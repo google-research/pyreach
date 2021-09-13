@@ -23,7 +23,7 @@ import sys
 from typing import List, Tuple, Union, Optional
 
 import numpy as np  # type: ignore
-from scipy.spatial.transform import Rotation  # type: ignore
+from scipy.spatial.transform.rotation import Rotation  # type: ignore
 import cv2  # type: ignore
 
 ZERO_VECTOR3 = np.array([0.0, 0.0, 0.0]).reshape(3, 1)
@@ -253,13 +253,37 @@ def unproject_vectorized(uv_coordinates: np.ndarray, depth_values: np.ndarray,
 
   # shape of points_undistorted is [N, 2] after the squeeze().
   points_undistorted = cv2.undistortPoints(
-      uv_coordinates.reshape((-1, 1, 2)), cam_mtx, cam_dist).squeeze()
+      uv_coordinates.reshape((-1, 1, 2)), cam_mtx, cam_dist).squeeze(axis=1)
 
   x = points_undistorted[:, 0] * depth_values
   y = points_undistorted[:, 1] * depth_values
 
   xyz = np.vstack((x, y, depth_values)).T
   return xyz
+
+
+def unproject_depth_sample_vectorized(
+    img_pts: np.ndarray,
+    raw_depths: np.ndarray,
+    depth_dist: ArrayOrList8,
+    camera_mtx: np.ndarray,
+    camera_dist: np.ndarray) -> np.ndarray:
+  """Convert (u,v) pixel coordinate, with depth, into an (x, y, z) coordinate.
+
+  Args:
+    img_pts: (u,v) pixel coordinates of shape (n, 2).
+    raw_depths: depth values pre-calibration of shape (n).
+    depth_dist: depth distortion parameters of shape (8,)
+    camera_mtx: intrinsics matrix of shape (3, 3). This is typically the return
+      value of intrinsics_to_matrix.
+    camera_dist: camera distortion parameters. numpy array of shape (5,).
+
+  Returns:
+    xyz coordinates in camera frame of shape (n, 3).
+  """
+  adjusted_depths = depth_dist[0] + raw_depths * depth_dist[1]
+  return unproject_vectorized(img_pts, adjusted_depths, camera_mtx,
+                              camera_dist).reshape(img_pts.shape[0], 3)
 
 
 def unproject_depth_vectorized(im_depth: np.ndarray, depth_dist: np.ndarray,

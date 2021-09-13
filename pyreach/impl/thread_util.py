@@ -351,7 +351,7 @@ class CallbackManager(Generic[T]):
     Args:
       tup: A tuple containing a callback and finish call back function.
     """
-    # TODO: Why not two arguments?
+    # TODO: Why not two arguments? pylint: disable=g-bad-todo
     with self._lock:
       if tup not in self._callbacks:
         return

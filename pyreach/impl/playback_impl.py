@@ -13,10 +13,9 @@
 # limitations under the License.
 
 """Implementation of the playback API."""
+import dataclasses
 import logging
 from typing import Optional
-
-import dataclasses
 
 from pyreach.core import PyReachStatus
 from pyreach.impl import client as cli

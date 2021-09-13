@@ -46,7 +46,7 @@ class VacuumMock(vacuum.Vacuum):
   @property
   def gauge_state(self) -> Optional[vacuum.VacuumGauge]:
     """Return the latest vacuum gauge state."""
-    return vacuum.VacuumGauge(time=0.0, sequence=0, state=12.0)
+    return vacuum.VacuumGauge(time=0.0, sequence=0, state=123.456)
 
   @property
   def support_blowoff(self) -> bool:
@@ -72,6 +72,25 @@ class VacuumMock(vacuum.Vacuum):
 
     Args:
       callback: Callback called when a new vacuum state arrives. The callback
+        function should return False for continuous state update. When the
+        callback function returns True, it will stop receiving future updates.
+      finished_callback: Optional callback, called when the callback is stopped.
+
+    Returns:
+      A function that when called stops the callback.
+
+    """
+    raise NotImplementedError
+
+  def add_blowoff_state_callback(
+      self,
+      callback: Callable[[vacuum.BlowoffState], bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback for blowoff state.
+
+    Args:
+      callback: Callback called when a new blowoff state arrives. The callback
         function should return False for continuous state update. When the
         callback function returns True, it will stop receiving future updates.
       finished_callback: Optional callback, called when the callback is stopped.
@@ -260,7 +279,7 @@ class VacuumMock(vacuum.Vacuum):
       Latest vacuum state.
 
     """
-    raise NotImplementedError
+    return vacuum.VacuumState(time=0.0, sequence=0, state=True)
 
   def async_fetch_state(self,
                         callback: Optional[Callable[[vacuum.VacuumState],
@@ -272,6 +291,37 @@ class VacuumMock(vacuum.Vacuum):
 
     Args:
       callback: Optional callback when a new vacuum state arrives.
+      error_callback: Optional callback called if there is an error.
+      timeout: The number of seconds to wait before giving up.
+    """
+    raise NotImplementedError
+
+  def fetch_blowoff_state(self,
+                          timeout: float = 15.0
+                         ) -> Optional[vacuum.BlowoffState]:
+    """Fetch a new blowoff state.
+
+    Args:
+      timeout: The number of seconds to wait before giving up.
+
+    Raises:
+      PyReachError: on timeout.
+
+    Returns:
+      Latest blowoff state.
+
+    """
+    return vacuum.BlowoffState(time=0.0, sequence=0, state=True)
+
+  def async_fetch_blowoff_state(
+      self,
+      callback: Optional[Callable[[vacuum.BlowoffState], None]] = None,
+      error_callback: Optional[Callable[[core.PyReachStatus], None]] = None,
+      timeout: float = 15.0) -> None:
+    """Fetch a new blowoff state asynchronously.
+
+    Args:
+      callback: Optional callback when a new blowoff state arrives.
       error_callback: Optional callback called if there is an error.
       timeout: The number of seconds to wait before giving up.
     """
@@ -291,7 +341,7 @@ class VacuumMock(vacuum.Vacuum):
       The latest pressure state.
 
     """
-    raise NotImplementedError
+    return vacuum.VacuumPressure(time=0.0, sequence=0, state=True)
 
   def async_fetch_pressure_state(
       self,
@@ -324,7 +374,7 @@ class VacuumMock(vacuum.Vacuum):
       The latest vacuum gauge state.
 
     """
-    raise NotImplementedError
+    return vacuum.VacuumGauge(time=0.0, sequence=0, state=123.456)
 
   def async_fetch_gauge_state(self,
                               callback: Optional[Callable[[vacuum.VacuumGauge],
@@ -343,4 +393,56 @@ class VacuumMock(vacuum.Vacuum):
       PyReachError: if gauge state is not supported.
 
     """
+    raise NotImplementedError
+
+  def start_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum output state.
+
+    Args:
+      request_period: The number of seconds between vacuum states. Defaults to
+        .1 seconds between vacuum output states.
+    """
+    pass
+
+  def stop_streaming(self) -> None:
+    """Stop streaming vacuum output states."""
+    raise NotImplementedError
+
+  def start_blowoff_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between blowoff states. Defaults to
+        .1 seconds between blowoff output states.
+    """
+    pass
+
+  def stop_blowoff_streaming(self) -> None:
+    """Stop streaming blowoff output states."""
+    raise NotImplementedError
+
+  def start_gauge_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between vacuum gauge states.
+        Defaults to .1 seconds between vacuum gauge sensor states.
+    """
+    raise NotImplementedError
+
+  def stop_gauge_streaming(self) -> None:
+    """Stop streaming vacuum gauge states."""
+    raise NotImplementedError
+
+  def start_pressure_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum pressure states.
+
+    Args:
+      request_period: The number of seconds between vacuum pressure states.
+        Defaults to .1 seconds between vacuum pressure sensor states.
+    """
+    raise NotImplementedError
+
+  def stop_pressure_streaming(self) -> None:
+    """Stop streaming vacuum pressure states."""
     raise NotImplementedError

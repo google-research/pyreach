@@ -15,12 +15,12 @@
 """Implementation of PyReach force torque interface."""
 
 import logging  # type: ignore
-from typing import Callable, Optional, Dict, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 from pyreach import core
-from pyreach import ForceTorqueSensor
-from pyreach import ForceTorqueSensorState
 from pyreach.common.python import types_gen
+from pyreach.force_torque_sensor import ForceTorqueSensor
+from pyreach.force_torque_sensor import ForceTorqueSensorState
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
@@ -172,3 +172,20 @@ class ForceTorqueSensorImpl(ForceTorqueSensor):
             self._device.device_name,
             data_type="sensor-state",
             timeout=timeout), callback, error_callback)
+
+  def start_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of force torque sensor state.
+
+    Args:
+      request_period: The number of seconds between force torque sensor states.
+        Defaults to .1 seconds between force torque sensor states.
+    """
+    self._device.set_untagged_request_period("force-torque-sensor",
+                                             self._device.device_name,
+                                             "sensor-state", request_period)
+
+  def stop_streaming(self) -> None:
+    """Stop streaming force torque sensor states."""
+    self._device.set_untagged_request_period("force-torque-sensor",
+                                             self._device.device_name,
+                                             "sensor-state", None)

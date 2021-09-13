@@ -27,8 +27,6 @@ from pyreach.impl import calibration_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-from pyreach.utils import load_depth_image
-from pyreach.utils import load_image
 
 
 class DepthFrameImpl(depth_camera.DepthFrame):
@@ -204,7 +202,7 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
 
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[depth_camera.DepthFrame]:
-    """Get the depth camera image if it is avaiable."""
+    """Get the depth camera image if it is available."""
     if (msg.data_type == "color-depth" and
         msg.device_type == self._device_type and
         msg.device_name == self._device_name):
@@ -229,7 +227,7 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
   ) -> "Optional[depth_camera.DepthFrame]":
     """Convert a JSON message into a camera frame."""
     try:
-      color = load_image(msg.color)
+      color: np.ndarray = utils.load_color_image_from_data(msg)
     except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
@@ -237,8 +235,9 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
           "depth color message missing file a %d ms time delta, file %s", delta,
           msg.color)
       return None
-    depth = load_depth_image(msg.depth)
-    if depth is None:
+    try:
+      depth: np.ndarray = utils.load_depth_image_from_data(msg)
+    except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
       logging.warning("depth message missing file at %d ms time delta, file %s",
@@ -280,12 +279,13 @@ class DepthCameraImpl(depth_camera.DepthCamera):
     """
     self._device.set_untagged_request_period(self._device.device_type(),
                                              self._device.device_name(),
-                                             request_period)
+                                             "color-depth", request_period)
 
   def stop_streaming(self) -> None:
     """Stop depth camera streaming."""
     self._device.set_untagged_request_period(self._device.device_type(),
-                                             self._device.device_name(), None)
+                                             self._device.device_name(),
+                                             "color-depth", None)
 
   def enable_tagged_request(self) -> None:
     """Enable tagged depth camare image requests."""
@@ -388,12 +388,3 @@ class DepthCameraImpl(depth_camera.DepthCamera):
       return core.Pose.from_list(list(device.extrinsics))
     logging.warning("Camera had a parent ID. Currently unsupported.")
     return None
-
-
-class Photoneo(DepthCameraDevice):
-  """Represent a photoneo depth camera."""
-
-  def __init__(self, calibration: calibration_impl.CalDevice) -> None:
-    """Init a Photoneo camera."""
-    super().__init__(
-        device_type="photoneo", device_name="", calibration=calibration)

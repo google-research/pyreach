@@ -14,7 +14,7 @@
 
 """Initialize Reach Gyms package."""
 
-from pyreach.gyms.registration import register
+from pyreach.gyms.registration import register  # type: ignore
 
 register(
     id='pyreach_gym_example-v0',
@@ -53,6 +53,15 @@ register(
 )
 
 register(
+    id='benchmark-folding-v2',
+    entry_point=(
+        'pyreach.gyms.envs.benchmark_folding_v2:BenchmarkFoldingEnv'
+    ),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
     id='singulation-autopick-v0',
     entry_point=(
         'pyreach.gyms.envs.singulation_autopick:SingulationAutopickEnv'
@@ -84,6 +93,35 @@ register(
     entry_point=(
         'pyreach.gyms.envs.integration_xarm:IntegrationTestXarmAsyncEnv'
     ),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
+    id='integration-ur-v0',
+    entry_point=('pyreach.gyms.envs.integration_ur:IntegrationTestUREnv'),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
+    id='integration-ur-sync-v0',
+    entry_point=('pyreach.gyms.envs.integration_ur:IntegrationTestURSyncEnv'),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
+    id='integration-ur-async-v0',
+    entry_point=('pyreach.gyms.envs.integration_ur:IntegrationTestURAsyncEnv'),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
+    id='benchmark-integration-v0',
+    entry_point=(
+        'pyreach.gyms.envs.benchmark_integration_test:BenchmarkIntegrationEnv'),
     max_episode_steps=9999999999999999999999,
     reward_threshold=99999999999999999999.0,
 )

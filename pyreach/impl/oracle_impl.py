@@ -23,7 +23,6 @@ from pyreach.impl import device_base
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-from pyreach.utils import load_image
 
 
 class OracleDevice(requester.Requester[oracle.Prediction]):
@@ -277,13 +276,13 @@ class OracleDevice(requester.Requester[oracle.Prediction]):
 
     """
     try:
-      color = load_image(msg.color)
+      color = utils.load_color_image_from_data(msg)
     except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
       logging.warning(
-          "oracle message missing file at %d ms time delta, file %s",
-          delta, msg.color)
+          "oracle message missing file at %d ms time delta, file %s", delta,
+          msg.color)
       return None
     color.flags.writeable = False
     pick_points = [
@@ -315,9 +314,9 @@ class OracleDevice(requester.Requester[oracle.Prediction]):
 
     return oracle.Prediction(
         utils.time_at_timestamp(msg.ts), msg.seq,
-        msg.device_type, msg.device_name,
-        tuple(pick_points), tuple(pick_place_points), color, intent,
-        prediction_type, request_type, task_code, label)
+        msg.device_type, msg.device_name, tuple(pick_points),
+        tuple(pick_place_points), color, intent, prediction_type, request_type,
+        task_code, label)
 
 
 class OracleImpl(oracle.Oracle):

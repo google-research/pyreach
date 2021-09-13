@@ -21,12 +21,11 @@ Many parameters in this class inherits its meaning from OpenCV documentation:
   https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
 """
 
+import dataclasses
 from typing import Optional, Tuple, List
 
-from dataclasses import dataclass
 
-
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class CalibrationDevice(object):
   """Base class for various calibration device.
 
@@ -43,7 +42,7 @@ class CalibrationDevice(object):
   sub_type: Optional[str]
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class CalibrationRobot(CalibrationDevice):
   """Calibration information of a robot.
 
@@ -70,7 +69,7 @@ class CalibrationRobot(CalibrationDevice):
   link_name: Optional[str]
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class CalibrationCamera(CalibrationDevice):
   """Calibration information of a camera device.
 
@@ -102,7 +101,7 @@ class CalibrationCamera(CalibrationDevice):
   link_name: Optional[str]
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class CalibrationObject(CalibrationDevice):
   """Calibration information of an object such as an April tag.
 

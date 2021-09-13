@@ -24,12 +24,12 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 from pyreach.gyms import core
 from pyreach.gyms import experiment_assigner
-from pyreach.gyms.envs.benchmark_folding import BenchmarkFoldingEnv
+from pyreach.gyms.envs.benchmark_folding_v2 import BenchmarkFoldingEnv
 
 
 class JointsFoldingAgent:
   """Example agent for the wrapped T-Shirt Folding benchmark environment using joint moves."""
-  ACTION_TIME_INCREMENT_SECONDS = 1.0
+  ACTION_TIME_INCREMENT_SECONDS = 0.1
 
   def __init__(self) -> None:
     # Store anything that needs to be preserved, such as models.
@@ -72,6 +72,13 @@ class JointsFoldingAgent:
         "arm": {
             "joint_angles": new_joints,
             "command": 1,
+            "synchronous": 0,
+            "use_linear": 0,
+            "preemptive": 1,
+            "servo": 1,
+            "servo_time_seconds": 0.2,
+            "servo_gain": 100,
+            "servo_lookahead_time_seconds": 0.1,
             "id": self._action_id
         },
         "vacuum": {
@@ -83,30 +90,40 @@ class JointsFoldingAgent:
 
   def single_attempt(self, env: BenchmarkFoldingEnv) -> None:
     """Runs the agent loop."""
-    env.set_agent_id("sample-folding-agent-v0")
+    env.set_agent_id("sample-folding-agent-v2")
 
-    # env.reset() will swirl the t-shirt into a random configuration
     obs = env.reset()
+    assert isinstance(obs, (dict, collections.OrderedDict))
 
-    print(f"{time.time():.4f}:AGENT: Starting policy")
+    print(f"{time.time():.4f}:AGENT: Starting policy.")
+    policy_start_time = obs["server"]["latest_ts"]
 
     while True:
       loop_start_time = time.time()
 
       # Get up-to-date observation after we slept
       obs, _, done, _ = env.step({})
+      assert isinstance(obs, (dict, collections.OrderedDict))
 
       # Check if environment says we are done
       if done:
         print(f"{time.time():.4f}:AGENT: Step returned done")
         break
 
-      # Agents are welcome to attempt unfolding, but it is not required.
-      if env.parse_instruction(obs) == "Unfold the t-shirt":
-        print(f"{time.time():.4f}:AGENT: Cheating. Just say you are done.")
-        env.finish_instruction()
-        # Unfolding is done, let's continue for the 'Fold' instruction.
+      # Agents are welcome to attempt scrambling, but it is not required.
+      if env.parse_instruction(obs) == "Scramble the t-shirt":
+        print(f"{time.time():.4f}:AGENT: Cheating with pre-scripted scramble")
+        env.scramble()
+        print(f"{time.time():.4f}:AGENT: Scramble done, finishing early")
+        env.scramble_done()
+        # Scrambling is done, let's continue for the 'Fold' instruction.
         continue
+
+      # For example purposes, finish after 30 seconds to show early termination
+      if obs["server"]["latest_ts"] > (policy_start_time + 30):
+        print(f"{time.time():.4f}:AGENT: Bored with folding. Finishing early.")
+        env.fold_done()
+        break
 
       # If no special cases or timeouts, perform normal obs -> action -> step
       action = self._calculate_action(obs, env)
@@ -136,7 +153,7 @@ class JointsFoldingAgent:
 def main() -> None:
   agent = JointsFoldingAgent()
 
-  with gym.make("benchmark-folding-v0") as env:
+  with gym.make("benchmark-folding-v2") as env:
     # To compare multiple agents, pass more than one agents below.
     experiment_assigner.randomized_run(env, [agent.single_attempt], [1.0])
 

@@ -13,9 +13,6 @@
 # limitations under the License.
 
 """Wrapper script to download and invoke reach command automatically.
-
-Sample non-blaze command:
-  python3 -m pyreach.tools.reach
 """
 import hashlib
 import os
@@ -36,7 +33,7 @@ flags.DEFINE_string("o",
                                  "reach_workspace"), "Reach working directory")
 
 WEBRTC_SHA256 = "afeb5d7fe13823c4316894823e0b9b10aadefa609eb2623dc218118866beb1ca"
-REACH_SHA256 = "024b9bbb04447508576af4d1f65e2439e8cb412ae671afcdc517f7a5fcc8c2a0"
+REACH_SHA256 = "4cbfd8cbff972498737564a404ea249d269772144903bad5fe791adbcb2445ce"
 WEBRTC_BASE = "https://storage.googleapis.com/brain-reach-public/releases/webrtc/linux-x86_64/webrtc_headless."
 REACH_BASE = "https://storage.googleapis.com/brain-reach-public/releases/reach/linux-x86_64/reach."
 

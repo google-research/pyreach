@@ -12,9 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional, Callable, Tuple
+"""Interface for interacting with an Oracle device.
+
+An Oracle device is a ML model that runs on the Reach host. This is considered
+the legacy way of integrating ML model with Reach. Because the ML model
+is tightly coupled with Reach internal data structure.
+
+The recommended way of integrating new ML model with Reach is to run ML model
+as an Agent that talks to the Reach host through the PyReach API.
+
+The existing Oracle models will continue to be supported, specifically, the
+pick point model and kitting model.
+
+Any new Oracle model is strongly discouraged. Please discuss with the Reach
+infrastructure team first before developing any new Oracle models.
+"""
 
 import dataclasses
+from typing import Callable, Optional, Tuple
+
 import numpy  # type: ignore
 
 from pyreach import core

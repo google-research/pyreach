@@ -14,9 +14,9 @@
 
 """Pipeline Descriptions."""
 
-import enum
-from typing import Tuple
 import dataclasses
+import enum
+from typing import Optional, Tuple
 
 
 class InterfaceType(enum.Enum):
@@ -41,6 +41,7 @@ class InterfaceType(enum.Enum):
   PUBLISH = "publish"
   REACH_SCRIPT = "reach-script"
   RUN_SCRIPT = "run-script"
+  STREAM_REQUEST = "stream-request"
   TEXT_INSTRUCTION_REQUEST = "text-instruction-request"
   USER_LABEL = "user-label"
   UR_COMMAND = "ur-command"
@@ -91,3 +92,31 @@ class MachineInterfaces(object):
         interface for interface in self.machine_interfaces
         if interface.device_type == device_type
     ])
+
+  def get_request_strategy(self, device_type: str, device_name: str,
+                           data_type: str) -> Optional[InterfaceType]:
+    """Get the correct request strategy to read from a device.
+
+    Args:
+      device_type: The device type to consider.
+      device_name: The device name to consider.
+      data_type: The data type to consider.
+
+    Returns:
+      The request strategy for the given data.
+    """
+    have_frame_request = False
+    for interface in self.machine_interfaces:
+      if interface.device_type != device_type:
+        continue
+      if interface.device_name != device_name:
+        continue
+      if interface.data_type != data_type:
+        continue
+      if interface.interface_type == InterfaceType.PUBLISH:
+        return InterfaceType.PUBLISH
+      elif interface.interface_type == InterfaceType.FRAME_REQUEST:
+        have_frame_request = True
+    if have_frame_request:
+      return InterfaceType.FRAME_REQUEST
+    return None

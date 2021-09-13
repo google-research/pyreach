@@ -166,10 +166,11 @@ class IKPybullet:
             self._effector_link,
             translation,
             quaternion_xyzw,
-            # TODO: use real limits
+            # TODO: use real limits. pylint: disable=g-bad-todo
             lowerLimits=[-17] * 6,
             upperLimits=[17] * 6,
             jointRanges=[17] * 6,
+            # pylint: disable=g-bad-todo
             # TODO: Understand why examples don't use actual positions for
             # the first two joints. Taken from
             # `pybullet/gym/pybullet_robots/xarm/xarm_sim.py`

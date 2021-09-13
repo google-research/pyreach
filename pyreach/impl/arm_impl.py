@@ -941,9 +941,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       The device State if it is present in the message.
 
     """
-    if self._device_name == msg.device_name and msg.device_type == "ur" and msg.data_type == "ur-state":
-      return self._arm_state_from_message(self._arm_type, msg)
-    if self._device_name == msg.device_name and msg.device_type == "robot" and msg.data_type == "robot-state":
+    if (self._device_name == msg.device_name and msg.device_type == "robot" and
+        msg.data_type == "robot-state"):
       return self._arm_state_from_message(self._arm_type, msg)
     return None
 
@@ -1285,11 +1284,12 @@ class ArmImpl(arm.Arm):
         second between states.
     """
     self._device.set_untagged_request_period("robot", self.device_name,
-                                             request_period)
+                                             "robot-state", request_period)
 
   def stop_streaming(self) -> None:
     """Stop streaming arm states."""
-    self._device.set_untagged_request_period("robot", self.device_name, None)
+    self._device.set_untagged_request_period("robot", self.device_name,
+                                             "robot-state", None)
 
   @property
   def joint_limits(self) -> Optional[Tuple[constraints.JointLimit, ...]]:

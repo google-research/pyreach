@@ -14,8 +14,8 @@
 
 """Interface for interacting with a vacuum device."""
 
-from typing import Optional, Callable
 import dataclasses
+from typing import Callable, Optional
 
 from pyreach import core
 
@@ -454,4 +454,56 @@ class Vacuum(object):
       PyReachError: if gauge state is not supported.
 
     """
+    raise NotImplementedError
+
+  def start_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum output state.
+
+    Args:
+      request_period: The number of seconds between vacuum states. Defaults to
+        .1 seconds between vacuum output states.
+    """
+    raise NotImplementedError
+
+  def stop_streaming(self) -> None:
+    """Stop streaming vacuum output states."""
+    raise NotImplementedError
+
+  def start_blowoff_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between blowoff states. Defaults to
+        .1 seconds between blowoff output states.
+    """
+    raise NotImplementedError
+
+  def stop_blowoff_streaming(self) -> None:
+    """Stop streaming blowoff output states."""
+    raise NotImplementedError
+
+  def start_gauge_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between vacuum gauge states.
+        Defaults to .1 seconds between vacuum gauge sensor states.
+    """
+    raise NotImplementedError
+
+  def stop_gauge_streaming(self) -> None:
+    """Stop streaming vacuum gauge states."""
+    raise NotImplementedError
+
+  def start_pressure_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum pressure states.
+
+    Args:
+      request_period: The number of seconds between vacuum pressure states.
+        Defaults to .1 seconds between vacuum pressure sensor states.
+    """
+    raise NotImplementedError
+
+  def stop_pressure_streaming(self) -> None:
+    """Stop streaming vacuum pressure states."""
     raise NotImplementedError

@@ -16,9 +16,8 @@
 
 from typing import Tuple
 
+import cv2  # type: ignore  # type: ignore
 import numpy as np  # type: ignore
-
-import cv2  # type: ignore
 
 
 def _get_undistortion_shifts(

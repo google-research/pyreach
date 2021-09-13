@@ -18,6 +18,7 @@ from pyreach.arm import Arm
 from pyreach.arm import ArmState
 from pyreach.arm import IKLibType
 from pyreach.calibration import Calibration
+from pyreach.client_annotation import ClientAnnotation
 from pyreach.color_camera import ColorCamera
 from pyreach.color_camera import ColorFrame
 from pyreach.core import AxisAngle

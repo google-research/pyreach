@@ -15,7 +15,7 @@
 from typing import List, Optional
 import unittest
 
-from pyreach import core
+from pyreach import core  # pylint: disable=unused-import
 from pyreach import text_instruction
 from pyreach.common.python import types_gen
 from pyreach.impl import test_utils
@@ -88,8 +88,9 @@ class TestPyReachTextInstruction(unittest.TestCase):
     ## Setup, ensure no cached image, and that tagged requests will be used.
     rdev, dev = text_instruction_impl.TextInstructionDevice().get_wrapper()
     with test_utils.TestDevice(rdev) as test_device:
-      global_callbacks: "thread_util.CallbackCapturer[text_instruction.TextInstruction]" = thread_util.CallbackCapturer(
-      )
+      global_callbacks: ("thread_util.CallbackCapturer["
+                         "text_instruction.TextInstruction]") = (
+                             thread_util.CallbackCapturer())
       stop_callback = dev.add_update_callback(
           global_callbacks.callback_false, global_callbacks.finished_callback)
       self.assertIsNone(dev.text_instruction)
@@ -103,9 +104,10 @@ class TestPyReachTextInstruction(unittest.TestCase):
       self._verify_frame(frame_1)
       self.assertNotEqual(frame_0, frame_1)
 
-      callbacks: ("thread_util.DoubleCallbackCapturer[text_instruction.TextInstruction,"
-                  " core.PyReachStatus]") = \
-        thread_util.DoubleCallbackCapturer()
+      callbacks: (
+          "thread_util.DoubleCallbackCapturer["
+          "text_instruction.TextInstruction,"
+          " core.PyReachStatus]") = thread_util.DoubleCallbackCapturer()
       dev.async_fetch_text_instruction(
           callback=callbacks.first_callback_finish,
           error_callback=callbacks.second_callback_finish)

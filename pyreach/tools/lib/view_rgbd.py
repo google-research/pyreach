@@ -18,24 +18,25 @@ import threading
 import time
 from typing import List, Optional, Tuple
 
+import cv2  # type: ignore  # type: ignore
 import numpy as np  # type: ignore
-import open3d as o3d  # type: ignore
 
-import cv2  # type: ignore
+import google3.third_party.open3d.open3d as o3d  # type: ignore
+
 
 _DEPTH_SCALE = 0.1
 
 
 # Fast conversion of rgbd images to point cloud.
-# TODO: Include depthDistortions.
-# TODO: May be this should be moved to transform_utils.py.
+# TODO(hirak): Include depthDistortions.
+# TODO(hirak): May be this should be moved to transform_utils.py.
 def pgm_to_pointcloud(
     depth_image: np.ndarray, color_image: Optional[np.ndarray],
     intrinsics: Tuple[float, float, float, float],
     distortion: List[float]) -> Tuple[np.ndarray, Optional[np.ndarray]]:
   """Fast conversion of opencv images to pointcloud.
 
-  Takes ~7 ms per 1280x720 RGBD on a corp laptop.
+  Takes ~7 ms per 1280x720 RGBD on my corp laptop (hirak).
 
   Args:
     depth_image: OpenCV image.
@@ -71,7 +72,7 @@ def pgm_to_pointcloud(
   return points, colors
 
 
-# TODO: Correct for extrinsics (useful to test multiple depth cams).
+# TODO(hirak): Correct for extrinsics (useful to test multiple depth cams).
 def _pgm_to_pcd(depth_raw: np.ndarray, color_raw: np.ndarray,
                 intrinsics: Tuple[float, float, float, float],
                 distortion: List[float]) -> o3d.geometry.PointCloud:

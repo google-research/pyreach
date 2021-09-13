@@ -18,19 +18,19 @@ import subprocess
 import threading
 from typing import Any, Callable, List, Optional, Tuple
 
+import cv2  # type: ignore  # type: ignore
 import numpy as np  # type: ignore
 
-from pyreach import Arm
-from pyreach import AxisAngle
-from pyreach import Host
-from pyreach import Pose
-from pyreach import PyReachStatus
-from pyreach import Translation
-from pyreach import Vacuum
+from pyreach.arm import Arm
 from pyreach.common.base import transform_util
+from pyreach.core import AxisAngle
+from pyreach.core import Pose
+from pyreach.core import PyReachStatus
+from pyreach.core import Translation
 from pyreach.factory import LocalTCPHostFactory
+from pyreach.host import Host
 from pyreach.host import SessionState
-import cv2  # type: ignore
+from pyreach.vacuum import Vacuum
 
 ContinuousControlThread = Callable[
     [List["Pendant"], Callable[[float], bool], float], None]
@@ -341,7 +341,8 @@ class Pendant(object):
       self._target_pose[:3] += transform[:3]
 
     self._arm.async_to_pose(
-        Pose.from_list(self._target_pose.tolist()), servo=True)
+        Pose.from_list(self._target_pose.tolist()), servo=True,
+        allow_uncalibrated=True)
 
   def inc_pos_step(self) -> None:
     """Increment the value of the position step."""
@@ -524,6 +525,7 @@ class Pendant(object):
                 pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_ZN, (x, y)):
@@ -535,6 +537,7 @@ class Pendant(object):
                 pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_YP, (x, y)):
@@ -545,6 +548,7 @@ class Pendant(object):
                             pose.position.z), pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_YN, (x, y)):
@@ -555,6 +559,7 @@ class Pendant(object):
                             pose.position.z), pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_XP, (x, y)):
@@ -565,6 +570,7 @@ class Pendant(object):
                             pose.position.z), pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_XN, (x, y)):
@@ -575,6 +581,7 @@ class Pendant(object):
                             pose.position.z), pose.orientation),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RXP, (x, y)):
@@ -587,6 +594,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RXN, (x, y)):
@@ -599,6 +607,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RYP, (x, y)):
@@ -611,6 +620,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RYN, (x, y)):
@@ -623,6 +633,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RZP, (x, y)):
@@ -635,6 +646,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz + self._rot_step)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RZN, (x, y)):
@@ -647,6 +659,7 @@ class Pendant(object):
                           pose.orientation.axis_angle.rz - self._rot_step)),
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -658,6 +671,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -668,6 +682,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -678,6 +693,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -688,6 +704,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -698,6 +715,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -708,6 +726,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -718,6 +737,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -728,6 +748,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -738,6 +759,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -748,6 +770,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -758,6 +781,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -768,6 +792,7 @@ class Pendant(object):
             joints,
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
+            allow_uncalibrated=True,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -823,6 +848,7 @@ class Pendant(object):
           self._arm.async_to_joints(
               _XARM_HOMEJ,
               velocity=_XARM_HOMEJ_VELOCITY,
+              allow_uncalibrated=True,
               callback=self._command_callback,
               finished_callback=self._command_finished_callback)
           print(f"Homing... {self._arm.arm_type.urdf_file}")

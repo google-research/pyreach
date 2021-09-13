@@ -99,16 +99,18 @@ class IntrinsicsTest(unittest.TestCase):
 class ProjectionTest(unittest.TestCase):
 
   @staticmethod
-  def _load_cal_params() -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+  def _load_cal_params() -> Tuple[np.ndarray, np.ndarray, np.ndarray, int, int]:
     cal_params = json.loads(CALIBRATION_PARAMS_JSON)
     intrinsics = transform_util.intrinsics_to_matrix(cal_params['intrinsics'])
     distortion = np.array(cal_params['distortion'])
     distortion_depth = np.array(cal_params['distortionDepth'])
-    return intrinsics, distortion, distortion_depth
+    height = cal_params['height']
+    width = cal_params['width']
+    return intrinsics, distortion, distortion_depth, height, width
 
   def test_project2int(self) -> None:
     """Test simple projection (with identity extrinsics)."""
-    intrinsics, distortion, _ = self._load_cal_params()
+    intrinsics, distortion, _, _, _ = self._load_cal_params()
 
     def proj(p: Tuple[int, int, int]) -> np.ndarray:
       return transform_util.project_2d_int(
@@ -130,7 +132,7 @@ class ProjectionTest(unittest.TestCase):
 
   def test_project(self) -> None:
     """Test simple projection (with identity extrinsics)."""
-    intrinsics, distortion, _ = self._load_cal_params()
+    intrinsics, distortion, _, _, _ = self._load_cal_params()
 
     def proj(p: Tuple[int, int, int]) -> np.ndarray:
       return transform_util.project(
@@ -145,7 +147,7 @@ class ProjectionTest(unittest.TestCase):
 
   def test_unproject_depth_sample(self) -> None:
     """Test simple unprojection."""
-    intrinsics, distortion, distortion_depth = self._load_cal_params()
+    intrinsics, distortion, distortion_depth, _, _ = self._load_cal_params()
 
     xyz = transform_util.unproject_depth_sample((1, 1), 0, distortion_depth,
                                                 intrinsics, distortion)
@@ -161,28 +163,54 @@ class ProjectionTest(unittest.TestCase):
 
   def test_unproject_depth_vectorized(self) -> None:
     """Test simple depth image unprojection."""
-    intrinsics, distortion, distortion_depth = self._load_cal_params()
+    intrinsics, distortion, distortion_depth, _, _ = self._load_cal_params()
 
-    height = 7
-    width = 11
-    im_depth = np.random.rand(height, width)
-    im_depth[0, 0] = 0  # Add in an invalid depth.
+    for width, height in [(11, 7), (1, 1)]:
+      height = 7
+      width = 11
+      im_depth = np.random.rand(height, width)
+      im_depth[0, 0] = 0  # Add in an invalid depth.
 
-    im_xyz = transform_util.unproject_depth_vectorized(im_depth,
-                                                       distortion_depth,
-                                                       intrinsics, distortion)
-    self.assertIs(type(im_xyz), np.ndarray)
-    self.assertEqual(im_xyz.shape, (height * width, 3))
+      im_xyz = transform_util.unproject_depth_vectorized(im_depth,
+                                                         distortion_depth,
+                                                         intrinsics,
+                                                         distortion)
+      self.assertIs(type(im_xyz), np.ndarray)
+      self.assertEqual(im_xyz.shape, (height * width, 3))
+      # Check that 0 depth maps to (0, 0, 0).
+      self.assertLess(np.abs(im_xyz[0, :]).max(), 1e-6)
+
+      # Check consistency with the single sample version.
+      im_xyz = im_xyz.reshape(height, width, 3)
+      for v in range(height):
+        for u in range(width):
+          xyz = transform_util.unproject_depth_sample(
+              (u, v), im_depth[v, u], distortion_depth, intrinsics, distortion)
+          self.assertLess(np.linalg.norm(xyz - im_xyz[v, u, :]), 1e-6)
+
+  def test_unproject_depth_sample_vectorized(self) -> None:
+    """Test simple unprojection."""
+    (intrinsics, distortion, distortion_depth, height,
+     width) = self._load_cal_params()
+    npnts = 11
+    uvs = np.stack([np.random.randint(low=0, high=width, size=(npnts,)),
+                    np.random.randint(low=0, high=height, size=(npnts,))],
+                   axis=1).astype(np.float64)
+    depths = np.random.rand(npnts) * 1000.00
+    depths[0] = 0  # Add in an invalid depth.
+
+    xyz = transform_util.unproject_depth_sample_vectorized(
+        uvs, depths, distortion_depth, intrinsics, distortion)
+    self.assertIs(type(xyz), np.ndarray)
+    self.assertEqual(xyz.shape, (npnts, 3))
     # Check that 0 depth maps to (0, 0, 0).
-    self.assertLess(np.abs(im_xyz[0, :]).max(), 1e-6)
+    self.assertLess(np.abs(xyz[0]).max(), 1e-6)
 
-    # Check consistency with the single sample version.
-    im_xyz = im_xyz.reshape(height, width, 3)
-    for v in range(height):
-      for u in range(width):
-        xyz = transform_util.unproject_depth_sample(
-            (u, v), im_depth[v, u], distortion_depth, intrinsics, distortion)
-        self.assertLess(np.linalg.norm(xyz - im_xyz[v, u, :]), 1e-6)
+    # Check against non-vectorized version.
+    for ipnt in range(npnts):
+      cur_xyz = transform_util.unproject_depth_sample(
+          uvs[ipnt], depths[ipnt], distortion_depth, intrinsics, distortion)
+      self.assertLess(np.abs(cur_xyz - xyz[ipnt]).max(), 1e-6)
 
 
 class ConversionTest(unittest.TestCase):

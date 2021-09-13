@@ -146,9 +146,6 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
     _, _, _, _ = super().step(action)
     obs = super().reset()
 
-    # There's a problem with IK, so we're skipping this for now.
-    # self._do_cleanup_sweep(obs)
-
     # Start a new task
     action = collections.OrderedDict(
         {"text_instructions": collections.OrderedDict({"task_enable": 1})})

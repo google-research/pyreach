@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Tests for google3.robotics.learning.reach.third_party.pyreach.impl.machine_interfaces_impl."""
+
 from typing import List
 import unittest
 from pyreach.common.python import types_gen
@@ -22,7 +24,7 @@ from pyreach.impl import test_utils
 _test_machine_interfaces = types_gen.MachineInterfaces(interfaces=[
     types_gen.MachineInterface(
         data_type="color-depth",
-        device_type="photoneo",
+        device_type="depth-camera",
         py_type="frame-request"),
     types_gen.MachineInterface(
         data_type="color-depth",
@@ -35,14 +37,14 @@ _test_machine_interfaces = types_gen.MachineInterfaces(interfaces=[
         device_type="realsense",
         py_type="frame-request"),
     types_gen.MachineInterface(
-        data_type="color", device_type="uvc", py_type="frame-request"),
+        data_type="color", device_type="color-camera", py_type="frame-request"),
     types_gen.MachineInterface(
         data_type="color",
         device_name="vnc0",
         device_type="vnc",
         py_type="frame-request"),
     types_gen.MachineInterface(
-        data_type="ur-state", device_type="ur", py_type="publish"),
+        data_type="robot-state", device_type="robot", py_type="publish"),
     types_gen.MachineInterface(
         data_type="key-value",
         device_type="settings-engine",
@@ -156,7 +158,7 @@ class MachineInterfacesImplTest(unittest.TestCase):
           interfaces.machine_interfaces[0],
           machine_interfaces.MachineInterface(
               data_type="color-depth",
-              device_type="photoneo",
+              device_type="depth-camera",
               device_name="",
               interface_type=machine_interfaces.InterfaceType.FRAME_REQUEST,
               keys=()))
@@ -180,7 +182,7 @@ class MachineInterfacesImplTest(unittest.TestCase):
           interfaces.machine_interfaces[3],
           machine_interfaces.MachineInterface(
               data_type="color",
-              device_type="uvc",
+              device_type="color-camera",
               device_name="",
               interface_type=machine_interfaces.InterfaceType.FRAME_REQUEST,
               keys=()))
@@ -195,8 +197,8 @@ class MachineInterfacesImplTest(unittest.TestCase):
       self.assertEqual(
           interfaces.machine_interfaces[5],
           machine_interfaces.MachineInterface(
-              data_type="ur-state",
-              device_type="ur",
+              data_type="robot-state",
+              device_type="robot",
               device_name="",
               interface_type=machine_interfaces.InterfaceType.PUBLISH,
               keys=()))

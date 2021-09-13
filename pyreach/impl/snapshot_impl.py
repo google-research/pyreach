@@ -123,6 +123,7 @@ def reverse_snapshot(
               synchronous=action.synchronous))
   return Snapshot(
       source=snapshot.source,
+      gym_server_time=utils.time_at_timestamp(snapshot.gym_server_ts),
       gym_env_id=snapshot.gym_env_id,
       gym_run_id=snapshot.gym_run_id,
       gym_episode=snapshot.gym_episode,
@@ -217,6 +218,7 @@ def convert_snapshot(
             logger_action_params=logger_params))
   return types_gen.Snapshot(
       source=snapshot.source,
+      gym_server_ts=utils.timestamp_at_time(snapshot.gym_server_time),
       gym_env_id=snapshot.gym_env_id,
       gym_run_id=snapshot.gym_run_id,
       gym_episode=snapshot.gym_episode,

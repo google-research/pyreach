@@ -17,7 +17,7 @@
 import importlib
 from typing import Any
 
-from gym import register as _register  # type: ignore
+import gym  # type: ignore
 
 
 # pylint: disable=redefined-builtin
@@ -41,4 +41,4 @@ def register(id: str, entry_point: str, **kwargs: Any) -> None:
     fn = getattr(mod, attr_name)
     return fn(**args_update)
 
-  _register(id=id, entry_point=wrapped, **kwargs)
+  gym.register(id=id, entry_point=wrapped, **kwargs)

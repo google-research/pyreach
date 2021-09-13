@@ -14,6 +14,7 @@
 
 """Testing utilities for PyReach."""
 
+import dataclasses
 import hashlib
 import json
 import os
@@ -21,13 +22,69 @@ import queue
 import threading
 from typing import Any, Callable, Dict, List, Optional, Tuple
 import urllib.request
-import dataclasses
-import numpy  # type: ignore
+
+import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
+
 from pyreach.common.python import types_gen
 from pyreach.impl import client
 from pyreach.impl import device_base
+from pyreach.impl import utils
 import cv2  # type: ignore
+
+
+def device_data_equal(data_1: types_gen.DeviceData,
+                      data_2: types_gen.DeviceData) -> bool:
+  """Test if two device datas are equal, including images.
+
+  Args:
+    data_1: first device data
+    data_2: second device data
+
+  Returns:
+    If the device data elements are equal.
+  """
+  if json.dumps(data_1.to_json()) != json.dumps(data_2.to_json()):
+    return False
+  color_image_1: Optional[np.ndarray] = None
+  color_image_2: Optional[np.ndarray] = None
+  depth_image_1: Optional[np.ndarray] = None
+  depth_image_2: Optional[np.ndarray] = None
+  if isinstance(data_1, utils.ImagedDeviceData):
+    data_1_translated: utils.ImagedDeviceData = data_1
+    color_image_1 = data_1_translated.color_image
+    depth_image_1 = data_1_translated.depth_image
+  if isinstance(data_2, utils.ImagedDeviceData):
+    data_2_translated: utils.ImagedDeviceData = data_2
+    color_image_2 = data_2_translated.color_image
+    depth_image_2 = data_2_translated.depth_image
+  if color_image_1 is None and color_image_2 is not None:
+    return False
+  if color_image_1 is not None and (
+      color_image_2 is None or color_image_1.shape != color_image_2.shape or
+      not np.array_equal(color_image_1, color_image_2)):
+    return False
+  if depth_image_1 is None and color_image_2 is not None:
+    return False
+  if depth_image_1 is not None and (
+      depth_image_2 is None or depth_image_1.shape != depth_image_2.shape or
+      not np.array_equal(depth_image_1, depth_image_2)):
+    return False
+  return True
+
+
+def command_data_equal(data_1: types_gen.CommandData,
+                       data_2: types_gen.CommandData) -> bool:
+  """Test if two command datas are equal.
+
+  Args:
+    data_1: first device data
+    data_2: second device data
+
+  Returns:
+    If the command data elements are equal.
+  """
+  return json.dumps(data_1.to_json()) == json.dumps(data_2.to_json())
 
 
 class TestResponder:
@@ -121,7 +178,7 @@ def is_frame_request_for(cmd: types_gen.CommandData, device_type: str,
   return False
 
 
-def assert_image_equal(image: numpy.ndarray, filename: str) -> None:
+def assert_image_equal(image: np.ndarray, filename: str) -> None:
   """Verify that memory image matches a file image.
 
   Args:
@@ -129,9 +186,9 @@ def assert_image_equal(image: numpy.ndarray, filename: str) -> None:
     filename: The file name for the image.
   """
   image_pil = Image.open(get_test_image_file(filename))
-  im = numpy.array(image_pil)
+  im = np.array(image_pil)
   if len(im.shape) == 2:
-    im = numpy.tile(im[..., None], (1, 1, 3))  # grey to rgb.
+    im = np.tile(im[..., None], (1, 1, 3))  # grey to rgb.
   assert im is not None, "Failed to read: " + filename
   assert len(im.shape) == len(
       image.shape), "Image shape invalid for %s, got %s wanted %s" % (
@@ -140,10 +197,10 @@ def assert_image_equal(image: numpy.ndarray, filename: str) -> None:
     assert im_shape == image_shape, (
         "Image shape invalid for %s, got %s wanted %s") % (
             filename, str(image.shape), str(im.shape))
-  assert numpy.array_equal(im, image), "Images unequal for: " + filename
+  assert np.array_equal(im, image), "Images unequal for: " + filename
 
 
-def assert_image_depth_equal(image: numpy.ndarray, filename: str) -> None:
+def assert_image_depth_equal(image: np.ndarray, filename: str) -> None:
   """Verify that memory depth image matches a file depth image.
 
   Args:
@@ -159,7 +216,7 @@ def assert_image_depth_equal(image: numpy.ndarray, filename: str) -> None:
     assert im_shape == image_shape, (
         "Image shape invalid for %s, got %s wanted %s") % (
             filename, str(image.shape), str(im.shape))
-  assert numpy.array_equal(im, image), "Images unequal for: " + filename
+  assert np.array_equal(im, image), "Images unequal for: " + filename
 
 
 def run_test_client_test(responders: List[TestResponder],
@@ -187,17 +244,17 @@ def run_test_client_test(responders: List[TestResponder],
           response.append(data)
         except queue.Empty:
           break
-      assert len(response) == len(step.data), \
-          ("Got %d data messages, expected %d for step %d (%s)" %
-           (len(response), len(step.data), index,
-            json.dumps(step.command.to_json())))
+      assert len(response) == len(
+          step.data), (("Got %d data messages, expected %d for step %d (%s)" %
+                        (len(response), len(step.data), index,
+                         json.dumps(step.command.to_json()))))
       for response_element, expect in zip(response, step.data):
         response_json = json.dumps(response_element.to_json())
         expect_json = json.dumps(expect.to_json())
-        assert response_json == expect_json, \
+        assert response_json == expect_json, (
             ("Got %s data, expected %s for step %d (%s)" %
              (response_json, expect_json, index,
-              json.dumps(step.command.to_json())))
+              json.dumps(step.command.to_json()))))
 
 
 _color_only_dirs = ["oracle-pick-points", "uvc", "vnc", "realsense_invoice"]
@@ -247,7 +304,10 @@ _is_running_on_google3 = False
 
 
 def _get_google3_resources_directory() -> str:
-  return ""
+  return os.path.join(
+      
+      "google3/robotics/learning/reach/third_party/pyreach/impl")
+
 
 def _verify_download(test_image_dir: str) -> None:
   """Verify the download of the directory.

@@ -652,12 +652,15 @@ class TestGymServerEnv(unittest.TestCase):
       observation_match: Dict[str, Any] = {
           "server": {
               "latest_ts": gyms_core.Timestamp.new(0.0),
+              "server_ts": gyms_core.Timestamp.new(0.0),
           }
       }
 
       assert space_match(observation_space, observation_match, ("observation",))
 
       observation: Dict[str, Any] = env.reset()
+      if "server" in observation and "server_ts" in observation["server"]:
+        observation["server"]["server_ts"] = gyms_core.Timestamp.new(0.0)
       assert action_observation_eq(observation, observation_match)
 
 
@@ -752,7 +755,11 @@ class GymVacuumEnv(reach_env.ReachEnv):
     """Init GymVacuumEnv."""
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "vacuum":
-            reach_env.ReachVacuum(reach_name="", is_synchronous=is_synchronous)
+            reach_env.ReachVacuum(
+                reach_name="",
+                is_synchronous=is_synchronous,
+                vacuum_detect_enable=True,
+                vacuum_gauge_enable=True)
     }
 
     mock_host: host.Host = host_mock.HostMock()
@@ -815,13 +822,19 @@ class TestGymVacuumEnv(unittest.TestCase):
       observation_match: Dict[str, Any] = {
           "vacuum": {
               "state": reach_env.ReachVacuumState.BLOWOFF,
+              "vacuum_detect": 1,
+              "vacuum_gauge": np.array(123.456),
               "ts": gyms_core.Timestamp.new(0.0),
           }
       }
       assert space_match(observation_space, observation_match, ("observation",))
 
       observation: gyms_core.Observation = env.reset()
-      assert action_observation_eq(observation, observation_match)
+      assert action_observation_eq(observation,
+                                   observation_match), ("got_observation=",
+                                                        observation,
+                                                        "want_observation=",
+                                                        observation_match)
 
       # Now do some steps:
       if is_synchronous:

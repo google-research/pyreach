@@ -208,6 +208,14 @@ class HostMock(host.Host):
     text_instructions = text_instructions_mock.TextInstructionsMock()
     return text_instructions
 
+  def get_server_offset_time(self) -> Optional[float]:
+    """Return the offset to the server time.
+
+    Returns:
+      The offset to the server-side time, or None if it could not be computed.
+    """
+    return None
+
   def set_timers(self, timers: pyreach_internal.Timers) -> None:
     """Set the Host performance timers."""
     self._timers = timers

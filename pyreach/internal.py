@@ -23,8 +23,9 @@ WARNING: Please do not use the internal functions in the PyReach application
 import os
 import threading
 import time
-
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, TextIO, Tuple
+
+import numpy as np  # type: ignore
 
 from pyreach import core
 from pyreach.common.python import types_gen
@@ -488,6 +489,34 @@ class Internal(object):
   @property
   def playback(self) -> Optional[InternalPlayback]:
     """Get the playback object, if available."""
+    raise NotImplementedError
+
+  def load_color_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+    """Load the color image from a device-data.
+
+    Args:
+      msg: the data message to load from.
+
+    Raises:
+      FileNotFoundError: if the image file is not found.
+
+    Returns:
+      The image loaded into an-unwritable np.ndarray.
+    """
+    raise NotImplementedError
+
+  def load_depth_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+    """Load the depth image from a device-data.
+
+    Args:
+      msg: the data message to load from.
+
+    Raises:
+      FileNotFoundError: if the image file is not found.
+
+    Returns:
+      The image loaded into an-unwritable np.ndarray.
+    """
     raise NotImplementedError
 
   def async_send_command_data(

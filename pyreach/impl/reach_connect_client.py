@@ -109,6 +109,11 @@ class ReachConnectClient(cli.Client):
       os.chmod(webrtc_headless_file,
                os.stat(webrtc_headless_file).st_mode | stat.S_IEXEC)
     reach_path = "reach"
+    if _is_running_on_google3:
+      reach_path = os.path.join(
+          os.getcwd(),
+          "third_party/robotics/project_reach/go/src/project_reach/tools/reach/reach"
+      )
     try:
       try:
         self._process = subprocess.Popen(
@@ -267,7 +272,7 @@ def reach_connect_webrtc(robot_id: str,
                          working_directory: Optional[str] = None,
                          download_webrtc_headless: bool = True,
                          reach_connect_arguments: Optional[List[str]] = None,
-                         kwargs: Dict[str, Any] = None) -> host.Host:
+                         kwargs: Optional[Dict[str, Any]] = None) -> host.Host:
   """Connect to a remote robot.
 
   Args:
@@ -289,13 +294,13 @@ def reach_connect_webrtc(robot_id: str,
                          reach_connect_arguments), **kwargs)
 
 
-def reach_connect_remote_tcp(robot_id: str,
-                             connect_host: Optional[str] = None,
-                             connect_port: Optional[int] = 50009,
-                             working_directory: Optional[str] = None,
-                             reach_connect_arguments: Optional[
-                                 List[str]] = None,
-                             kwargs: Dict[str, Any] = None) -> host.Host:
+def reach_connect_remote_tcp(
+    robot_id: str,
+    connect_host: Optional[str] = None,
+    connect_port: Optional[int] = 50009,
+    working_directory: Optional[str] = None,
+    reach_connect_arguments: Optional[List[str]] = None,
+    kwargs: Optional[Dict[str, Any]] = None) -> host.Host:
   """Connect to a remote robot.
 
   Args:

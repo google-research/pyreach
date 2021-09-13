@@ -19,17 +19,16 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np  # type: ignore
 
-from pyreach import ColorFrame
-from pyreach import DepthFrame
-from pyreach import Host
-from pyreach import PointerEventType
-from pyreach import Prediction
 from pyreach.calibration import CalibrationCamera
+from pyreach.color_camera import ColorFrame
 from pyreach.common.python import types_gen
+from pyreach.depth_camera import DepthFrame
 from pyreach.factory import LocalTCPHostFactory
+from pyreach.host import Host
+from pyreach.oracle import Prediction
 from pyreach.tools.lib import cv2_eventloop
 from pyreach.tools.lib import image_display
-from pyreach.utils import load_image
+from pyreach.vnc import PointerEventType
 
 # Directory to store snapshots in.
 _SNAPSHOT_DIR = "snapshots"
@@ -76,10 +75,15 @@ class Controller:
   _show_detections: bool
   _quiet: bool
 
-  def __init__(self, camera_names: List[Tuple[str,
-                                              Optional[str]]], reqfps: float,
-               uwidth: int, show_undistortion: bool, use_tags: bool,
-               show_detections: bool, quiet: bool):
+  def __init__(self,
+               camera_names: List[Tuple[str, Optional[str]]],
+               reqfps: float,
+               uwidth: int,
+               show_undistortion: bool,
+               use_tags: bool,
+               show_detections: bool,
+               quiet: bool,
+               show_crosshair: bool = True) -> None:
     """Instantiate a controller for multiple cameras.
 
     Args:
@@ -91,6 +95,8 @@ class Controller:
       use_tags: if true, will use tagged requests.
       show_detections: if true, will show object detections.
       quiet: if true, will not print help text.
+      show_crosshair: If true, the crosshair at the centre of each window will
+        be displayed.
     """
     # If true, will render the undistortion field as red / green arrows.
     self._show_undistortion = show_undistortion
@@ -105,7 +111,8 @@ class Controller:
     self._cv2e = cv2_eventloop.get_instance()
 
     # Image displayer using OpenCV windows.
-    self._image_display = image_display.ImageDisplay(uwidth=uwidth)
+    self._image_display = image_display.ImageDisplay(
+        show_crosshair=show_crosshair, uwidth=uwidth)
     self._image_display.add_click_listener(self._on_mouse)
 
     # These "windows" variables hold the names of the windows for each camera to
@@ -306,13 +313,15 @@ class Controller:
       return
     if msg.device_name not in self._unrequested_oracles:
       return
+    if self._host is None or self._host.internal is None:
+      return
     try:
-      image = load_image(msg.color)
+      image = self._host.internal.load_color_image_from_data(msg)
     except FileNotFoundError:
       print("oracle message missing file %s", msg.color)
       return
-    self._image_callback(self._oracle_windows, "oracle", msg.device_name,
-                         image, None)
+    self._image_callback(self._oracle_windows, "oracle", msg.device_name, image,
+                         None)
 
   def _object_detector_listener(self, msg: types_gen.DeviceData) -> None:
     """Called when a new device data is received to update object detector.

@@ -15,9 +15,10 @@
 """Interface for interacting with VNC device."""
 
 import enum
-from typing import Optional, Callable
-from pyreach import ColorCamera
+from typing import Callable, Optional
+
 from pyreach import core
+from pyreach.color_camera import ColorCamera
 
 
 class PointerEventType(enum.Enum):

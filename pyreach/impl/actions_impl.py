@@ -513,8 +513,8 @@ class ActionStep:
     if not isinstance(json_data.get("_tipInputIdx"), int):
       logging.warning("Action Step _tipInputIdx invalid: %s", json_data)
       return None
-    if not isinstance(json_data.get("_parentType"), int) or \
-        not 0 <= json_data["_parentType"] < len(list(ActionStepParentType)):
+    if (not isinstance(json_data.get("_parentType"), int) or
+        not 0 <= json_data["_parentType"] < len(list(ActionStepParentType))):
       logging.warning("Action Step _parentType invalid: %s", json_data)
       return None
     pos = _from_json_vector3(json_data.get("pos"))
@@ -783,7 +783,6 @@ class Action:
     for name in json_data:
       if name not in expect:
         logging.warning("extra field %s in %s", name, json_data)
-        return None
     steps = []
     for step in json_data["_steps"]:
       step_object = ActionStep.from_json(step)

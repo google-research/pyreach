@@ -14,9 +14,8 @@
 
 """Interface for interacting with text instructions."""
 
-from typing import Optional, Callable
-
 import dataclasses
+from typing import Callable, Optional
 
 from pyreach import core
 

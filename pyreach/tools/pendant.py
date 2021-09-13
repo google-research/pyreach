@@ -14,6 +14,10 @@
 
 """Pendant displays a control pendant for a Reach workcell.
 
+Sample blaze command:
+  blaze run --define OPENCVX_USE_QT=true --config=grte_v5
+  //robotics/learning/reach/third_party/pyreach/tools:pendant
+
 Sample non-blaze command:
   python3 pendant.py
 """

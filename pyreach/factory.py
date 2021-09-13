@@ -166,3 +166,62 @@ class RemoteTCPHostFactory(HostFactory):
     return fn(self._robot_id, self._connect_host, self._connect_port,
               self._working_directory, self._reach_connect_arguments,
               self._kwargs)
+
+
+class LocalPlaybackHostFactory(HostFactory):
+  """Factory for local playback of a robot's log session."""
+
+  _working_directory: str
+  _robot_id: str
+  _client_id: Optional[str]
+  _select_client: bool
+  _snapshot_run_id: Optional[str]
+  _select_snapshot_run_id: bool
+  _kwargs: Any
+
+  def __init__(self,
+               robot_id: str,
+               working_directory: str,
+               client_id: Optional[str] = None,
+               select_client: bool = False,
+               snapshot_run_id: Optional[str] = None,
+               select_snapshot_run_id: bool = False,
+               **kwargs: Any) -> None:
+    """Construct a LocalPlaybackHostFactory object.
+
+    Args:
+      robot_id: the robot id to connect to.
+      working_directory: optional directory to run within.
+      client_id: the client ID to simulate.
+      select_client: if client ID is None, will select first client.
+      snapshot_run_id: if specified, will select the given snapshot by
+        gym_run_id.
+      select_snapshot_run_id: if specified, but snapshot_run_id is None, will
+        select first snapshot.
+      **kwargs: the optional kwargs to the connect host.
+    """
+    self._robot_id = robot_id
+    self._working_directory = working_directory
+    self._client_id = client_id
+    self._select_client = select_client
+    self._snapshot_run_id = snapshot_run_id
+    self._select_snapshot_run_id = select_snapshot_run_id
+    if kwargs is None:
+      self._kwargs = {}
+    else:
+      self._kwargs = kwargs
+
+  def connect(self) -> pyreach.Host:
+    """Connect to a log directory, simulating a reach host.
+
+    Returns:
+      An implementation of the Host interface.
+    """
+    mod = importlib.import_module('pyreach.impl.logs_directory_client')
+    if not hasattr(mod, 'connect_logs_directory'):
+      raise pyreach.PyReachError()
+
+    fn = getattr(mod, 'connect_logs_directory')
+    return fn(self._robot_id, self._working_directory, self._client_id,
+              self._select_client, self._snapshot_run_id,
+              self._select_snapshot_run_id, self._kwargs)

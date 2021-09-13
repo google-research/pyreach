@@ -106,32 +106,33 @@ class TestPyReachLogger(unittest.TestCase):
       ])
       self.assertEqual(status.status, "done")
 
-  def test_start_task(self) -> None:
+  def test_task(self) -> None:
     rdev, dev = logger_impl.LoggerDevice().get_wrapper()
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestLogger())
-      dev.start_task({})
-      test_device.expect_command_data([
-          types_gen.CommandData(
-              data_type="event-start",
-              device_type="operator",
-          )
-      ])
-
-  def test_end_task(self) -> None:
-    rdev, dev = logger_impl.LoggerDevice().get_wrapper()
-    with test_utils.TestDevice(rdev) as test_device:
-      test_device.set_responder(TestLogger())
-      dev.end_task({})
-      dev_impl = cast(logger_impl.LoggerImpl, dev)
-      test_device.expect_command_data([
-          types_gen.CommandData(
-              data_type="event",
-              device_type="operator",
-              event_name="pick",
-              event_duration=float(dev_impl._device._task_end_ts -
-                                   dev_impl._device._task_start_ts) / 1e3)
-      ])
+      for _ in range(0, 10):
+        dev.start_task({})
+        test_device.expect_command_data([
+            types_gen.CommandData(
+                data_type="event-start",
+                device_type="operator",
+            )
+        ])
+        self.assertRaises(core.PyReachError, dev.start_task, {})
+        dev_impl = cast(logger_impl.LoggerImpl, dev)
+        start_ts = dev_impl._device._task_start_ts
+        assert start_ts
+        test_device.set_responder(TestLogger())
+        dev.end_task({})
+        test_device.expect_command_data([
+            types_gen.CommandData(
+                data_type="event",
+                device_type="operator",
+                event_name="pick",
+                event_duration=float(dev_impl._device._task_end_ts - start_ts) /
+                1e3)
+        ])
+        self.assertRaises(core.PyReachError, dev.end_task, {})
 
   def test_send_snapshot(self) -> None:
     rdev, dev = logger_impl.LoggerDevice().get_wrapper()
@@ -165,6 +166,7 @@ class TestPyReachLogger(unittest.TestCase):
                           progress=13.0,
                           message="test-message",
                           code=14))),
+              gym_server_time=0.001,
               gym_env_id="test-env-id",
               gym_run_id="test-run-id",
               gym_episode=1,
@@ -214,6 +216,7 @@ class TestPyReachLogger(unittest.TestCase):
                           device_data_ref=types_gen.DeviceDataRef(
                               ts=11000, seq=12))
                   ],
+                  gym_server_ts=1,
                   gym_actions=[
                       types_gen.GymAction(
                           device_type="test-type",

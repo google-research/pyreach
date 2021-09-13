@@ -23,8 +23,8 @@ from pyreach.impl import thread_util
 class _MockRequester(requester.Requester[str]):
 
   def get_message_supplement(self, msg: types_gen.DeviceData) -> Optional[str]:
-    if msg.device_type == "robot" and msg.device_name == "test" and \
-        msg.data_type == "key-value" and msg.key == "robot_constraints.json":
+    if (msg.device_type == "robot" and msg.device_name == "test" and
+        msg.data_type == "key-value" and msg.key == "robot_constraints.json"):
       return msg.value
     return None
 

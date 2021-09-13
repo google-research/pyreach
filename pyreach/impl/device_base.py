@@ -21,13 +21,14 @@ Each DeviceBase instance has its own thread pool that processes DeviceData
 messages.
 """
 
+import dataclasses
 import queue
 import threading
 from typing import Any, Callable, Dict, Optional, Set, Tuple
-import dataclasses
 
 from pyreach import core
 from pyreach.common.python import types_gen
+from pyreach.impl import machine_interfaces
 from pyreach.impl import thread_util
 
 
@@ -91,6 +92,15 @@ class DeviceBase:
   def flush(self) -> None:
     """Flush all data from the queues."""
     self._queue.join()
+
+  def set_machine_interfaces(
+      self, interfaces: Optional[machine_interfaces.MachineInterfaces]) -> None:
+    """Set the machine interface settings.
+
+    Args:
+      interfaces: the machine interfaces discovered.
+    """
+    pass
 
   def sync_device_data(self, msg: types_gen.DeviceData) -> None:
     """Process a device-data message.

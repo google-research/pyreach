@@ -14,8 +14,9 @@
 
 """Interface for generating snapshots for client state logging."""
 
-from typing import Dict, Tuple, Union
 import dataclasses
+from typing import Dict, Tuple, Union
+
 from pyreach.core import PyReachStatus
 
 
@@ -140,6 +141,7 @@ class Snapshot:
     source: The application source that generates this snapshot.
     device_data_refs: The logger snapshot references.
     responses: The response snapshot references.
+    gym_server_time: The estimated server-side time at snapshot creation.
     gym_env_id: The gym environment ID.
     gym_run_id: The gym run ID.
     gym_episode: The gym episode number starting with 1 for the first episode.
@@ -151,6 +153,7 @@ class Snapshot:
   source: str
   device_data_refs: Tuple[SnapshotReference, ...]
   responses: Tuple[SnapshotResponse, ...]
+  gym_server_time: float
   gym_env_id: str
   gym_run_id: str
   gym_episode: int

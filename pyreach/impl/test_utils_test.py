@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Tests for google3.robotics.learning.reach.third_party.pyreach.impl.test_utils."""
+
 import json
 import os
 import queue
@@ -23,6 +25,7 @@ from PIL import Image  # type: ignore
 from pyreach.common.python import types_gen
 from pyreach.impl import device_base
 from pyreach.impl import test_utils
+from pyreach.impl import utils
 
 
 class _MockDeviceBase(device_base.DeviceBase):
@@ -46,6 +49,101 @@ class _MockDeviceBase(device_base.DeviceBase):
 
 
 class TestUtilsTest(unittest.TestCase):
+
+  def test_equals(self) -> None:
+    self.assertTrue(
+        test_utils.device_data_equal(
+            types_gen.DeviceData(
+                ts=1, seq=1, device_type="robot", data_type="robot-state"),
+            types_gen.DeviceData(
+                ts=1, seq=1, device_type="robot", data_type="robot-state")))
+    self.assertTrue(
+        test_utils.device_data_equal(
+            utils.ImagedDeviceData(
+                ts=1, seq=1, device_type="robot", data_type="robot-state"),
+            types_gen.DeviceData(
+                ts=1, seq=1, device_type="robot", data_type="robot-state")))
+    self.assertTrue(
+        test_utils.device_data_equal(
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([3, 4])),
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([3, 4]))))
+    self.assertFalse(
+        test_utils.device_data_equal(
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([3, 4])),
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                depth_image=numpy.array([3, 4]))))
+    self.assertFalse(
+        test_utils.device_data_equal(
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([3, 4])),
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([5, 4]))))
+    self.assertFalse(
+        test_utils.device_data_equal(
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 2]),
+                depth_image=numpy.array([3, 4])),
+            utils.ImagedDeviceData(
+                ts=1,
+                seq=1,
+                device_type="depth-camera",
+                data_type="color-depth",
+                color_image=numpy.array([1, 5]),
+                depth_image=numpy.array([3, 4]))))
+    self.assertFalse(
+        test_utils.device_data_equal(
+            types_gen.DeviceData(
+                ts=1, seq=1, device_type="robot", data_type="robot-state"),
+            types_gen.DeviceData(
+                ts=1, seq=2, device_type="robot", data_type="robot-state")))
+    self.assertTrue(
+        test_utils.command_data_equal(
+            types_gen.CommandData(
+                ts=1, seq=1, device_type="robot", data_type="reach-script"),
+            types_gen.CommandData(
+                ts=1, seq=1, device_type="robot", data_type="reach-script")))
+    self.assertFalse(
+        test_utils.command_data_equal(
+            types_gen.CommandData(
+                ts=1, seq=1, device_type="robot", data_type="reach-script"),
+            types_gen.CommandData(
+                ts=1, seq=2, device_type="robot", data_type="reach-script")))
 
   def test_test_responder(self) -> None:
     responder = test_utils.TestResponder()

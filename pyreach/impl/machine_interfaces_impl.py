@@ -17,10 +17,11 @@
 import logging
 import threading
 import time
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 from pyreach.common.python import types_gen
 from pyreach.impl import device_base
 from pyreach.impl import machine_interfaces
+from pyreach.impl import thread_util
 from pyreach.impl import utils
 
 
@@ -28,11 +29,31 @@ class MachineInterfacesDevice(device_base.DeviceBase):
   """Gets and stores the machine interfaces of a connection."""
   _machine_interfaces_lock: threading.Lock
   _machine_interfaces: Optional[machine_interfaces.MachineInterfaces]
+  _callbacks: thread_util.CallbackManager[Optional[
+      machine_interfaces.MachineInterfaces]]
 
   def __init__(self) -> None:
     super().__init__()
     self._machine_interfaces_lock = threading.Lock()
     self._machine_interfaces = None
+    self._callbacks = thread_util.CallbackManager()
+
+  def add_update_callback(
+      self,
+      callback: Callable[[Optional[machine_interfaces.MachineInterfaces]],
+                         bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback to the MachineInterfacesDevice.
+
+    Args:
+      callback: A function to be called whenever there is a new message.
+      finished_callback: A function to be called when done.
+
+    Returns:
+      A function that when called stops the callback.
+    """
+    return self._callbacks.add_callback(callback, finished_callback)
 
   def on_start(self) -> None:
     """Start the state machine."""
@@ -84,11 +105,17 @@ class MachineInterfacesDevice(device_base.DeviceBase):
       self._machine_interfaces = machine_interfaces.MachineInterfaces(
           time=utils.time_at_timestamp(msg.ts),
           machine_interfaces=tuple(interfaces))
+    self._callbacks.call(self.get())
 
   def get(self) -> Optional[machine_interfaces.MachineInterfaces]:
     """Get gets the currently loaded MachineInterfaces."""
     with self._machine_interfaces_lock:
       return self._machine_interfaces
+
+  def close(self) -> None:
+    """Close the machine interface device."""
+    self._callbacks.close()
+    super().close()
 
 
 class MachineInterfacesWrapper:
@@ -101,3 +128,20 @@ class MachineInterfacesWrapper:
   def get(self) -> Optional[machine_interfaces.MachineInterfaces]:
     """Get gets the currently loaded MachineInterfaces."""
     return self._device.get()
+
+  def add_update_callback(
+      self,
+      callback: Callable[[Optional[machine_interfaces.MachineInterfaces]],
+                         bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback to the MachineInterfacesDevice.
+
+    Args:
+      callback: A function to be called whenever there is a new message.
+      finished_callback: A function to be called when done.
+
+    Returns:
+      A function that when called stops the callback.
+    """
+    return self._device.add_update_callback(callback, finished_callback)

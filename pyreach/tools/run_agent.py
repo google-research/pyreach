@@ -15,17 +15,12 @@
 """Program to run agent connected to robot/simulator."""
 
 import pathlib
-import queue
-import signal
 import subprocess
 import sys
-import threading
-import time
-from typing import Any, BinaryIO, cast, Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from pyreach import core
-
-Event = Tuple[str, Optional[str]]
+from pyreach.tools import agent_runner
 
 
 def main() -> None:
@@ -44,7 +39,8 @@ def main() -> None:
   print(f"agent_argument='{agent_argument}'")
   print(f"robot_argmuent='{robot_sim_argument}'")
 
-  current_directory: pathlib.Path = pathlib.Path(".").absolute()
+  current_directory: pathlib.Path = pathlib.Path(__file__)
+  current_directory = current_directory.parent.parent.absolute()
   agents: Dict[str, pathlib.Path] = {}
   if agent_argument in ("ALL", "AUTOPICK"):
     agents["singulate"] = (
@@ -84,12 +80,12 @@ def main() -> None:
     # appropriate robot/simulator.
     workcell_modes = (True,)
 
-  agent_runner: AgentRunner
+  agent: agent_runner.AgentRunner
   if "other" in agents and exact_match:
     # Run just one explicit instance.
     try:
-      agent_runner = AgentRunner(agent_argument, robot_sim_argument)
-      agent_runner.run()
+      agent = agent_runner.AgentRunner(agent_argument, robot_sim_argument, True)
+      agent.run()
     except core.PyReachError as error:
       print(f"AgentRunner Exception: {error}")
 
@@ -119,8 +115,8 @@ def main() -> None:
             # Run robot/simulator.
             print(f"{agent_name}: Run on '{robot_sim}' {workcell_type}")
             try:
-              agent_runner = AgentRunner(str(agent_path), robot_sim)
-              agent_runner.run()
+              agent = agent_runner.AgentRunner(str(agent_path), robot_sim, True)
+              agent.run()
             except core.PyReachError as error:
               print(f"AgentRunner Exception: {error}")
       print("================")
@@ -171,292 +167,6 @@ def find_matches(agents: Dict[str, pathlib.Path],
             matches[match][1] = name
 
   return matches
-
-
-class AgentRunner:
-  """Class for running an agent."""
-
-  def __init__(self, agent_name: str, robot_name: str) -> None:
-    """Initialize the AgentRunner class.
-
-    Args:
-      agent_name: The name of the program that implements the agent.
-      robot_name: The name of the robot/simulator to run.
-
-    Raises:
-      core.PyReachError when an initialization error occurs.
-
-    """
-    # File path hacking.  This must be run from `pyreach` directory.
-    pyreach_dir: pathlib.Path = pathlib.Path(".").absolute()
-    if pyreach_dir.name != "pyreach":
-      raise core.PyReachError(f"This program is in {pyreach_dir} directory, "
-                              "not the '.../pyreach' directory")
-    go_dir: pathlib.Path = pyreach_dir.parent / "go"
-    if not go_dir.exists():
-      raise core.PyReachError(f"Reach go directory '{go_dir}' does not exit")
-
-    viewer_dir: pathlib.Path = pyreach_dir / "tools"
-    if not go_dir.exists():
-      raise core.PyReachError(f"Reach viewer directory '{viewer_dir}' "
-                              "does not exit")
-
-    viewer_main: pathlib.Path = viewer_dir / "async_viewer.py"
-    if not viewer_main.exists():
-      raise core.PyReachError(f"Viewer program '{viewer_main}' "
-                              "does not exist.")
-
-    self._agent_path: pathlib.Path = pathlib.Path(agent_name)
-    self._agent_process: Optional[subprocess.Popen[Any]] = None
-    self._agent_thread: Optional[threading.Thread] = None
-    self._events: "queue.Queue[Tuple[str, Optional[str]]]" = queue.Queue()
-    self._go_dir: pathlib.Path = go_dir
-    self._lock: threading.Lock = threading.Lock()
-    self._connect_process: Optional[subprocess.Popen[Any]] = None
-    self._connect_thread_stderr: Optional[threading.Thread] = None
-    self._connect_thread_stdout: Optional[threading.Thread] = None
-    self._robot_name: str = robot_name
-    self._viewer_dir: pathlib.Path = viewer_dir
-    self._viewer_main: pathlib.Path = viewer_main
-    self._viewer_process: Optional[subprocess.Popen[Any]] = None
-    self._viewer_thread_stderr: Optional[threading.Thread] = None
-    self._viewer_thread_stdout: Optional[threading.Thread] = None
-
-  def run(self) -> None:
-    """Run the robot/simulator, viewer, and agent."""
-
-    signal.signal(signal.SIGINT, self.signal_catcher)
-
-    self.connect_begin()
-    self.events_process()
-    self.shutdown()
-
-  def signal_catcher(self, signal_number: int, _: Any) -> None:
-    """Catch a signal.
-
-    Args:
-      signal_number: The signal number (e.g. SIGTERM.)
-    """
-    self._events.put(("signal", str(signal_number)))
-
-  def events_process(self) -> None:
-    """Process events in events queue."""
-
-    # Process events from the events queue.
-    while True:
-      with self._lock:
-        if (self._agent_process is None and self._connect_process is None and
-            self._viewer_process is None):
-          break
-
-      event: Event = self._events.get()
-      label: str
-      value: Optional[str]
-      label, value = event
-
-      if label == "connect":
-        if value is None:
-          break
-        self.viewer_begin()
-        self.agent_begin()
-
-      elif label == "viewer":
-        pass
-
-      elif label == "agent":
-        break
-
-      elif label == "signal":
-        print(f"Signal {value} occurred")
-        break
-
-      else:
-        assert False, f"Unexpected label '{label}'."
-
-  def shutdown(self) -> None:
-    """Shutdown all of the processes."""
-
-    self.agent_shutdown()
-    self.viewer_shutdown()
-    self.connect_shutdown()
-
-  def connect_begin(self) -> None:
-    """Begin a connection."""
-    with self._lock:
-      commands: List[str] = ["reach", "connect", self._robot_name]
-      self._connect_process = subprocess.Popen(
-          commands,
-          cwd=self._go_dir,
-          stderr=subprocess.PIPE,
-          stdout=subprocess.PIPE)
-
-      self._connect_thread_stderr = threading.Thread(
-          target=self.connect_events, args=(self._connect_process.stderr, True))
-      self._connect_thread_stderr.daemon = True  # Shut down on program exit
-
-      self._connect_thread_stdout = threading.Thread(
-          target=self.connect_events,
-          args=(self._connect_process.stdout, False))
-      self._connect_thread_stdout.daemon = True  # Shut down on program exit
-
-    self._connect_thread_stderr.start()
-    self._connect_thread_stdout.start()
-
-  def connect_events(self, pipe: BinaryIO, is_stderr: bool) -> None:
-    """Generate a connect event when a simulator actually connects.
-
-    Args:
-      pipe: The pipe to read input from.
-      is_stderr: True of the pipe is stderr, otherwiser stdout.
-    """
-    assert pipe is not None
-    waiting: bool = True
-    while True:
-      line_bytes: Optional[bytes] = pipe.readline()
-      if line_bytes is None:
-        break
-      line: str = line_bytes.decode("utf-8")
-      if not line:
-        break
-      if line.endswith("\n"):
-        line = line[:-1]
-      if waiting:
-        print(f"<<<<{line}>>>>" if is_stderr else f"[[[[{line}]]]]")
-      if line.find("Connected to") >= 0:
-        self._events.put(("connect", line))
-        waiting = False
-    self._events.put(("connect", None))
-
-  def connect_shutdown(self) -> None:
-    """Shutdown reach server connection."""
-    with self._lock:
-      connect_process: Optional[subprocess.Popen[Any]] = self._connect_process
-
-    if connect_process:
-      print("Sending SIGTERM to reach connect")
-      connect_process.send_signal(signal.SIGINT)
-      print("Waiting for reach connect to terminate")
-      connect_process.wait()
-
-    with self._lock:
-      self._connect_process = None
-      self._connect_thread_stderr = None
-      self._connect_thread_stdout = None
-
-  def viewer_begin(self) -> None:
-    """Start the viewer."""
-    with self._lock:
-      viewer_process: Optional[subprocess.Popen[Any]] = self._viewer_process
-
-    if not viewer_process:
-
-      viewer_process = subprocess.Popen(
-          ["python", str(self._viewer_main), "--reqfps=0"],
-          cwd=self._viewer_dir,
-          stdin=subprocess.PIPE,
-          stderr=subprocess.PIPE,
-          stdout=subprocess.PIPE)
-      viewer_thread_stderr = threading.Thread(
-          target=self.viewer_events, args=(viewer_process.stderr, True))
-      viewer_thread_stderr.daemon = True
-      viewer_thread_stdout = threading.Thread(
-          target=self.viewer_events, args=(viewer_process.stdout, False))
-      viewer_thread_stdout.daemon = True
-
-      with self._lock:
-        self._viewer_process = viewer_process
-        self._viewer_thread_stderr = viewer_thread_stderr
-        self._viewer_thread_stdout = viewer_thread_stdout
-
-      viewer_thread_stderr.start()
-      viewer_thread_stdout.start()
-
-  def viewer_events(self, pipe: BinaryIO, is_stderr: bool) -> None:
-    """Generate a viewer event when the viewer appears to be up.
-
-    Args:
-      pipe: The pipe to read input from.
-      is_stderr: True of the pipe is stderr, otherwiser stdout.
-    """
-    assert pipe is not None
-    waiting: bool = True
-    while True:
-      line_bytes: Optional[bytes] = pipe.readline()
-      if line_bytes is None:
-        break
-      line: str = line_bytes.decode("utf-8")
-      if not line:
-        break
-      if line.endswith("\n"):
-        line = line[:-1]
-      if True or waiting:
-        s: bool = is_stderr
-        print(f"<<<<{line}>>>> {s}" if is_stderr else f"[[[[{line}]]]] {s}")
-      if line.startswith("CameraType:"):
-        self._events.put(("viewer", line))
-        waiting = False
-    self._events.put(("viewer", None))
-
-  def viewer_shutdown(self) -> None:
-    """Shutdown the viewer."""
-
-    with self._lock:
-      viewer_process: Optional[subprocess.Popen[Any]] = self._viewer_process
-      if viewer_process:
-        assert isinstance(viewer_process, subprocess.Popen)
-        # Send an escape character first, then try SIGINT.
-        stdin = cast(BinaryIO, viewer_process.stdin)
-        escape: bytes = b"\x1b"
-        stdin.write(escape)
-        time.sleep(1.0)
-        viewer_process.send_signal(signal.SIGINT)
-        viewer_process.wait()
-      self._viewer_process = None
-      self._viewer_thread_stderr = None
-      self._viewer_thread_stdout = None
-
-  def agent_begin(self) -> None:
-    """Start the agent."""
-    with self._lock:
-      agent_path: pathlib.Path = self._agent_path
-      agent_process: Optional[subprocess.Popen[Any]] = self._agent_process
-      agent_thread: Optional[threading.Thread] = self._agent_thread
-
-    if not agent_process:
-      agent_process = subprocess.Popen(["python", agent_path])
-
-    if not agent_thread:
-      agent_thread = threading.Thread(target=self.agent_events, args=())
-      agent_thread.daemon = True
-
-    with self._lock:
-      self._agent_process = agent_process
-      self._agent_thread = agent_thread
-
-    agent_thread.start()
-
-  def agent_events(self) -> None:
-    """Generate a agent event when the agent exits."""
-    with self._lock:
-      agent_process: Optional[subprocess.Popen[Any]] = self._agent_process
-      events: "queue.Queue[Tuple[str, Optional[str]]]" = self._events
-
-    assert isinstance(agent_process, subprocess.Popen), agent_process
-    agent_process.wait()
-
-    events.put(("agent", None))
-
-  def agent_shutdown(self) -> None:
-    """Shutdown the agent."""
-    with self._lock:
-      agent_process: Optional[subprocess.Popen[Any]] = self._agent_process
-
-    if agent_process:
-      agent_process.send_signal(signal.SIGINT)
-      agent_process.wait()
-
-    with self._lock:
-      self._agent_process = None
 
 
 if __name__ == "__main__":

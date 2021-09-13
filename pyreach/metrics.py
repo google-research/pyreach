@@ -18,9 +18,8 @@ This interface allows generation of special log records that is used for
 metrics calculation.
 """
 
-from typing import List, Tuple, Callable, Optional
-
 import dataclasses
+from typing import Callable, List, Optional, Tuple
 
 
 @dataclasses.dataclass(frozen=True)

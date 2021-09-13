@@ -24,6 +24,7 @@ from pyreach.common.python import types_gen
 from pyreach.core import PyReachError
 from pyreach.impl import client as cli
 from pyreach.impl import device_base
+from pyreach.impl import machine_interfaces
 from pyreach.impl import thread_util
 from pyreach.impl import utils
 
@@ -36,6 +37,8 @@ class Ping(device_base.DeviceBase):
   _send_ts: Optional[int]
   _send_tag: Optional[str]
   _ping_time: Optional[float]
+  _server_offset_time: Optional[float]
+  _server_offset_time_store: List[float]
   _lock: threading.Lock
 
   def __init__(self) -> None:
@@ -44,6 +47,8 @@ class Ping(device_base.DeviceBase):
     self._send_ts = None
     self._send_tag = None
     self._ping_time = None
+    self._server_offset_time = None
+    self._server_offset_time_store = []
     self._lock = threading.Lock()
 
   def on_start(self) -> None:
@@ -52,9 +57,13 @@ class Ping(device_base.DeviceBase):
 
   def _on_poll(self) -> bool:
     with self._lock:
-      if self._send_ts is not None and utils.timestamp_now(
-      ) - self._send_ts < 5000:
-        return False
+      if self._send_ts is not None:
+        if self._send_tag is None:
+          if utils.timestamp_now() - self._send_ts < 1000:
+            return False
+        else:
+          if utils.timestamp_now() - self._send_ts < 15000:
+            return False
       self._send_ts = utils.timestamp_now()
       self._send_tag = utils.generate_tag()
       self.send_cmd(
@@ -69,13 +78,36 @@ class Ping(device_base.DeviceBase):
     """Invoke when a device data message is received."""
     with self._lock:
       if self._send_tag and self._send_ts and self._send_tag == data.tag:
-        self._ping_time = (self._send_ts - data.local_ts) / 1000.0
+        # Read the receive timestamp as either the current clock value, or the
+        # local_ts if the device data has a local_ts value which stores the
+        # receive time upstream of PyReach, improving calculation accuracy.
+        recv_ts = utils.timestamp_now()
+        if data.local_ts <= 0:
+          recv_ts = data.local_ts
+        estimated_server_ts = int((recv_ts + self._send_ts) / 2)
+        server_offset_time = (data.ts - estimated_server_ts) / 1000.0
+        self._server_offset_time_store.append(server_offset_time)
+        while len(self._server_offset_time_store) > 120:
+          self._server_offset_time_store = self._server_offset_time_store[1:]
+        self._server_offset_time = (
+            sum(self._server_offset_time_store) /
+            len(self._server_offset_time_store))
+        self._ping_time = (self._send_ts - recv_ts) / 1000.0
         self._send_tag = None
 
   def get_ping_time(self) -> Optional[float]:
     """Return the latest ping time."""
     with self._lock:
       return self._ping_time
+
+  def get_server_offset_time(self) -> Optional[float]:
+    """Return the offset to the server time.
+
+    Returns:
+      The offset to the server-side time, or None if it could not be computed.
+    """
+    with self._lock:
+      return self._server_offset_time
 
 
 class SessionManager(device_base.DeviceBase):
@@ -427,6 +459,16 @@ class ReachHost:
       if not success:
         self.close()
 
+  def set_machine_interfaces(
+      self, interfaces: Optional[machine_interfaces.MachineInterfaces]) -> None:
+    """Set the machine interface settings.
+
+    Args:
+      interfaces: the machine interfaces discovered.
+    """
+    for device in self._devices:
+      device.set_machine_interfaces(interfaces)
+
   def get_ping_time(self) -> Optional[float]:
     """Return the latest ping time.
 
@@ -437,6 +479,16 @@ class ReachHost:
     if not self._ping_device:
       return None
     return self._ping_device.get_ping_time()
+
+  def get_server_offset_time(self) -> Optional[float]:
+    """Return the offset to the server time.
+
+    Returns:
+      The offset to the server-side time, or None if it could not be computed.
+    """
+    if not self._ping_device:
+      return None
+    return self._ping_device.get_server_offset_time()
 
   def set_should_take_control(self,
                               should_take_control: bool,

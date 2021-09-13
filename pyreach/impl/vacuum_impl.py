@@ -21,10 +21,10 @@ from pyreach import core
 from pyreach import vacuum
 from pyreach.common.python import types_gen
 from pyreach.impl import arm_impl
+from pyreach.impl import machine_interfaces
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io  # type: ignore
 
 
 class VacuumDevice(requester.Requester[None]):
@@ -43,11 +43,42 @@ class VacuumDevice(requester.Requester[None]):
   _support_gauge: bool
   _support_pressure: bool
 
-  def __init__(
-      self,
-      workcell_io_config: Optional[workcell_io.IOConfig],  # type: ignore
-      arm: arm_impl.ArmImpl):
+  def __init__(self, interfaces: machine_interfaces.MachineInterfaces,
+               arm: arm_impl.ArmImpl) -> None:
+    have_vacuum = False
+    have_blowoff = False
+    have_gauge = False
+    have_pressure = False
+    for interface in interfaces.machine_interfaces:
+      if interface.device_name != arm.device_name:
+        continue
+      if interface.interface_type not in {
+          machine_interfaces.InterfaceType.PUBLISH,
+          machine_interfaces.InterfaceType.FRAME_REQUEST,
+          machine_interfaces.InterfaceType.STREAM_REQUEST
+      }:
+        continue
+      if (interface.device_type == "vacuum" and
+          interface.data_type == "output-state"):
+        have_vacuum = True
+      elif (interface.device_type == "blowoff" and
+            interface.data_type == "output-state"):
+        have_blowoff = True
+      elif (interface.device_type == "vacuum-gauge" and
+            interface.data_type == "sensor-state"):
+        have_gauge = True
+      elif (interface.device_type == "vacuum-pressure" and
+            interface.data_type == "sensor-state"):
+        have_pressure = True
     super().__init__()
+    self.set_machine_interfaces(interfaces)
+    if not have_vacuum:
+      logging.error("Vacuum %s does not exist despite being in workcell IO",
+                    arm.device_name)
+    if arm.support_blowoff and not have_blowoff:
+      logging.error(
+          "Vacuum %s does not have blowoff state despite being in workcell IO",
+          arm.device_name)
     self._arm = arm
     self._vacuum_state = None
     self._vacuum_state_callbacks = thread_util.CallbackManager()
@@ -58,21 +89,8 @@ class VacuumDevice(requester.Requester[None]):
     self._vacuum_gauge_state = None
     self._vacuum_gauge_state_callbacks = thread_util.CallbackManager()
     self._support_blowoff = arm.support_blowoff
-    self._support_gauge = False
-    self._support_pressure = False
-    if workcell_io_config is None:
-      return
-    for capability in workcell_io_config.capability:
-      if capability.device_type not in {"ur", "robot"}:
-        continue
-      if capability.device_name != arm.device_name:
-        continue
-      if capability.type == "vacuum-pressure":
-        if capability.io_type == workcell_io.DIGITAL_INPUT:  # type: ignore
-          self._support_pressure = True
-      if capability.type == "vacuum-gauge":
-        if capability.io_type == workcell_io.ANALOG_INPUT:  # type: ignore
-          self._support_gauge = True
+    self._support_gauge = have_gauge
+    self._support_pressure = have_pressure
 
   def vacuum_gauge_state_callbacks(
       self) -> thread_util.CallbackManager[vacuum.VacuumGauge]:
@@ -492,7 +510,7 @@ class VacuumImpl(vacuum.Vacuum):
     data = thread_util.extract_all_from_queue(
         self._device.request_untagged(
             "vacuum",
-            self._arm.device_name,
+            self.device_name,
             data_type="output-state",
             timeout=timeout))
     if not data:
@@ -529,7 +547,7 @@ class VacuumImpl(vacuum.Vacuum):
     self._device.queue_to_error_callback_transform(
         self._device.request_untagged(
             "vacuum",
-            self._arm.device_name,
+            self.device_name,
             data_type="output-state",
             timeout=timeout), callback, error_callback, transform)
 
@@ -549,7 +567,7 @@ class VacuumImpl(vacuum.Vacuum):
     data = thread_util.extract_all_from_queue(
         self._device.request_untagged(
             "blowoff",
-            self._arm.device_name,
+            self.device_name,
             data_type="output-state",
             timeout=timeout))
     if not data:
@@ -585,7 +603,7 @@ class VacuumImpl(vacuum.Vacuum):
     self._device.queue_to_error_callback_transform(
         self._device.request_untagged(
             "blowoff",
-            self._arm.device_name,
+            self.device_name,
             data_type="output-state",
             timeout=timeout), callback, error_callback, transform)
 
@@ -608,7 +626,7 @@ class VacuumImpl(vacuum.Vacuum):
     data = thread_util.extract_all_from_queue(
         self._device.request_untagged(
             "vacuum-pressure",
-            self._arm.device_name,
+            self.device_name,
             data_type="sensor-state",
             timeout=timeout))
     if not data:
@@ -649,7 +667,7 @@ class VacuumImpl(vacuum.Vacuum):
     self._device.queue_to_error_callback_transform(
         self._device.request_untagged(
             "vacuum-pressure",
-            self._arm.device_name,
+            self.device_name,
             data_type="sensor-state",
             timeout=timeout), callback, error_callback, transform)
 
@@ -671,7 +689,7 @@ class VacuumImpl(vacuum.Vacuum):
     data = thread_util.extract_all_from_queue(
         self._device.request_untagged(
             "vacuum-gauge",
-            self._arm.device_name,
+            self.device_name,
             data_type="sensor-state",
             timeout=timeout))
     if not data:
@@ -714,6 +732,80 @@ class VacuumImpl(vacuum.Vacuum):
     self._device.queue_to_error_callback_transform(
         self._device.request_untagged(
             "vacuum-gauge",
-            self._arm.device_name,
+            self.device_name,
             data_type="sensor-state",
             timeout=timeout), callback, error_callback, transform)
+
+  def start_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum output state.
+
+    Args:
+      request_period: The number of seconds between vacuum states. Defaults to
+        .1 seconds between vacuum output states.
+    """
+    self._device.set_untagged_request_period("vacuum", self.device_name,
+                                             "output-state", request_period)
+
+  def stop_streaming(self) -> None:
+    """Stop streaming vacuum output states."""
+    self._device.set_untagged_request_period("vacuum", self.device_name,
+                                             "output-state", None)
+
+  def start_blowoff_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between blowoff states. Defaults to
+        .1 seconds between blowoff output states.
+    """
+    if not self.support_blowoff:
+      raise core.PyReachError("blowoff is not supported")
+    self._device.set_untagged_request_period("blowoff", self.device_name,
+                                             "output-state", request_period)
+
+  def stop_blowoff_streaming(self) -> None:
+    """Stop streaming blowoff output states."""
+    if not self.support_blowoff:
+      raise core.PyReachError("blowoff is not supported")
+    self._device.set_untagged_request_period("blowoff", self.device_name,
+                                             "output-state", None)
+
+  def start_gauge_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of blowoff output state.
+
+    Args:
+      request_period: The number of seconds between vacuum gauge states.
+        Defaults to .1 seconds between vacuum gauge sensor states.
+    """
+    if not self.support_gauge:
+      raise core.PyReachError("gauge is not supported")
+    self._device.set_untagged_request_period("vacuum-gauge", self.device_name,
+                                             "sensor-state", request_period)
+
+  def stop_gauge_streaming(self) -> None:
+    """Stop streaming vacuum gauge states."""
+    if not self.support_gauge:
+      raise core.PyReachError("gauge is not supported")
+    self._device.set_untagged_request_period("vacuum-gauge", self.device_name,
+                                             "sensor-state", None)
+
+  def start_pressure_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of vacuum pressure states.
+
+    Args:
+      request_period: The number of seconds between vacuum pressure states.
+        Defaults to .1 seconds between vacuum pressure sensor states.
+    """
+    if not self.support_pressure:
+      raise core.PyReachError("pressure is not supported")
+    self._device.set_untagged_request_period("vacuum-pressure",
+                                             self.device_name, "sensor-state",
+                                             request_period)
+
+  def stop_pressure_streaming(self) -> None:
+    """Stop streaming vacuum pressure states."""
+    if not self.support_pressure:
+      raise core.PyReachError("pressure is not supported")
+    self._device.set_untagged_request_period("vacuum-pressure",
+                                             self.device_name, "sensor-state",
+                                             None)

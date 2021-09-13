@@ -99,21 +99,21 @@ class TestPipelineDescription(TestResponder):
                       py_type="inference-request"),
                   types_gen.MachineInterface(
                       data_type="color-depth",
-                      device_type="photoneo",
+                      device_type="depth-camera",
                       py_type="frame-request"),
                   types_gen.MachineInterface(
                       data_type="color-depth",
                       device_name="wrist",
-                      device_type="realsense",
+                      device_type="depth-camera",
                       py_type="frame-request"),
                   types_gen.MachineInterface(
                       data_type="color",
                       device_name="invoice",
-                      device_type="realsense",
+                      device_type="color-camera",
                       py_type="frame-request"),
                   types_gen.MachineInterface(
                       data_type="color",
-                      device_type="uvc",
+                      device_type="color-camera",
                       py_type="frame-request"),
                   types_gen.MachineInterface(
                       data_type="color",
@@ -121,7 +121,9 @@ class TestPipelineDescription(TestResponder):
                       device_type="vnc",
                       py_type="frame-request"),
                   types_gen.MachineInterface(
-                      data_type="ur-state", device_type="ur", py_type="publish")
+                      data_type="robot-state",
+                      device_type="robot",
+                      py_type="publish"),
               ]))
       ]
     return []

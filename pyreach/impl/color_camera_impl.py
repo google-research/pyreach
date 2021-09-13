@@ -26,7 +26,6 @@ from pyreach.impl import calibration_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-from pyreach.utils import load_image
 
 
 class ColorFrameImpl(color_camera.ColorFrame):
@@ -161,26 +160,16 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
   ) -> Optional[color_camera.ColorFrame]:
     """Convert JSON message into a ColorFrame."""
     try:
-      color = load_image(msg.color)
-      color.flags.writeable = False
+      color_image: np.ndarray = utils.load_color_image_from_data(msg)
       return ColorFrameImpl(
           utils.time_at_timestamp(msg.ts), msg.seq,
-          msg.device_type, msg.device_name,
-          color, calibration)
+          msg.device_type, msg.device_name, color_image, calibration)
     except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
       logging.warning("color message missing file at %d ms time delta, file %s",
                       delta, msg.color)
       return None
-
-
-class UVC(ColorCameraDevice):
-  """Represents a UVC color camera."""
-
-  def __init__(self, calibration: calibration_impl.CalDevice) -> None:
-    """Initialize a UVC camera."""
-    super().__init__(device_type="uvc", device_name="", calibration=calibration)
 
 
 class ColorCameraImpl(color_camera.ColorCamera):
@@ -224,12 +213,13 @@ class ColorCameraImpl(color_camera.ColorCamera):
     """
     self._device.set_untagged_request_period(self._device.device_type,
                                              self._device.device_name,
-                                             request_period)
+                                             "color", request_period)
 
   def stop_streaming(self) -> None:
     """Stop streaming camera images."""
     self._device.set_untagged_request_period(self._device.device_type,
-                                             self._device.device_name, None)
+                                             self._device.device_name, "color",
+                                             None)
 
   def supports_tagged_request(self) -> bool:
     """Return True if tagged requests are supported."""

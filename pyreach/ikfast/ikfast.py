@@ -21,7 +21,7 @@ import os
 import sys
 from typing import Dict, List, Optional, Union, Tuple
 import numpy as np  # type: ignore
-from scipy.spatial.transform import Rotation  # type: ignore
+from scipy.spatial.transform.rotation import Rotation  # type: ignore
 from pyreach.common.base import debug
 from pyreach.common.base import transform_util
 

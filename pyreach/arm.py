@@ -21,10 +21,10 @@ Supported features
   - Action template: execute a predefined action.
   - Streaming control
 """
-import enum
-from typing import List, Optional, Callable, Tuple, Union
-
 import dataclasses
+import enum
+from typing import Callable, List, Optional, Tuple, Union
+
 import numpy as np  # type: ignore
 
 from pyreach import constraints

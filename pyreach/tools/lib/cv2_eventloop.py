@@ -48,8 +48,8 @@
 import collections
 import threading
 from typing import Any, Callable, Deque, List, Optional, Tuple
+import cv2  # type: ignore  # type: ignore
 
-import cv2  # type: ignore
 
 # How long to wait on cv2.waitKey() for the main event loop.
 _CV2_EVENTLOOP_MS = 100

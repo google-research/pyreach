@@ -14,13 +14,11 @@
 
 """Basic types for PyReach."""
 
+import dataclasses
 import json
 import math
-
 from typing import Dict, Generic, ItemsView, Iterator, KeysView, TypeVar
-from typing import Optional, ValuesView, Union, cast, Tuple, List
-
-import dataclasses
+from typing import List, Optional, Tuple, Union, ValuesView, cast
 
 T = TypeVar("T")
 

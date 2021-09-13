@@ -16,8 +16,11 @@
 
 import unittest
 
+import numpy  # type: ignore
+
 from pyreach import core
 from pyreach.common.python import types_gen
+from pyreach.impl import test_utils
 from pyreach.impl import utils
 
 
@@ -31,6 +34,34 @@ class UtilsTest(unittest.TestCase):
 
   def test_generate_tag(self) -> None:
     self.assertIsNotNone(utils.generate_tag())
+
+  def test_data_copy(self) -> None:
+
+    def copy_test(data: types_gen.DeviceData) -> None:
+      self.assertTrue(
+          test_utils.device_data_equal(data, utils.copy_device_data(data)))
+
+    copy_test(
+        utils.ImagedDeviceData(
+            ts=1,
+            seq=1,
+            device_type="depth-camera",
+            data_type="color-depth",
+            color_image=numpy.array([1, 2]),
+            depth_image=numpy.array([3, 4])))
+    copy_test(
+        types_gen.DeviceData(
+            ts=1, seq=1, device_type="robot", data_type="robot-state"))
+
+  def test_command_copy(self) -> None:
+
+    def copy_test(data: types_gen.CommandData) -> None:
+      self.assertTrue(
+          test_utils.command_data_equal(data, utils.copy_command_data(data)))
+
+    copy_test(
+        types_gen.CommandData(
+            ts=1, seq=1, device_type="robot", data_type="reach-script"))
 
   def test_pyreach_status_from_message(self) -> None:
     device_data = types_gen.DeviceData()

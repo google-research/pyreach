@@ -23,6 +23,7 @@ from typing import Any, Callable, Optional, TypeVar
 from pyreach import actionsets
 from pyreach import arm
 from pyreach import calibration
+from pyreach import client_annotation
 from pyreach import color_camera
 from pyreach import constraints
 from pyreach import core
@@ -101,6 +102,11 @@ class Host(object):
   @property
   def config(self) -> Config:
     """Return the config dictionary."""
+    raise NotImplementedError
+
+  @property
+  def client_annotation(self) -> client_annotation.ClientAnnotation:
+    """Return the client annotation device."""
     raise NotImplementedError
 
   @property
@@ -248,6 +254,14 @@ class Host(object):
     Returns:
       Returns the latest ping time or None if no ping time is available.
 
+    """
+    raise NotImplementedError
+
+  def get_server_offset_time(self) -> Optional[float]:
+    """Return the offset to the server time.
+
+    Returns:
+      The offset to the server-side time, or None if it could not be computed.
     """
     raise NotImplementedError
 

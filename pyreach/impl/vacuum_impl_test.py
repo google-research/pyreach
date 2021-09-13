@@ -20,10 +20,10 @@ from pyreach import vacuum  # pylint: disable=unused-import
 from pyreach.common.python import types_gen
 from pyreach.impl import arm_impl
 from pyreach.impl import calibration_impl
+from pyreach.impl import machine_interfaces
 from pyreach.impl import test_utils
 from pyreach.impl import thread_util
 from pyreach.impl import vacuum_impl
-from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 
 
 class TestPyreachVacuum(unittest.TestCase):
@@ -320,19 +320,26 @@ class TestPyreachVacuum(unittest.TestCase):
     armdev, constraints_device, arm_wrapper = arm_impl.ArmDevice(
         arm_impl.ArmTypeImpl.from_urdf_file("ur5e.urdf"), calibration_device,
         None, None, "test-name").get_wrapper()
-    workcell_io_config = workcell_io.IOConfig()  # type: ignore
-    pressure_io = workcell_io_config.capability.add()
-    pressure_io.device_type = "ur"
-    pressure_io.device_name = "test-name"
-    pressure_io.type = "vacuum-pressure"
-    pressure_io.io_type = workcell_io.DIGITAL_INPUT  # type: ignore
-    pressure_io = workcell_io_config.capability.add()
-    pressure_io.device_type = "ur"
-    pressure_io.device_name = "test-name"
-    pressure_io.type = "vacuum-gauge"
-    pressure_io.io_type = workcell_io.ANALOG_INPUT  # type: ignore
-    rdev, dev = vacuum_impl.VacuumDevice(workcell_io_config,
-                                         arm_wrapper).get_wrapper()
+    interfaces = machine_interfaces.MachineInterfaces(
+        0.0, (machine_interfaces.MachineInterface(
+            interface_type=machine_interfaces.InterfaceType.PUBLISH,
+            device_type="vacuum",
+            device_name="test-name",
+            data_type="output-state",
+            keys=()),
+              machine_interfaces.MachineInterface(
+                  interface_type=machine_interfaces.InterfaceType.PUBLISH,
+                  device_type="vacuum-pressure",
+                  device_name="test-name",
+                  data_type="sensor-state",
+                  keys=()),
+              machine_interfaces.MachineInterface(
+                  interface_type=machine_interfaces.InterfaceType.PUBLISH,
+                  device_type="vacuum-gauge",
+                  device_name="test-name",
+                  data_type="sensor-state",
+                  keys=())))
+    rdev, dev = vacuum_impl.VacuumDevice(interfaces, arm_wrapper).get_wrapper()
     calibration_device.close()
     constraints_device.close()
     armdev.close()
@@ -340,27 +347,23 @@ class TestPyreachVacuum(unittest.TestCase):
       assert not dev.support_blowoff
       assert dev.support_pressure
       assert dev.support_gauge
-      vacuum_state_callbacks: \
-        "thread_util.CallbackCapturer[vacuum.VacuumState]" = \
-        thread_util.CallbackCapturer()
+      vacuum_state_callbacks: "thread_util.CallbackCapturer[vacuum.VacuumState]"
+      vacuum_state_callbacks = thread_util.CallbackCapturer()
       stop_vacuum_state_callback = dev.add_state_callback(
           vacuum_state_callbacks.callback_false,
           vacuum_state_callbacks.finished_callback)
-      vacuum_blowoff_state_callbacks: \
-        "thread_util.CallbackCapturer[vacuum.BlowoffState]" = \
-        thread_util.CallbackCapturer()
+      vacuum_blowoff_state_callbacks: "thread_util.CallbackCapturer[vacuum.BlowoffState]"
+      vacuum_blowoff_state_callbacks = thread_util.CallbackCapturer()
       stop_vacuum_blowoff_state_callback = dev.add_blowoff_state_callback(
           vacuum_blowoff_state_callbacks.callback_false,
           vacuum_blowoff_state_callbacks.finished_callback)
-      vacuum_pressure_state_callbacks: \
-        "thread_util.CallbackCapturer[vacuum.VacuumPressure]" = \
-        thread_util.CallbackCapturer()
+      vacuum_pressure_state_callbacks: "thread_util.CallbackCapturer[vacuum.VacuumPressure]"
+      vacuum_pressure_state_callbacks = thread_util.CallbackCapturer()
       stop_vacuum_pressure_state_callback = dev.add_pressure_state_callback(
           vacuum_pressure_state_callbacks.callback_false,
           vacuum_pressure_state_callbacks.finished_callback)
-      vacuum_gauge_state_callbacks: \
-        "thread_util.CallbackCapturer[vacuum.VacuumGauge]" = \
-        thread_util.CallbackCapturer()
+      vacuum_gauge_state_callbacks: "thread_util.CallbackCapturer[vacuum.VacuumGauge]"
+      vacuum_gauge_state_callbacks = thread_util.CallbackCapturer()
       stop_vacuum_gauge_state_callback = dev.add_gauge_state_callback(
           vacuum_gauge_state_callbacks.callback_false,
           vacuum_gauge_state_callbacks.finished_callback)

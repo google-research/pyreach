@@ -15,6 +15,7 @@
 """Implementation of the PyReach Host interface."""
 import logging
 import queue
+import threading
 import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -22,6 +23,7 @@ import pyreach
 from pyreach import actionsets
 from pyreach import arm
 from pyreach import calibration
+from pyreach import client_annotation
 from pyreach import constraints
 from pyreach import core
 from pyreach import force_torque_sensor
@@ -33,6 +35,7 @@ from pyreach.impl import actions_impl
 from pyreach.impl import arm_impl
 from pyreach.impl import calibration_impl
 from pyreach.impl import client as cli
+from pyreach.impl import client_annotation_impl
 from pyreach.impl import color_camera_impl
 from pyreach.impl import constraints_impl
 from pyreach.impl import depth_camera_impl
@@ -120,6 +123,7 @@ class HostImpl(pyreach.Host):
   """Entry point of PyReach for accessing resources of a Reach host."""
 
   _host: reach_host.ReachHost
+  _client_annotation: client_annotation.ClientAnnotation
   _color_cameras: core.ImmutableDictionary[pyreach.ColorCamera]
   _color_camera: Optional[pyreach.ColorCamera]
   _depth_cameras: core.ImmutableDictionary[pyreach.DepthCamera]
@@ -303,7 +307,6 @@ class HostImpl(pyreach.Host):
     if interfaces is not None:
       color_interfaces = interfaces.get_machine_interfaces_with_type(
           "color-camera")
-      color_interfaces += interfaces.get_machine_interfaces_with_type("uvc")
       for color_interface in color_interfaces:
         if color_interface.device_name in color_cameras:
           continue
@@ -323,8 +326,6 @@ class HostImpl(pyreach.Host):
     if interfaces is not None:
       depth_interfaces = interfaces.get_machine_interfaces_with_type(
           "depth-camera")
-      depth_interfaces += interfaces.get_machine_interfaces_with_type(
-          "photoneo")
       for depth_camera_interface in depth_interfaces:
         if depth_camera_interface.device_name in depth_cameras:
           continue
@@ -384,11 +385,10 @@ class HostImpl(pyreach.Host):
     arms: Dict[str, arm_impl.ArmImpl] = {}
     if interfaces is not None:
       arm_interfaces = interfaces.get_machine_interfaces_with_type("robot")
-      arm_interfaces += interfaces.get_machine_interfaces_with_type("ur")
       for arm_interface in arm_interfaces:
         if arm_interface.device_name in arms:
           continue
-        if arm_interface.data_type not in {"ur-state", "robot-state"}:
+        if arm_interface.data_type != "robot-state":
           continue
         if arm_interface.interface_type not in {
             machine_interfaces.InterfaceType.FRAME_REQUEST,
@@ -408,16 +408,18 @@ class HostImpl(pyreach.Host):
     vacuums: Dict[str, pyreach.Vacuum] = {}
     self._vacuum = None
     for name, arm_for_vacuum in self._arms.items():
-      if not arm_for_vacuum.support_vacuum:
+      if not arm_for_vacuum.support_vacuum or not interfaces:
         continue
       vacuums[name] = add_device(
-          vacuum_impl.VacuumDevice(workcell_io_config,
-                                   arm_for_vacuum).get_wrapper())
+          vacuum_impl.VacuumDevice(interfaces, arm_for_vacuum).get_wrapper())
       if arm_for_vacuum == self._arm:
         self._vacuum = vacuums[name]
     self._vacuums = core.ImmutableDictionary(vacuums)
     # Add logger
     self._logger = add_device(logger_impl.LoggerDevice().get_wrapper())
+    # Add client annotation
+    self._client_annotation = add_device(
+        client_annotation_impl.ClientAnnotationDevice().get_wrapper())
     # Add metrics
     self._metrics = add_device(metrics_impl.MetricDevice().get_wrapper())
     # Add text instruction
@@ -440,6 +442,18 @@ class HostImpl(pyreach.Host):
       assert internal_playback is not None
       self._playback = playback_impl.PlaybackImpl(internal_playback, self._host,
                                                   client)
+
+    machine_lock = threading.Lock()
+
+    def machine_callback(
+        unused_interfaces: Optional[machine_interfaces.MachineInterfaces]
+    ) -> bool:
+      with machine_lock:
+        self._host.set_machine_interfaces(self._config.machine_interfaces)
+      return False
+
+    self._config._machine_interfaces.add_update_callback(machine_callback)
+    machine_callback(interfaces)
     self._host.start()
     if enable_streaming and not is_playback:
       self._start_streaming()
@@ -450,17 +464,67 @@ class HostImpl(pyreach.Host):
 
   def _start_streaming(self) -> None:
     """Start streaming from hosts."""
+    # Create a queue for callbacks. In order to start up, we must have all
+    # callbacks be called at least once, so that all data is loaded. For
+    # example, host.arm.state is guaranteed not to be none if _start_streaming()
+    # completes and the host was not closed.
+    callback_queue: "queue.Queue[bool]" = queue.Queue()
+    request_count = 0
+
+    # Create new callback by first incrementing the callback_count, and then
+    # returning a callback function.
+    def new_callback() -> Callable[[Optional[Any]], bool]:
+      nonlocal request_count, callback_queue
+      request_count += 1
+
+      # The callback function will wait for a state (e.g. arm state) and then
+      # return True, stopping it from getting called again.
+      def cb_func(input_state: Optional[Any]) -> bool:
+        nonlocal callback_queue
+        if input_state is not None:
+          callback_queue.put(True)
+          return True
+        return False
+
+      return cb_func
+
     for _, v1 in self._arms.items():
-      v1.fetch_state()
       v1.start_streaming()
+      v1.add_update_callback(new_callback())
 
     for _, v2 in self._color_cameras.items():
-      v2.fetch_image()
       v2.start_streaming()
+      v2.add_update_callback(new_callback())
 
     for _, v3 in self._depth_cameras.items():
-      v3.fetch_image()
       v3.start_streaming()
+      v3.add_update_callback(new_callback())
+
+    for _, v4 in self._force_torque_sensors.items():
+      v4.start_streaming()
+      v4.add_update_callback(new_callback())
+
+    for _, v5 in self._vacuums.items():
+      v5.start_streaming()
+      v5.add_state_callback(new_callback())
+      if v5.support_blowoff:
+        v5.start_blowoff_streaming()
+        v5.add_blowoff_state_callback(new_callback())
+      if v5.support_gauge:
+        v5.start_gauge_streaming()
+        v5.add_gauge_state_callback(new_callback())
+      if v5.support_pressure:
+        v5.start_pressure_streaming()
+        v5.add_pressure_state_callback(new_callback())
+
+    # Wait for all the callbacks to respond.
+    callback_count = 0
+    while callback_count < request_count and not self.is_closed():
+      try:
+        if callback_queue.get(block=True, timeout=0.01):
+          callback_count += 1
+      except queue.Empty:
+        pass
 
   def __enter__(self) -> "pyreach.Host":
     """With statement entry dunder."""
@@ -495,6 +559,11 @@ class HostImpl(pyreach.Host):
   def config(self) -> host.Config:
     """Return the config dictionary."""
     return self._config
+
+  @property
+  def client_annotation(self) -> client_annotation.ClientAnnotation:
+    """Return the client annotation device."""
+    return self._client_annotation
 
   @property
   def color_cameras(self) -> core.ImmutableDictionary[pyreach.ColorCamera]:
@@ -643,6 +712,14 @@ class HostImpl(pyreach.Host):
 
     """
     return self._host.get_ping_time()
+
+  def get_server_offset_time(self) -> Optional[float]:
+    """Return the offset to the server time.
+
+    Returns:
+      The offset to the server-side time, or None if it could not be computed.
+    """
+    return self._host.get_server_offset_time()
 
   def set_should_take_control(self,
                               should_take_control: bool,

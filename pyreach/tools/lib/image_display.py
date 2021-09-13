@@ -21,12 +21,12 @@ import os
 import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+import cv2  # type: ignore  # type: ignore
 import numpy as np  # type: ignore
+
 from pyreach.tools.lib import cv2_eventloop
 from pyreach.tools.lib import frame_counter
 from pyreach.tools.lib import undistortion_field
-
-import cv2  # type: ignore
 
 # Directory where image snapshots will be saved.
 _SNAPSHOT_DIR = "snapshots"
@@ -34,18 +34,59 @@ _SNAPSHOT_DIR = "snapshots"
 # Aspect ratio used for the unified window.
 _UNIFIED_ASPECT_RATIO = 16 / 9
 
+# Color in which the crosshair is drawn, in the form (B, G, R).
+_CROSSHAIR_COLOR = (255, 0, 255)
+
+# Fraction of the image height which the crosshair should take up.
+_CROSSHAIR_LENGTH_FRAC = 0.25
+
+# The crosshair thickness in pixels.
+_CROSSHAIR_THICKNESS = 2
+
 # Type denoting tuple of (object name, coordinates).
 NamedPolygonT = Tuple[str, List[Tuple[float, float]]]
 
 
-def _get_image_to_show(
-    img: Optional[np.ndarray],
-    overlay_img: Optional[np.ndarray] = None) -> Optional[np.ndarray]:
+def _draw_crosshair(img: np.ndarray, color: Tuple[int, int, int],
+                    length_frac: float, thickness: int) -> None:
+  """Draw a crosshair at the centre of each image.
+
+  Args:
+    img: The image to draw the crosshair on. This image is edited in place.
+    color: Color in which the crosshair is drawn, in the form (B, G, R).
+    length_frac: Fraction of the image height which the crosshair should take
+      up. This value should be in the range 0 to 1.
+    thickness: The crosshair thickness in pixels.
+  """
+
+  assert 0. < length_frac <= 1.
+
+  length = int(length_frac * img.shape[0])
+  centre_x = int(img.shape[1] / 2)
+  centre_y = int(img.shape[0] / 2)
+
+  # Draw a vertical line
+  cv2.line(img, (centre_x, centre_y - int(length / 2)),
+           (centre_x, centre_y + int(length / 2)), color, thickness)
+
+  # Draw a horizontal line
+  cv2.line(img, (centre_x - int(length / 2), centre_y),
+           (centre_x + int(length / 2), centre_y), color, thickness)
+
+
+def _get_image_to_show(img: Optional[np.ndarray],
+                       overlay_img: Optional[np.ndarray] = None,
+                       show_crosshair: bool = True) -> Optional[np.ndarray]:
   """Get the image to show in the viewer.
 
   Args:
     img: the image.
     overlay_img: optional overlay image.
+    show_crosshair: if true, the crosshair at the centre of each image will be
+      drawn.
+
+  Raises:
+    RuntimeError: if the image format is unexpected.
 
   Returns:
     The image to display.
@@ -53,8 +94,8 @@ def _get_image_to_show(
   if img is None:
     return None
   if img.dtype == np.uint16:
-    return cv2.applyColorMap((img / 64).astype(np.uint8), cv2.COLORMAP_JET)
-  if img.dtype == np.uint8:
+    img = cv2.applyColorMap((img / 64).astype(np.uint8), cv2.COLORMAP_JET)
+  elif img.dtype == np.uint8:
     if overlay_img is not None:
       if img.shape[0] == overlay_img.shape[0] and img.shape[
           1] == overlay_img.shape[1]:
@@ -67,18 +108,25 @@ def _get_image_to_show(
       else:
         print("Img has size {} and overlay has size {}".format(
             img.shape, overlay_img.shape))
-    return img
-  return None
+  else:
+    raise RuntimeError(f"Unexpected image format {img.dtype!r}")
+
+  if show_crosshair:
+    _draw_crosshair(img, _CROSSHAIR_COLOR, _CROSSHAIR_LENGTH_FRAC,
+                    _CROSSHAIR_THICKNESS)
+  return img
 
 
 class ImageDisplay:
   """ImageDisplay displays images."""
 
-  def __init__(self, uwidth: int = 0) -> None:
+  def __init__(self, uwidth: int = 0, show_crosshair: bool = True) -> None:
     """Initialize the image display.
 
     Args:
       uwidth: the width of the display, if zero, will autoscale.
+      show_crosshair: if true, the crosshair at the centre of each image will be
+        displayed.
     """
     # Threadsafe cv2.
     self._cv2e = cv2_eventloop.get_instance()
@@ -89,6 +137,8 @@ class ImageDisplay:
     self._frames: Dict[str, frame_counter.FrameCounter] = {}
     # If true, will draw everything in one window.
     self._uwidth = uwidth
+    # If true, the crosshair at the center of each image will be displayed.
+    self._show_crosshair = show_crosshair
     # Callback for mouse clicks. Must take (window_name, x, y, width, height).
     self._click_listeners: List[Callable[[str, float, float, float, float],
                                          None]] = []
@@ -175,7 +225,7 @@ class ImageDisplay:
       target_extent: the size (width, height) tuple to paste the image to.
       window_name: the name of the window.
     """
-    # TODO: Height / width and x / y are swapped in this method. Should
+    # TODO(hirak): Height / width and x / y are swapped in this method. Should
     # be corrected.
     width, height = target_extent
     owidth, oheight = img.shape[0], img.shape[1]
@@ -214,7 +264,7 @@ class ImageDisplay:
     for index, window_tuple in enumerate(sorted(self._last_shown.items())):
       wname, images_tuple = window_tuple
       raw_img, raw_ovl, _ = images_tuple
-      img = _get_image_to_show(raw_img, raw_ovl)
+      img = _get_image_to_show(raw_img, raw_ovl, self._show_crosshair)
       grid_j = index // h
       grid_i = index % h
       start_y = int(grid_i * self._unified_shape[0] / h)
@@ -318,7 +368,7 @@ class ImageDisplay:
     self._frames.setdefault(window_name, frame_counter.FrameCounter()).incr()
 
     # Optionally apply overlay (e.g. --cameras=depth-camera+oracle.pick-points).
-    img = _get_image_to_show(img, ovl)
+    img = _get_image_to_show(img, ovl, self._show_crosshair)
     # If detections exist, render them.
     img = self._draw_detections(img, window_name)
     self._render(window_name, img)

@@ -62,6 +62,7 @@ class SnapshotImpl(unittest.TestCase):
                         message="test-message",
                         code=14)),
             ],
+            gym_server_ts=1,
             gym_actions=[
                 types_gen.GymAction(
                     device_type="test-type",
@@ -132,6 +133,7 @@ class SnapshotImpl(unittest.TestCase):
                    snapshot.SnapshotResponse(
                        10, "oracle", "test-oracle",
                        snapshot.SnapshotReference(11.0, 12))),
+        gym_server_time=0.001,
         gym_env_id="test-env-id",
         gym_run_id="test-run-id",
         gym_episode=1,
@@ -183,6 +185,7 @@ class SnapshotImpl(unittest.TestCase):
                                progress=13.0,
                                message="test-message",
                                code=14))),
+            gym_server_time=0.001,
             gym_env_id="test-env-id",
             gym_run_id="test-run-id",
             gym_episode=1,
@@ -232,6 +235,7 @@ class SnapshotImpl(unittest.TestCase):
                 gym_config_name="test-oracle",
                 device_data_ref=types_gen.DeviceDataRef(ts=11000, seq=12))
         ],
+        gym_server_ts=1,
         gym_actions=[
             types_gen.GymAction(
                 device_type="test-type",

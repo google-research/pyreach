@@ -43,7 +43,7 @@ class LoggerMock(logger.Logger):
     Args:
       event_params: additional session information in name-value pair.
     """
-    raise NotImplementedError
+    pass
 
   def send_snapshot(self, snapshot: snapshot_lib.Snapshot) -> None:
     """Send a snapshot.

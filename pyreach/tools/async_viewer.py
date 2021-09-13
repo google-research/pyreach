@@ -59,9 +59,7 @@ def main() -> None:
       default=10,
       help="Fps at which frame requests are sent.")
   parser.add_argument(
-      "--tags",
-      action="store_true",
-      help="Use tagged requests where possible.")
+      "--tags", action="store_true", help="Use tagged requests where possible.")
   parser.add_argument(
       "--undistortion-field",
       action="store_true",
@@ -81,6 +79,11 @@ def main() -> None:
           "Uses \"unified\" view even if only one stream is requested. "
           "Overrides default behavior to stream raw images at native resolution. "
           "Useful to see resolution, fps etc."))
+  parser.add_argument(
+      "--disable_crosshair",
+      default=False,
+      action="store_true",
+      help="Disables the crosshair at centre of images.")
   args = parser.parse_args()
 
   uwidth: int = args.uwidth
@@ -100,7 +103,8 @@ def main() -> None:
       show_undistortion=args.undistortion_field,
       use_tags=args.tags,
       show_detections=True,
-      quiet=False)
+      quiet=False,
+      show_crosshair=not args.disable_crosshair)
   control.run()
 
 

@@ -22,6 +22,7 @@ from typing import Callable, Dict, Generic, List, Optional, Set, Tuple, TypeVar
 from pyreach import core
 from pyreach.common.python import types_gen
 from pyreach.impl import device_base
+from pyreach.impl import machine_interfaces
 from pyreach.impl import thread_util
 from pyreach.impl import utils
 
@@ -210,6 +211,7 @@ class Requester(device_base.DeviceBase, Generic[T]):
   _untagged_request_period: Dict[Tuple[str, str], float]
   _untagged_request_counter: Dict[Tuple[str, str], int]
   _enable_tagged_requests: Set[Tuple[str, str]]
+  _interfaces: Optional[machine_interfaces.MachineInterfaces]
 
   def __init__(self) -> None:
     """Init a Requester."""
@@ -222,6 +224,7 @@ class Requester(device_base.DeviceBase, Generic[T]):
     self._untagged_request_counter = {}
     self._untagged_request_period = {}
     self._enable_tagged_requests = set()
+    self._interfaces = None
 
   def get_message_supplement(self, msg: types_gen.DeviceData) -> Optional[T]:
     """Allow subclass to provide custom transformation.
@@ -248,31 +251,54 @@ class Requester(device_base.DeviceBase, Generic[T]):
     device_base.DeviceBase.start(self)
     self.poll(1.0, self._on_poll)
 
+  def set_machine_interfaces(
+      self, interfaces: Optional[machine_interfaces.MachineInterfaces]) -> None:
+    """Set the machine interface settings.
+
+    Args:
+      interfaces: the machine interfaces discovered.
+    """
+    super().set_machine_interfaces(interfaces)
+    with self._lock:
+      self._interfaces = interfaces
+
   def set_untagged_request_period(self, device_type: str, device_name: str,
+                                  data_type: str,
                                   period: Optional[float]) -> None:
     """Set the untagged request period for a Requester.
 
     Args:
       device_type: The device type as a string.
       device_name: The device name as a string.
+      data_type: The data name as a string.
       period: The polling period in sec.
     """
     if period is not None and period <= 0:
       raise core.PyReachError("Request period must be greater than zero")
     with self._lock:
-      device_pair = (device_type, device_name)
-      if period is None:
-        if device_pair in self._untagged_request_period:
-          self._untagged_request_counter[device_pair] = (
-              self._untagged_request_counter.get(device_pair, 0) + 1)
-      elif (device_pair not in self._untagged_request_period or
-            self._untagged_request_period[device_pair] != period):
-        self._untagged_request_period[device_pair] = period
-        self._untagged_request_counter[
-            device_pair] = self._untagged_request_counter.get(device_pair,
-                                                              0) + 1
-        self.poll(period, self._untagged_poll, device_type, device_name,
-                  self._untagged_request_counter[device_pair])
+      request_type = (
+          self._interfaces and self._interfaces.get_request_strategy(
+              device_type, device_name, data_type))
+      if request_type == machine_interfaces.InterfaceType.PUBLISH:
+        self._set_untagged_request_period(device_type, device_name, None)
+      else:
+        self._set_untagged_request_period(device_type, device_name, period)
+
+  def _set_untagged_request_period(self, device_type: str, device_name: str,
+                                   period: Optional[float]) -> None:
+    device_pair = (device_type, device_name)
+    if period is None:
+      if device_pair in self._untagged_request_period:
+        self._untagged_request_counter[device_pair] = (
+            self._untagged_request_counter.get(device_pair, 0) + 1)
+        del self._untagged_request_period[device_pair]
+    elif (device_pair not in self._untagged_request_period or
+          self._untagged_request_period[device_pair] != period):
+      self._untagged_request_period[device_pair] = period
+      self._untagged_request_counter[
+          device_pair] = self._untagged_request_counter.get(device_pair, 0) + 1
+      self.poll(period, self._untagged_poll, device_type, device_name,
+                self._untagged_request_counter[device_pair])
 
   def _untagged_poll(self, device_type: str, device_name: str,
                      counter: int) -> bool:
@@ -281,7 +307,7 @@ class Requester(device_base.DeviceBase, Generic[T]):
     Args:
       device_type: The device type as a string.
       device_name: The device name as a string.
-      counter:
+      counter: Expected counter value.
 
     Returns:
       True to stop the request.

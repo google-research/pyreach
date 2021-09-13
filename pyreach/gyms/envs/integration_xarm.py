@@ -32,7 +32,7 @@ class IntegrationTestXarmEnv(reach_env.ReachEnv):
   """
   SAFE_JOINT_ANGLES: np.ndarray = np.deg2rad([0, 0, -45, 0, 45, 0])
 
-  # TODO: Grab MAX and MIN joint angles from real 3F5944 workcell
+  # TODO(adrianwong): Grab MAX and MIN joint angles from real 3F5944 workcell
   MIN_JOINT_ANGLES = SAFE_JOINT_ANGLES - 5.0
   MAX_JOINT_ANGLES = SAFE_JOINT_ANGLES + 5.0
 

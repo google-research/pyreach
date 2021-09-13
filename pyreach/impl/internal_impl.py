@@ -15,6 +15,8 @@
 """Implementation of the PyReach Internal interface."""
 from typing import Callable, Optional, Tuple
 
+import numpy as np  # type: ignore
+
 from pyreach import internal
 from pyreach.common.python import types_gen
 from pyreach.impl import client as cli
@@ -198,6 +200,34 @@ class InternalImpl(internal.Internal):
   def playback(self) -> Optional[internal.InternalPlayback]:
     """Get the playback object, if available."""
     return self._device.playback
+
+  def load_color_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+    """Load the color image from a device-data.
+
+    Args:
+      msg: the data message to load from.
+
+    Raises:
+      FileNotFoundError: if the image file is not found.
+
+    Returns:
+      The image loaded into an-unwritable np.ndarray.
+    """
+    return utils.load_color_image_from_data(msg)
+
+  def load_depth_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+    """Load the depth image from a device-data.
+
+    Args:
+      msg: the data message to load from.
+
+    Raises:
+      FileNotFoundError: if the image file is not found.
+
+    Returns:
+      The image loaded into an-unwritable np.ndarray.
+    """
+    return utils.load_depth_image_from_data(msg)
 
   def async_send_command_data(
       self,

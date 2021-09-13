@@ -33,7 +33,9 @@ class Timestamp(gym.spaces.Box):  # type: ignore
   @classmethod
   def new(cls, ts: Union[float, np.ndarray]) -> np.ndarray:
     """Return a new timestamp as numpy scalar for an observation."""
-    if isinstance(ts, np.ndarray):
+    # There are currently no type hints for numpy, which confuses the
+    # Google3 Python type hints checker.  This solves the problem.
+    if isinstance(ts, np.ndarray) and not isinstance(ts, float):
       size: int = len(ts.shape)
       if size:
         raise core.PyReachError(f"Timestamp ts={ts} is not scalar numpy array")

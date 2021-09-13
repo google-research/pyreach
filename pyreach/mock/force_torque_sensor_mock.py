@@ -99,3 +99,16 @@ class ForceTorqueSensorMock(force_torque_sensor.ForceTorqueSensor):
       timeout: The number of seconds to wait before giving up.
     """
     raise NotImplementedError
+
+  def start_streaming(self, request_period: float = 0.1) -> None:
+    """Start streaming of force torque sensor state.
+
+    Args:
+      request_period: The number of seconds between force torque sensor states.
+        Defaults to .1 seconds between force torque sensor states.
+    """
+    pass
+
+  def stop_streaming(self) -> None:
+    """Stop streaming force torque sensor states."""
+    pass

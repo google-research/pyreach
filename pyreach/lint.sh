@@ -12,38 +12,125 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#/bin/bash
-# Google3 lint does not like word splitting at all.
-# The following bash code uses bash arrays to make the linter happy.
-# 1. declare -a V    # Declare the array
-# 2. V=($(cmd ...))  # Fill the array
-# 3. "${V[@]}"       # Access the array as individual words.
+#/usr/bin/env bash
+
+# The Google bash lint tools encourage using bash arrays instead of word splitting.
+# Below is an extremely brief tutorial about bash arrays.
+# 1. declare -a A                # Declare the array A
+# 2. A=("value1", ..., "valueN") # Fill array A with values
+# 3. A+=("another_value")        # Append to array A
+# 4. "${A[@]}"                   # Access array A as individual words
 
 set -uxeo pipefail
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+readonly MYPY_CONFIG="${SCRIPT_DIR}/mypy.ini"
 cd "$SCRIPT_DIR"
 
-../scripts/lint/lint.sh \
-  --skip-test-dir gyms/ \
-  --skip tools/view3d.py --skip tools/view_rgbd.py \
-  --skip tools/lib/view3d.py --skip tools/lib/view_rgbd.py \
-  --skip-dir common/proto_gen/ \
-  --skip-test-dir impl/ \
-  --skip-test common/spacemouse/spacemouse_lib.py \
-  --skip-test tools/pendant_control.py \
-  --skip-test tools/reach.py
+# Code to scan for all Python files and lint most (but not all) of them.
+declare -a SKIP_FILES
+SKIP_FILES=()
+SKIP_FILES+=("tools/view3d.py")
+SKIP_FILES+=("tools/view_rgbd.py")
+SKIP_FILES+=("tools/lib/view3d.py")
+SKIP_FILES+=("tools/lib/view_rgbd.py")
 
+declare -a SKIP_DIRS
+SKIP_DIRS=()
+SKIP_DIRS+=("common/proto_gen/")
+
+declare -a SKIP_TEST_DIRS
+SKIP_TEST_DIRS=()
+SKIP_TEST_FILES=()
+SKIP_TEST_DIRS+=("gyms/")
+SKIP_TEST_DIRS+=("impl/")
+
+declare -a SKIP_TEST_FILES
+SKIP_TEST_FILES=()
+SKIP_TEST_FILES+=("common/spacemouse/spacemouse_lib.py")
+SKIP_TEST_FILES+=("tools/pendant_control.py")
+SKIP_TEST_FILES+=("tools/reach.py")
+
+set +x
+
+# Build the file lists.
+declare -a PY_FILES
+PY_FILES=()
+while read -d $'\0' FILE ; do
+  SKIP=0
+  for SKIP_FILE in "${SKIP_FILES[@]}" ; do
+    if [[ "${FILE}" == "${SKIP_FILE}" ]]; then
+      SKIP=1
+    fi
+  done
+  for SKIP_DIR in "${SKIP_DIRS[@]}" ; do
+    if echo "${FILE} " | grep -q "${SKIP_DIR}" ; then
+      SKIP=1
+    fi
+  done
+  if [[ "${SKIP}" == 0 ]] ; then
+    PY_FILES+=("${FILE}")
+  fi
+done < <(find * -type f -name "*.py" -print0)
+
+declare -a TEST_FILES
+TEST_FILES=()
+for FILE in "${PY_FILES[@]}" ; do
+  SKIP=0
+  for SKIP_FILE in "${SKIP_TEST_FILES[@]}" ; do
+    if [[ "${FILE}" == "${SKIP_FILE}" ]] ; then
+      SKIP=1
+    fi
+  done
+  for SKIP_DIR in "${SKIP_TEST_DIRS[@]}" ; do
+    if [[ "${FILE}" == "${SKIP_DIR}"* ]] ; then
+      SKIP=1
+    fi
+  done
+  if [[ "${SKIP}" == 0 ]] ; then
+    TEST_FILES+=("${FILE}")
+  fi
+done
+
+set -x
+
+# Run the linters.
+EXIT_CODE=0
+echo "================ mypy ================"
+if ! python3 -m mypy -V ; then
+  echo "mypy is not installed"
+  exit 1
+elif ! python3 -m mypy --config-file "${MYPY_CONFIG}" "${PY_FILES[@]}" ; then
+  echo "FAILED: mypy errors"
+  EXIT_CODE=1
+fi
+
+echo "================ flake8 ================"
+if ! python3 -m flake8 --version ; then
+  echo "flake8 is not installed"
+  exit 1
+elif ! python3 -m flake8 --ignore=E111,E114,E121,E123,E124,E125,E126,E127,E129,E266,E131,E305,E501,F401,V305,W293,W391,W504 "${PY_FILES[@]}" ; then
+  echo "FAILED: Flake8 errors"
+  EXIT_CODE=1
+fi
+
+echo "================ unittest ================"
+if ! python3 -m unittest -v -c "${TEST_FILES[@]}" ; then
+  echo "unittest failed"
+  EXIT_CODE=1
+fi
 
 # Python unittest module shadows common package incorrectly.
 # Run impl test from within the impl folder.
-pushd impl
-python3 -m unittest -v -c *.py
-popd
+echo "================ impl Unit tests ================"
+(cd impl ; python3 -m unittest -v -c *.py)
 
 # Gym register() function breaks in unittest. Run the gym tests individually.
+echo "================ gyms Unit tests ================"
 while read -d $'\0' FILE ; do
-  if [[ "$FILE" != "gyms/__init__.py" ]] ; then
-    python3 "$FILE"
+  if [[ "${FILE}" != "gyms/__init__.py" ]] ; then
+    python3 "${FILE}"
   fi
 done < <(find gyms/* -type f -name "*.py" -print0)
+
+exit "$EXIT_CODE"

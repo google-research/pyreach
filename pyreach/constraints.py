@@ -17,9 +17,9 @@
 PyReach only provides bare minimum support for the constraints right now.
 """
 
+import dataclasses
 from typing import Optional, Tuple
 
-import dataclasses
 import numpy as np  # type: ignore
 
 

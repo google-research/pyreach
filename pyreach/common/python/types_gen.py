@@ -129,7 +129,6 @@ class AddObject:
   """Representation of proto message AddObject.
 
    AddObject adds a new object in a specific pose within a scene in SIM.
-
   """
   py_id: str
   py_type: str
@@ -582,8 +581,6 @@ class AudioRequest:
   """Representation of proto message AudioRequest.
 
    AudioRequest is used for audio mute and unmute requests.
-
-   For more details, see design doc:
   """
   text_cue: str
 
@@ -719,8 +716,6 @@ class CapabilityState:
   """Representation of proto message CapabilityState.
 
    CapabilityState represents the state of one pin in a workcell capability.
-
-   For more details, see the design doc at
   """
   # The pin name within the capability (if any).
   pin: str
@@ -796,6 +791,7 @@ class ClientAnnotation:
 
    ClientAnnotation is the message type for extra log messages from control
    sessions.
+
   """
   #
   # The associatedServerTS is server timestamp (TS value) of the most recent
@@ -808,12 +804,14 @@ class ClientAnnotation:
   log_channel_id: str
   interval_start: Optional['IntervalStart']
   interval_end: Optional['IntervalEnd']
+  text_annotation: Optional['TextAnnotation']
 
-  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '') -> None:
+  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', text_annotation: Optional['TextAnnotation'] = None) -> None:
     self.associated_server_ts = associated_server_ts
     self.interval_end = interval_end
     self.interval_start = interval_start
     self.log_channel_id = log_channel_id
+    self.text_annotation = text_annotation
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -835,6 +833,10 @@ class ClientAnnotation:
       assert isinstance(self.log_channel_id, str), 'Wrong type for attribute: log_channel_id. Expected: str. Got: ' + str(type(self.log_channel_id)) + '.'
       json_data['logChannelID'] = self.log_channel_id
 
+    if self.text_annotation:
+      assert self.text_annotation.__class__.__name__ == 'TextAnnotation', 'Wrong type for attribute: text_annotation. Expected: TextAnnotation. Got: ' + str(type(self.text_annotation)) + '.'
+      json_data['textAnnotation'] = self.text_annotation.to_json()
+
     return json_data
 
   @staticmethod
@@ -842,7 +844,7 @@ class ClientAnnotation:
     """Convert JSON to type object."""
     obj = ClientAnnotation()
 
-    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID']
+    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'textAnnotation']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ClientAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -863,6 +865,10 @@ class ClientAnnotation:
       assert isinstance(json_data['logChannelID'], str), 'Wrong type for attribute: logChannelID. Expected: str. Got: ' + str(type(json_data['logChannelID'])) + '.'
       obj.log_channel_id = json_data['logChannelID']
 
+    if 'textAnnotation' in json_data:
+      assert isinstance(json_data['textAnnotation'], dict), 'Wrong type for attribute: textAnnotation. Expected: dict. Got: ' + str(type(json_data['textAnnotation'])) + '.'
+      obj.text_annotation = TextAnnotation.from_json(json_data['textAnnotation'])
+
     return obj
 
   @staticmethod
@@ -875,6 +881,7 @@ class ClientAnnotation:
     obj.interval_end = IntervalEnd.from_proto(get_proto_field(proto, 'interval_end'))
     obj.interval_start = IntervalStart.from_proto(get_proto_field(proto, 'interval_start'))
     obj.log_channel_id = get_proto_value(proto.log_channel_id)
+    obj.text_annotation = TextAnnotation.from_proto(get_proto_field(proto, 'text_annotation'))
     return obj
 
 
@@ -1036,6 +1043,18 @@ class CommandData:
   # (no fields)
   # ==============================
 
+  # === Fields for dataType stream-request:
+
+  # StreamRequest is used in a command of dataType "stream-request", to set a
+  # rate of streaming.
+  #
+  stream_request: Optional['StreamRequest']
+  # ==============================
+
+  # === Fields for dataType controller-descriptions-request:
+  # (no fields)
+  # ==============================
+
   # The text of the script to run, if the command is run-script.
   script: str
 
@@ -1084,7 +1103,6 @@ class CommandData:
 
   # history passes the request to fetch settings config history.
   #
-  # For more details, see design doc:
   history: Optional['History']
   # ==============================
 
@@ -1127,7 +1145,7 @@ class CommandData:
   robot_id: str
   # ==============================
 
-  def __init__(self, args: Optional[List[str]] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
+  def __init__(self, args: Optional[List[str]] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, stream_request: Optional['StreamRequest'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
     if args is None:
       self.args = []
     else:
@@ -1180,6 +1198,7 @@ class CommandData:
     self.session_info = session_info
     self.sim_action = sim_action
     self.snapshot = snapshot
+    self.stream_request = stream_request
     self.success_type = success_type
     self.tag = tag
     self.task_code = task_code
@@ -1361,6 +1380,10 @@ class CommandData:
       assert self.snapshot.__class__.__name__ == 'Snapshot', 'Wrong type for attribute: snapshot. Expected: Snapshot. Got: ' + str(type(self.snapshot)) + '.'
       json_data['snapshot'] = self.snapshot.to_json()
 
+    if self.stream_request:
+      assert self.stream_request.__class__.__name__ == 'StreamRequest', 'Wrong type for attribute: stream_request. Expected: StreamRequest. Got: ' + str(type(self.stream_request)) + '.'
+      json_data['streamRequest'] = self.stream_request.to_json()
+
     if self.success_type:
       assert isinstance(self.success_type, str), 'Wrong type for attribute: success_type. Expected: str. Got: ' + str(type(self.success_type)) + '.'
       json_data['successType'] = self.success_type
@@ -1405,7 +1428,7 @@ class CommandData:
     obj = CommandData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['args', 'clientAnnotation', 'clientSessionStart', 'cmd', 'dataType', 'detailedError', 'deviceName', 'deviceType', 'error', 'eventDuration', 'eventLabels', 'eventName', 'eventParams', 'exp', 'expArray', 'experimentToken', 'floatValue', 'history', 'intValue', 'intent', 'key', 'label', 'message', 'metadata', 'origin', 'originClient', 'originControl', 'originTransportType', 'originType', 'pickID', 'predictionType', 'progress', 'reachScript', 'requestType', 'robotID', 'script', 'seq', 'sessionInfo', 'simAction', 'snapshot', 'successType', 'tag', 'taskCode', 'textCue', 'ts', 'value', 'webrtcAudioRequest', 'x', 'y']
+    expected_json_keys: List[str] = ['args', 'clientAnnotation', 'clientSessionStart', 'cmd', 'dataType', 'detailedError', 'deviceName', 'deviceType', 'error', 'eventDuration', 'eventLabels', 'eventName', 'eventParams', 'exp', 'expArray', 'experimentToken', 'floatValue', 'history', 'intValue', 'intent', 'key', 'label', 'message', 'metadata', 'origin', 'originClient', 'originControl', 'originTransportType', 'originType', 'pickID', 'predictionType', 'progress', 'reachScript', 'requestType', 'robotID', 'script', 'seq', 'sessionInfo', 'simAction', 'snapshot', 'streamRequest', 'successType', 'tag', 'taskCode', 'textCue', 'ts', 'value', 'webrtcAudioRequest', 'x', 'y']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid CommandData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -1582,6 +1605,10 @@ class CommandData:
       assert isinstance(json_data['snapshot'], dict), 'Wrong type for attribute: snapshot. Expected: dict. Got: ' + str(type(json_data['snapshot'])) + '.'
       obj.snapshot = Snapshot.from_json(json_data['snapshot'])
 
+    if 'streamRequest' in json_data:
+      assert isinstance(json_data['streamRequest'], dict), 'Wrong type for attribute: streamRequest. Expected: dict. Got: ' + str(type(json_data['streamRequest'])) + '.'
+      obj.stream_request = StreamRequest.from_json(json_data['streamRequest'])
+
     if 'successType' in json_data:
       assert isinstance(json_data['successType'], str), 'Wrong type for attribute: successType. Expected: str. Got: ' + str(type(json_data['successType'])) + '.'
       obj.success_type = json_data['successType']
@@ -1682,6 +1709,7 @@ class CommandData:
     obj.session_info = SessionInfo.from_proto(get_proto_field(proto, 'session_info'))
     obj.sim_action = SimAction.from_proto(get_proto_field(proto, 'sim_action'))
     obj.snapshot = Snapshot.from_proto(get_proto_field(proto, 'snapshot'))
+    obj.stream_request = StreamRequest.from_proto(get_proto_field(proto, 'stream_request'))
     obj.success_type = get_proto_value(proto.success_type)
     obj.tag = get_proto_value(proto.tag)
     obj.task_code = get_proto_value(proto.inference_request.task_code)
@@ -1905,6 +1933,115 @@ class ConnectedClients:
     return obj
 
 
+class ControllerDescription:
+  """Representation of proto message ControllerDescription.
+
+   ControllerDescription is the description of a controllers supported by
+   a robot.
+  """
+  name: str
+
+  def __init__(self, name: str = '') -> None:
+    self.name = name
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.name:
+      assert isinstance(self.name, str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(self.name)) + '.'
+      json_data['name'] = self.name
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'ControllerDescription':
+    """Convert JSON to type object."""
+    obj = ControllerDescription()
+
+    expected_json_keys: List[str] = ['name']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid ControllerDescription. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'name' in json_data:
+      assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
+      obj.name = json_data['name']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.ControllerDescription) -> 'ControllerDescription':
+    """Convert ControllerDescription proto to type object."""
+    if not proto:
+      return None
+    obj = ControllerDescription()
+    obj.name = get_proto_value(proto.name)
+    return obj
+
+
+class ControllerDescriptions:
+  """Representation of proto message ControllerDescriptions.
+
+   ControllerDescriptions are the descriptions of the controllers supported by
+   a robot.
+  """
+  descriptions: List['ControllerDescription']
+
+  def __init__(self, descriptions: Optional[List['ControllerDescription']] = None) -> None:
+    if descriptions is None:
+      self.descriptions = []
+    else:
+      self.descriptions = descriptions
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+    item: Any
+
+    if self.descriptions:
+      assert isinstance(self.descriptions, list), 'Wrong type for attribute: descriptions. Expected: list. Got: ' + str(type(self.descriptions)) + '.'
+      obj_list = []
+      for item in self.descriptions:
+        obj_list.append(item.to_json())
+      json_data['descriptions'] = obj_list
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'ControllerDescriptions':
+    """Convert JSON to type object."""
+    obj = ControllerDescriptions()
+    json_list: List[Any]
+
+    expected_json_keys: List[str] = ['descriptions']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid ControllerDescriptions. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'descriptions' in json_data:
+      assert isinstance(json_data['descriptions'], list), 'Wrong type for attribute: descriptions. Expected: list. Got: ' + str(type(json_data['descriptions'])) + '.'
+      json_list = []
+      for j in json_data['descriptions']:
+        json_list.append(ControllerDescription.from_json(j))
+      obj.descriptions = json_list
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.ControllerDescriptions) -> 'ControllerDescriptions':
+    """Convert ControllerDescriptions proto to type object."""
+    if not proto:
+      return None
+    obj = ControllerDescriptions()
+    if proto.descriptions:
+      json_list = []
+      for j in proto.descriptions:
+        json_list.append(ControllerDescription.from_proto(j))
+      obj.descriptions = json_list
+    return obj
+
+
 class ConveyorState:
   """Representation of proto message ConveyorState.
 
@@ -1958,7 +2095,6 @@ class DeleteObject:
   """Representation of proto message DeleteObject.
 
    DeleteObject requests an object deletion from the scene in SIM.
-
   """
   py_id: str
 
@@ -2473,7 +2609,7 @@ class DeviceData:
   # Event parameters can be found primarily on metrics DeviceData.
   event_params: List['KeyValue']
 
-  # Last timestamp for message timestamps. See design doc:
+  # Last timestamp for message timestamps.
   message_last_timestamps: List['MessageLastTimestamp']
 
   # Sequence number of the DeviceData. Unique within a Reach serve run.
@@ -2917,11 +3053,21 @@ class DeviceData:
 
   # === Fields for dataType report-error:
 
-  # ReportError for "report-error" messages. See design doc:
+  # ReportError for "report-error" messages.
   report_error: Optional['ReportError']
   # ==============================
 
-  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
+  # === Fields for dataType health:
+
+  # Health messages collect health metrics for Reach.
+  health: Optional['Health']
+  # ==============================
+
+  # === Fields for dataType controller-descriptions:
+  controller_descriptions: Optional['ControllerDescriptions']
+  # ==============================
+
+  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
     if accept_depth_encoding is None:
       self.accept_depth_encoding = []
     else:
@@ -2964,6 +3110,7 @@ class DeviceData:
       self.confidence = confidence
     self.connected_clients = connected_clients
     self.constraints_version = constraints_version
+    self.controller_descriptions = controller_descriptions
     self.data_type = data_type
     self.depth = depth
     if depth_intrinsics is None:
@@ -2997,6 +3144,7 @@ class DeviceData:
       self.force = []
     else:
       self.force = force
+    self.health = health
     self.hint = hint
     self.history = history
     self.inhibit_frame_save = inhibit_frame_save
@@ -3247,6 +3395,10 @@ class DeviceData:
       assert isinstance(self.constraints_version, str), 'Wrong type for attribute: constraints_version. Expected: str. Got: ' + str(type(self.constraints_version)) + '.'
       json_data['constraintsVersion'] = self.constraints_version
 
+    if self.controller_descriptions:
+      assert self.controller_descriptions.__class__.__name__ == 'ControllerDescriptions', 'Wrong type for attribute: controller_descriptions. Expected: ControllerDescriptions. Got: ' + str(type(self.controller_descriptions)) + '.'
+      json_data['controllerDescriptions'] = self.controller_descriptions.to_json()
+
     if self.data_type:
       assert isinstance(self.data_type, str), 'Wrong type for attribute: data_type. Expected: str. Got: ' + str(type(self.data_type)) + '.'
       json_data['dataType'] = self.data_type
@@ -3312,6 +3464,10 @@ class DeviceData:
     if self.force:
       assert isinstance(self.force, list), 'Wrong type for attribute: force. Expected: list. Got: ' + str(type(self.force)) + '.'
       json_data['force'] = self.force
+
+    if self.health:
+      assert self.health.__class__.__name__ == 'Health', 'Wrong type for attribute: health. Expected: Health. Got: ' + str(type(self.health)) + '.'
+      json_data['health'] = self.health.to_json()
 
     if self.hint:
       assert isinstance(self.hint, str), 'Wrong type for attribute: hint. Expected: str. Got: ' + str(type(self.hint)) + '.'
@@ -3715,7 +3871,7 @@ class DeviceData:
     obj = DeviceData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'analogBank', 'analogIn', 'analogOut', 'audioRequestMute', 'audioRequestUnmute', 'boardIOCurrentA', 'boardTempC', 'calibrationVersion', 'clientAnnotation', 'clientOS', 'clientSessionUID', 'code', 'color', 'colorIntrinsics', 'colorTS', 'compressedDepth', 'confidence', 'connectedClients', 'constraintsVersion', 'dataType', 'depth', 'depthIntrinsics', 'depthTS', 'detection', 'deviceName', 'deviceType', 'digitalBank', 'digitalIn', 'digitalOut', 'error', 'eventParams', 'experimentToken', 'floatValue', 'force', 'hint', 'history', 'inhibitFrameSave', 'inhibitFrameSend', 'intValue', 'integerBank', 'intent', 'isEmergencyStopped', 'isObjectDetected', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'key', 'label', 'metricLabels', 'lastTerminatedProgram', 'level', 'localTS', 'machineDescription', 'machineInterfaces', 'message', 'messageLastTimestamps', 'metadata', 'metricValue', 'on', 'operatorType', 'operatorUID', 'pickLabel', 'pickPoints', 'pipelineDescription', 'placeLabel', 'placePosition3D', 'placeQuaternion3D', 'pose', 'position3D', 'predictionType', 'programCounter', 'progress', 'quaternion3D', 'relay', 'remoteTS', 'reportError', 'requestType', 'robotCurrentA', 'robotDexterity', 'robotID', 'robotMode', 'robotName', 'robotPowerState', 'robotPowerStateUpdate', 'robotVoltageV', 'safetyMessage', 'safetyVersion', 'script', 'sendToClients', 'sensorIn', 'seq', 'sessionID', 'simInstanceSegmentation', 'simState', 'startTime', 'state', 'status', 'tag', 'taskCode', 'textInstruction', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque', 'transport', 'ts', 'uiVersion', 'uncompressedDepth', 'uploadDepth', 'vacuumLevelPa', 'value', 'webrtcAudioRequest', 'webrtcAudioResponse', 'workcellIOVersion', 'workcellSetupVersion']
+    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'analogBank', 'analogIn', 'analogOut', 'audioRequestMute', 'audioRequestUnmute', 'boardIOCurrentA', 'boardTempC', 'calibrationVersion', 'clientAnnotation', 'clientOS', 'clientSessionUID', 'code', 'color', 'colorIntrinsics', 'colorTS', 'compressedDepth', 'confidence', 'connectedClients', 'constraintsVersion', 'controllerDescriptions', 'dataType', 'depth', 'depthIntrinsics', 'depthTS', 'detection', 'deviceName', 'deviceType', 'digitalBank', 'digitalIn', 'digitalOut', 'error', 'eventParams', 'experimentToken', 'floatValue', 'force', 'health', 'hint', 'history', 'inhibitFrameSave', 'inhibitFrameSend', 'intValue', 'integerBank', 'intent', 'isEmergencyStopped', 'isObjectDetected', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'key', 'label', 'metricLabels', 'lastTerminatedProgram', 'level', 'localTS', 'machineDescription', 'machineInterfaces', 'message', 'messageLastTimestamps', 'metadata', 'metricValue', 'on', 'operatorType', 'operatorUID', 'pickLabel', 'pickPoints', 'pipelineDescription', 'placeLabel', 'placePosition3D', 'placeQuaternion3D', 'pose', 'position3D', 'predictionType', 'programCounter', 'progress', 'quaternion3D', 'relay', 'remoteTS', 'reportError', 'requestType', 'robotCurrentA', 'robotDexterity', 'robotID', 'robotMode', 'robotName', 'robotPowerState', 'robotPowerStateUpdate', 'robotVoltageV', 'safetyMessage', 'safetyVersion', 'script', 'sendToClients', 'sensorIn', 'seq', 'sessionID', 'simInstanceSegmentation', 'simState', 'startTime', 'state', 'status', 'tag', 'taskCode', 'textInstruction', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque', 'transport', 'ts', 'uiVersion', 'uncompressedDepth', 'uploadDepth', 'vacuumLevelPa', 'value', 'webrtcAudioRequest', 'webrtcAudioResponse', 'workcellIOVersion', 'workcellSetupVersion']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid DeviceData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -3825,6 +3981,10 @@ class DeviceData:
       assert isinstance(json_data['constraintsVersion'], str), 'Wrong type for attribute: constraintsVersion. Expected: str. Got: ' + str(type(json_data['constraintsVersion'])) + '.'
       obj.constraints_version = json_data['constraintsVersion']
 
+    if 'controllerDescriptions' in json_data:
+      assert isinstance(json_data['controllerDescriptions'], dict), 'Wrong type for attribute: controllerDescriptions. Expected: dict. Got: ' + str(type(json_data['controllerDescriptions'])) + '.'
+      obj.controller_descriptions = ControllerDescriptions.from_json(json_data['controllerDescriptions'])
+
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
       obj.data_type = json_data['dataType']
@@ -3902,6 +4062,10 @@ class DeviceData:
       for j in json_data['force']:
         json_list.append(j)
       obj.force = json_list
+
+    if 'health' in json_data:
+      assert isinstance(json_data['health'], dict), 'Wrong type for attribute: health. Expected: dict. Got: ' + str(type(json_data['health'])) + '.'
+      obj.health = Health.from_json(json_data['health'])
 
     if 'hint' in json_data:
       assert isinstance(json_data['hint'], str), 'Wrong type for attribute: hint. Expected: str. Got: ' + str(type(json_data['hint'])) + '.'
@@ -4387,6 +4551,7 @@ class DeviceData:
       obj.confidence = json_list
     obj.connected_clients = ConnectedClients.from_proto(get_proto_field(proto, 'connected_clients'))
     obj.constraints_version = get_proto_value(proto.session_info.constraints_version)
+    obj.controller_descriptions = ControllerDescriptions.from_proto(get_proto_field(proto, 'controller_descriptions'))
     obj.data_type = get_proto_value(proto.data_type)
     obj.depth = get_proto_value(proto.color_depth.depth)
     if proto.color_depth.depth_intrinsics:
@@ -4426,6 +4591,7 @@ class DeviceData:
       for j in proto.ur_state.force:
         json_list.append(j)
       obj.force = json_list
+    obj.health = Health.from_proto(get_proto_field(proto, 'health'))
     obj.hint = get_proto_value(proto.hint)
     obj.history = History.from_proto(get_proto_field(proto, 'history'))
     obj.inhibit_frame_save = get_proto_value(proto.inhibit_frame_save)
@@ -5030,7 +5196,6 @@ class GetAllObjectPoses:
    GetAllObjectPoses requests all object poses of a scene in SIM.
    Deliberately an empty message. Serves like a marker of the type of SIM
    action and also to be consistent with all other actions.
-
   """
 
   def __init__(self) -> None:
@@ -5066,7 +5231,6 @@ class GetSegmentedImage:
   """Representation of proto message GetSegmentedImage.
 
    GetSegmentedImage requests a segmented image from the SIM.
-
   """
   device_key: str
 
@@ -5210,12 +5374,293 @@ class GymAction:
     return obj
 
 
+class Health:
+  """Representation of proto message Health.
+
+   Health messages collect health metrics for Reach.
+  """
+  interval_length_ms: int
+  display_name: str
+  heart_beats: Optional['HeartBeats']
+
+  def __init__(self, display_name: str = '', heart_beats: Optional['HeartBeats'] = None, interval_length_ms: int = 0) -> None:
+    self.display_name = display_name
+    self.heart_beats = heart_beats
+    self.interval_length_ms = interval_length_ms
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.display_name:
+      assert isinstance(self.display_name, str), 'Wrong type for attribute: display_name. Expected: str. Got: ' + str(type(self.display_name)) + '.'
+      json_data['displayName'] = self.display_name
+
+    if self.heart_beats:
+      assert self.heart_beats.__class__.__name__ == 'HeartBeats', 'Wrong type for attribute: heart_beats. Expected: HeartBeats. Got: ' + str(type(self.heart_beats)) + '.'
+      json_data['heartBeats'] = self.heart_beats.to_json()
+
+    if self.interval_length_ms:
+      assert isinstance(self.interval_length_ms, int), 'Wrong type for attribute: interval_length_ms. Expected: int. Got: ' + str(type(self.interval_length_ms)) + '.'
+      json_data['intervalLengthMs'] = self.interval_length_ms
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'Health':
+    """Convert JSON to type object."""
+    obj = Health()
+
+    expected_json_keys: List[str] = ['displayName', 'heartBeats', 'intervalLengthMs']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid Health. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'displayName' in json_data:
+      assert isinstance(json_data['displayName'], str), 'Wrong type for attribute: displayName. Expected: str. Got: ' + str(type(json_data['displayName'])) + '.'
+      obj.display_name = json_data['displayName']
+
+    if 'heartBeats' in json_data:
+      assert isinstance(json_data['heartBeats'], dict), 'Wrong type for attribute: heartBeats. Expected: dict. Got: ' + str(type(json_data['heartBeats'])) + '.'
+      obj.heart_beats = HeartBeats.from_json(json_data['heartBeats'])
+
+    if 'intervalLengthMs' in json_data:
+      assert isinstance(json_data['intervalLengthMs'], int), 'Wrong type for attribute: intervalLengthMs. Expected: int. Got: ' + str(type(json_data['intervalLengthMs'])) + '.'
+      obj.interval_length_ms = json_data['intervalLengthMs']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.Health) -> 'Health':
+    """Convert Health proto to type object."""
+    if not proto:
+      return None
+    obj = Health()
+    obj.display_name = get_proto_value(proto.display_name)
+    obj.heart_beats = HeartBeats.from_proto(get_proto_field(proto, 'heart_beats'))
+    obj.interval_length_ms = get_proto_value(proto.interval_length_ms)
+    return obj
+
+
+class HealthState:
+  """Representation of proto message HealthState.
+
+   HealthState messages include a boolean state and information string for
+   health heartbeats.
+  """
+  ok: bool
+  info: str
+
+  def __init__(self, info: str = '', ok: bool = False) -> None:
+    self.info = info
+    self.ok = ok
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.info:
+      assert isinstance(self.info, str), 'Wrong type for attribute: info. Expected: str. Got: ' + str(type(self.info)) + '.'
+      json_data['info'] = self.info
+
+    if self.ok:
+      assert isinstance(self.ok, bool), 'Wrong type for attribute: ok. Expected: bool. Got: ' + str(type(self.ok)) + '.'
+      json_data['ok'] = self.ok
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'HealthState':
+    """Convert JSON to type object."""
+    obj = HealthState()
+
+    expected_json_keys: List[str] = ['info', 'ok']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid HealthState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'info' in json_data:
+      assert isinstance(json_data['info'], str), 'Wrong type for attribute: info. Expected: str. Got: ' + str(type(json_data['info'])) + '.'
+      obj.info = json_data['info']
+
+    if 'ok' in json_data:
+      assert isinstance(json_data['ok'], bool), 'Wrong type for attribute: ok. Expected: bool. Got: ' + str(type(json_data['ok'])) + '.'
+      obj.ok = json_data['ok']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.HealthState) -> 'HealthState':
+    """Convert HealthState proto to type object."""
+    if not proto:
+      return None
+    obj = HealthState()
+    obj.info = get_proto_value(proto.info)
+    obj.ok = get_proto_value(proto.ok)
+    return obj
+
+
+class HeartBeats:
+  """Representation of proto message HeartBeats.
+
+   HeartBeats messages collect the heartbeats of the various devices to be
+   included in health messages.
+  """
+  any_camera: Optional['HealthState']
+  depth_camera: Optional['HealthState']
+  color_camera: Optional['HealthState']
+  not_estopped: Optional['HealthState']
+  not_pstopped: Optional['HealthState']
+  not_safeguardstopped: Optional['HealthState']
+  joints: Optional['HealthState']
+  movement: Optional['HealthState']
+  client_connected: Optional['HealthState']
+  no_reach_script_failure: Optional['HealthState']
+  teleop_generates_metric: Optional['HealthState']
+
+  def __init__(self, any_camera: Optional['HealthState'] = None, client_connected: Optional['HealthState'] = None, color_camera: Optional['HealthState'] = None, depth_camera: Optional['HealthState'] = None, joints: Optional['HealthState'] = None, movement: Optional['HealthState'] = None, no_reach_script_failure: Optional['HealthState'] = None, not_estopped: Optional['HealthState'] = None, not_pstopped: Optional['HealthState'] = None, not_safeguardstopped: Optional['HealthState'] = None, teleop_generates_metric: Optional['HealthState'] = None) -> None:
+    self.any_camera = any_camera
+    self.client_connected = client_connected
+    self.color_camera = color_camera
+    self.depth_camera = depth_camera
+    self.joints = joints
+    self.movement = movement
+    self.no_reach_script_failure = no_reach_script_failure
+    self.not_estopped = not_estopped
+    self.not_pstopped = not_pstopped
+    self.not_safeguardstopped = not_safeguardstopped
+    self.teleop_generates_metric = teleop_generates_metric
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.any_camera:
+      assert self.any_camera.__class__.__name__ == 'HealthState', 'Wrong type for attribute: any_camera. Expected: HealthState. Got: ' + str(type(self.any_camera)) + '.'
+      json_data['anyCamera'] = self.any_camera.to_json()
+
+    if self.client_connected:
+      assert self.client_connected.__class__.__name__ == 'HealthState', 'Wrong type for attribute: client_connected. Expected: HealthState. Got: ' + str(type(self.client_connected)) + '.'
+      json_data['clientConnected'] = self.client_connected.to_json()
+
+    if self.color_camera:
+      assert self.color_camera.__class__.__name__ == 'HealthState', 'Wrong type for attribute: color_camera. Expected: HealthState. Got: ' + str(type(self.color_camera)) + '.'
+      json_data['colorCamera'] = self.color_camera.to_json()
+
+    if self.depth_camera:
+      assert self.depth_camera.__class__.__name__ == 'HealthState', 'Wrong type for attribute: depth_camera. Expected: HealthState. Got: ' + str(type(self.depth_camera)) + '.'
+      json_data['depthCamera'] = self.depth_camera.to_json()
+
+    if self.joints:
+      assert self.joints.__class__.__name__ == 'HealthState', 'Wrong type for attribute: joints. Expected: HealthState. Got: ' + str(type(self.joints)) + '.'
+      json_data['joints'] = self.joints.to_json()
+
+    if self.movement:
+      assert self.movement.__class__.__name__ == 'HealthState', 'Wrong type for attribute: movement. Expected: HealthState. Got: ' + str(type(self.movement)) + '.'
+      json_data['movement'] = self.movement.to_json()
+
+    if self.no_reach_script_failure:
+      assert self.no_reach_script_failure.__class__.__name__ == 'HealthState', 'Wrong type for attribute: no_reach_script_failure. Expected: HealthState. Got: ' + str(type(self.no_reach_script_failure)) + '.'
+      json_data['noReachScriptFailure'] = self.no_reach_script_failure.to_json()
+
+    if self.not_estopped:
+      assert self.not_estopped.__class__.__name__ == 'HealthState', 'Wrong type for attribute: not_estopped. Expected: HealthState. Got: ' + str(type(self.not_estopped)) + '.'
+      json_data['notEstopped'] = self.not_estopped.to_json()
+
+    if self.not_pstopped:
+      assert self.not_pstopped.__class__.__name__ == 'HealthState', 'Wrong type for attribute: not_pstopped. Expected: HealthState. Got: ' + str(type(self.not_pstopped)) + '.'
+      json_data['notPstopped'] = self.not_pstopped.to_json()
+
+    if self.not_safeguardstopped:
+      assert self.not_safeguardstopped.__class__.__name__ == 'HealthState', 'Wrong type for attribute: not_safeguardstopped. Expected: HealthState. Got: ' + str(type(self.not_safeguardstopped)) + '.'
+      json_data['notSafeguardstopped'] = self.not_safeguardstopped.to_json()
+
+    if self.teleop_generates_metric:
+      assert self.teleop_generates_metric.__class__.__name__ == 'HealthState', 'Wrong type for attribute: teleop_generates_metric. Expected: HealthState. Got: ' + str(type(self.teleop_generates_metric)) + '.'
+      json_data['teleopGeneratesMetric'] = self.teleop_generates_metric.to_json()
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'HeartBeats':
+    """Convert JSON to type object."""
+    obj = HeartBeats()
+
+    expected_json_keys: List[str] = ['anyCamera', 'clientConnected', 'colorCamera', 'depthCamera', 'joints', 'movement', 'noReachScriptFailure', 'notEstopped', 'notPstopped', 'notSafeguardstopped', 'teleopGeneratesMetric']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid HeartBeats. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'anyCamera' in json_data:
+      assert isinstance(json_data['anyCamera'], dict), 'Wrong type for attribute: anyCamera. Expected: dict. Got: ' + str(type(json_data['anyCamera'])) + '.'
+      obj.any_camera = HealthState.from_json(json_data['anyCamera'])
+
+    if 'clientConnected' in json_data:
+      assert isinstance(json_data['clientConnected'], dict), 'Wrong type for attribute: clientConnected. Expected: dict. Got: ' + str(type(json_data['clientConnected'])) + '.'
+      obj.client_connected = HealthState.from_json(json_data['clientConnected'])
+
+    if 'colorCamera' in json_data:
+      assert isinstance(json_data['colorCamera'], dict), 'Wrong type for attribute: colorCamera. Expected: dict. Got: ' + str(type(json_data['colorCamera'])) + '.'
+      obj.color_camera = HealthState.from_json(json_data['colorCamera'])
+
+    if 'depthCamera' in json_data:
+      assert isinstance(json_data['depthCamera'], dict), 'Wrong type for attribute: depthCamera. Expected: dict. Got: ' + str(type(json_data['depthCamera'])) + '.'
+      obj.depth_camera = HealthState.from_json(json_data['depthCamera'])
+
+    if 'joints' in json_data:
+      assert isinstance(json_data['joints'], dict), 'Wrong type for attribute: joints. Expected: dict. Got: ' + str(type(json_data['joints'])) + '.'
+      obj.joints = HealthState.from_json(json_data['joints'])
+
+    if 'movement' in json_data:
+      assert isinstance(json_data['movement'], dict), 'Wrong type for attribute: movement. Expected: dict. Got: ' + str(type(json_data['movement'])) + '.'
+      obj.movement = HealthState.from_json(json_data['movement'])
+
+    if 'noReachScriptFailure' in json_data:
+      assert isinstance(json_data['noReachScriptFailure'], dict), 'Wrong type for attribute: noReachScriptFailure. Expected: dict. Got: ' + str(type(json_data['noReachScriptFailure'])) + '.'
+      obj.no_reach_script_failure = HealthState.from_json(json_data['noReachScriptFailure'])
+
+    if 'notEstopped' in json_data:
+      assert isinstance(json_data['notEstopped'], dict), 'Wrong type for attribute: notEstopped. Expected: dict. Got: ' + str(type(json_data['notEstopped'])) + '.'
+      obj.not_estopped = HealthState.from_json(json_data['notEstopped'])
+
+    if 'notPstopped' in json_data:
+      assert isinstance(json_data['notPstopped'], dict), 'Wrong type for attribute: notPstopped. Expected: dict. Got: ' + str(type(json_data['notPstopped'])) + '.'
+      obj.not_pstopped = HealthState.from_json(json_data['notPstopped'])
+
+    if 'notSafeguardstopped' in json_data:
+      assert isinstance(json_data['notSafeguardstopped'], dict), 'Wrong type for attribute: notSafeguardstopped. Expected: dict. Got: ' + str(type(json_data['notSafeguardstopped'])) + '.'
+      obj.not_safeguardstopped = HealthState.from_json(json_data['notSafeguardstopped'])
+
+    if 'teleopGeneratesMetric' in json_data:
+      assert isinstance(json_data['teleopGeneratesMetric'], dict), 'Wrong type for attribute: teleopGeneratesMetric. Expected: dict. Got: ' + str(type(json_data['teleopGeneratesMetric'])) + '.'
+      obj.teleop_generates_metric = HealthState.from_json(json_data['teleopGeneratesMetric'])
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.HeartBeats) -> 'HeartBeats':
+    """Convert HeartBeats proto to type object."""
+    if not proto:
+      return None
+    obj = HeartBeats()
+    obj.any_camera = HealthState.from_proto(get_proto_field(proto, 'any_camera'))
+    obj.client_connected = HealthState.from_proto(get_proto_field(proto, 'client_connected'))
+    obj.color_camera = HealthState.from_proto(get_proto_field(proto, 'color_camera'))
+    obj.depth_camera = HealthState.from_proto(get_proto_field(proto, 'depth_camera'))
+    obj.joints = HealthState.from_proto(get_proto_field(proto, 'joints'))
+    obj.movement = HealthState.from_proto(get_proto_field(proto, 'movement'))
+    obj.no_reach_script_failure = HealthState.from_proto(get_proto_field(proto, 'no_reach_script_failure'))
+    obj.not_estopped = HealthState.from_proto(get_proto_field(proto, 'not_estopped'))
+    obj.not_pstopped = HealthState.from_proto(get_proto_field(proto, 'not_pstopped'))
+    obj.not_safeguardstopped = HealthState.from_proto(get_proto_field(proto, 'not_safeguardstopped'))
+    obj.teleop_generates_metric = HealthState.from_proto(get_proto_field(proto, 'teleop_generates_metric'))
+    return obj
+
+
 class History:
   """Representation of proto message History.
 
    History represents history storing configuration data.
-
-   For more details, see design doc:
   """
   # history document name
   key: str
@@ -5316,8 +5761,6 @@ class IOState:
    capability can have more than one pin, state is repeated, one for each
    pin. Note that if the capability is digital and fused, then there will only
    be one pin representing the state of all pins in the capability.
-
-   For more details, see the design doc at
   """
   state: List['CapabilityState']
 
@@ -6094,7 +6537,7 @@ class MessageLastTimestamp:
 
    MessageLastTimestamp stores the last timestamp of a given message in the
    metadata for logs. The timestamp can be used to go back in the logs to
-   retrieve that last value of the message. See design doc:
+   retrieve that last value of the message.
   """
   device_type: str
   device_name: str
@@ -6986,7 +7429,6 @@ class ObjectState:
   """Representation of proto message ObjectState.
 
    ObjectState is the list of object states in SIM for ML research.
-
   """
   # unique object identifier
   py_id: str
@@ -7785,7 +8227,7 @@ class ReachScript:
   preemptive_reason: str
 
   # States if the command depends on calibration.
-  # TODO: Jira VIS-274. Reject reach script without
+  # TODO(hirak): Jira VIS-274. Reject reach script without
   # calibration_requirement once all clients are updated to send it.
   calibration_requirement: Optional['ReachScriptCalibrationRequirement']
 
@@ -8134,8 +8576,11 @@ class ReachScriptCommand:
 
   wait: Optional['WaitArgs']
 
-  def __init__(self, acquire_image: Optional['AcquireImageArgs'] = None, move_j_path: Optional['MoveJPathArgs'] = None, move_l_path: Optional['MoveLPathArgs'] = None, move_pose_path: Optional['MovePosePathArgs'] = None, raw: Optional['RawArgs'] = None, set_analog_out: Optional['SetAnalogOutArgs'] = None, set_blend_radius: Optional['SetBlendRadiusArgs'] = None, set_digital_out: Optional['SetDigitalOutArgs'] = None, set_output: Optional['SetOutput'] = None, set_radial_speed: Optional['SetRadialSpeedArgs'] = None, set_tool_digital_out: Optional['SetDigitalOutArgs'] = None, sleep: Optional['SleepArgs'] = None, stop_j: Optional['StopJArgs'] = None, sync: Optional['SyncArgs'] = None, wait: Optional['WaitArgs'] = None) -> None:
+  controller_name: str
+
+  def __init__(self, acquire_image: Optional['AcquireImageArgs'] = None, controller_name: str = '', move_j_path: Optional['MoveJPathArgs'] = None, move_l_path: Optional['MoveLPathArgs'] = None, move_pose_path: Optional['MovePosePathArgs'] = None, raw: Optional['RawArgs'] = None, set_analog_out: Optional['SetAnalogOutArgs'] = None, set_blend_radius: Optional['SetBlendRadiusArgs'] = None, set_digital_out: Optional['SetDigitalOutArgs'] = None, set_output: Optional['SetOutput'] = None, set_radial_speed: Optional['SetRadialSpeedArgs'] = None, set_tool_digital_out: Optional['SetDigitalOutArgs'] = None, sleep: Optional['SleepArgs'] = None, stop_j: Optional['StopJArgs'] = None, sync: Optional['SyncArgs'] = None, wait: Optional['WaitArgs'] = None) -> None:
     self.acquire_image = acquire_image
+    self.controller_name = controller_name
     self.move_j_path = move_j_path
     self.move_l_path = move_l_path
     self.move_pose_path = move_pose_path
@@ -8158,6 +8603,10 @@ class ReachScriptCommand:
     if self.acquire_image:
       assert self.acquire_image.__class__.__name__ == 'AcquireImageArgs', 'Wrong type for attribute: acquire_image. Expected: AcquireImageArgs. Got: ' + str(type(self.acquire_image)) + '.'
       json_data['acquireImage'] = self.acquire_image.to_json()
+
+    if self.controller_name:
+      assert isinstance(self.controller_name, str), 'Wrong type for attribute: controller_name. Expected: str. Got: ' + str(type(self.controller_name)) + '.'
+      json_data['controllerName'] = self.controller_name
 
     if self.move_j_path:
       assert self.move_j_path.__class__.__name__ == 'MoveJPathArgs', 'Wrong type for attribute: move_j_path. Expected: MoveJPathArgs. Got: ' + str(type(self.move_j_path)) + '.'
@@ -8222,7 +8671,7 @@ class ReachScriptCommand:
     """Convert JSON to type object."""
     obj = ReachScriptCommand()
 
-    expected_json_keys: List[str] = ['acquireImage', 'movejPath', 'movelPath', 'movePosePath', 'raw', 'setAnalogOut', 'setBlendRadius', 'setDigitalOut', 'setOutput', 'setRadialSpeed', 'setToolDigitalOut', 'sleep', 'stopJ', 'sync', 'wait']
+    expected_json_keys: List[str] = ['acquireImage', 'controllerName', 'movejPath', 'movelPath', 'movePosePath', 'raw', 'setAnalogOut', 'setBlendRadius', 'setDigitalOut', 'setOutput', 'setRadialSpeed', 'setToolDigitalOut', 'sleep', 'stopJ', 'sync', 'wait']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ReachScriptCommand. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -8230,6 +8679,10 @@ class ReachScriptCommand:
     if 'acquireImage' in json_data:
       assert isinstance(json_data['acquireImage'], dict), 'Wrong type for attribute: acquireImage. Expected: dict. Got: ' + str(type(json_data['acquireImage'])) + '.'
       obj.acquire_image = AcquireImageArgs.from_json(json_data['acquireImage'])
+
+    if 'controllerName' in json_data:
+      assert isinstance(json_data['controllerName'], str), 'Wrong type for attribute: controllerName. Expected: str. Got: ' + str(type(json_data['controllerName'])) + '.'
+      obj.controller_name = json_data['controllerName']
 
     if 'movejPath' in json_data:
       assert isinstance(json_data['movejPath'], dict), 'Wrong type for attribute: movejPath. Expected: dict. Got: ' + str(type(json_data['movejPath'])) + '.'
@@ -8296,6 +8749,7 @@ class ReachScriptCommand:
       return None
     obj = ReachScriptCommand()
     obj.acquire_image = AcquireImageArgs.from_proto(get_proto_field(proto, 'acquire_image'))
+    obj.controller_name = get_proto_value(proto.controller_name)
     obj.move_j_path = MoveJPathArgs.from_proto(get_proto_field(proto, 'move_j_path'))
     obj.move_l_path = MoveLPathArgs.from_proto(get_proto_field(proto, 'move_l_path'))
     obj.move_pose_path = MovePosePathArgs.from_proto(get_proto_field(proto, 'move_pose_path'))
@@ -8497,8 +8951,6 @@ class ReachScriptVar:
 
 class ReportError:
   """Representation of proto message ReportError.
-
-   ReportError for "report-error" messages. See design doc:
   """
   error: str
   tags: List[str]
@@ -9885,7 +10337,6 @@ class SetCameraIntrinsics:
   """Representation of proto message SetCameraIntrinsics.
 
    SetCameraIntrinsics sets the camera intrinsics in SIM.
-
   """
   py_id: str
   intrinsics: List[float]
@@ -10034,7 +10485,6 @@ class SetObjectPose:
   """Representation of proto message SetObjectPose.
 
    SetObjectPose sets the pose of a specific object of the scene in SIM.
-
   """
   py_id: str
   pose_xyzxyzw: List[float]
@@ -10335,7 +10785,6 @@ class SimAction:
   """Representation of proto message SimAction.
 
    SimAction is the type of environment interaction in SIM for ML research.
-
   """
   get_all_object_poses: Optional['GetAllObjectPoses']
   set_object_pose: Optional['SetObjectPose']
@@ -10438,7 +10887,6 @@ class SimInstanceSegmentation:
 
    SimInstanceSegmentation is the object sent when a SIM instance segmentation
    is requested.
-
   """
   # sim_ts is the internal SIM time if the SIM is sped up.
   sim_ts: int
@@ -10528,7 +10976,6 @@ class SimState:
 
    SimState is the list of object states and timestamp
    in SIM for ML research.
-
   """
   # sim_ts is the internal SIM time if the SIM is sped up.
   sim_ts: int
@@ -10652,7 +11099,6 @@ class Snapshot:
   """Representation of proto message Snapshot.
 
    Snapshot is the client's view of the robot state at a given moment.
-   Design doc:
   """
   # The application source that generates this snapshot, such as PyReach.
   source: str
@@ -10665,6 +11111,9 @@ class Snapshot:
   responses: List['SnapshotResponse']
 
   # PyReach gym specific fields
+  # The calculated server time for this snapshot.
+  gym_server_ts: int
+
   # The gym environment id.
   gym_env_id: str
 
@@ -10690,7 +11139,7 @@ class Snapshot:
   # Actions.
   gym_actions: List['GymAction']
 
-  def __init__(self, device_data_refs: Optional[List['DeviceDataRef']] = None, gym_actions: Optional[List['GymAction']] = None, gym_done: bool = False, gym_env_id: str = '', gym_episode: int = 0, gym_reward: float = 0.0, gym_run_id: str = '', gym_step: int = 0, responses: Optional[List['SnapshotResponse']] = None, source: str = '') -> None:
+  def __init__(self, device_data_refs: Optional[List['DeviceDataRef']] = None, gym_actions: Optional[List['GymAction']] = None, gym_done: bool = False, gym_env_id: str = '', gym_episode: int = 0, gym_reward: float = 0.0, gym_run_id: str = '', gym_server_ts: int = 0, gym_step: int = 0, responses: Optional[List['SnapshotResponse']] = None, source: str = '') -> None:
     if device_data_refs is None:
       self.device_data_refs = []
     else:
@@ -10704,6 +11153,7 @@ class Snapshot:
     self.gym_episode = gym_episode
     self.gym_reward = gym_reward
     self.gym_run_id = gym_run_id
+    self.gym_server_ts = gym_server_ts
     self.gym_step = gym_step
     if responses is None:
       self.responses = []
@@ -10750,6 +11200,10 @@ class Snapshot:
       assert isinstance(self.gym_run_id, str), 'Wrong type for attribute: gym_run_id. Expected: str. Got: ' + str(type(self.gym_run_id)) + '.'
       json_data['gymRunId'] = self.gym_run_id
 
+    if self.gym_server_ts:
+      assert isinstance(self.gym_server_ts, int), 'Wrong type for attribute: gym_server_ts. Expected: int. Got: ' + str(type(self.gym_server_ts)) + '.'
+      json_data['gymServerTS'] = self.gym_server_ts
+
     if self.gym_step:
       assert isinstance(self.gym_step, int), 'Wrong type for attribute: gym_step. Expected: int. Got: ' + str(type(self.gym_step)) + '.'
       json_data['gymStep'] = self.gym_step
@@ -10773,7 +11227,7 @@ class Snapshot:
     obj = Snapshot()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['deviceDataRefs', 'gymActions', 'gymDone', 'gymEnvId', 'gymEpisode', 'gymReward', 'gymRunId', 'gymStep', 'responses', 'source']
+    expected_json_keys: List[str] = ['deviceDataRefs', 'gymActions', 'gymDone', 'gymEnvId', 'gymEpisode', 'gymReward', 'gymRunId', 'gymServerTS', 'gymStep', 'responses', 'source']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid Snapshot. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -10811,6 +11265,10 @@ class Snapshot:
     if 'gymRunId' in json_data:
       assert isinstance(json_data['gymRunId'], str), 'Wrong type for attribute: gymRunId. Expected: str. Got: ' + str(type(json_data['gymRunId'])) + '.'
       obj.gym_run_id = json_data['gymRunId']
+
+    if 'gymServerTS' in json_data:
+      assert isinstance(json_data['gymServerTS'], int), 'Wrong type for attribute: gymServerTS. Expected: int. Got: ' + str(type(json_data['gymServerTS'])) + '.'
+      obj.gym_server_ts = json_data['gymServerTS']
 
     if 'gymStep' in json_data:
       assert isinstance(json_data['gymStep'], int), 'Wrong type for attribute: gymStep. Expected: int. Got: ' + str(type(json_data['gymStep'])) + '.'
@@ -10850,6 +11308,7 @@ class Snapshot:
     obj.gym_episode = get_proto_value(proto.gym_episode)
     obj.gym_reward = get_proto_value(proto.gym_reward)
     obj.gym_run_id = get_proto_value(proto.gym_run_id)
+    obj.gym_server_ts = get_proto_value(proto.gym_server_ts)
     obj.gym_step = get_proto_value(proto.gym_step)
     if proto.responses:
       json_list = []
@@ -11188,6 +11647,93 @@ class StopJArgs:
     return obj
 
 
+class StreamRequest:
+  """Representation of proto message StreamRequest.
+
+   StreamRequest is used in a command of dataType "stream-request", to set a
+   rate of streaming.
+  """
+  # deviceType to stream
+  device_type: str
+
+  # deviceName to stream
+  device_name: str
+
+  # dataType to stream
+  data_type: str
+
+  # maximum desired rate in Hz
+  max_rate: float
+
+  def __init__(self, data_type: str = '', device_name: str = '', device_type: str = '', max_rate: float = 0.0) -> None:
+    self.data_type = data_type
+    self.device_name = device_name
+    self.device_type = device_type
+    self.max_rate = max_rate
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.data_type:
+      assert isinstance(self.data_type, str), 'Wrong type for attribute: data_type. Expected: str. Got: ' + str(type(self.data_type)) + '.'
+      json_data['dataType'] = self.data_type
+
+    if self.device_name:
+      assert isinstance(self.device_name, str), 'Wrong type for attribute: device_name. Expected: str. Got: ' + str(type(self.device_name)) + '.'
+      json_data['deviceName'] = self.device_name
+
+    if self.device_type:
+      assert isinstance(self.device_type, str), 'Wrong type for attribute: device_type. Expected: str. Got: ' + str(type(self.device_type)) + '.'
+      json_data['deviceType'] = self.device_type
+
+    if self.max_rate:
+      assert isinstance(self.max_rate, float) or isinstance(self.max_rate, int), 'Wrong type for attribute: max_rate. Expected: float. Got: ' + str(type(self.max_rate)) + '.'
+      json_data['maxRate'] = self.max_rate
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'StreamRequest':
+    """Convert JSON to type object."""
+    obj = StreamRequest()
+
+    expected_json_keys: List[str] = ['dataType', 'deviceName', 'deviceType', 'maxRate']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid StreamRequest. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'dataType' in json_data:
+      assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
+      obj.data_type = json_data['dataType']
+
+    if 'deviceName' in json_data:
+      assert isinstance(json_data['deviceName'], str), 'Wrong type for attribute: deviceName. Expected: str. Got: ' + str(type(json_data['deviceName'])) + '.'
+      obj.device_name = json_data['deviceName']
+
+    if 'deviceType' in json_data:
+      assert isinstance(json_data['deviceType'], str), 'Wrong type for attribute: deviceType. Expected: str. Got: ' + str(type(json_data['deviceType'])) + '.'
+      obj.device_type = json_data['deviceType']
+
+    if 'maxRate' in json_data:
+      assert isinstance(json_data['maxRate'], float) or isinstance(json_data['maxRate'], int), 'Wrong type for attribute: maxRate. Expected: float. Got: ' + str(type(json_data['maxRate'])) + '.'
+      obj.max_rate = json_data['maxRate']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.StreamRequest) -> 'StreamRequest':
+    """Convert StreamRequest proto to type object."""
+    if not proto:
+      return None
+    obj = StreamRequest()
+    obj.data_type = get_proto_value(proto.data_type)
+    obj.device_name = get_proto_value(proto.device_name)
+    obj.device_type = get_proto_value(proto.device_type)
+    obj.max_rate = get_proto_value(proto.max_rate)
+    return obj
+
+
 class SyncArgs:
   """Representation of proto message SyncArgs.
 
@@ -11236,6 +11782,68 @@ class SyncArgs:
     return obj
 
 
+class TextAnnotation:
+  """Representation of proto message TextAnnotation.
+
+   TextAnnotation is for client annotations consisting only of a text string
+   with an optional category.
+  """
+  # The category that the text applies to. This is custom to the client, and
+  # differentiates text generated for different purposes.
+  category: str
+
+  # The text string for the annotation.
+  text: str
+
+  def __init__(self, category: str = '', text: str = '') -> None:
+    self.category = category
+    self.text = text
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.category:
+      assert isinstance(self.category, str), 'Wrong type for attribute: category. Expected: str. Got: ' + str(type(self.category)) + '.'
+      json_data['category'] = self.category
+
+    if self.text:
+      assert isinstance(self.text, str), 'Wrong type for attribute: text. Expected: str. Got: ' + str(type(self.text)) + '.'
+      json_data['text'] = self.text
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'TextAnnotation':
+    """Convert JSON to type object."""
+    obj = TextAnnotation()
+
+    expected_json_keys: List[str] = ['category', 'text']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid TextAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'category' in json_data:
+      assert isinstance(json_data['category'], str), 'Wrong type for attribute: category. Expected: str. Got: ' + str(type(json_data['category'])) + '.'
+      obj.category = json_data['category']
+
+    if 'text' in json_data:
+      assert isinstance(json_data['text'], str), 'Wrong type for attribute: text. Expected: str. Got: ' + str(type(json_data['text'])) + '.'
+      obj.text = json_data['text']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.TextAnnotation) -> 'TextAnnotation':
+    """Convert TextAnnotation proto to type object."""
+    if not proto:
+      return None
+    obj = TextAnnotation()
+    obj.category = get_proto_value(proto.category)
+    obj.text = get_proto_value(proto.text)
+    return obj
+
+
 class TextInstruction:
   """Representation of proto message TextInstruction.
 
@@ -11260,7 +11868,7 @@ class TextInstruction:
 
   # ID that identifies the list of instructions that this instruction is a
   # part of. Used when it is important to identify that an instruction is part
-  # of a specific group of instructions. Design doc:
+  # of a specific group of instructions.
   supertask_id: str
 
   def __init__(self, instruction: str = '', intent: str = '', success_detection: str = '', success_type: str = '', supertask_id: str = '', uid: str = '') -> None:
@@ -12424,7 +13032,6 @@ class WebrtcAudioRequest:
 
    WebrtcAudioRequest is used in a command of dataType "webrtc-audio-request",
    an internal message for setting mute/unmute status in webrtc.
-
   """
   speaker_unmute: bool
   microphone_unmute: bool
@@ -12482,7 +13089,6 @@ class WebrtcAudioResponse:
   """Representation of proto message WebrtcAudioResponse.
 
    WebrtcAudioResponse is the response to a webrtc-audio-request command.
-
   """
   success: bool
 

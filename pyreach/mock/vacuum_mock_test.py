@@ -28,6 +28,14 @@ class TestVacuumMock(unittest.TestCase):
     mock_vacuum: vacuum_mock.VacuumMock = vacuum_mock.VacuumMock()
     assert isinstance(mock_vacuum, vacuum_mock.VacuumMock)
     assert isinstance(mock_vacuum, vacuum.Vacuum)
+    assert isinstance(mock_vacuum.device_name, str)
+    assert isinstance(mock_vacuum.state, vacuum.VacuumState)
+    assert isinstance(mock_vacuum.blowoff_state, vacuum.BlowoffState)
+    assert isinstance(mock_vacuum.pressure_state, vacuum.VacuumPressure)
+    assert isinstance(mock_vacuum.gauge_state, vacuum.VacuumGauge)
+    assert mock_vacuum.support_blowoff
+    assert mock_vacuum.support_gauge
+    assert mock_vacuum.support_pressure
 
 
 if __name__ == "__main__":

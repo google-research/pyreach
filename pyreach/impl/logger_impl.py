@@ -34,7 +34,7 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
   _time_lock: threading.Lock
   _task_time_lock: threading.Lock
   _start_times: Dict[str, int]
-  _task_start_ts: int
+  _task_start_ts: Optional[int]
   _task_end_ts: int
 
   def __init__(self) -> None:
@@ -43,8 +43,8 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
     self._time_lock = threading.Lock()
     self._task_time_lock = threading.Lock()
     self._start_times = {}
-    self._task_start_ts: int = 0
-    self._task_end_ts: int = 0
+    self._task_start_ts = None
+    self._task_end_ts = 0
 
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[core.PyReachStatus]:
@@ -131,6 +131,8 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
       event_params: custom parameters of the event.
     """
     with self._task_time_lock:
+      if self._task_start_ts is not None:
+        raise core.PyReachError("start_task when task is already started")
       self._task_start_ts = utils.timestamp_now()
 
       self.send_cmd(
@@ -151,6 +153,8 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
       event_params: custom parameters of the event.
     """
     with self._task_time_lock:
+      if self._task_start_ts is None:
+        raise core.PyReachError("end_task when task is not yet started")
       self._task_end_ts = utils.timestamp_now()
 
       self.send_cmd(
@@ -166,6 +170,7 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
                   for key, value in event_params.items()
               ],
                                   key=lambda obj: obj.key)))
+      self._task_start_ts = None
 
   def send_snapshot(self, snapshot: Snapshot) -> None:
     """Send a snapshot.

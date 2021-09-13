@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Tests for google3.robotics.learning.reach.third_party.pyreach.tools.lib.cv2_eventloop."""
+
 import collections
 from typing import Deque, List, Union  # pylint: disable=unused-import
 import unittest

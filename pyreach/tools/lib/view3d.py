@@ -16,11 +16,12 @@
 
 from typing import Optional, Tuple, cast
 
-from pyreach import DepthFrame
+import cv2  # type: ignore  # type: ignore
+
 from pyreach.calibration import CalibrationCamera
+from pyreach.depth_camera import DepthFrame
 from pyreach.factory import LocalTCPHostFactory
 from pyreach.tools.lib import view_rgbd
-import cv2  # type: ignore
 
 
 class View3dOverReach:
