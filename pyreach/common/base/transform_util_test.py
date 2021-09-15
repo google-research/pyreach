@@ -13,8 +13,6 @@
 # limitations under the License.
 
 # Lint as: python3
-r"""Tests for transform_util.
-"""
 
 import json
 import math

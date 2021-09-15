@@ -22,7 +22,7 @@ from google.protobuf import duration_pb2
 from google.protobuf import timestamp_pb2
 from pyreach.common.proto_gen import logs_pb2  # type: ignore
 
-# This file is generated. DO NOT EDIT.
+# This file is generated with a Reach proto2json converter. DO NOT EDIT.
 
 
 def get_proto_value(field):
@@ -129,6 +129,7 @@ class AddObject:
   """Representation of proto message AddObject.
 
    AddObject adds a new object in a specific pose within a scene in SIM.
+
   """
   py_id: str
   py_type: str
@@ -326,14 +327,16 @@ class ArmActionParams:
   servo_lookahead_time_secs: float
   servo_gain: float
   allow_uncalibrated: bool
+  controller_name: str
 
-  def __init__(self, acceleration: float = 0.0, action_name: str = '', allow_uncalibrated: bool = False, apply_tip_adjust_transform: bool = False, cid: int = 0, command: int = 0, intent: str = '', joint_angles: Optional[List[float]] = None, pick_id: str = '', pose: Optional[List[float]] = None, reach_action: int = 0, servo: bool = False, servo_gain: float = 0.0, servo_lookahead_time_secs: float = 0.0, servo_t_secs: float = 0.0, success_type: str = '', timeout_sec: float = 0.0, use_linear: bool = False, use_unity_ik: bool = False, velocity: float = 0.0) -> None:
+  def __init__(self, acceleration: float = 0.0, action_name: str = '', allow_uncalibrated: bool = False, apply_tip_adjust_transform: bool = False, cid: int = 0, command: int = 0, controller_name: str = '', intent: str = '', joint_angles: Optional[List[float]] = None, pick_id: str = '', pose: Optional[List[float]] = None, reach_action: int = 0, servo: bool = False, servo_gain: float = 0.0, servo_lookahead_time_secs: float = 0.0, servo_t_secs: float = 0.0, success_type: str = '', timeout_sec: float = 0.0, use_linear: bool = False, use_unity_ik: bool = False, velocity: float = 0.0) -> None:
     self.acceleration = acceleration
     self.action_name = action_name
     self.allow_uncalibrated = allow_uncalibrated
     self.apply_tip_adjust_transform = apply_tip_adjust_transform
     self.cid = cid
     self.command = command
+    self.controller_name = controller_name
     self.intent = intent
     if joint_angles is None:
       self.joint_angles = []
@@ -382,6 +385,10 @@ class ArmActionParams:
     if self.command:
       assert isinstance(self.command, int), 'Wrong type for attribute: command. Expected: int. Got: ' + str(type(self.command)) + '.'
       json_data['command'] = self.command
+
+    if self.controller_name:
+      assert isinstance(self.controller_name, str), 'Wrong type for attribute: controller_name. Expected: str. Got: ' + str(type(self.controller_name)) + '.'
+      json_data['controllerName'] = self.controller_name
 
     if self.intent:
       assert isinstance(self.intent, str), 'Wrong type for attribute: intent. Expected: str. Got: ' + str(type(self.intent)) + '.'
@@ -447,7 +454,7 @@ class ArmActionParams:
     obj = ArmActionParams()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceleration', 'actionName', 'allowUncalibrated', 'applyTipAdjustTransform', 'cid', 'command', 'intent', 'jointAngles', 'pickID', 'pose', 'reachAction', 'servo', 'servoGain', 'servoLookaheadTimeSecs', 'servoTSecs', 'successType', 'timeoutSec', 'useLinear', 'useUnityIk', 'velocity']
+    expected_json_keys: List[str] = ['acceleration', 'actionName', 'allowUncalibrated', 'applyTipAdjustTransform', 'cid', 'command', 'controllerName', 'intent', 'jointAngles', 'pickID', 'pose', 'reachAction', 'servo', 'servoGain', 'servoLookaheadTimeSecs', 'servoTSecs', 'successType', 'timeoutSec', 'useLinear', 'useUnityIk', 'velocity']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ArmActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -475,6 +482,10 @@ class ArmActionParams:
     if 'command' in json_data:
       assert isinstance(json_data['command'], int), 'Wrong type for attribute: command. Expected: int. Got: ' + str(type(json_data['command'])) + '.'
       obj.command = json_data['command']
+
+    if 'controllerName' in json_data:
+      assert isinstance(json_data['controllerName'], str), 'Wrong type for attribute: controllerName. Expected: str. Got: ' + str(type(json_data['controllerName'])) + '.'
+      obj.controller_name = json_data['controllerName']
 
     if 'intent' in json_data:
       assert isinstance(json_data['intent'], str), 'Wrong type for attribute: intent. Expected: str. Got: ' + str(type(json_data['intent'])) + '.'
@@ -552,6 +563,7 @@ class ArmActionParams:
     obj.apply_tip_adjust_transform = get_proto_value(proto.apply_tip_adjust_transform)
     obj.cid = get_proto_value(proto.cid)
     obj.command = get_proto_value(proto.command)
+    obj.controller_name = get_proto_value(proto.controller_name)
     obj.intent = get_proto_value(proto.intent)
     if proto.joint_angles:
       json_list = []
@@ -581,6 +593,7 @@ class AudioRequest:
   """Representation of proto message AudioRequest.
 
    AudioRequest is used for audio mute and unmute requests.
+
   """
   text_cue: str
 
@@ -716,6 +729,7 @@ class CapabilityState:
   """Representation of proto message CapabilityState.
 
    CapabilityState represents the state of one pin in a workcell capability.
+
   """
   # The pin name within the capability (if any).
   pin: str
@@ -882,6 +896,52 @@ class ClientAnnotation:
     obj.interval_start = IntervalStart.from_proto(get_proto_field(proto, 'interval_start'))
     obj.log_channel_id = get_proto_value(proto.log_channel_id)
     obj.text_annotation = TextAnnotation.from_proto(get_proto_field(proto, 'text_annotation'))
+    return obj
+
+
+class ClientAnnotationActionParams:
+  """Representation of proto message ClientAnnotationActionParams.
+
+   ClientAnnotationActionParams stores the client annotation action params.
+  """
+  annotation: Optional['ClientAnnotation']
+
+  def __init__(self, annotation: Optional['ClientAnnotation'] = None) -> None:
+    self.annotation = annotation
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.annotation:
+      assert self.annotation.__class__.__name__ == 'ClientAnnotation', 'Wrong type for attribute: annotation. Expected: ClientAnnotation. Got: ' + str(type(self.annotation)) + '.'
+      json_data['annotation'] = self.annotation.to_json()
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'ClientAnnotationActionParams':
+    """Convert JSON to type object."""
+    obj = ClientAnnotationActionParams()
+
+    expected_json_keys: List[str] = ['annotation']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid ClientAnnotationActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'annotation' in json_data:
+      assert isinstance(json_data['annotation'], dict), 'Wrong type for attribute: annotation. Expected: dict. Got: ' + str(type(json_data['annotation'])) + '.'
+      obj.annotation = ClientAnnotation.from_json(json_data['annotation'])
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.ClientAnnotationActionParams) -> 'ClientAnnotationActionParams':
+    """Convert ClientAnnotationActionParams proto to type object."""
+    if not proto:
+      return None
+    obj = ClientAnnotationActionParams()
+    obj.annotation = ClientAnnotation.from_proto(get_proto_field(proto, 'annotation'))
     return obj
 
 
@@ -2095,6 +2155,7 @@ class DeleteObject:
   """Representation of proto message DeleteObject.
 
    DeleteObject requests an object deletion from the scene in SIM.
+
   """
   py_id: str
 
@@ -3053,17 +3114,18 @@ class DeviceData:
 
   # === Fields for dataType report-error:
 
-  # ReportError for "report-error" messages.
+  # ReportError for "report-error" messages. See design doc:
   report_error: Optional['ReportError']
   # ==============================
 
   # === Fields for dataType health:
 
-  # Health messages collect health metrics for Reach.
+  # Health messages collect health metrics for Reach. See design doc:
   health: Optional['Health']
   # ==============================
 
   # === Fields for dataType controller-descriptions:
+
   controller_descriptions: Optional['ControllerDescriptions']
   # ==============================
 
@@ -5196,6 +5258,7 @@ class GetAllObjectPoses:
    GetAllObjectPoses requests all object poses of a scene in SIM.
    Deliberately an empty message. Serves like a marker of the type of SIM
    action and also to be consistent with all other actions.
+
   """
 
   def __init__(self) -> None:
@@ -5231,6 +5294,7 @@ class GetSegmentedImage:
   """Representation of proto message GetSegmentedImage.
 
    GetSegmentedImage requests a segmented image from the SIM.
+
   """
   device_key: str
 
@@ -5284,9 +5348,11 @@ class GymAction:
   arm_action_params: Optional['ArmActionParams']
   vacuum_action_params: Optional['VacuumActionParams']
   logger_action_params: Optional['LoggerActionParams']
+  client_annotation_action_params: Optional['ClientAnnotationActionParams']
 
-  def __init__(self, arm_action_params: Optional['ArmActionParams'] = None, device_name: str = '', device_type: str = '', logger_action_params: Optional['LoggerActionParams'] = None, synchronous: bool = False, vacuum_action_params: Optional['VacuumActionParams'] = None) -> None:
+  def __init__(self, arm_action_params: Optional['ArmActionParams'] = None, client_annotation_action_params: Optional['ClientAnnotationActionParams'] = None, device_name: str = '', device_type: str = '', logger_action_params: Optional['LoggerActionParams'] = None, synchronous: bool = False, vacuum_action_params: Optional['VacuumActionParams'] = None) -> None:
     self.arm_action_params = arm_action_params
+    self.client_annotation_action_params = client_annotation_action_params
     self.device_name = device_name
     self.device_type = device_type
     self.logger_action_params = logger_action_params
@@ -5300,6 +5366,10 @@ class GymAction:
     if self.arm_action_params:
       assert self.arm_action_params.__class__.__name__ == 'ArmActionParams', 'Wrong type for attribute: arm_action_params. Expected: ArmActionParams. Got: ' + str(type(self.arm_action_params)) + '.'
       json_data['armActionParams'] = self.arm_action_params.to_json()
+
+    if self.client_annotation_action_params:
+      assert self.client_annotation_action_params.__class__.__name__ == 'ClientAnnotationActionParams', 'Wrong type for attribute: client_annotation_action_params. Expected: ClientAnnotationActionParams. Got: ' + str(type(self.client_annotation_action_params)) + '.'
+      json_data['clientAnnotationActionParams'] = self.client_annotation_action_params.to_json()
 
     if self.device_name:
       assert isinstance(self.device_name, str), 'Wrong type for attribute: device_name. Expected: str. Got: ' + str(type(self.device_name)) + '.'
@@ -5328,7 +5398,7 @@ class GymAction:
     """Convert JSON to type object."""
     obj = GymAction()
 
-    expected_json_keys: List[str] = ['armActionParams', 'deviceName', 'deviceType', 'loggerActionParams', 'synchronous', 'vacuumActionParams']
+    expected_json_keys: List[str] = ['armActionParams', 'clientAnnotationActionParams', 'deviceName', 'deviceType', 'loggerActionParams', 'synchronous', 'vacuumActionParams']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid GymAction. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -5336,6 +5406,10 @@ class GymAction:
     if 'armActionParams' in json_data:
       assert isinstance(json_data['armActionParams'], dict), 'Wrong type for attribute: armActionParams. Expected: dict. Got: ' + str(type(json_data['armActionParams'])) + '.'
       obj.arm_action_params = ArmActionParams.from_json(json_data['armActionParams'])
+
+    if 'clientAnnotationActionParams' in json_data:
+      assert isinstance(json_data['clientAnnotationActionParams'], dict), 'Wrong type for attribute: clientAnnotationActionParams. Expected: dict. Got: ' + str(type(json_data['clientAnnotationActionParams'])) + '.'
+      obj.client_annotation_action_params = ClientAnnotationActionParams.from_json(json_data['clientAnnotationActionParams'])
 
     if 'deviceName' in json_data:
       assert isinstance(json_data['deviceName'], str), 'Wrong type for attribute: deviceName. Expected: str. Got: ' + str(type(json_data['deviceName'])) + '.'
@@ -5366,6 +5440,7 @@ class GymAction:
       return None
     obj = GymAction()
     obj.arm_action_params = ArmActionParams.from_proto(get_proto_field(proto, 'arm_action_params'))
+    obj.client_annotation_action_params = ClientAnnotationActionParams.from_proto(get_proto_field(proto, 'client_annotation_action_params'))
     obj.device_name = get_proto_value(proto.device_name)
     obj.device_type = get_proto_value(proto.device_type)
     obj.logger_action_params = LoggerActionParams.from_proto(get_proto_field(proto, 'logger_action_params'))
@@ -5661,6 +5736,7 @@ class History:
   """Representation of proto message History.
 
    History represents history storing configuration data.
+
   """
   # history document name
   key: str
@@ -5761,6 +5837,7 @@ class IOState:
    capability can have more than one pin, state is repeated, one for each
    pin. Note that if the capability is digital and fused, then there will only
    be one pin representing the state of all pins in the capability.
+
   """
   state: List['CapabilityState']
 
@@ -5919,6 +5996,7 @@ class IntervalEnd:
   """Representation of proto message IntervalEnd.
 
    IntervalEnd ends a named interval.
+
   """
   # The name of the interval to end.
   name: str
@@ -5992,6 +6070,7 @@ class IntervalStart:
   """Representation of proto message IntervalStart.
 
    IntervalStart starts a named interval.
+
   """
   # The name of the interval to start.
   name: str
@@ -7429,6 +7508,7 @@ class ObjectState:
   """Representation of proto message ObjectState.
 
    ObjectState is the list of object states in SIM for ML research.
+
   """
   # unique object identifier
   py_id: str
@@ -8951,6 +9031,8 @@ class ReachScriptVar:
 
 class ReportError:
   """Representation of proto message ReportError.
+
+   ReportError for "report-error" messages.
   """
   error: str
   tags: List[str]
@@ -10337,6 +10419,7 @@ class SetCameraIntrinsics:
   """Representation of proto message SetCameraIntrinsics.
 
    SetCameraIntrinsics sets the camera intrinsics in SIM.
+
   """
   py_id: str
   intrinsics: List[float]
@@ -10485,6 +10568,7 @@ class SetObjectPose:
   """Representation of proto message SetObjectPose.
 
    SetObjectPose sets the pose of a specific object of the scene in SIM.
+
   """
   py_id: str
   pose_xyzxyzw: List[float]
@@ -10785,6 +10869,7 @@ class SimAction:
   """Representation of proto message SimAction.
 
    SimAction is the type of environment interaction in SIM for ML research.
+
   """
   get_all_object_poses: Optional['GetAllObjectPoses']
   set_object_pose: Optional['SetObjectPose']
@@ -10887,6 +10972,7 @@ class SimInstanceSegmentation:
 
    SimInstanceSegmentation is the object sent when a SIM instance segmentation
    is requested.
+
   """
   # sim_ts is the internal SIM time if the SIM is sped up.
   sim_ts: int
@@ -10976,6 +11062,7 @@ class SimState:
 
    SimState is the list of object states and timestamp
    in SIM for ML research.
+
   """
   # sim_ts is the internal SIM time if the SIM is sped up.
   sim_ts: int
@@ -11652,6 +11739,7 @@ class StreamRequest:
 
    StreamRequest is used in a command of dataType "stream-request", to set a
    rate of streaming.
+
   """
   # deviceType to stream
   device_type: str
@@ -13032,6 +13120,7 @@ class WebrtcAudioRequest:
 
    WebrtcAudioRequest is used in a command of dataType "webrtc-audio-request",
    an internal message for setting mute/unmute status in webrtc.
+
   """
   speaker_unmute: bool
   microphone_unmute: bool
@@ -13089,6 +13178,7 @@ class WebrtcAudioResponse:
   """Representation of proto message WebrtcAudioResponse.
 
    WebrtcAudioResponse is the response to a webrtc-audio-request command.
+
   """
   success: bool
 

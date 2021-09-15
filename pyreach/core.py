@@ -308,6 +308,17 @@ class Quaternion(object):
     return cls.from_tuple(rotation_tuple)
 
 
+@dataclasses.dataclass(frozen=True)
+class Scale(object):
+  """A data class that represents a 3D scale.
+
+  Values in meters. Default to 1 meter.
+  """
+  x: float = 1.0
+  y: float = 1.0
+  z: float = 1.0
+
+
 class Rotation(object):
   """A interface that represents a particular rotation in 3D space."""
 

@@ -1,3 +1,4 @@
+#/usr/bin/env bash
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,8 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-#/usr/bin/env bash
 
 # The Google bash lint tools encourage using bash arrays instead of word splitting.
 # Below is an extremely brief tutorial about bash arrays.

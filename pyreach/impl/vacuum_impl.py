@@ -439,8 +439,8 @@ class VacuumImpl(vacuum.Vacuum):
       finished_callback: callback called after operation is completed.
     """
     self._arm.async_set_vacuum_state(arm_impl.ActionVacuumState.VACUUM, intent,
-                                     pick_id, success_type, timeout, callback,
-                                     finished_callback)
+                                     pick_id, success_type, "", timeout,
+                                     callback, finished_callback)
 
   def async_off(self,
                 intent: str = "",
@@ -461,8 +461,8 @@ class VacuumImpl(vacuum.Vacuum):
       finished_callback: callback called after operation is completed.
     """
     self._arm.async_set_vacuum_state(arm_impl.ActionVacuumState.OFF, intent,
-                                     pick_id, success_type, timeout, callback,
-                                     finished_callback)
+                                     pick_id, success_type, "", timeout,
+                                     callback, finished_callback)
 
   def async_blowoff(
       self,
@@ -491,8 +491,8 @@ class VacuumImpl(vacuum.Vacuum):
     if not self.support_blowoff:
       raise core.PyReachError("blowoff is not supported")
     self._arm.async_set_vacuum_state(arm_impl.ActionVacuumState.BLOWOFF, intent,
-                                     pick_id, success_type, timeout, callback,
-                                     finished_callback)
+                                     pick_id, success_type, "", timeout,
+                                     callback, finished_callback)
 
   def fetch_state(self, timeout: float = 15.0) -> vacuum.VacuumState:
     """Fetch a new vacuum state.

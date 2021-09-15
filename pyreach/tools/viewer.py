@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Viewer displays camera images for a Reach workcell.
+"""Viewer displays camera images for a Reach workcell."""
 
-Sample non-blaze command:
-  python3 viewer.py
-"""
 from typing import List
 
 from absl import app  # type: ignore

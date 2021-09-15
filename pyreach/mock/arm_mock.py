@@ -38,9 +38,9 @@ class ArmMock(arm.Arm):
     orientation: core.AxisAngle = core.AxisAngle.from_tuple((0.0, 0.0, 0.0))
     pose: core.Pose = core.Pose(position, orientation)
     force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    state: arm.ArmState = arm.ArmState(
-        0.0, 0, "robot", "", joint_angles, pose, force, False, False, False,
-        False, "", False, False, arm.RobotMode.DEFAULT)
+    state: arm.ArmState = arm.ArmState(0.0, 0, "robot", "", joint_angles, pose,
+                                       force, False, False, False, False, "",
+                                       False, False, arm.RobotMode.DEFAULT)
     return state
 
   @property
@@ -103,9 +103,9 @@ class ArmMock(arm.Arm):
     joint_angles: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     pose: core.Pose = core.Pose.from_tuple((0.0, 0.0, 0.0, 1.0, 0.0, 0.0))
     force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    return arm.ArmState(time, sequence,
-                        "robot", "", joint_angles, pose, force, False, False,
-                        False, False, "", False, False, arm.RobotMode.DEFAULT)
+    return arm.ArmState(time, sequence, "robot", "", joint_angles, pose, force,
+                        False, False, False, False, "", False, False,
+                        arm.RobotMode.DEFAULT)
 
   def async_fetch_state(
       self,
@@ -138,6 +138,7 @@ class ArmMock(arm.Arm):
                 servo_lookahead_time_seconds: float = 0.0,
                 servo_gain: float = 0.0,
                 preemptive: bool = False,
+                controller_name: str = "",
                 timeout: Optional[float] = None) -> core.PyReachStatus:
     """Move the arm to a target joint configuration synchronously.
 
@@ -158,6 +159,7 @@ class ArmMock(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
 
     Returns:
@@ -181,6 +183,7 @@ class ArmMock(arm.Arm):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -203,6 +206,7 @@ class ArmMock(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -235,6 +239,7 @@ class ArmMock(arm.Arm):
               servo_lookahead_time_seconds: float = 0.0,
               servo_gain: float = 0.0,
               preemptive: bool = False,
+              controller_name: str = "",
               timeout: Optional[float] = None) -> core.PyReachStatus:
     """Move the arm to a target pose synchronously.
 
@@ -257,6 +262,7 @@ class ArmMock(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
 
     Returns:
@@ -281,6 +287,7 @@ class ArmMock(arm.Arm):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -305,6 +312,7 @@ class ArmMock(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.

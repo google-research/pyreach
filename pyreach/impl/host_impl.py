@@ -17,7 +17,7 @@ import logging
 import queue
 import threading
 import time
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Set, Optional, Tuple
 
 import pyreach
 from pyreach import actionsets
@@ -143,6 +143,7 @@ class HostImpl(pyreach.Host):
   _playback: Optional[Playback]
   _metrics: pyreach.Metrics
   _text_instructions: pyreach.TextInstructions
+  _arm_devices: List[arm_impl.ArmDevice]
 
   def __init__(
       self,
@@ -168,6 +169,7 @@ class HostImpl(pyreach.Host):
 
     # Load config
     self._config = ConfigImpl()
+    self._arm_devices = []
 
     # Read the initial key-value requests:
     msgs: List[Optional[types_gen.DeviceData]] = []
@@ -279,10 +281,11 @@ class HostImpl(pyreach.Host):
       return dev[1]
 
     def add_arm_device(
-        dev: Tuple[device_base.DeviceBase, device_base.DeviceBase, host.T]
-    ) -> host.T:
+        dev: Tuple[arm_impl.ArmDevice, device_base.DeviceBase,
+                   host.T]) -> host.T:
       devices.append(dev[0])
       devices.append(dev[1])
+      self._arm_devices.append(dev[0])
       return dev[2]
 
     # Load oracles
@@ -385,6 +388,14 @@ class HostImpl(pyreach.Host):
     arms: Dict[str, arm_impl.ArmImpl] = {}
     if interfaces is not None:
       arm_interfaces = interfaces.get_machine_interfaces_with_type("robot")
+      support_controllers: Set[str] = set()
+      for arm_interface in arm_interfaces:
+        # Constant name makes line to long unless shortened via local variable.
+        cdr = machine_interfaces.InterfaceType.CONTROLLER_DESCRIPTIONS_REQUEST
+        if (arm_interface.data_type == "controller-descriptions" and
+            arm_interface.interface_type == cdr and
+            arm_interface.device_type == "robot"):
+          support_controllers.add(arm_interface.device_name)
       for arm_interface in arm_interfaces:
         if arm_interface.device_name in arms:
           continue
@@ -399,9 +410,14 @@ class HostImpl(pyreach.Host):
         if arm_type is None:
           continue
         arms[arm_interface.device_name] = add_arm_device(
-            arm_impl.ArmDevice(arm_type, self._config._calibration,
-                               self._config._actionsets, workcell_io_config,
-                               arm_interface.device_name).get_wrapper())
+            arm_impl.ArmDevice(
+                arm_type,
+                self._config._calibration,
+                self._config._actionsets,
+                workcell_io_config,
+                arm_interface.device_name,
+                support_controllers=(arm_interface.device_name
+                                     in support_controllers)).get_wrapper())
     self._arms = core.ImmutableDictionary(arms)
     self._arm = arms.get("")
     # Add vacuums
@@ -457,10 +473,29 @@ class HostImpl(pyreach.Host):
     self._host.start()
     if enable_streaming and not is_playback:
       self._start_streaming()
+    else:
+      for t in self._start_arm_read_controller():
+        t.join()
 
   def get_timers(self) -> internal.Timers:  # pylint: disable=unused-argument
     """Return the global timers object."""
     return internal.Internal.get_timers()
+
+  def _start_arm_read_controller(self) -> List[threading.Thread]:
+
+    def arm_read_controllers(load_arm: arm_impl.ArmDevice) -> None:
+      while (load_arm.fetch_supported_controllers() is None and
+             not self.is_closed()):
+        pass
+
+    threads: List[threading.Thread] = []
+
+    for arm_dev in self._arm_devices:
+      t = threading.Thread(target=arm_read_controllers, args=(arm_dev,))
+      t.start()
+      threads.append(t)
+
+    return threads
 
   def _start_streaming(self) -> None:
     """Start streaming from hosts."""
@@ -491,6 +526,8 @@ class HostImpl(pyreach.Host):
     for _, v1 in self._arms.items():
       v1.start_streaming()
       v1.add_update_callback(new_callback())
+
+    threads = self._start_arm_read_controller()
 
     for _, v2 in self._color_cameras.items():
       v2.start_streaming()
@@ -525,6 +562,8 @@ class HostImpl(pyreach.Host):
           callback_count += 1
       except queue.Empty:
         pass
+    for t in threads:
+      t.join()
 
   def __enter__(self) -> "pyreach.Host":
     """With statement entry dunder."""

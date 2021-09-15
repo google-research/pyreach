@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for generating snapshots for client state logging."""
 
 import dataclasses
@@ -89,6 +88,7 @@ class SnapshotGymArmAction(SnapshotGymAction):
       only).
     allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
       set in calibration code).
+    controller_name: The name of the controller to send the command to.
   """
   command: int
   cid: int
@@ -109,6 +109,7 @@ class SnapshotGymArmAction(SnapshotGymAction):
   servo_lookahead_time_seconds: float = 0.0
   servo_gain: float = 0.0
   allow_uncalibrated: bool = False
+  controller_name: str = ""
 
 
 @dataclasses.dataclass(frozen=True)

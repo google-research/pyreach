@@ -94,9 +94,17 @@ class _Command:
   convert Arm Commands to lower level Reach Script commands.
   """
 
-  def __init__(self) -> None:
-    """Init Arm Command base instance."""
-    pass
+  def __init__(self, controller_name: str) -> None:
+    """Init Arm Command base instance.
+
+    Args:
+      controller_name: the name of the controller.
+    """
+    self._controller_name = controller_name
+
+  @property
+  def controller_name(self) -> str:
+    return self._controller_name
 
   def to_reach_script(
       self,
@@ -139,6 +147,7 @@ class _MoveJoints(_Command):
   _servo_gain: float
 
   def __init__(self,
+               controller_name: str,
                joints: List[float],
                velocity: float = 0.0,
                acceleration: float = 0.0,
@@ -149,6 +158,7 @@ class _MoveJoints(_Command):
     """Construct a move joints command.
 
     Args:
+      controller_name: the name of the controller.
       joints: Desired joint angles.
       velocity: Max velocity.
       acceleration: Max acceleration.
@@ -159,7 +169,7 @@ class _MoveJoints(_Command):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
     """
-    super().__init__()
+    super().__init__(controller_name)
     self._joints = joints
     self._velocity = velocity
     self._acceleration = acceleration
@@ -198,6 +208,7 @@ class _MoveJoints(_Command):
       raise core.PyReachError("Invalid joint count in MoveJoints")
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             move_j_path=types_gen.MoveJPathArgs(waypoints=[
                 types_gen.MoveJWaypointArgs(
                     rotation=self._joints,
@@ -221,6 +232,7 @@ class _MoveLinear(_Command):
   _servo: bool
 
   def __init__(self,
+               controller_name: str,
                joints: List[float],
                velocity: float = 0.0,
                acceleration: float = 0.0,
@@ -228,12 +240,13 @@ class _MoveLinear(_Command):
     """Construct the Arm Move Linear command with its desired joints.
 
     Args:
+      controller_name: the name of the controller.
       joints: Desired joints.
       velocity: Max velocity.
       acceleration: Max acceleration.
       servo: Use servo mode.
     """
-    super().__init__()
+    super().__init__(controller_name)
     self._joints = joints
     self._velocity = velocity
     self._acceleration = acceleration
@@ -269,6 +282,7 @@ class _MoveLinear(_Command):
       raise core.PyReachError("Invalid joint count in MoveLinear")
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             move_l_path=types_gen.MoveLPathArgs(waypoints=[
                 types_gen.MoveLWaypointArgs(
                     rotation=self._joints,
@@ -295,6 +309,7 @@ class _MovePose(_Command):
   _servo_gain: float
 
   def __init__(self,
+               controller_name: str,
                translation: types_gen.Vec3d,
                rotation: types_gen.Vec3d,
                velocity: float = 0.0,
@@ -309,6 +324,7 @@ class _MovePose(_Command):
     """Construct the MovePose object.
 
     Args:
+      controller_name: the name of the controller.
       translation: The [X,Y,Z] location to translate to.
       rotation: The rotation represented in angle-axis notation, [AX, AY, AZ]
         specifying the rotation axis and the length of the axis specifying the
@@ -325,7 +341,7 @@ class _MovePose(_Command):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
     """
-    super().__init__()
+    super().__init__(controller_name)
     self._translation = translation
     self._rotation = rotation
     self._velocity = velocity
@@ -387,13 +403,15 @@ class _MovePose(_Command):
       if joints is None:
         raise core.PyReachError("IK failed to find solution")
       if self._use_linear:
-        return _MoveLinear(joints.tolist(), self._velocity,
+        return _MoveLinear(self.controller_name, joints.tolist(),
+                           self._velocity,
                            self._acceleration, self._servo).to_reach_script(
                                arm_type, support_vacuum, support_blowoff,
                                ik_lib, ik_hints, state, arm_origin,
                                tip_adjust_transform)
       else:
         return _MoveJoints(
+            self.controller_name,
             joints.tolist(),
             self._velocity,
             self._acceleration,
@@ -406,6 +424,7 @@ class _MovePose(_Command):
     else:
       return [
           types_gen.ReachScriptCommand(
+              controller_name=self.controller_name,
               move_pose_path=types_gen.MovePosePathArgs(waypoints=[
                   types_gen.MovePoseWaypointArgs(
                       translation=types_gen.Vec3d(pose[0], pose[1], pose[2]),
@@ -421,9 +440,14 @@ class _SetVacuumState(_Command):
 
   _state: ActionVacuumState
 
-  def __init__(self, state: ActionVacuumState) -> None:
-    """Init the vacuum state for an Arm Command."""
-    super().__init__()
+  def __init__(self, controller_name: str, state: ActionVacuumState) -> None:
+    """Init the vacuum state for an Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      state: the vacuum state.
+    """
+    super().__init__(controller_name)
     self._state = state
 
   # pylint: disable=unused-argument
@@ -457,6 +481,7 @@ class _SetVacuumState(_Command):
       raise core.PyReachError("Robot does not support vacuum")
     cmds = [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             set_output=types_gen.SetOutput(
                 py_type="vacuum",
                 name="",
@@ -469,6 +494,7 @@ class _SetVacuumState(_Command):
     if support_blowoff:
       cmds.append(
           types_gen.ReachScriptCommand(
+              controller_name=self.controller_name,
               set_output=types_gen.SetOutput(
                   py_type="blowoff",
                   name="",
@@ -489,9 +515,15 @@ class _SetDigitalOut(_Command):
   _output: int
   _value: bool
 
-  def __init__(self, output: int, value: bool) -> None:
-    """Init the output state for an Arm Command."""
-    super().__init__()
+  def __init__(self, controller_name: str, output: int, value: bool) -> None:
+    """Init the output state for an Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      output: the output number to set.
+      value: the value to set.
+    """
+    super().__init__(controller_name)
     self._output = output
     self._value = value
 
@@ -524,6 +556,7 @@ class _SetDigitalOut(_Command):
     """
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             set_digital_out=types_gen.SetDigitalOutArgs(
                 output=self._output, value=self._value))
     ]
@@ -535,9 +568,15 @@ class _SetToolDigitalOut(_Command):
   _output: int
   _value: bool
 
-  def __init__(self, output: int, value: bool) -> None:
-    """Init the tool output state for an Arm Command."""
-    super().__init__()
+  def __init__(self, controller_name: str, output: int, value: bool) -> None:
+    """Init the tool output state for an Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      output: the output number to set.
+      value: the value to set.
+    """
+    super().__init__(controller_name)
     self._output = output
     self._value = value
 
@@ -570,6 +609,7 @@ class _SetToolDigitalOut(_Command):
     """
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             set_tool_digital_out=types_gen.SetDigitalOutArgs(
                 output=self._output, value=self._value))
     ]
@@ -581,9 +621,15 @@ class _SetAnalogOut(_Command):
   _output: int
   _value: float
 
-  def __init__(self, output: int, value: float) -> None:
-    """Init the tool output state for an Arm Command."""
-    super().__init__()
+  def __init__(self, controller_name: str, output: int, value: float) -> None:
+    """Init the tool output state for an Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      output: the output number to set.
+      value: the value to set.
+    """
+    super().__init__(controller_name)
     self._output = output
     self._value = value
 
@@ -616,6 +662,7 @@ class _SetAnalogOut(_Command):
     """
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             set_analog_out=types_gen.SetAnalogOutArgs(
                 output=self._output, value=self._value))
     ]
@@ -629,17 +676,19 @@ class _SetOutput(_Command):
   _int_states: List[Tuple[str, int]]
   _float_states: List[Tuple[str, float]]
 
-  def __init__(self, typ: str, name: str, int_states: List[Tuple[str, int]],
-               float_states: List[Tuple[str, float]]):
+  def __init__(self, controller_name: str, typ: str, name: str,
+               int_states: List[Tuple[str, int]],
+               float_states: List[Tuple[str, float]]) -> None:
     """Init the out state for an Arm Command.
 
     Args:
+      controller_name: the name of the controller.
       typ: The type of the output.
       name: The name of the output.
       int_states: The initial integer states as a list of name/value pairs.
       float_states: The initial float states as a list of name/value pairs.
     """
-    super().__init__()
+    super().__init__(controller_name)
     self._type = typ
     self._name = name
     self._int_states = int_states
@@ -674,6 +723,7 @@ class _SetOutput(_Command):
     """
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             set_output=types_gen.SetOutput(
                 py_type=self._type,
                 name=self._name,
@@ -692,13 +742,14 @@ class _Stop(_Command):
 
   _deceleration: float
 
-  def __init__(self, deceleration: float = 2.0) -> None:
+  def __init__(self, controller_name: str, deceleration: float = 2.0) -> None:
     """Init Stop Arm Command.
 
     Args:
+      controller_name: the name of the controller.
       deceleration: The deceleration rate in radians/second/second.
     """
-    super().__init__()
+    super().__init__(controller_name)
     self._deceleration = deceleration
 
   # pylint: disable=unused-argument
@@ -730,6 +781,7 @@ class _Stop(_Command):
     """
     return [
         types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
             stop_j=types_gen.StopJArgs(deceleration=self._deceleration)),
     ]
 
@@ -819,6 +871,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _actions: Optional[actions_impl.ActionDevice]
   _support_vacuum: bool
   _support_blowoff: bool
+  _supported_controllers: Optional[Tuple[arm.ArmControllerDescription, ...]]
   _timers: internal.Timers
 
   def __init__(
@@ -828,7 +881,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       actions: Optional[actions_impl.ActionDevice] = None,
       workcell_io_config: Optional[workcell_io.IOConfig] = None,  # type: ignore
       device_name: str = "",
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]] = None
+      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]] = None,
+      support_controllers: bool = False,
   ) -> None:
     """Construct the Arm Device.
 
@@ -839,6 +893,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       workcell_io_config: Teh workcell IO config.
       device_name: The name of the device.
       ik_lib: Override creation of ikfast.
+      support_controllers: Robot supports controllers
     """
     requester.Requester.__init__(self)
     self._arm_type = arm_type
@@ -853,6 +908,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     self._actions = actions
     self._support_vacuum = False
     self._support_blowoff = False
+    self._supported_controllers = None if support_controllers else ()
     self._timers = internal.Timers(set())
     if workcell_io_config is None:
       return
@@ -867,6 +923,28 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         self._support_vacuum = True
       elif capability.type == "blowoff":
         self._support_blowoff = True
+
+  @property
+  def supported_controllers(
+      self) -> Optional[Tuple[arm.ArmControllerDescription, ...]]:
+    """The supported controllers, or None if not loaded."""
+    return self._supported_controllers
+
+  def fetch_supported_controllers(
+      self) -> Optional[Tuple[arm.ArmControllerDescription, ...]]:
+    """Fetch the supported controllers."""
+    controllers = self.supported_controllers
+    if controllers is not None:
+      return controllers
+    thread_util.extract_all_from_queue(
+        self.send_tagged_request(
+            types_gen.CommandData(
+                tag=utils.generate_tag(),
+                ts=utils.timestamp_now(),
+                device_type="robot",
+                device_name=self.device_name,
+                data_type="controller-descriptions-request")))
+    return self.supported_controllers
 
   @property
   def constraints(self) -> constraints_impl.ConstraintsDevice:
@@ -941,6 +1019,14 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       The device State if it is present in the message.
 
     """
+    if (self._device_name == msg.device_name and msg.device_type == "robot" and
+        msg.data_type == "controller-descriptions"):
+      descs = []
+      if (msg.controller_descriptions and
+          msg.controller_descriptions.descriptions):
+        for desc in msg.controller_descriptions.descriptions:
+          descs.append(arm.ArmControllerDescription(name=desc.name))
+      self._supported_controllers = tuple(descs)
     if (self._device_name == msg.device_name and msg.device_type == "robot" and
         msg.data_type == "robot-state"):
       return self._arm_state_from_message(self._arm_type, msg)
@@ -1151,7 +1237,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         utils.timestamp_now(), status="rejected", error="timeout")
 
   def get_wrapper(
-      self) -> Tuple[device_base.DeviceBase, device_base.DeviceBase, "ArmImpl"]:
+      self) -> Tuple["ArmDevice", device_base.DeviceBase, "ArmImpl"]:
     """Return the Device, Constraints Device, and Arm."""
     return self, self._constraints_device, ArmImpl(self)
 
@@ -1229,6 +1315,12 @@ class ArmImpl(arm.Arm):
   def arm_type(self) -> arm.ArmType:
     """Return the arm type of the arm."""
     return self._device.arm_type
+
+  @property
+  def supported_controllers(
+      self) -> Optional[Tuple[arm.ArmControllerDescription, ...]]:
+    """The supported controllers, or None if not loaded."""
+    return self._device.supported_controllers
 
   def reset_sim(self) -> None:
     """Send reset sim command."""
@@ -1357,6 +1449,7 @@ class ArmImpl(arm.Arm):
                 servo_lookahead_time_seconds: float = 0.0,
                 servo_gain: float = 0.0,
                 preemptive: bool = False,
+                controller_name: str = "",
                 timeout: Optional[float] = None) -> core.PyReachStatus:
     """Set the arm joints synchronously.
 
@@ -1377,6 +1470,7 @@ class ArmImpl(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: No timeout)
 
     Returns:
@@ -1386,12 +1480,14 @@ class ArmImpl(arm.Arm):
     move_command: Union[_MoveLinear, _MoveJoints]
     if use_linear:
       move_command = _MoveLinear(
+          controller_name,
           list(joints),
           servo=servo,
           acceleration=acceleration,
           velocity=velocity)
     else:
       move_command = _MoveJoints(
+          controller_name,
           list(joints),
           servo=servo,
           acceleration=acceleration,
@@ -1426,6 +1522,7 @@ class ArmImpl(arm.Arm):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -1448,6 +1545,7 @@ class ArmImpl(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The number of seconds to wait before timing out.
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -1456,6 +1554,7 @@ class ArmImpl(arm.Arm):
 
     if use_linear:
       path = types_gen.ReachScriptCommand(
+          controller_name=controller_name,
           move_l_path=types_gen.MoveLPathArgs(waypoints=[
               types_gen.MoveLWaypointArgs(
                   rotation=list(joints),
@@ -1465,6 +1564,7 @@ class ArmImpl(arm.Arm):
           ]))
     else:
       path = types_gen.ReachScriptCommand(
+          controller_name=controller_name,
           move_j_path=types_gen.MoveJPathArgs(waypoints=[
               types_gen.MoveJWaypointArgs(
                   rotation=list(joints),
@@ -1523,6 +1623,7 @@ class ArmImpl(arm.Arm):
               servo_lookahead_time_seconds: float = 0.0,
               servo_gain: float = 0.0,
               preemptive: bool = False,
+              controller_name: str = "",
               timeout: Optional[float] = None) -> core.PyReachStatus:
     """Set the pose synchronously.
 
@@ -1544,6 +1645,7 @@ class ArmImpl(arm.Arm):
        servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
          only).
        preemptive: True to preempt existing scripts.
+       controller_name: The name of the controller to send the command to.
        timeout: The amount of time to wait until giving up.
 
     Returns:
@@ -1553,6 +1655,7 @@ class ArmImpl(arm.Arm):
     return self._device.run_command(
         _Commands([
             _MovePose(
+                controller_name,
                 types_gen.Vec3d(*pose.position.as_list()),
                 types_gen.Vec3d(*pose.orientation.axis_angle.as_list()),
                 use_linear=use_linear,
@@ -1587,6 +1690,7 @@ class ArmImpl(arm.Arm):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -1610,6 +1714,7 @@ class ArmImpl(arm.Arm):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount of time to wait until giving up.
       callback: Optional function to call when done (None for fail.)
       finished_callback: Optional finish function to call when done.
@@ -1626,6 +1731,7 @@ class ArmImpl(arm.Arm):
     self._device.run_command(
         _Commands([
             _MovePose(
+                controller_name,
                 types_gen.Vec3d(*pose.position.as_list()),
                 types_gen.Vec3d(*pose.orientation.axis_angle.as_list()),
                 use_linear=use_linear,
@@ -1652,6 +1758,7 @@ class ArmImpl(arm.Arm):
       intent: str = "",
       pick_id: str = "",
       success_type: str = "",
+      controller_name: str = "",
       timeout: Optional[float] = None,
   ) -> Optional[core.PyReachStatus]:
     """Set the vacuum state synchronously.
@@ -1661,13 +1768,14 @@ class ArmImpl(arm.Arm):
       intent: The intent of the command.
       pick_id: The pick_id of the command.
       success_type: The success_type of the command.
+      controller_name: The name of the controller to send the command to.
       timeout: The time in seconds to wait until failing.
 
     Returns:
       The Arm status on success and None otherwise.
     """
     return self._device.run_command(
-        _Commands([_SetVacuumState(vacuum_state)]),
+        _Commands([_SetVacuumState(controller_name, vacuum_state)]),
         intent=intent,
         pick_id=pick_id,
         success_type=success_type,
@@ -1679,6 +1787,7 @@ class ArmImpl(arm.Arm):
       intent: str = "",
       pick_id: str = "",
       success_type: str = "",
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[],
@@ -1690,6 +1799,7 @@ class ArmImpl(arm.Arm):
       intent: The intent string (or empty) for the request.
       pick_id: The pick id (or empty) for the request.
       success_type: The success type to return on success.
+      controller_name: The name of the controller to send the command to.
       timeout: An optional timeout measured in seconds.
       callback: A callback function to invoke when the vacuum state arrives.
       finished_callback: A callback function to call when done.
@@ -1704,7 +1814,7 @@ class ArmImpl(arm.Arm):
     if callback is None:
       callback = cb
     return self._device.run_command(
-        _Commands([_SetVacuumState(vacuum_state)]),
+        _Commands([_SetVacuumState(controller_name, vacuum_state)]),
         intent=intent,
         pick_id=pick_id,
         success_type=success_type,
@@ -1842,6 +1952,7 @@ class ArmImpl(arm.Arm):
           use_linear = True
         commands.append(
             _MovePose(
+                controller_name="",
                 translation=types_gen.Vec3d(arm_tool_transform[0],
                                             arm_tool_transform[1],
                                             arm_tool_transform[2]),
@@ -1860,7 +1971,7 @@ class ArmImpl(arm.Arm):
             ) == "vacuum" or step.get_set_capability_type() == "blowoff":
               commands.append(
                   _SetVacuumState(
-                      ActionVacuumState(step.get_set_capability_value())))
+                      "", ActionVacuumState(step.get_set_capability_value())))
 
       if len(step_pose) == start_len:
         raise core.PyReachError("Action invalid: contains infinite loop")
@@ -2027,6 +2138,7 @@ class ArmImpl(arm.Arm):
            success_type: str = "",
            allow_uncalibrated: bool = False,
            preemptive: bool = False,
+           controller_name: str = "",
            timeout: Optional[float] = None) -> core.PyReachStatus:
     """Stop the robot arm synchronously.
 
@@ -2038,6 +2150,7 @@ class ArmImpl(arm.Arm):
       allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
         set in calibration code).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: An optional timeout measured in seconds.
 
     Returns:
@@ -2045,7 +2158,9 @@ class ArmImpl(arm.Arm):
 
     """
     return self._device.run_command(
-        _Commands([_Stop(deceleration=deceleration)]),
+        _Commands(
+            [_Stop(controller_name=controller_name,
+                   deceleration=deceleration)]),
         intent=intent,
         pick_id=pick_id,
         success_type=success_type,
@@ -2061,6 +2176,7 @@ class ArmImpl(arm.Arm):
       success_type: str = "",
       allow_uncalibrated: bool = False,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -2074,6 +2190,7 @@ class ArmImpl(arm.Arm):
       allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
         set in calibration code).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: An optional timeout measured in seconds.
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -2086,7 +2203,9 @@ class ArmImpl(arm.Arm):
       callback = cb
 
     self._device.run_command(
-        _Commands([_Stop(deceleration=deceleration)]),
+        _Commands(
+            [_Stop(controller_name=controller_name,
+                   deceleration=deceleration)]),
         intent=intent,
         pick_id=pick_id,
         success_type=success_type,

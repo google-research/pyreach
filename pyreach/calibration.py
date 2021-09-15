@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Robot calibration module.
-
-The calibration object captures information as described in the
-Calibration 20190103 Design Doc.
-
-Many parameters in this class inherits its meaning from OpenCV documentation:
-  https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
-"""
+"""Robot calibration module."""
+# The calibration object captures information as described in the
+# Calibration 20190103 Design Doc.
+#
+# Many parameters in this class inherits its meaning from OpenCV documentation:
+#  https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
 
 import dataclasses
 from typing import Optional, Tuple, List

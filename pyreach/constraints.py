@@ -18,9 +18,11 @@ PyReach only provides bare minimum support for the constraints right now.
 """
 
 import dataclasses
-from typing import Optional, Tuple
+from typing import Optional, Text, Tuple
 
 import numpy as np  # type: ignore
+
+from pyreach import core
 
 
 @dataclasses.dataclass(frozen=True)
@@ -35,6 +37,37 @@ class JointLimit:
 
   min: float
   max: float
+
+
+@dataclasses.dataclass(frozen=True)
+class Geometry:
+  """Base class for Geometries."""
+
+
+@dataclasses.dataclass(frozen=True)
+class Box(Geometry):
+  """A geometry with the shape of a box.
+
+  Attributes:
+    pose: the pose of the box.
+    scale: the scale of the box.
+  """
+
+  pose: core.Pose
+  scale: core.Scale
+
+
+@dataclasses.dataclass(frozen=True)
+class Interactable:
+  """An interactable is a geometry that a user can interact within its volume.
+
+  Attributes:
+    name: the name of the interactable.
+    geometry: the geometry user can interact within.
+  """
+
+  name: Text
+  geometry: Geometry
 
 
 class Constraints(object):
@@ -64,6 +97,15 @@ class Constraints(object):
 
     Returns:
       Limits of all the joints if available.
+
+    """
+    raise NotImplementedError
+
+  def get_interactables(self) -> Optional[Tuple[Interactable, ...]]:
+    """Get the list of interactable geometries.
+
+    Returns:
+      Limits of all the interactable geometries if available.
 
     """
     raise NotImplementedError

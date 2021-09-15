@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation for snapshot conversion."""
 import logging
 from typing import List, Optional
@@ -95,6 +94,7 @@ def reverse_snapshot(
               .servo_lookahead_time_secs,
               servo_gain=action.arm_action_params.servo_gain,
               allow_uncalibrated=action.arm_action_params.allow_uncalibrated,
+              controller_name=action.arm_action_params.controller_name,
               timeout_sec=action.arm_action_params.timeout_sec))
     elif action.vacuum_action_params is not None:
       gym_actions.append(
@@ -198,6 +198,7 @@ def convert_snapshot(
           servo_lookahead_time_secs=action.servo_lookahead_time_seconds,
           servo_gain=action.servo_gain,
           allow_uncalibrated=action.allow_uncalibrated,
+          controller_name=action.controller_name,
           timeout_sec=action.timeout_sec)
     elif isinstance(action, SnapshotGymVacuumAction):
       vacuum_params = types_gen.VacuumActionParams(state=action.state)

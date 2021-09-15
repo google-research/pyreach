@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Library for the pendant GUI."""
 import os
 import subprocess
@@ -59,6 +58,7 @@ _CONTINUOUS_CONTROL_INTERVAL_DELAY_SECONDS = 0.02
 _COLOR_DISABLED = (128, 128, 128)
 _COLOR_ENABLED = (128, 200, 128)
 _COLOR_TEXT = (0, 0, 0)
+_COLOR_WARNING_TEXT = (0, 0, 255)
 _COLOR_CLEARSTOP = _COLOR_DISABLED
 _TEXT_THICKNESS = 1
 _TEXT_Y = 15
@@ -101,11 +101,14 @@ _BUTTON_VACUUM = (160, 335, 234, 365)
 _BUTTON_CONTINUOUS = (160, 370, 234, 400)
 _BUTTON_BLOWOFF = (258, 335, 325, 365)
 _BUTTON_HOMEJ = (258, 370, 325, 400)
+_BUTTON_HOMEJ_Y = (258, 370, 278, 400)
+_BUTTON_HOMEJ_N = (288, 370, 310, 400)
 
 _BUTTON_COLOR = (15, 329, 65, 354)
 _BUTTON_DEPTH = (80, 329, 130, 354)
 
 _BUTTON_SESSION = (13, 401, 134, 426)
+_HOME_WARNING_TEXT = (140, 410)
 
 
 def _contains(rect: Tuple[int, int, int, int], pt: Tuple[int, int]) -> bool:
@@ -234,11 +237,14 @@ class Pendant(object):
   _vacuum_button: Button
   _blowoff_button: Button
   _homej_button: Button
+  _homej_y_button: Button
+  _homej_n_button: Button
   _continuous_control_button: Button
   _color_button: Button
   _depth_button: Button
   _session_button: Button
   _target_pose: Optional[np.ndarray]
+  _home_warning_active: bool
   _arm: Arm
   _vacuum: Optional[Vacuum]
 
@@ -287,7 +293,15 @@ class Pendant(object):
         _BUTTON_BLOWOFF,
         enabled=(self._vacuum is not None and self._vacuum.support_blowoff))
     self._homej_button = Button(
-        "HomeJ", _BUTTON_HOMEJ, enabled=is_xarm, active=is_xarm)
+        "HomeJ",
+        _BUTTON_HOMEJ,
+        enabled=is_xarm,
+        active=is_xarm,
+        active_color=(0, 0, 220))
+    self._homej_y_button = Button(
+        "Y", _BUTTON_HOMEJ_Y, enabled=False, active=False, bg_color=(0, 0, 220))
+    self._homej_n_button = Button(
+        "N", _BUTTON_HOMEJ_N, enabled=False, active=False, bg_color=(220, 0, 0))
     self._continuous_control_button = Button(
         "ContCtl",
         _BUTTON_CONTINUOUS,
@@ -297,6 +311,8 @@ class Pendant(object):
     self._session_button = Button(
         "Take Control", _BUTTON_SESSION, active_text="Release Control")
     self._target_pose = None
+
+    self._home_warning_active = False
 
     print(f"Connecting Robot name '{device_name}'")
 
@@ -341,7 +357,8 @@ class Pendant(object):
       self._target_pose[:3] += transform[:3]
 
     self._arm.async_to_pose(
-        Pose.from_list(self._target_pose.tolist()), servo=True,
+        Pose.from_list(self._target_pose.tolist()),
+        servo=True,
         allow_uncalibrated=True)
 
   def inc_pos_step(self) -> None:
@@ -466,7 +483,11 @@ class Pendant(object):
     self._vacuum_button.draw(img)
     self._blowoff_button.draw(img)
     self._continuous_control_button.draw(img)
-    self._homej_button.draw(img)
+    if not self._home_warning_active:
+      self._homej_button.draw(img)
+    else:
+      self._homej_y_button.draw(img)
+      self._homej_n_button.draw(img)
     self._color_button.set_active(True)
     self._color_button.draw(img)
     self._depth_button.set_active(True)
@@ -477,6 +498,19 @@ class Pendant(object):
                                      session_state == SessionState.ACTIVE)
     self._session_button.set_active(session_state == SessionState.ACTIVE)
     self._session_button.draw(img)
+
+    if self._home_warning_active:
+      cv2.putText(img, "The home action may be dangerous.", _HOME_WARNING_TEXT,
+                  _TEXT_FONT, _TEXT_SIZE * 0.8, _COLOR_WARNING_TEXT,
+                  _TEXT_THICKNESS)
+      cv2.putText(img, "Click 'Y' to continue.",
+                  (_HOME_WARNING_TEXT[0], _HOME_WARNING_TEXT[1] + 10),
+                  _TEXT_FONT, _TEXT_SIZE * 0.8, _COLOR_WARNING_TEXT,
+                  _TEXT_THICKNESS)
+      cv2.putText(img, "Click 'N' to cancel.",
+                  (_HOME_WARNING_TEXT[0], _HOME_WARNING_TEXT[1] + 20),
+                  _TEXT_FONT, _TEXT_SIZE * 0.8, _COLOR_WARNING_TEXT,
+                  _TEXT_THICKNESS)
 
     cv2.imshow(self._window_name, img)
 
@@ -494,6 +528,21 @@ class Pendant(object):
 
   def _command_finished_callback(self) -> None:
     pass
+
+  def _move_home(self) -> None:
+    """Moves the robot to the Home position."""
+    if self._homej_button.enabled:
+      self._continuous_control_button.set_active(False)
+      self._homej_button.set_active(True)
+      self._arm.async_to_joints(
+          _XARM_HOMEJ,
+          velocity=_XARM_HOMEJ_VELOCITY,
+          allow_uncalibrated=True,
+          callback=self._command_callback,
+          finished_callback=self._command_finished_callback)
+      print(f"Homing... {self._arm.arm_type.urdf_file}")
+    else:
+      print(f"HomeJ not enabled for {self._arm.arm_type.urdf_file}")
 
   def _on_mouse(self, event: int, x: int, y: int, unused_flags: int,
                 unused_param: Any) -> None:
@@ -841,19 +890,23 @@ class Pendant(object):
               callback=self._command_callback,
               finished_callback=self._command_finished_callback)
 
-      if self._homej_button.hit((x, y)):
-        if self._homej_button.enabled:
-          self._continuous_control_button.set_active(False)
-          self._homej_button.set_active(True)
-          self._arm.async_to_joints(
-              _XARM_HOMEJ,
-              velocity=_XARM_HOMEJ_VELOCITY,
-              allow_uncalibrated=True,
-              callback=self._command_callback,
-              finished_callback=self._command_finished_callback)
-          print(f"Homing... {self._arm.arm_type.urdf_file}")
-        else:
-          print(f"HomeJ not enabled for {self._arm.arm_type.urdf_file}")
+      if not self._home_warning_active:
+        if self._homej_button.hit((x, y)):
+          self._home_warning_active = True
+
+          # Print warning to terminal in bold.
+          print("\033[1m"
+                "The Home action may be dangerous. "
+                "Click Y to continue or click N to cancel."
+                "\033[0m")
+      else:
+        if self._homej_y_button.hit((x, y)):
+          self._home_warning_active = False
+          self._move_home()
+
+        if self._homej_n_button.hit((x, y)):
+          print("Cancelled home action")
+          self._home_warning_active = False
 
       if self._continuous_control_button.hit((x, y)):
         if not self._continuous_control_button.enabled:

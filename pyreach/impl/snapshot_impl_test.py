@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for snapshot_impl."""
 
 import json
@@ -105,7 +104,8 @@ class SnapshotImpl(unittest.TestCase):
                         servo_t_secs=7.0,
                         servo_lookahead_time_secs=8.0,
                         servo_gain=9.0,
-                        allow_uncalibrated=True))
+                        allow_uncalibrated=True,
+                        controller_name="test-controller"))
             ],
             gym_env_id="test-env-id",
             gym_run_id="test-run-id",
@@ -153,7 +153,8 @@ class SnapshotImpl(unittest.TestCase):
                          (1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
                          (1.0, 2.0, 3.0, 4.0, 5.0, 6.0), True, 4.0, 5.0, 6.0,
                          "test-action", True, "test-intent", "success",
-                         "test-id", True, True, 7.0, 8.0, 9.0, True)))
+                         "test-id", True, True, 7.0, 8.0, 9.0, True,
+                         "test-controller")))
     self.assertEqual(expect_snapshot, snapshot_cmd)
 
   def test_convert_snapshot(self) -> None:
@@ -206,7 +207,8 @@ class SnapshotImpl(unittest.TestCase):
                              (1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
                              (1.0, 2.0, 3.0, 4.0, 5.0, 6.0), True, 4.0, 5.0,
                              6.0, "test-action", True, "test-intent", "success",
-                             "test-id", True, True, 7.0, 8.0, 9.0, True))))
+                             "test-id", True, True, 7.0, 8.0, 9.0, True,
+                             "test-controller"))))
     self.assertIsNotNone(snapshot_cmd)
     expect_snapshot = types_gen.Snapshot(
         source="pyreach-test",
@@ -277,7 +279,8 @@ class SnapshotImpl(unittest.TestCase):
                     servo_t_secs=7.0,
                     servo_lookahead_time_secs=8.0,
                     servo_gain=9.0,
-                    allow_uncalibrated=True))
+                    allow_uncalibrated=True,
+                    controller_name="test-controller"))
         ],
         gym_env_id="test-env-id",
         gym_run_id="test-run-id",

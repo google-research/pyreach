@@ -97,6 +97,7 @@ def load_urdf(pybullet_client: Any, file_path: str, *args: Any,
       raise FileNotFoundError('Cannot load the URDF file {}'.format(file_path))
 
   else:
+    # Handles project-reach case.
     try:
       if file_path.startswith(
           'third_party/bullet/examples/pybullet/gym/pybullet_data/'):

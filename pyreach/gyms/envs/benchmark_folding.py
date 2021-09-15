@@ -27,6 +27,8 @@ from pyreach.gyms import reach_env
 class BenchmarkFoldingEnv(reach_env.ReachEnv):
   """Benchmark environment for the T-Shirt Folding challenge.
 
+  pyreach/g3doc/benchmark_folding_challenge.md
+
   == Evaluation Protocol ==
 
     1.  The agent connects to the evaluation cell.

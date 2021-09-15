@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Test the Logger."""
 
 from typing import List, cast
@@ -177,12 +176,13 @@ class TestPyReachLogger(unittest.TestCase):
                   snapshot.SnapshotGymAction("test-type", "test-name", True),
                   snapshot.SnapshotGymVacuumAction("test-vacuum", "vacuum",
                                                    True, 1),
-                  snapshot.SnapshotGymArmAction(
-                      "test-arm", "arm", True, 1, 2, (1.1, 2.2, 3.3, 4.4, 5.5,
-                                                      6.6), (1.0, 2.0, 3.0, 4.0,
-                                                             5.0, 6.0), True,
-                      4.0, 5.0, 6.0, "test-action", True, "test-intent",
-                      "success", "test-id", True, True, 7.0, 8.0, 9.0, True))))
+                  snapshot.SnapshotGymArmAction("test-arm", "arm", True, 1, 2, (
+                      1.1, 2.2, 3.3, 4.4, 5.5,
+                      6.6), (1.0, 2.0, 3.0, 4.0, 5.0,
+                             6.0), True, 4.0, 5.0, 6.0, "test-action", True,
+                                                "test-intent", "success",
+                                                "test-id", True, True, 7.0, 8.0,
+                                                9.0, True, "test-controller"))))
       test_device.expect_command_data([
           types_gen.CommandData(
               device_type="client-annotation",
@@ -250,6 +250,7 @@ class TestPyReachLogger(unittest.TestCase):
                               servo_t_secs=7.0,
                               servo_lookahead_time_secs=8.0,
                               servo_gain=9.0,
+                              controller_name="test-controller",
                               allow_uncalibrated=True))
                   ],
                   gym_env_id="test-env-id",

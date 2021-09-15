@@ -26,6 +26,7 @@ class InterfaceType(enum.Enum):
   AUDIO_REQUEST_UNMUTE = "audio-request-unmute"
   CLIENT_ANNOTATION = "client-annotation"
   CONNECTED_CLIENTS_REQUEST = "connected-clients-request"
+  CONTROLLER_DESCRIPTIONS_REQUEST = "controller-descriptions-request"
   DISABLE_EXPERIMENTS = "disable-experiments"
   ENABLE_EXPERIMENTS = "enable-experiments"
   EVENT = "event"

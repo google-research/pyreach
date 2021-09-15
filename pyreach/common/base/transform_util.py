@@ -13,9 +13,7 @@
 # limitations under the License.
 
 # Lint as: python3
-r"""A collection of math transform methods.
-
-"""
+r"""A collection of math transform methods."""
 
 import math
 import random

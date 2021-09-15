@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Wrapper script to download and invoke reach command automatically.
-"""
+"""Wrapper script to download and invoke reach command automatically."""
+
 import hashlib
 import os
 import shutil
@@ -87,7 +87,10 @@ def main(unused_argv: Sequence[str]) -> None:
     os.mkdir(workspace)
 
   reach_file = os.path.join(workspace, "reach")
-  _download(REACH_BASE, REACH_SHA256, workspace, "reach")
+  if _is_running_on_google3:
+    pass
+  else:
+    _download(REACH_BASE, REACH_SHA256, workspace, "reach")
 
   args = sys.argv[1:]
   if args and "connect" == args[

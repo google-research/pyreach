@@ -157,7 +157,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     """Return a the most recent prediction.
 
     This code works around:
-    * Multiple Images Using the Same Device-Data:
+    * Multiple Images Using the Same Device-Data: PIPE-2552
     Args:
       host: Reach host.
 

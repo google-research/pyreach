@@ -83,6 +83,16 @@ class ActionInput:
 
 
 @dataclasses.dataclass(frozen=True)
+class ArmControllerDescription:
+  """The description of an arm controller.
+
+  Attributes:
+    name: The name of the controller.
+  """
+  name: str
+
+
+@dataclasses.dataclass(frozen=True)
 class ArmState:
   """The state of a robot Arm at a specific time.
 
@@ -136,6 +146,12 @@ class Arm(object):
   @property
   def arm_type(self) -> ArmType:
     """Return the arm type of the arm."""
+    raise NotImplementedError
+
+  @property
+  def supported_controllers(
+      self) -> Optional[Tuple[ArmControllerDescription, ...]]:
+    """The supported controllers, or None if not loaded."""
     raise NotImplementedError
 
   def set_ik_lib(self, ik_lib: IKLibType) -> None:
@@ -230,6 +246,7 @@ class Arm(object):
                 servo_lookahead_time_seconds: float = 0.0,
                 servo_gain: float = 0.0,
                 preemptive: bool = False,
+                controller_name: str = "",
                 timeout: Optional[float] = None) -> core.PyReachStatus:
     """Move the arm to a target joint configuration synchronously.
 
@@ -250,6 +267,7 @@ class Arm(object):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
 
     Returns:
@@ -273,6 +291,7 @@ class Arm(object):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -295,6 +314,7 @@ class Arm(object):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -316,6 +336,7 @@ class Arm(object):
               servo_lookahead_time_seconds: float = 0.0,
               servo_gain: float = 0.0,
               preemptive: bool = False,
+              controller_name: str = "",
               timeout: Optional[float] = None) -> core.PyReachStatus:
     """Move the arm to a target pose synchronously.
 
@@ -338,6 +359,7 @@ class Arm(object):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
 
     Returns:
@@ -362,6 +384,7 @@ class Arm(object):
       servo_lookahead_time_seconds: float = 0.0,
       servo_gain: float = 0.0,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -386,6 +409,7 @@ class Arm(object):
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: The amount time to wait before giving up. (Default: no timeout)
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -468,6 +492,7 @@ class Arm(object):
            success_type: str = "",
            allow_uncalibrated: bool = False,
            preemptive: bool = False,
+           controller_name: str = "",
            timeout: Optional[float] = None) -> core.PyReachStatus:
     """Stop the robot arm synchronously.
 
@@ -479,6 +504,7 @@ class Arm(object):
       allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
         set in calibration code).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: An optional timeout measured in seconds.
 
     Returns:
@@ -495,6 +521,7 @@ class Arm(object):
       success_type: str = "",
       allow_uncalibrated: bool = False,
       preemptive: bool = False,
+      controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -508,6 +535,7 @@ class Arm(object):
       allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
         set in calibration code).
       preemptive: True to preempt existing scripts.
+      controller_name: The name of the controller to send the command to.
       timeout: An optional timeout measured in seconds.
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
