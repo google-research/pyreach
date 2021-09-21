@@ -23,7 +23,7 @@ import pyreach
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import server_element
-from pyreach.gyms.impl import reach_device
+from pyreach.gyms.devices import reach_device
 
 
 class ReachDeviceServer(reach_device.ReachDevice):

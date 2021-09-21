@@ -14,19 +14,44 @@
 
 """Implementation of Open AI Gym interface for PyReach."""
 
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+import logging
+import time
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+import uuid
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
+from pyreach import factory
+from pyreach import internal
 from pyreach import snapshot as lib_snapshot
+from pyreach.gyms import arm_element
+from pyreach.gyms import color_camera_element
 from pyreach.gyms import core as gyms_core
+from pyreach.gyms import depth_camera_element
+from pyreach.gyms import force_torque_sensor_element
+from pyreach.gyms import oracle_element
+from pyreach.gyms import reach_element
+from pyreach.gyms import server_element
+from pyreach.gyms import text_instructions_element
+from pyreach.gyms import vacuum_element
 from pyreach.gyms.arm_element import ReachArm  # pylint: disable=unused-import
 from pyreach.gyms.color_camera_element import ReachColorCamera  # pylint: disable=unused-import
 from pyreach.gyms.depth_camera_element import ReachDepthCamera  # pylint: disable=unused-import
+
+from pyreach.gyms.devices.arm_device import ReachDeviceArm
+from pyreach.gyms.devices.color_camera_device import ReachDeviceColorCamera
+from pyreach.gyms.devices.depth_camera_device import ReachDeviceDepthCamera
+from pyreach.gyms.devices.force_torque_sensor_device import ReachDeviceForceTorqueSensor
+from pyreach.gyms.devices.oracle_device import ReachDeviceOracle
+from pyreach.gyms.devices.reach_device import ReachDevice
+from pyreach.gyms.devices.reach_device import ReachDeviceSynchronous
+from pyreach.gyms.devices.server_device import ReachDeviceServer
+from pyreach.gyms.devices.text_instructions_device import ReachDeviceTextInstructions
+from pyreach.gyms.devices.vacuum_device import ReachDeviceVacuum
+
 from pyreach.gyms.force_torque_sensor_element import ReachForceTorqueSensor  # pylint: disable=unused-import
-from pyreach.gyms.impl import mirror_reach_env
 from pyreach.gyms.oracle_element import ReachOracle  # pylint: disable=unused-import
 from pyreach.gyms.reach_element import ReachElement
 from pyreach.gyms.server_element import ReachServer  # pylint: disable=unused-import
@@ -63,26 +88,26 @@ class ReachEnv(gym.Env):  # type: ignore
   @property
   def action_space(self) -> gyms_core.Space:
     """Return the action space."""
-    return self._gym_mirror.action_space
+    return self._action_space
 
   @property
   def observation_space(self) -> gyms_core.Space:
     """Return the observation space."""
-    return self._gym_mirror.observation_space
+    return self._observation_space
 
   @property
   def reward_range(self) -> Tuple[float, float]:
     """Return the reward range."""
-    return self._gym_mirror.reward_range
+    return self._reward_range
 
   @property
   def metadata(self) -> Dict[str, Any]:
-    """Return the meda data dictionary."""
-    return self._gym_mirror.metadata
+    """Return the meta data dictionary."""
+    return self._metadata
 
   @property
   def task_params(self) -> Dict[str, str]:
-    return self._gym_mirror.task_params
+    return self._task_params
 
   def __init__(self,
                pyreach_config: Optional[Dict[str, ReachElement]] = None,
@@ -106,8 +131,168 @@ class ReachEnv(gym.Env):  # type: ignore
 
     """
     super().__init__()
-    self._gym_mirror: gym.Env = mirror_reach_env.MirrorReachEnv(
-        pyreach_config, task_params, timeout, host, gym_env_id, **kwargs)
+    assert gym_env_id, (
+        "The gym_env_id argument must be specified. Please ensure the gym was "
+        "using the pyreach gym register wrapper function and that gym_env_id "
+        "is passed through any subclass __init__().")
+    self._gym_env_id: str = gym_env_id
+    self._timers = internal.Timers({
+        "agent",
+        "gym.action",
+        "gym.arm",
+        "gym.color",
+        "gym.depth",
+        "gym.force_torque_sensor",
+        "gym.init",
+        "gym.obs",
+        "gym.oracle",
+        "gym.reset",
+        "gym.step",
+        "gym.sync",
+        "gym.text",
+        "gym.vacuum",
+        "host.arm.execute",
+        "host.arm.fk",
+        "host.arm.state",
+        "host.arm.status",
+        "host.arm.to_joints",
+        "host.arm.to_pose",
+        "host.color",
+        "host.depth",
+        "host.force_torque_sensor",
+        "host.oracle",
+        "host.text",
+        "host.vacuum",
+    })
+
+    # Create the run ID
+    self._run_id: str = str(uuid.uuid4())
+
+    # Relay timers the host via the Internal class.
+    internal.Internal.set_timers(self._timers)
+
+    # Assign all non-gym and non-host activity to the "agent" timer.
+    agent_timer: internal.Timer = self._timers["agent"]
+    agent_timer.start()
+
+    with self._timers.select({"!agent*", "gym.init"}):
+      if not pyreach_config:
+        pyreach_config = {}
+      if not task_params:
+        task_params = {}
+      host_kwargs: Dict[str, Any] = {}
+      if not host:
+        host = factory.LocalTCPHostFactory(**host_kwargs).connect()
+
+      reach_synchronous: ReachDeviceSynchronous = (
+          ReachDeviceSynchronous(host, self._timers, timeout=timeout))
+
+      # Create the composite action space from the configuration.
+      element: Optional[ReachDevice] = None
+      action_space_dict: Dict[str, gyms_core.Space] = {}
+      config_element: reach_element.ReachElement
+      config_names: Set[str] = set()
+      config_name: str
+      elements: Dict[str, ReachDevice] = {}
+
+      for config_name, config_element in pyreach_config.items():
+        if isinstance(config_element, arm_element.ReachArm):
+          element = ReachDeviceArm(config_element)
+        elif isinstance(config_element, color_camera_element.ReachColorCamera):
+          element = ReachDeviceColorCamera(config_element)
+        elif isinstance(config_element, depth_camera_element.ReachDepthCamera):
+          element = ReachDeviceDepthCamera(config_element)
+        elif isinstance(config_element,
+                        force_torque_sensor_element.ReachForceTorqueSensor):
+          element = ReachDeviceForceTorqueSensor(config_element)
+        elif isinstance(config_element, oracle_element.ReachOracle):
+          element = ReachDeviceOracle(config_element)
+        elif isinstance(config_element, server_element.ReachServer):
+          element = ReachDeviceServer(config_element)
+        elif isinstance(config_element,
+                        text_instructions_element.ReachTextInstructions):
+          element = ReachDeviceTextInstructions(config_element)
+        elif isinstance(config_element, vacuum_element.ReachVacuum):
+          element = ReachDeviceVacuum(config_element)
+
+        if not isinstance(element, ReachDevice):
+          raise pyreach.PyReachError(
+              f"Unexpected configuration element {element}")
+        elements[config_name] = element
+
+        element.set_task_params(task_params)
+        if not config_name:
+          raise pyreach.PyReachError("Configuration name must be non empty")
+        if config_name in config_names:
+          raise pyreach.PyReachError(
+              "Duplicate configuration name '{0}'".format(config_name))
+        config_names.add(config_name)
+        element._config_name = config_name
+        element.set_timers(self._timers)
+
+        is_synchronous: bool = element.is_synchronous
+        if is_synchronous:
+          reach_synchronous._register_element(element)
+
+        element_action_space: Optional[gyms_core.Space] = element.action_space
+        is_action_space: bool = element_action_space is not None
+        if is_action_space:
+          action_space_dict[config_name] = element_action_space
+
+        logging.info("Element: %15s synchronous=%d action=%d", config_name,
+                     int(is_synchronous), int(is_action_space))
+      action_space: gyms_core.Space = gym.spaces.Dict(action_space_dict)
+
+      # Create the composite observation space from the configuration.
+      observation_space_dict: Dict[str, gyms_core.Space] = {}
+      for name, element in elements.items():
+        element_observation_space: Optional[gyms_core.Space] = (
+            element.observation_space)
+        if element_observation_space is not None:
+          observation_space_dict[name] = element_observation_space
+
+      observation_space: gyms_core.Space = gym.spaces.Dict(
+          observation_space_dict)
+      observation_space_names: Set[str] = set(observation_space_dict.keys())
+      if config_names != observation_space_names:
+        raise pyreach.PyReachError(
+            "Internal Error: incomplete observation space "
+            f"{config_names} != {observation_space_names}")
+
+      # A top level gym.Env requires these 4 fields.
+      self._action_space: gyms_core.Space = action_space
+      self._observation_space: gyms_core.Space = observation_space
+      self._metadata: Dict[str, Any] = {}  # Explicitly for agent debugging
+      self._reach_synchronous = reach_synchronous
+      self._reward_range: Tuple[float, float] = (-float("inf"), float("inf"))
+      self._elements: Dict[str, ReachDevice] = elements
+      self._pyreach_config: Dict[str, ReachElement] = (pyreach_config)
+      self._text_instruction: Optional[ReachDeviceTextInstructions] = None
+      for element in self._elements.values():
+        if isinstance(element, ReachDeviceTextInstructions):
+          if self._text_instruction:
+            raise pyreach.PyReachError(
+                "Can have at most one ReachDeviceTextInstructions "
+                "in the gym configuration")
+          self._text_instruction = element
+      self._episode = 0
+      self._step = 0
+      self._host = host
+      self._reward_done_function: gyms_core.RewardDoneFunction = (
+          self._nop_reward_done_function)
+      self._task_started: bool = False
+      self._task_params: Dict[str, str] = task_params
+
+      # Allow overwride of reward/done/info function from kwargs.
+      if "reward_done_function" in kwargs:
+        self._reward_done_function = kwargs["reward_done_function"]
+
+  @staticmethod
+  def _nop_reward_done_function(
+      action: gyms_core.Action,
+      observation: gyms_core.Observation) -> Tuple[float, bool]:
+    """Do nothing reward/done/info function."""
+    return 0.0, False
 
   def step(
       self, action: gyms_core.Action
@@ -125,7 +310,56 @@ class ReachEnv(gym.Env):  # type: ignore
         info: Some miscellaneous information for debugging.
 
     """
-    return self._gym_mirror.step(action)
+    action_list: List[lib_snapshot.SnapshotGymAction] = []
+    with self._timers.select({"!agent*", "gym.step"}):
+      if not self._task_started and not self._text_instruction:
+        self._host.logger.start_task(self.task_params)
+        action_list.append(
+            lib_snapshot.SnapshotGymLoggerAction("operator", "", False, True,
+                                                 self.task_params),)
+        self._task_started = True
+
+      # Perform the actual action for each sub device.
+      with self._timers.select({"gym.action"}):
+        assert isinstance(action, Dict)
+        elements: Dict[str, ReachDevice] = self._elements
+        name: str
+        element: ReachDevice
+        for name, element in elements.items():
+          if name in action:
+            action_list.extend(element.do_action(action[name], self._host))
+
+      # Get the next observation.
+      observation: Dict[str, gyms_core.Observation]
+      snapshot_references: Tuple[lib_snapshot.SnapshotReference, ...]
+      snapshot_responses: Tuple[lib_snapshot.SnapshotResponse, ...]
+      server_time: float
+      observation, snapshot_references, snapshot_responses, server_time = (
+          self._get_observation(self._host))
+
+      # Compute and reward/done return values.
+      reward: float
+      done: bool
+      reward, done = self._reward_done_function(action, observation)
+
+      # Snapshot the observation here.
+      self._step += 1
+
+      snapshot: lib_snapshot.Snapshot = lib_snapshot.Snapshot(
+          source="pyreach_gym",
+          device_data_refs=tuple(snapshot_references),
+          responses=tuple(snapshot_responses),
+          gym_server_time=server_time,
+          gym_env_id=self._gym_env_id,
+          gym_run_id=self._run_id,
+          gym_episode=self._episode,
+          gym_step=self._step,
+          gym_reward=reward,
+          gym_done=done,
+          gym_actions=tuple(action_list))
+      self._host.logger.send_snapshot(snapshot)
+
+      return observation, reward, done, {}
 
   def reset(self) -> gyms_core.Observation:
     """Reset for a new episode and return an initial observation.
@@ -133,7 +367,133 @@ class ReachEnv(gym.Env):  # type: ignore
     Returns:
       Returns the next Gym Observation as a Gym Dict Space.
     """
-    return self._gym_mirror.reset()
+    return self._reach_reset(False)
+
+  def _reach_reset(self, close: bool) -> gyms_core.Observation:
+    """Reset for a new episode and return an initial observation.
+
+    Args:
+      close: if true, gym is closing.
+
+    Returns:
+      Returns the next Gym Observation as a Gym Dict Space.
+    """
+    with self._timers.select({"!agent*", "gym.reset"}):
+      action_list: List[lib_snapshot.SnapshotGymAction] = []
+
+      element: ReachDevice
+      for element in self._elements.values():
+        action_list.extend(element.reset(self._host))
+
+      observation: Dict[str, gyms_core.Observation] = {}
+      snapshot_references: Tuple[lib_snapshot.SnapshotReference, ...] = ()
+      snapshot_responses: Tuple[lib_snapshot.SnapshotResponse, ...] = ()
+      if close:
+        server_time = time.time() + (self._host.get_server_offset_time() or 0.0)
+        server_time = round(server_time, 3)
+      else:
+        self._host.reset()
+        self.task_params["reset_id"] = str(uuid.uuid4())
+
+        # Do element specific waiting for reset.
+        for element in self._elements.values():
+          element.reset_wait(self._host)
+
+        observation, snapshot_references, snapshot_responses, server_time = (
+            self._get_observation(self._host))
+
+      self._episode += 1
+      self._step = 0
+      snapshot: lib_snapshot.Snapshot = lib_snapshot.Snapshot(
+          source="pyreach_gym",
+          device_data_refs=tuple(snapshot_references),
+          responses=tuple(snapshot_responses),
+          gym_server_time=server_time,
+          gym_env_id=self._gym_env_id,
+          gym_run_id=self._run_id,
+          gym_episode=self._episode,
+          gym_step=self._step,
+          gym_reward=0.0,
+          gym_done=False,
+          gym_actions=tuple(action_list))
+      self._host.logger.send_snapshot(snapshot)
+
+      if not isinstance(observation, dict):
+        raise pyreach.PyReachError("Internal Error: non-dictionary observation")
+
+      return observation
+
+  def _get_observation(
+      self, host: pyreach.Host
+  ) -> Tuple[Dict[str, gyms_core.Observation], Tuple[
+      lib_snapshot.SnapshotReference, ...], Tuple[lib_snapshot.SnapshotResponse,
+                                                  ...], float]:
+    """Return the latest observation for the ReachEnv.
+
+    Args:
+      host: The reach host to use.
+
+    Returns:
+      The a tuple of next Gym Observation as Gym Dict Space and
+      the snapshot references.
+
+    """
+    with self._timers.select({"!agent*", "gym.obs"}):
+      # Wait for synchronous elements to respond.
+      reach_synchronous: ReachDeviceSynchronous
+      reach_synchronous = self._reach_synchronous
+      observations: Dict[str, gyms_core.Observation] = {}
+      reach_synchronous.start_observations(host)
+      latest_ts: float
+      snapshot_references: List[lib_snapshot.SnapshotReference]
+      snapshot_responses: List[lib_snapshot.SnapshotResponse]
+      latest_ts, snapshot_references, snapshot_responses = (
+          reach_synchronous.synchronize_observations(observations))
+
+      element_names: Set[str] = set(reach_synchronous.elements.keys())
+      observation_names: Set[str] = set(observations.keys())
+      if observation_names != element_names:
+        raise pyreach.PyReachError(
+            "Internal Error: observations({0}) != synchronous_elements({1})"
+            .format(observation_names, element_names))
+
+      # Collect the non-synchronous observations:
+      elements: Dict[str, ReachDevice] = self._elements
+      name: str
+      element: ReachDevice
+      for name, element in elements.items():
+        if not element.is_synchronous:
+          observation: gyms_core.Observation
+          references: Tuple[lib_snapshot.SnapshotReference, ...]
+          responses: Tuple[lib_snapshot.SnapshotResponse, ...]
+          observation, references, responses = element.get_observation(
+              self._host)
+          snapshot_references.extend(references)
+          snapshot_responses.extend(responses)
+          observations[name] = observation
+          if isinstance(observation, dict) and "ts" in observation:
+            latest_ts = max(latest_ts, float(observation["ts"]))
+
+      server_time = time.time() + (self._host.get_server_offset_time() or 0.0)
+      server_time = round(server_time, 3)
+      if "server" in observations:
+        server_observation: gyms_core.Observation = observations["server"]
+        if isinstance(server_observation, dict):
+          if "latest_ts" in server_observation:
+            server_observation["latest_ts"] = gyms_core.Timestamp.new(latest_ts)
+          if "server_ts" in server_observation:
+            server_observation["server_ts"] = gyms_core.Timestamp.new(
+                server_time)
+
+      element_names = set(elements.keys())
+      observation_names = set(observations.keys())
+      if element_names != observation_names:
+        raise pyreach.PyReachError(
+            "Internal error: elements({0}) != observation_names({1})".format(
+                element_names, observation_names))
+
+      return observations, tuple(snapshot_references), tuple(
+          snapshot_responses), server_time
 
   def set_reward_done_function(
       self, reward_done_function: gyms_core.RewardDoneFunction) -> None:
@@ -143,15 +503,18 @@ class ReachEnv(gym.Env):  # type: ignore
       reward_done_function: Override of the default reward function. (See
         compute_reward()) for arguments.
     """
-    self._gym_mirror.set_reward_done_function(reward_done_function)
+    self._reward_done_function = reward_done_function
 
   def render(self, mode: str = "human") -> None:
     """Render the current state."""
-    self._gym_mirror.render(mode)
+    pass
 
   def close(self) -> None:
     """Close the Reach Gym environment."""
-    self._gym_mirror.close()
+    super().close()
+    self._reach_reset(True)
+    self._host.close()
+    self._timers.dump()
 
   def fk(self,
          element: str,
@@ -171,7 +534,10 @@ class ReachEnv(gym.Env):  # type: ignore
       set to True, the pose for the tip of the end-effector. If the IK library
       was not yet initialized, this will return None.
     """
-    return self._gym_mirror.fk(element, joints, apply_tip_adjust_transform)
+    arm = self._elements.get(element)
+    if arm is None or not isinstance(arm, ReachDeviceArm):
+      return None
+    return arm.fk(self._host, joints, apply_tip_adjust_transform)
 
   def set_agent_id(self, agent_id: str) -> None:
     """Sets the agent ID for the environment.
@@ -182,7 +548,7 @@ class ReachEnv(gym.Env):  # type: ignore
     Args:
       agent_id: The name of the agent to mark logs with.
     """
-    self._gym_mirror.set_agent_id(agent_id)
+    self.task_params["agent_id"] = agent_id
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ flags.DEFINE_string("o",
                                  "reach_workspace"), "Reach working directory")
 
 WEBRTC_SHA256 = "afeb5d7fe13823c4316894823e0b9b10aadefa609eb2623dc218118866beb1ca"
-REACH_SHA256 = "4cbfd8cbff972498737564a404ea249d269772144903bad5fe791adbcb2445ce"
+REACH_SHA256 = "428af9a7560e1db1f60b531bdfd3db58eb10412841c121de11fb56c57540e7d6"
 WEBRTC_BASE = "https://storage.googleapis.com/brain-reach-public/releases/webrtc/linux-x86_64/webrtc_headless."
 REACH_BASE = "https://storage.googleapis.com/brain-reach-public/releases/reach/linux-x86_64/reach."
 

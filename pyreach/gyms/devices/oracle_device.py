@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of PyReach Gym Oracle Device."""
 
 import logging
@@ -25,7 +24,7 @@ import pyreach
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import oracle_element
-from pyreach.gyms.impl import reach_device
+from pyreach.gyms.devices import reach_device
 
 TaggedRequest = Tuple[str, str, str, str, str]
 
@@ -51,7 +50,10 @@ class ReachDeviceOracle(reach_device.ReachDevice):
   REQUEST_NONE: int = 0
   REQUEST_LEFT_BIN: int = 1
   REQUEST_RIGHT_BIN: int = 2
-  REQUEST_MAX: int = max(REQUEST_NONE, REQUEST_LEFT_BIN, REQUEST_RIGHT_BIN)
+  REQUEST_KITTING: int = 3
+  REQUEST_DEKITTING: int = 4
+  REQUEST_MAX: int = max(REQUEST_NONE, REQUEST_LEFT_BIN, REQUEST_RIGHT_BIN,
+                         REQUEST_KITTING, REQUEST_DEKITTING)
 
   # Valid "response" values:
   RESPONSE_NONE: int = 0
@@ -328,15 +330,24 @@ class ReachDeviceOracle(reach_device.ReachDevice):
 
       label: str = ""
       bin_name: str = ""
+      action_name: str = ""
       request: int
       if "request" in action_dict:
         request = int(action_dict["request"])
         if request == ReachDeviceOracle.REQUEST_LEFT_BIN:
           label = "SingulateLeftBin"
           bin_name = "left"
+          action_name = "SingulateLeftBin"
         elif request == ReachDeviceOracle.REQUEST_RIGHT_BIN:
           label = "SingulateRightBin"
           bin_name = "right"
+          action_name = "SingulateRightBin"
+        elif request == ReachDeviceOracle.REQUEST_KITTING:
+          label = "kit"
+          action_name = "Kit"
+        elif request == ReachDeviceOracle.REQUEST_DEKITTING:
+          label = "dekit"
+          action_name = "Kit"
       if not label:
         return ()
       self._request = request
@@ -410,7 +421,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
               "Internal Error: Oracle no selected 3D point")
         with self._timers.select({"!agent*", "!gym*", "host.arm.execute"}):
           self._execute_action_status = arm.execute_action(
-              label,
+              action_name,
               selected_point_3d,
               intent=self._intent,
               success_type=self._success_type,

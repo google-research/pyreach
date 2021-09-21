@@ -111,6 +111,7 @@ class TestGymArmEnv(unittest.TestCase):
       action_match: Dict[str, Any] = {
           "arm": {
               "command": 0,
+              "controller": 0,
               "id": 0,
               "joint_angles": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
               "pose": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),

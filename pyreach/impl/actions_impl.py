@@ -302,6 +302,8 @@ class ActionStep:
   _set_capability_io_type: str
   _randomized_offset: bool
   _randomized_offset_radius_cm: float
+  _acquire_image_tag: str
+  _acquire_image_mode: int
 
   def __init__(self, tip_input_idx: int, parent_type: ActionStepParentType,
                pos: types_gen.Vec3d, rot: types_gen.Quaternion3d, delay: float,
@@ -315,7 +317,8 @@ class ActionStep:
                set_capability: bool, set_capability_name: str,
                set_capability_type: str, set_capability_value: bool,
                set_capability_io_type: str, randomized_offset: bool,
-               randomized_offset_radius_cm: float) -> None:
+               randomized_offset_radius_cm: float,
+               acquire_image_tag: str, acquire_image_mode: int) -> None:
     """Construct an ActionStep.
 
     Args:
@@ -347,6 +350,8 @@ class ActionStep:
       set_capability_io_type:
       randomized_offset:
       randomized_offset_radius_cm:
+      acquire_image_tag:
+      acquire_image_mode:
     """
     self._tip_input_idx = tip_input_idx
     self._parent_type = parent_type
@@ -376,6 +381,8 @@ class ActionStep:
     self._set_capability_io_type = set_capability_io_type
     self._randomized_offset = randomized_offset
     self._randomized_offset_radius_cm = randomized_offset_radius_cm
+    self._acquire_image_tag = acquire_image_tag
+    self._acquire_image_mode = acquire_image_mode
 
   def get_tip_input_idx(self) -> int:
     """Get tip input index."""
@@ -488,6 +495,14 @@ class ActionStep:
   def get_randomized_offset_radius_cm(self) -> float:
     """Return the randomized offset radius in cm."""
     return self._randomized_offset_radius_cm
+
+  def get_acquire_image_tag(self) -> str:
+    """Return the acquire image tag."""
+    return self._acquire_image_tag
+
+  def get_acquire_image_mode(self) -> int:
+    """Return the acquire image mode."""
+    return self._acquire_image_mode
 
   @classmethod
   def from_json(cls, json_data: Dict[str, Any]) -> Optional["ActionStep"]:
@@ -607,6 +622,13 @@ class ActionStep:
       logging.warning("Action Step _randomizedOffsetRadiusCM invalid: %s",
                       json_data)
       return None
+    if not isinstance(json_data.get("_acquireImageTag", ""), str):
+      logging.warning("Action Step _acquireImageTag invalid: %s", json_data)
+      return None
+    if not isinstance(json_data.get("_acquireImageMode", 0), int):
+      logging.warning("Action Step _acquireImageMode invalid: %s",
+                      json_data)
+      return None
     return ActionStep(
         json_data["_tipInputIdx"],
         list(ActionStepParentType)[json_data["_parentType"]], pos, rot,
@@ -624,7 +646,9 @@ class ActionStep:
         json_data["_setCapability"], json_data["_setCapabilityName"],
         json_data["_setCapabilityType"], json_data["_setCapabilityValue"],
         json_data["_setCapabilityIOType"], json_data["_randomizedOffset"],
-        float(json_data["_randomizedOffsetRadiusCM"]))
+        float(json_data["_randomizedOffsetRadiusCM"]),
+        json_data.get("_acquireImageTag", ""),
+        json_data.get("_acquireImageMode", 0))
 
 
 class Action:

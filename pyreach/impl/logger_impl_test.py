@@ -16,6 +16,7 @@
 from typing import List, cast
 import unittest
 
+from pyreach.common.proto_gen import logs_pb2  # type: ignore
 from pyreach import core
 from pyreach import snapshot
 from pyreach.common.python import types_gen
@@ -182,7 +183,17 @@ class TestPyReachLogger(unittest.TestCase):
                              6.0), True, 4.0, 5.0, 6.0, "test-action", True,
                                                 "test-intent", "success",
                                                 "test-id", True, True, 7.0, 8.0,
-                                                9.0, True, "test-controller"))))
+                                                9.0, True, "test-controller"),
+                  snapshot.SnapshotGymClientAnnotationAction(
+                      "test-client",
+                      "client",
+                      True,
+                      logs_pb2.ClientAnnotation(  # type: ignore
+                          text_annotation=logs_pb2  # type: ignore
+                          .TextAnnotation(  # type: ignore
+                              category="test-category",  # type: ignore
+                              text="test-text")),  # type: ignore
+                  ))))
       test_device.expect_command_data([
           types_gen.CommandData(
               device_type="client-annotation",
@@ -251,7 +262,17 @@ class TestPyReachLogger(unittest.TestCase):
                               servo_lookahead_time_secs=8.0,
                               servo_gain=9.0,
                               controller_name="test-controller",
-                              allow_uncalibrated=True))
+                              allow_uncalibrated=True)),
+                      types_gen.GymAction(
+                          device_type="test-client",
+                          device_name="client",
+                          synchronous=True,
+                          client_annotation_action_params=types_gen
+                          .ClientAnnotationActionParams(
+                              annotation=types_gen.ClientAnnotation(
+                                  text_annotation=types_gen.TextAnnotation(
+                                      category="test-category",
+                                      text="test-text")))),
                   ],
                   gym_env_id="test-env-id",
                   gym_run_id="test-run-id",

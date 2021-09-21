@@ -26,7 +26,7 @@ from pyreach import snapshot as lib_snapshot
 from pyreach import vacuum as pyreach_vacuum
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import vacuum_element
-from pyreach.gyms.impl import reach_device
+from pyreach.gyms.devices import reach_device
 
 
 class ReachDeviceVacuum(reach_device.ReachDevice):

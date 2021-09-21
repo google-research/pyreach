@@ -260,12 +260,11 @@ def unproject_vectorized(uv_coordinates: np.ndarray, depth_values: np.ndarray,
   return xyz
 
 
-def unproject_depth_sample_vectorized(
-    img_pts: np.ndarray,
-    raw_depths: np.ndarray,
-    depth_dist: ArrayOrList8,
-    camera_mtx: np.ndarray,
-    camera_dist: np.ndarray) -> np.ndarray:
+def unproject_depth_sample_vectorized(img_pts: np.ndarray,
+                                      raw_depths: np.ndarray,
+                                      depth_dist: ArrayOrList8,
+                                      camera_mtx: np.ndarray,
+                                      camera_dist: np.ndarray) -> np.ndarray:
   """Convert (u,v) pixel coordinate, with depth, into an (x, y, z) coordinate.
 
   Args:
@@ -303,8 +302,9 @@ def unproject_depth_vectorized(im_depth: np.ndarray, depth_dist: np.ndarray,
 
   # shape of each u_map, v_map is [H, W].
   dtype = np.float64 if not isinstance(im_depth, np.ndarray) else im_depth.dtype
-  u_map, v_map = np.meshgrid(np.linspace(0, w - 1, w, dtype=dtype),
-                             np.linspace(0, h - 1, h, dtype=dtype))
+  u_map, v_map = np.meshgrid(
+      np.linspace(0, w - 1, w, dtype=dtype),
+      np.linspace(0, h - 1, h, dtype=dtype))
 
   adjusted_depth = depth_dist[0] + im_depth * depth_dist[1]
 
@@ -959,12 +959,58 @@ def euler_to_axis_angle(roll: float, pitch: float, yaw: float) -> np.ndarray:
   """Converts Euler angle to Axis-angle format.
 
   Args:
-    roll: rotation angle
-    pitch: up/down angle
-    yaw: left/right angle
+    roll: rotation angle.
+    pitch: up/down angle.
+    yaw: left/right angle.
 
   Returns:
     Equivalent Axis-angle format.
   """
   r = Rotation.from_euler('xyz', [roll, pitch, yaw])
   return r.as_rotvec()
+
+
+def inverse_quat(quat: np.ndarray) -> np.ndarray:
+  """Calculates the inverse of a quaternion.
+
+  Args:
+    quat: quaternion in (x, y, z, w).
+
+  Returns:
+    Inverse quaternion in (x, y, z, w).
+  """
+  x = quat[0]
+  y = quat[1]
+  z = quat[2]
+  w = quat[3]
+
+  q_norm = np.linalg.norm(quat)
+  return np.array([-x / q_norm, -y / q_norm, -z / q_norm, w / q_norm])
+
+
+def quaternion_multiply(quat1: np.ndarray, quat2: np.ndarray) -> np.ndarray:
+  """Multiplies two quaternions.
+
+  Args:
+    quat1: first quaternion in (x, y, z, w).
+    quat2: second quaternion in (x, y, z, w).
+
+  Returns:
+    The multiplication of the two quaternions in (x, y, z, w).
+  """
+  x1 = quat1[0]
+  y1 = quat1[1]
+  z1 = quat1[2]
+  w1 = quat1[3]
+
+  x2 = quat2[0]
+  y2 = quat2[1]
+  z2 = quat2[2]
+  w2 = quat2[3]
+
+  quat_mult_x = x1 * w2 + w1 * x2 + y1 * z2 - z1 * y2
+  quat_mult_y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2
+  quat_mult_z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
+  quat_mult_w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+
+  return np.array([quat_mult_x, quat_mult_y, quat_mult_z, quat_mult_w])

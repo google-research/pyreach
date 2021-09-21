@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Template for a Kitting agent using the PyReach Gym.
 
 This template demonstrates basic usage of the Kitting Gym environment. It
@@ -83,9 +82,9 @@ class KittingAgent:
       return True
     return False
 
-  def agent_reward_function(self, action: core.Action,
-                            observation: core.Observation
-                            ) -> Tuple[float, bool]:
+  def agent_reward_function(
+      self, action: core.Action,
+      observation: core.Observation) -> Tuple[float, bool]:
     """Reward function for environment.
 
     A function that the environment uses when step() is called, to compute the
@@ -127,27 +126,12 @@ class KittingAgent:
     Returns:
       The next action of the agent.
     """
-    assert isinstance(observation, (dict, collections.OrderedDict))
-    arm: Any = observation["arm"]
-    assert isinstance(arm, (dict, collections.OrderedDict))
-    robot_pose: Any = arm["pose"]
+    assert isinstance(self.env, BenchmarkKittingWrapper)
+    kitting_mode: int = self.env.switch_modes()
 
-    # Better would be to only change X and Y, and leave Z and the rotation
-    # alone. TODO: The environment should also prevent movements outside the
-    # X, Y bounds.
-
-    rnd_offset_x = np.random.uniform(low=-0.1, high=0.1)
-    rnd_offset_y = np.random.uniform(low=-0.1, high=0.1)
-    new_robot_pose = np.array(robot_pose)
-    new_robot_pose[0] += rnd_offset_x
-    new_robot_pose[1] += rnd_offset_y
-    new_robot_pose[2] = 0.114
     action = collections.OrderedDict(
-        {"arm": collections.OrderedDict({
-            "command": 2,
-            "pose": new_robot_pose,
-            "use_linear": 1,
-        })})
+        {"oracle": collections.OrderedDict({"request": kitting_mode})})
+
     return action
 
   def run(self, env: gym.Env) -> None:
@@ -195,10 +179,12 @@ def main() -> None:
 
   agent = KittingAgent()
 
-  with gym.make("benchmark-kitting-v0",
-                reward_done_function=agent.agent_reward_function) as env:
+  with gym.make(
+      "benchmark-kitting-v0",
+      reward_done_function=agent.agent_reward_function) as env:
 
     agent.run(BenchmarkKittingWrapper(env))
+
 
 if __name__ == "__main__":
   main()

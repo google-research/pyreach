@@ -11,17 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Benchmark environment for the Kitting benchmark."""
 
 import collections
 import time
 from typing import Tuple, Any, Dict, List
 import gym  # type: ignore
-import numpy as np  # type: ignore
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
+
+KITTING = 3
+DEKITTING = 4
+UNSET = 0
 
 
 class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
@@ -79,6 +81,13 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
             reach_env.ReachServer("Server"),
         "vacuum":
             reach_env.ReachVacuum(""),
+        "oracle":
+            reach_env.ReachOracle(
+                "oracle",
+                task_params["task-code"],
+                task_params["intent"],
+                task_params["success_type"],
+                is_synchronous=True),
         "text_instructions":
             reach_env.ReachTextInstructions("instruction-generator"),
     }
@@ -179,6 +188,7 @@ class BenchmarkKittingWrapper(gym.Wrapper):
     super().__init__(env)
 
     self.env = env
+    self._mode: int = UNSET
 
     self.action_space: core.Space = gym.spaces.Dict({
         "arm": gym.spaces.Dict({
@@ -190,15 +200,12 @@ class BenchmarkKittingWrapper(gym.Wrapper):
   def step(self,
            action: core.Action) -> Tuple[core.Observation, float, bool, Any]:
     assert isinstance(action, (dict, collections.OrderedDict))
-    arm: Any = action["arm"]
-    assert isinstance(arm, (dict, collections.OrderedDict))
-    pose: Any = arm["pose"]
-    assert isinstance(pose, np.ndarray)
-    new_action = {
-        "arm": {
-            "command": 2,
-            "pose": action["arm"]["pose"],
-        },
-    }
+    return self.env.step(action)
 
-    return self.env.step(new_action)
+  def switch_modes(self) -> int:
+    """Switch between intents."""
+    if self._mode == UNSET or self._mode == KITTING:
+      self._mode = DEKITTING
+    else:
+      self._mode = KITTING
+    return self._mode

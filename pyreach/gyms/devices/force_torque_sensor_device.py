@@ -26,7 +26,7 @@ from pyreach import force_torque_sensor
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import force_torque_sensor_element
-from pyreach.gyms.impl import reach_device
+from pyreach.gyms.devices import reach_device
 
 
 class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):

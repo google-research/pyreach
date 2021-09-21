@@ -21,6 +21,7 @@ import cv2  # type: ignore  # type: ignore
 import numpy as np  # type: ignore
 
 from pyreach.arm import Arm
+from pyreach.arm import ArmControllerDescription
 from pyreach.common.base import transform_util
 from pyreach.core import AxisAngle
 from pyreach.core import Pose
@@ -110,6 +111,8 @@ _BUTTON_DEPTH = (80, 329, 130, 354)
 _BUTTON_SESSION = (13, 401, 134, 426)
 _HOME_WARNING_TEXT = (140, 410)
 
+_BUTTON_CONTROLLER = (160, 405, 325, 435)
+
 
 def _contains(rect: Tuple[int, int, int, int], pt: Tuple[int, int]) -> bool:
   return rect[0] < pt[0] < rect[2] and rect[1] < pt[1] < rect[3]
@@ -163,6 +166,14 @@ class Button:
     self._active_color = active_color
     self._active = active
     self._enabled = enabled
+
+  def set_text(self, text: str) -> None:
+    """Set the text of the button.
+
+    Args:
+      text: the new button text.
+    """
+    self._text = text
 
   def hit(self, pt: Tuple[int, int]) -> bool:
     """Determine if the button is hit.
@@ -243,10 +254,13 @@ class Pendant(object):
   _color_button: Button
   _depth_button: Button
   _session_button: Button
+  _controller_button: Button
   _target_pose: Optional[np.ndarray]
   _home_warning_active: bool
   _arm: Arm
   _vacuum: Optional[Vacuum]
+  _controllers: Tuple[ArmControllerDescription, ...]
+  _controller_name: str
 
   def __init__(self, device_name: str, bg_img: np.ndarray, host: Host,
                have_continuous_control: bool) -> None:
@@ -272,6 +286,13 @@ class Pendant(object):
 
     self._arm = host.arms[device_name]
     self._vacuum = host.vacuums.get(device_name)
+    controllers = self._arm.supported_controllers
+    if controllers is None:
+      print("Warning failed to load controllers")
+      self._controllers = ()
+    else:
+      self._controllers = controllers
+    self._controller_name = ""
     self._arm.start_streaming(0.1)
     if self._arm.fetch_state(timeout=2.0) is None:
       print(
@@ -310,6 +331,7 @@ class Pendant(object):
     self._depth_button = Button("Depth", _BUTTON_DEPTH)
     self._session_button = Button(
         "Take Control", _BUTTON_SESSION, active_text="Release Control")
+    self._controller_button = Button("Controller:", _BUTTON_CONTROLLER)
     self._target_pose = None
 
     self._home_warning_active = False
@@ -359,7 +381,8 @@ class Pendant(object):
     self._arm.async_to_pose(
         Pose.from_list(self._target_pose.tolist()),
         servo=True,
-        allow_uncalibrated=True)
+        allow_uncalibrated=True,
+        controller_name=self._controller_name)
 
   def inc_pos_step(self) -> None:
     """Increment the value of the position step."""
@@ -485,6 +508,8 @@ class Pendant(object):
     self._continuous_control_button.draw(img)
     if not self._home_warning_active:
       self._homej_button.draw(img)
+      self._controller_button.set_text("Controller: " + self._controller_name)
+      self._controller_button.draw(img)
     else:
       self._homej_y_button.draw(img)
       self._homej_n_button.draw(img)
@@ -538,6 +563,7 @@ class Pendant(object):
           _XARM_HOMEJ,
           velocity=_XARM_HOMEJ_VELOCITY,
           allow_uncalibrated=True,
+          controller_name=self._controller_name,
           callback=self._command_callback,
           finished_callback=self._command_finished_callback)
       print(f"Homing... {self._arm.arm_type.urdf_file}")
@@ -575,6 +601,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_ZN, (x, y)):
@@ -587,6 +614,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_YP, (x, y)):
@@ -598,6 +626,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_YN, (x, y)):
@@ -609,6 +638,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_XP, (x, y)):
@@ -620,6 +650,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_XN, (x, y)):
@@ -631,6 +662,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RXP, (x, y)):
@@ -644,6 +676,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RXN, (x, y)):
@@ -657,6 +690,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RYP, (x, y)):
@@ -670,6 +704,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RYN, (x, y)):
@@ -683,6 +718,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RZP, (x, y)):
@@ -696,6 +732,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
       elif _contains(_BUTTON_RZN, (x, y)):
@@ -709,6 +746,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -721,6 +759,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -732,6 +771,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -743,6 +783,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -754,6 +795,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -765,6 +807,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -776,6 +819,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -787,6 +831,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -798,6 +843,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -809,6 +855,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -820,6 +867,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -831,6 +879,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -842,6 +891,7 @@ class Pendant(object):
             velocity=_RADIAL_VELOCITY_RAD_PER_SEC,
             acceleration=_RADIAL_ACCELERATION_RAD_PER_SEC2,
             allow_uncalibrated=True,
+            controller_name=self._controller_name,
             callback=self._command_callback,
             finished_callback=self._command_finished_callback)
 
@@ -849,7 +899,7 @@ class Pendant(object):
         self._continuous_control_button.set_active(False)
         print("stop")
         if self._arm:
-          self._arm.stop()
+          self._arm.stop(preemptive=True)
 
       if self._color_button.hit((x, y)):
         print("open color-camera")
@@ -899,6 +949,21 @@ class Pendant(object):
                 "The Home action may be dangerous. "
                 "Click Y to continue or click N to cancel."
                 "\033[0m")
+        if self._controller_button.hit((x, y)):
+          if not self._controller_name:
+            if self._controllers:
+              self._controller_name = self._controllers[0].name
+          else:
+            idx = 0
+            for ctl in self._controllers:
+              if ctl.name == self._controller_name:
+                break
+              idx += 1
+            idx += 1
+            if idx >= len(self._controllers):
+              self._controller_name = ""
+            else:
+              self._controller_name = self._controllers[idx].name
       else:
         if self._homej_y_button.hit((x, y)):
           self._home_warning_active = False

@@ -30,7 +30,7 @@ from pyreach import core
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import arm_element
 from pyreach.gyms import core as gyms_core
-from pyreach.gyms.impl import reach_device
+from pyreach.gyms.devices import reach_device
 
 IKLibType = pyreach.arm.IKLibType
 
@@ -40,17 +40,17 @@ class ReachDeviceArm(reach_device.ReachDevice):
 
   Attributes:
     action_space: A Gym action space represented as a Gym Dict Space with
-      "command", "joint_angles", "pose", "synchronous", and "id" fields.
-      "command" should be 0 for do nothing, 1 for set joint angles and 2 for set
-      pose. "joint_angles" should be the desired joint angles in radians. "pose"
-      should be the desired arm pose. "synchronous" is only valid when the arm
-      is configured as asynchronous. When set to 1, a synchronous move is
-      performed. When set to 0 (or not present), an asynchronous move occurs.
-      "id" is used to keep track of asynchronous move status. When id is present
-      and positive, each asynchronous move can be given a unique id (simple
-      counter bumping adequate) to keep track of the returned status for the
-      move.  The most recent returned statuses are put into the "responses"
-      portion of the arm observation.
+      "command", "joint_angles", "pose", "synchronous", "id", "controller"
+      and "command" should be 0 for do nothing, 1 for set joint angles and 2
+      for set pose. "joint_angles" should be the desired joint angles in
+      radians. "pose" should be the desired arm pose. "synchronous" is only
+      valid when the arm is configured as asynchronous. When set to 1, a
+      synchronous move is performed. When set to 0 (or not present), an
+      asynchronous move occurs.  "id" is used to keep track of asynchronous
+      move status. When id is present and positive, each asynchronous move
+      can be given a unique id (simple counter bumping adequate) to keep
+      track of the returned status for the move.  The most recent returned
+      statuses are put into the "responses" portion of the arm observation.
     observation_space: A Gym observation space represented as a Gym Dict Space
       with "ts", "joint_angles", and "pose" fields.
   """
@@ -77,8 +77,11 @@ class ReachDeviceArm(reach_device.ReachDevice):
     apply_tip_adjust_transform: bool = arm_config.apply_tip_adjust_transform
     is_synchronous: bool = arm_config.is_synchronous
     response_queue_length: int = arm_config.response_queue_length
+    controllers: Tuple[str, ...] = arm_config.controllers
     ik_lib: Optional[str] = arm_config.ik_lib
 
+    if not controllers:
+      raise pyreach.PyReachError("At least one controller must be specified")
     if response_queue_length < 0:
       raise pyreach.PyReachError(
           "response length queue must be non-negative: {0}".format(
@@ -108,6 +111,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
             gym.spaces.Box(low=0, high=10, shape=()),
         "timeout":
             gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
+        "controller":
+            gym.spaces.Discrete(len(controllers))
     }
     if not is_synchronous and response_queue_length:
       action_dict["synchronous"] = gym.spaces.Discrete(2)
@@ -141,6 +146,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
                      is_synchronous)
     self._arm: Optional[pyreach.Arm] = None
     self._arm_state_capturer: _ArmStateCapturer = _ArmStateCapturer()
+    self._controllers: Tuple[str, ...] = controllers
     self._high_joint_angles: Tuple[float, ...] = high_joint_angles
     self._low_joint_angles: Tuple[float, ...] = low_joint_angles
     self._joints: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -459,6 +465,14 @@ class ReachDeviceArm(reach_device.ReachDevice):
         if "servo_gain" in action_dict:
           raise pyreach.PyReachError(
               "servo_gain specified without servo set to 1")
+      controller_index: int = action_dict.get("controller", 0)
+      controllers: Tuple[str, ...] = self._controllers
+      controller_size: int = len(controllers)
+      if not 0 <= controller_index < controller_size:
+        raise pyreach.PyReachError(
+            f"Invalid controller index (={controller_index}) is too big; "
+            f"it must be less than {controller_size}")
+      controller_name: str = controllers[controller_index]
       preemptive: bool = action_dict.get("preemptive", 0) == 1
       velocity = float(action_dict.get("velocity", 0.0))
       acceleration = float(action_dict.get("acceleration", 0.0))
@@ -470,7 +484,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
       action_id: int = -1
       if (not self._is_synchronous and not synchronous and
           "id" not in action_dict):
-        raise pyreach.PyReachError("id is required for nonsynchronous moves")
+        raise pyreach.PyReachError("id is required for non-synchronous moves")
       if "id" in action_dict:
         if not isinstance(action_dict["id"], int):
           raise pyreach.PyReachError("id is not an integer: {0}".format(
@@ -492,6 +506,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             device_type="robot",
             device_name=arm.device_name,
             command=command,
+            controller_name=controller_name,
             cid=action_id,
             synchronous=self._is_synchronous or synchronous),)
 
@@ -508,6 +523,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             device_type="robot",
             device_name=arm.device_name,
             command=command,
+            controller_name=controller_name,
             cid=action_id,
             joint_angles=joints,
             use_linear=use_linear,
@@ -524,6 +540,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             self._pyreach_status = (
                 arm.to_joints(
                     joints,
+                    controller_name=controller_name,
                     use_linear=use_linear,
                     servo=servo,
                     servo_time_seconds=servo_time_seconds,
@@ -551,6 +568,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
         with self._timers.select({"!agent*", "!gym*", "host.arm.to_joints"}):
           arm.async_to_joints(
               joints,
+              controller_name=controller_name,
               use_linear=use_linear,
               servo=servo,
               servo_time_seconds=servo_time_seconds,
@@ -575,6 +593,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             device_type="robot",
             device_name=arm.device_name,
             command=command,
+            controller_name=controller_name,
             cid=action_id,
             pose=tuple(pose.tolist()),
             use_linear=use_linear,
@@ -588,6 +607,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
           with self._timers.select({"!agent*", "!gym*", "host.arm.to_pose"}):
             self._pyreach_status = arm.to_pose(
                 pyreach.Pose.from_list(pose_values),
+                controller_name=controller_name,
                 use_linear=use_linear,
                 servo=servo,
                 servo_time_seconds=servo_time_seconds,
@@ -617,6 +637,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
         with self._timers.select({"!agent*", "!gym*", "host.arm.to_pose"}):
           arm.async_to_pose(
               pyreach.Pose.from_list(pose_values),
+              controller_name=controller_name,
               use_linear=use_linear,
               servo=servo,
               servo_time_seconds=servo_time_seconds,

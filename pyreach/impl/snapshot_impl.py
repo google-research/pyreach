@@ -21,6 +21,7 @@ from pyreach.impl import utils
 from pyreach.snapshot import Snapshot
 from pyreach.snapshot import SnapshotGymAction
 from pyreach.snapshot import SnapshotGymArmAction
+from pyreach.snapshot import SnapshotGymClientAnnotationAction
 from pyreach.snapshot import SnapshotGymLoggerAction
 from pyreach.snapshot import SnapshotGymVacuumAction
 from pyreach.snapshot import SnapshotReference
@@ -115,6 +116,10 @@ def reverse_snapshot(
                   for data in action.logger_action_params.event_params
               ]),
           ))
+    elif action.logger_action_params is not None:
+      logging.warning(
+          "reversing a SnapshotGymClientAnnotationAction is  "
+          "currently unsupported due to protobuf compatibility issues")
     else:
       gym_actions.append(
           SnapshotGymAction(
@@ -178,6 +183,7 @@ def convert_snapshot(
     arm_params = None
     vacuum_params = None
     logger_params = None
+    client_annotation_params = None
     if isinstance(action, SnapshotGymArmAction):
       arm_params = types_gen.ArmActionParams(
           command=action.command,
@@ -209,6 +215,9 @@ def convert_snapshot(
               types_gen.KeyValue(key=key, value=value)
               for key, value in sorted(action.event_params.items())
           ])
+    elif isinstance(action, SnapshotGymClientAnnotationAction):
+      client_annotation_params = types_gen.ClientAnnotationActionParams(
+          annotation=types_gen.ClientAnnotation.from_proto(action.annotation))
     gym_actions.append(
         types_gen.GymAction(
             device_type=action.device_type,
@@ -216,7 +225,8 @@ def convert_snapshot(
             synchronous=action.synchronous,
             arm_action_params=arm_params,
             vacuum_action_params=vacuum_params,
-            logger_action_params=logger_params))
+            logger_action_params=logger_params,
+            client_annotation_action_params=client_annotation_params))
   return types_gen.Snapshot(
       source=snapshot.source,
       gym_server_ts=utils.timestamp_at_time(snapshot.gym_server_time),

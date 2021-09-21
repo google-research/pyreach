@@ -61,6 +61,11 @@ class ReachArm(reach_element.ReachElement):
     response_queue_length: When positive, the PyReach Gym returns the last N
       arm status values for asynchronous moves.
     ik_lib: Whether to use IKFast or IK PyBullet for inverse kinematics.
+    controllers: A list of the controller names to allow for arm control.
+      In the Gym, the controller is specified by a number that indexes into
+      this list.  The empty string means "no controller".  This list must
+      not empty.  By convention, the first entry is the empty string.
+      If not specified, the list defaults to `("",)`
   """
   low_joint_angles: Tuple[float, ...] = ()
   high_joint_angles: Tuple[float, ...] = ()
@@ -68,3 +73,4 @@ class ReachArm(reach_element.ReachElement):
   is_synchronous: bool = False
   response_queue_length: int = 0
   ik_lib: Optional[str] = None
+  controllers: Tuple[str] = ("",)

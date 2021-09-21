@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of the PyReach Arm interface."""
 
 import enum
@@ -382,7 +381,48 @@ class _MovePose(_Command):
     ])
     if self._apply_tip_adjust_transform:
       if tip_adjust_transform is not None:
-        pose = transform_util.multiply_pose(pose, tip_adjust_transform)
+        if self._use_unity_ik:
+
+          # Inverse of  Euler 90, -180, 0 in YXZ:
+          # rotation to fix tip adjust in the case of Unity.
+          quaternion_const = transform_util.inverse_quat(
+              np.array([0.0000, 0.7071, -0.7071, 0.0000]))
+
+          # First, inverse the tip adjust transform in robot space.
+          tip_adjust_transform = transform_util.inverse_pose(
+              tip_adjust_transform)
+
+          # Convert tip adjust transform in Unity space.
+          tip_adjust_unity = transform_util.unity_pos_quaternion_to_pose(
+              tip_adjust_transform[:3],
+              transform_util.axis_angle_to_quaternion(tip_adjust_transform[3:]))
+          tip_adjust_unity_translation = tip_adjust_unity[:3]
+          tip_adjust_unity_rotation = tip_adjust_unity[3:]
+          tip_adjust_unity_rotation_quat = transform_util.axis_angle_to_quaternion(
+              tip_adjust_unity_rotation)
+
+          # Apply the rotation adjustment.
+          tip_adjust_unity_rotation = transform_util.quaternion_multiply(
+              tip_adjust_unity_rotation_quat, quaternion_const)
+
+          # Convert back to pose form in Unity space.
+          tip_adjust_pose_unity = transform_util.pos_quaternion_to_pose(
+              tip_adjust_unity_translation, tip_adjust_unity_rotation)
+
+          # Calculate the inverse matrix in Unity space.
+          tip_adjust_pose_unity_matrix = np.linalg.inv(
+              transform_util.pose_to_matrix(tip_adjust_pose_unity))
+
+          # Calculate the pose in Unity space.
+          pose_unity = transform_util.multiply_pose(
+              pose, transform_util.matrix_to_pose(tip_adjust_pose_unity_matrix))
+
+          # Convert back to pose in robot space before sending to IK solver.
+          pose = transform_util.unity_pos_quaternion_to_pose(
+              pose_unity[:3],
+              transform_util.axis_angle_to_quaternion(pose_unity[3:]))
+        else:
+          pose = transform_util.multiply_pose(pose, tip_adjust_transform)
       else:
         raise core.PyReachError("Calibration was not loaded")
     if ik_lib is not None:
@@ -734,6 +774,68 @@ class _SetOutput(_Command):
                     types_gen.CapabilityState(pin=x[0], float_value=x[1])
                     for x in self._float_states
                 ]))
+    ]
+
+
+class _AcquireImage(_Command):
+  """An Arm Command to acquire image."""
+
+  _type: str
+  _name: str
+  _mode: int
+  _tag: str
+
+  def __init__(self, controller_name: str, typ: str, name: str, mode: int,
+               tag: str):
+    """Init the acquire image for an Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      typ: The type of the camera to acquire image.
+      name: The name of the camera to acquire image.
+      mode: Whether to acquire image in blocking mode or not.
+      tag: The tag for the acquire image command.
+    """
+    super().__init__(controller_name)
+    self._type = typ
+    self._name = name
+    self._mode = mode
+    self._tag = tag
+
+  # pylint: disable=unused-argument
+  def to_reach_script(
+      self,
+      arm_type: arm.ArmType,
+      support_vacuum: bool,
+      support_blowoff: bool,
+      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_hints: Dict[int, List[float]],
+      state: arm.ArmState,
+      arm_origin: Optional[np.ndarray],
+      tip_adjust_transform: Optional[np.ndarray],
+  ) -> List[types_gen.ReachScriptCommand]:
+    """Convert a Acquire Image into some ReachScript commands.
+
+    Args:
+      arm_type: The type of arm to use.
+      support_vacuum: True if vacuum is supported.
+      support_blowoff: True if blowoff is supported.
+      ik_lib: An optional inverse kinematics object.
+      ik_hints: The ik hints.
+      state: The arm state.
+      arm_origin: The origin of the arm.
+      tip_adjust_transform: The transform of the adjusted tip.
+
+    Returns:
+      A list Reach Commands to perform the translation.
+    """
+    return [
+        types_gen.ReachScriptCommand(
+            acquire_image=types_gen.AcquireImageArgs(
+                device_type=self._type,
+                device_name=self._name,
+                mode=self._mode,
+                tag=self._tag))
     ]
 
 
@@ -1854,6 +1956,30 @@ class ArmImpl(arm.Arm):
         if idx in step_pose:
           continue
 
+        if step.get_acquire_image_tag():
+          commands.append(
+              _AcquireImage("", step.get_set_capability_type(),
+                            step.get_set_capability_name(),
+                            step.get_acquire_image_mode(),
+                            utils.generate_tag()))
+          if step.get_parent_step_idx() in step_pose:
+            step_pose[idx] = step_pose[step.get_parent_step_idx()]
+          else:
+            step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
+          continue
+        elif step.get_set_capability():
+          if step.get_set_capability_io_type() == "DigitalOutput":
+            if step.get_set_capability_type(
+            ) == "vacuum" or step.get_set_capability_type() == "blowoff":
+              commands.append(
+                  _SetVacuumState(
+                      "", ActionVacuumState(step.get_set_capability_value())))
+          if step.get_parent_step_idx() in step_pose:
+            step_pose[idx] = step_pose[step.get_parent_step_idx()]
+          else:
+            step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
+          continue
+
         velocity = global_velocity if step.get_velocity(
         ) == 0 else step.get_velocity()
         accel = global_acceleration if step.get_acceleration(
@@ -1875,6 +2001,7 @@ class ArmImpl(arm.Arm):
         np_rot = np.array([step_rot.x, step_rot.y, step_rot.z, step_rot.w],
                           dtype=np.float64)
 
+        apply_tip_adjust_transform = False
         if step.get_parent_type() == actions_impl.ActionStepParentType.ABSOLUTE:
           target_tip_transform = transform_util.unity_pos_quaternion_to_pose(
               np_pos, np_rot)
@@ -1887,6 +2014,7 @@ class ArmImpl(arm.Arm):
             step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
         elif step.get_parent_type(
         ) == actions_impl.ActionStepParentType.TIP_INPUT:
+          apply_tip_adjust_transform = True
           if step.get_tip_input_idx() >= len(inputs):
             raise core.PyReachError("Not enough inputs")
 
@@ -1915,6 +2043,8 @@ class ArmImpl(arm.Arm):
           # Kitting
           elif input_data.position and input_data.rotation:
             np_pos = np_pos / 100
+
+            # This is already in Unity space.
             target_tip_transform = transform_util.pos_quaternion_to_pose(
                 np_pos, np_rot)
             position_list = [
@@ -1925,10 +2055,29 @@ class ArmImpl(arm.Arm):
                 input_data.rotation.x, input_data.rotation.y,
                 input_data.rotation.z, input_data.rotation.w
             ]
-            input_transform = transform_util.pos_quaternion_to_pose(
+
+            # Convert to Unity space.
+            input_transform = transform_util.unity_pos_quaternion_to_pose(
                 position_list, rotation_list)
+
+            # Apply rotation fix Euler 90, 180, 0 in YXZ on inputs as
+            # per Unity implementation.
+            quaternion_const = transform_util.inverse_quat(
+                np.array([0.0000, -0.7071, 0.7071, 0.0000]))
+            input_matrix_unity_translation = input_transform[:3]
+            input_matrix_unity_rotation = input_transform[3:]
+            input_matrix_unity_rotation_quat = transform_util.axis_angle_to_quaternion(
+                input_matrix_unity_rotation)
+            input_matrix_unity_rotation = transform_util.quaternion_multiply(
+                input_matrix_unity_rotation_quat, quaternion_const)
+
+            # Adjusted input pose in Unity space.
+            new_input_pose_unity = transform_util.pos_quaternion_to_pose(
+                input_matrix_unity_translation, input_matrix_unity_rotation)
+
+            # Input and step pose in Unity space.
             target_tip_transform = transform_util.multiply_pose(
-                input_transform, target_tip_transform)
+                new_input_pose_unity, target_tip_transform)
 
           if step.get_parent_step_idx() in step_pose:
             step_pose[idx] = step_pose[step.get_parent_step_idx()]
@@ -1963,15 +2112,7 @@ class ArmImpl(arm.Arm):
                 acceleration=accel,
                 use_linear=use_linear,
                 use_unity_ik=use_unity_ik,
-                apply_tip_adjust_transform=True))
-
-        if step.get_set_capability():
-          if step.get_set_capability_io_type() == "DigitalOutput":
-            if step.get_set_capability_type(
-            ) == "vacuum" or step.get_set_capability_type() == "blowoff":
-              commands.append(
-                  _SetVacuumState(
-                      "", ActionVacuumState(step.get_set_capability_value())))
+                apply_tip_adjust_transform=apply_tip_adjust_transform))
 
       if len(step_pose) == start_len:
         raise core.PyReachError("Action invalid: contains infinite loop")
