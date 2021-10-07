@@ -89,7 +89,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
 
     action_dict: Dict[str, gyms_core.Action] = {
         "command":
-            gym.spaces.Discrete(3),
+            gym.spaces.Discrete(4),
         "id":
             gym.spaces.Discrete(1 << 30),
         "joint_angles":
@@ -446,8 +446,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
       if "command" not in action_dict:
         raise pyreach.PyReachError("No command specified in Arm Action.")
       command: Any = action_dict["command"]
-      if not (isinstance(command, int) and (0 <= command <= 2)):
-        raise pyreach.PyReachError("Invalid arm command -- must be 0, 1, or 2")
+      if not (isinstance(command, int) and (0 <= command <= 3)):
+        raise pyreach.PyReachError("Invalid arm command -- must be 0 - 3")
 
       use_linear: bool = action_dict.get("use_linear", 0) == 1
       servo: bool = action_dict.get("servo", 0) == 1
@@ -651,8 +651,28 @@ class ReachDeviceArm(reach_device.ReachDevice):
               finished_callback=finished_callback)
         return cmd_tuple
 
+      if command == 3:
+        # Stop the arm:
+
+        cmd_tuple = (lib_snapshot.SnapshotGymArmAction(
+            device_type="robot",
+            device_name=arm.device_name,
+            cid=action_id,
+            command=command,
+            controller_name=controller_name,
+            velocity=velocity,
+            acceleration=acceleration,
+            timeout_sec=timeout if timeout else 0.0,
+            synchronous=self._is_synchronous or synchronous),)
+        if self._is_synchronous or synchronous:
+          with self._timers.select({"!agent*", "!gym*", "host.arm.stop"}):
+            arm.stop(deceleration=acceleration)
+        else:
+          arm.async_stop(deceleration=acceleration)
+        return cmd_tuple
+
       raise pyreach.PyReachError(
-          "Invalid Arm command {0} (must be 0, 1, or 2)".format(command))
+          f"Invalid Arm command {command} (must be 0, 1, 2, or 3)")
 
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""

@@ -11,12 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation for metrics devices."""
 import queue
 import threading
 import time
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple
 import uuid
 from pyreach import metrics
 from pyreach.common.python import types_gen
@@ -76,13 +75,15 @@ class MetricDevice(requester.Requester[metrics.Metric]):
 
   def start_pick(
       self,
+      intent: Optional[str] = None,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[metrics.Metric], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None
-  ) -> Tuple[str, Callable[[], List[metrics.Metric]]]:
+  ) -> Tuple[str, Callable[[], Tuple[metrics.Metric, ...]]]:
     """Start listening for data from a pick event.
 
     Args:
+      intent: the intent for the last command. If None, will accept any.
       timeout: Optional, timeout for the metric response.
       callback: Optional, will be called when a metric arrives.
       finished_callback: Optional, will be called when the last metric for the
@@ -93,23 +94,27 @@ class MetricDevice(requester.Requester[metrics.Metric]):
       the pick arrive.
 
     """
+    assert intent is None or isinstance(intent, str)
+    assert timeout is None or isinstance(timeout, float)
     q: "queue.Queue[Optional[metrics.Metric]]" = queue.Queue()
     pick_id = str(uuid.uuid4())
-    callback_wrapper: Callable[
-        [metrics.Metric],
-        bool] = lambda metric: self._pick_callback(q, pick_id, metric, callback)
-    finished_callback_wrapper: Callable[
-        [], None] = lambda: self._pick_finished_callback(q, finished_callback)
+
+    def callback_wrapper(metric: metrics.Metric) -> bool:
+      return self._pick_callback(q, pick_id, intent, metric, callback)
+
+    def finished_callback_wrapper() -> None:
+      return self._pick_finished_callback(q, finished_callback)
+
     stop_func = self.add_update_callback(callback_wrapper,
                                          finished_callback_wrapper)
     if timeout is not None:
       self.run(self._pick_timeout, timeout, stop_func)
-    return pick_id, lambda: thread_util.extract_all_from_queue(q)
+    return pick_id, lambda: tuple(thread_util.extract_all_from_queue(q))
 
   def _pick_callback(
       self, q: "queue.Queue[Optional[metrics.Metric]]", pick_id: str,
-      metric: metrics.Metric, callback: Optional[Callable[[metrics.Metric],
-                                                          bool]]) -> bool:
+      intent: Optional[str], metric: metrics.Metric,
+      callback: Optional[Callable[[metrics.Metric], bool]]) -> bool:
     if metric.get_label("pick_id") == pick_id:
       q.put(metric)
       if callback is not None:
@@ -117,8 +122,8 @@ class MetricDevice(requester.Requester[metrics.Metric]):
           return True
       if metric.key in {
           "operator/success", "operator/pick_success", "operator/failure",
-          "operator/pick_failure"
-      }:
+          "operator/pick_failure", "operator/partial"
+      } and (intent is None or metric.get_label("intent") == intent):
         return True
     return False
 
@@ -202,13 +207,15 @@ class MetricsImpl(metrics.Metrics):
 
   def start_pick(
       self,
+      intent: Optional[str] = None,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[metrics.Metric], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None
-  ) -> Tuple[str, Callable[[], List[metrics.Metric]]]:
+  ) -> Tuple[str, Callable[[], Tuple[metrics.Metric, ...]]]:
     """Start listening for data from a pick event.
 
     Args:
+      intent: the intent for the last command. If None, will accept any.
       timeout: Optional, timeout for the metric response.
       callback: Optional, will be called when a metric arrives.
       finished_callback: Optional, will be called when the last metric for the
@@ -219,4 +226,4 @@ class MetricsImpl(metrics.Metrics):
       the pick arrive.
 
     """
-    return self._device.start_pick(timeout, callback, finished_callback)
+    return self._device.start_pick(intent, timeout, callback, finished_callback)

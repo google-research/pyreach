@@ -17,6 +17,7 @@
 from typing import Any, Optional
 
 from pyreach import arm
+from pyreach import client_annotation
 from pyreach import color_camera
 from pyreach import core
 from pyreach import depth_camera
@@ -29,6 +30,7 @@ from pyreach import oracle
 from pyreach import text_instruction
 from pyreach import vacuum
 from pyreach.mock import arm_mock
+from pyreach.mock import client_annotation_mock
 from pyreach.mock import color_camera_mock
 from pyreach.mock import depth_camera_mock
 from pyreach.mock import force_torque_sensor_mock
@@ -96,6 +98,13 @@ class HostMock(host.Host):
     """
     mock_arm: arm_mock.ArmMock = arm_mock.ArmMock()
     return mock_arm
+
+  @property
+  def client_annotation(self) -> client_annotation.ClientAnnotation:
+    """Return the client annotation device."""
+    mock_client_annotation: client_annotation.ClientAnnotation
+    mock_client_annotation = client_annotation_mock.ClientAnnotationMock()
+    return mock_client_annotation
 
   @property
   def color_cameras(self) -> core.ImmutableDictionary[color_camera.ColorCamera]:

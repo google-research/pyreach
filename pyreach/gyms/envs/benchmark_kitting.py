@@ -106,12 +106,12 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
     observation, reward, done, info = super().step(action)
 
     if done:
-      observation, _, _, info = self._ask_for_new_instruction(observation)
+      observation, _, _, info = self.ask_for_new_instruction(observation)
       return (observation, reward, done, info)
 
     return (observation, reward, done, info)
 
-  def _ask_for_new_instruction(
+  def ask_for_new_instruction(
       self, current_observation: core.Observation
   ) -> Tuple[core.Observation, float, bool, Any]:
     """Asks for a new instruction.
@@ -202,10 +202,10 @@ class BenchmarkKittingWrapper(gym.Wrapper):
     assert isinstance(action, (dict, collections.OrderedDict))
     return self.env.step(action)
 
-  def switch_modes(self) -> int:
-    """Switch between intents."""
-    if self._mode == UNSET or self._mode == KITTING:
+  def set_mode(self, instruction: str) -> int:
+    """Set mode of Kitting task."""
+    if instruction == "dekitting":
       self._mode = DEKITTING
-    else:
+    elif instruction == "kitting":
       self._mode = KITTING
     return self._mode

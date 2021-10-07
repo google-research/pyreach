@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for generating metrics related log entries in the Reach server log.
 
 This interface allows generation of special log records that is used for
 metrics calculation.
 """
 
-from typing import List, Tuple, Callable, Optional
+from typing import Tuple, Callable, Optional
 
 from pyreach import metrics
 
@@ -55,13 +54,15 @@ class MetricsMock(metrics.Metrics):
 
   def start_pick(
       self,
+      intent: Optional[str] = None,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[metrics.Metric], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None
-  ) -> Tuple[str, Callable[[], List[metrics.Metric]]]:
+  ) -> Tuple[str, Callable[[], Tuple[metrics.Metric, ...]]]:
     """Start listening for data from a pick event.
 
     Args:
+      intent: the intent for the last command. If None, will accept any.
       timeout: Optional.
       callback: Optional, will be called when a metric arrives.
       finished_callback: Optional, will be called when the last metric for the

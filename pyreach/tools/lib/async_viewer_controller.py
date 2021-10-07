@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Controller for the async viewer."""
 
 import threading
@@ -83,7 +82,8 @@ class Controller:
                use_tags: bool,
                show_detections: bool,
                quiet: bool,
-               show_crosshair: bool = True) -> None:
+               show_crosshair: bool = True,
+               request_oracles: bool = False) -> None:
     """Instantiate a controller for multiple cameras.
 
     Args:
@@ -97,6 +97,7 @@ class Controller:
       quiet: if true, will not print help text.
       show_crosshair: If true, the crosshair at the centre of each window will
         be displayed.
+      request_oracles: If true, will send requests to the oracles.
     """
     # If true, will render the undistortion field as red / green arrows.
     self._show_undistortion = show_undistortion
@@ -127,6 +128,8 @@ class Controller:
     # If an oracle is in this list, it is not requested, and must be processed
     # manually by the viewer.
     self._unrequested_oracles = set()
+
+    self._validate_requested_cameras(camera_names)
 
     if camera_names:
       self._color_camera_windows = {}
@@ -164,11 +167,10 @@ class Controller:
               print("Invalid camera overlay:", overlay_id)
         else:
           print("Invalid camera:", cam_id)
+          self._host.close()
+          return
 
     for name, color_camera in self._host.color_cameras.items():
-      if not self._quiet:
-        print("Discovered --cameras=color-camera" +
-              (("." + name) if name else ""))
       if (self._color_camera_windows is not None and
           name not in self._color_camera_windows):
         continue
@@ -179,9 +181,6 @@ class Controller:
         color_camera.start_streaming(1.0 / reqfps)
 
     for name, depth_camera in self._host.depth_cameras.items():
-      if not self._quiet:
-        print("Discovered --cameras=depth-camera" +
-              (("." + name) if name else ""))
       if (self._depth_camera_windows is not None and
           name not in self._depth_camera_windows):
         continue
@@ -192,12 +191,10 @@ class Controller:
         depth_camera.start_streaming(1.0 / reqfps)
 
     for name, oracle in self._host.oracles.items():
-      if not self._quiet:
-        print("Discovered --cameras=oracle" + (("." + name) if name else ""))
       if self._oracle_windows is not None and name not in self._oracle_windows:
         continue
       oracle.add_update_callback(self._oracle_callback)
-      if use_tags or reqfps > 0:
+      if (use_tags or reqfps > 0) and request_oracles:
         oracle.enable_tagged_request(
             intent="",
             prediction_type="",
@@ -208,8 +205,6 @@ class Controller:
         self._unrequested_oracles.add(name)
 
     for name, vnc in self._host.vncs.items():
-      if not self._quiet:
-        print("Discovered --cameras=vnc" + (("." + name) if name else ""))
       if self._vnc_windows is not None and name not in self._vnc_windows:
         continue
       vnc.add_update_callback(self._vnc_callback)
@@ -235,6 +230,31 @@ class Controller:
       host_id = self._host.host_id
       if host_id:
         self._image_display.update_host_name(host_id)
+
+  def _validate_requested_cameras(
+      self, camera_names: List[Tuple[str, Optional[str]]]) -> None:
+    """Ensures all requested cameras were discovered."""
+    seen_cameras: Set[str] = set()
+    cameras_types: List[Tuple[List[str], List[str]]] = [
+        (list(self._host.color_cameras.keys()), ["color-camera", "uvc"]),
+        (list(self._host.depth_cameras.keys()), ["depth-camera", "photoneo"]),
+        (list(self._host.oracles.keys()), ["oracle"]),
+        (list(self._host.vncs.keys()), ["vnc"])
+    ]
+    for discovered_cameras, types in cameras_types:
+      for name in discovered_cameras:
+        for t in types:
+          seen_cameras.add(t + (("." + name) if name else ""))
+        if not self._quiet:
+          print("Discovered --cameras=" + types[0] +
+                (("." + name) if name else ""))
+    requested_camera_ids = {cam_id for cam_id, _ in camera_names}
+    unseen_cameras = requested_camera_ids - seen_cameras
+    if unseen_cameras:
+      for u in unseen_cameras:
+        print(f"Error: specified camera was not discovered: {u}")
+      self._host.close()
+      return
 
   def _image_callback(self, listeners: Optional[Dict[str, List[Tuple[str,
                                                                      bool]]]],

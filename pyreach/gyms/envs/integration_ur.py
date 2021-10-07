@@ -68,6 +68,10 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
                                   state_enable=True,
                                   vacuum_gauge_enable=True,
                                   vacuum_detect_enable=True),
+        "annotation":
+            reach_env.ReachAnnotation("",
+                                      is_synchronous=False,
+                                      maximum_size=1024),
     }
 
     super().__init__(pyreach_config=pyreach_config, **kwargs)

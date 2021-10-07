@@ -819,12 +819,18 @@ class ClientAnnotation:
   interval_start: Optional['IntervalStart']
   interval_end: Optional['IntervalEnd']
   text_annotation: Optional['TextAnnotation']
+  snapshot_annotation: Optional['SnapshotAnnotation']
 
-  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', text_annotation: Optional['TextAnnotation'] = None) -> None:
+  # A measurement at a single point in time.
+  point_measurement: Optional['PointMeasurement']
+
+  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', point_measurement: Optional['PointMeasurement'] = None, snapshot_annotation: Optional['SnapshotAnnotation'] = None, text_annotation: Optional['TextAnnotation'] = None) -> None:
     self.associated_server_ts = associated_server_ts
     self.interval_end = interval_end
     self.interval_start = interval_start
     self.log_channel_id = log_channel_id
+    self.point_measurement = point_measurement
+    self.snapshot_annotation = snapshot_annotation
     self.text_annotation = text_annotation
 
   def to_json(self) -> Dict[str, Any]:
@@ -847,6 +853,14 @@ class ClientAnnotation:
       assert isinstance(self.log_channel_id, str), 'Wrong type for attribute: log_channel_id. Expected: str. Got: ' + str(type(self.log_channel_id)) + '.'
       json_data['logChannelID'] = self.log_channel_id
 
+    if self.point_measurement:
+      assert self.point_measurement.__class__.__name__ == 'PointMeasurement', 'Wrong type for attribute: point_measurement. Expected: PointMeasurement. Got: ' + str(type(self.point_measurement)) + '.'
+      json_data['pointMeasurement'] = self.point_measurement.to_json()
+
+    if self.snapshot_annotation:
+      assert self.snapshot_annotation.__class__.__name__ == 'SnapshotAnnotation', 'Wrong type for attribute: snapshot_annotation. Expected: SnapshotAnnotation. Got: ' + str(type(self.snapshot_annotation)) + '.'
+      json_data['snapshotAnnotation'] = self.snapshot_annotation.to_json()
+
     if self.text_annotation:
       assert self.text_annotation.__class__.__name__ == 'TextAnnotation', 'Wrong type for attribute: text_annotation. Expected: TextAnnotation. Got: ' + str(type(self.text_annotation)) + '.'
       json_data['textAnnotation'] = self.text_annotation.to_json()
@@ -858,7 +872,7 @@ class ClientAnnotation:
     """Convert JSON to type object."""
     obj = ClientAnnotation()
 
-    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'textAnnotation']
+    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'pointMeasurement', 'snapshotAnnotation', 'textAnnotation']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ClientAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -879,6 +893,14 @@ class ClientAnnotation:
       assert isinstance(json_data['logChannelID'], str), 'Wrong type for attribute: logChannelID. Expected: str. Got: ' + str(type(json_data['logChannelID'])) + '.'
       obj.log_channel_id = json_data['logChannelID']
 
+    if 'pointMeasurement' in json_data:
+      assert isinstance(json_data['pointMeasurement'], dict), 'Wrong type for attribute: pointMeasurement. Expected: dict. Got: ' + str(type(json_data['pointMeasurement'])) + '.'
+      obj.point_measurement = PointMeasurement.from_json(json_data['pointMeasurement'])
+
+    if 'snapshotAnnotation' in json_data:
+      assert isinstance(json_data['snapshotAnnotation'], dict), 'Wrong type for attribute: snapshotAnnotation. Expected: dict. Got: ' + str(type(json_data['snapshotAnnotation'])) + '.'
+      obj.snapshot_annotation = SnapshotAnnotation.from_json(json_data['snapshotAnnotation'])
+
     if 'textAnnotation' in json_data:
       assert isinstance(json_data['textAnnotation'], dict), 'Wrong type for attribute: textAnnotation. Expected: dict. Got: ' + str(type(json_data['textAnnotation'])) + '.'
       obj.text_annotation = TextAnnotation.from_json(json_data['textAnnotation'])
@@ -895,6 +917,8 @@ class ClientAnnotation:
     obj.interval_end = IntervalEnd.from_proto(get_proto_field(proto, 'interval_end'))
     obj.interval_start = IntervalStart.from_proto(get_proto_field(proto, 'interval_start'))
     obj.log_channel_id = get_proto_value(proto.log_channel_id)
+    obj.point_measurement = PointMeasurement.from_proto(get_proto_field(proto, 'point_measurement'))
+    obj.snapshot_annotation = SnapshotAnnotation.from_proto(get_proto_field(proto, 'snapshot_annotation'))
     obj.text_annotation = TextAnnotation.from_proto(get_proto_field(proto, 'text_annotation'))
     return obj
 
@@ -1006,7 +1030,7 @@ class ClientSessionStart:
 class CommandData:
   """Representation of proto message CommandData.
 
-   Command data, representing commands received from clients.
+   CommandData represents the commands received from clients.
    See the corresponding file in the Project Reach source code:
    project-reach/go/src/project-reach/pkg/rc/types.go
   """
@@ -5027,7 +5051,7 @@ class DigitalBank:
 class ExperimentalCommandData:
   """Representation of proto message ExperimentalCommandData.
 
-   Experimental command data, augmenting CommandData.
+   ExperimentalCommandData augments CommandData with experimental features.
    No new fields should be added to this structure; the existing
    fields might be migrated to proper places in the future.
    See the corresponding file in the Project Reach source code:
@@ -6132,7 +6156,7 @@ class IntervalStart:
 class KeyValue:
   """Representation of proto message KeyValue.
 
-   Message for generic key-value data.
+   KeyValueData is the message for generic key-value data.
   """
   key: str
   value: str
@@ -6626,6 +6650,52 @@ class MachineInterfaces:
     return obj
 
 
+class Measurement:
+  """Representation of proto message Measurement.
+
+   Measurement is a value for a measurement, with units.
+  """
+  seconds: float
+
+  def __init__(self, seconds: float = 0.0) -> None:
+    self.seconds = seconds
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.seconds:
+      assert isinstance(self.seconds, float) or isinstance(self.seconds, int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(self.seconds)) + '.'
+      json_data['seconds'] = self.seconds
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'Measurement':
+    """Convert JSON to type object."""
+    obj = Measurement()
+
+    expected_json_keys: List[str] = ['seconds']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid Measurement. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'seconds' in json_data:
+      assert isinstance(json_data['seconds'], float) or isinstance(json_data['seconds'], int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(json_data['seconds'])) + '.'
+      obj.seconds = json_data['seconds']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.Measurement) -> 'Measurement':
+    """Convert Measurement proto to type object."""
+    if not proto:
+      return None
+    obj = Measurement()
+    obj.seconds = get_proto_value(proto.seconds)
+    return obj
+
+
 class MessageLastTimestamp:
   """Representation of proto message MessageLastTimestamp.
 
@@ -6880,7 +6950,7 @@ class Metric:
 class MoveJPathArgs:
   """Representation of proto message MoveJPathArgs.
 
-   Execute a path in joint-space.
+   MoveJPathArgs executes a path in joint-space.
   """
   waypoints: List['MoveJWaypointArgs']
 
@@ -6941,10 +7011,10 @@ class MoveJPathArgs:
 class MoveJWaypointArgs:
   """Representation of proto message MoveJWaypointArgs.
 
-   Move to a position in joint-space. The exact number and interpretation
-   of rotation elements is robot-dependent. If the blend radius is not present,
-   then the default blend radius (set via SetBlendRadius) will be used.
-   The velocity is measured in rad/sec and acceleration in rad/sec/sec.
+   MoveJWaypointArgs moves to a position in joint-space. The exact number and
+   interpretation of rotation elements is robot-dependent. If the blend radius
+   is not present, then the default blend radius (set via SetBlendRadius) will
+   be used. The velocity is measured in rad/sec and acceleration in rad/sec/sec.
    If the velocity is not present then the default velocity (set via
    SetRadialSpeed) will be used (but it will be interpreted as rad/sec). If the
    acceleration is not present then the default acceleration (set via
@@ -7145,7 +7215,7 @@ class MoveJWaypointArgs:
 class MoveLPathArgs:
   """Representation of proto message MoveLPathArgs.
 
-   Execute a linear path in joint-space.
+   MoveLPathArgs executes a linear path in joint-space.
   """
   waypoints: List['MoveLWaypointArgs']
 
@@ -7206,14 +7276,14 @@ class MoveLPathArgs:
 class MoveLWaypointArgs:
   """Representation of proto message MoveLWaypointArgs.
 
-   Move to a position linearly in joint-space. The exact number and
-   interpretation of rotation elements is robot-dependent. If the blend radius
-   is not present, then the default blend radius (set via SetBlendRadius) will
-   be used. The velocity is measured in m/sec and acceleration in m/sec/sec.
-   If the velocity is not present then the default velocity (set via
-   SetRadialSpeed) will be used (but it will be interpreted as m/sec). If the
-   acceleration is not present then the default acceleration (set via
-   SetRadialSpeed) will be used (but it will be interpreted as m/sec/sec).
+   MoveLWaypointArgs moves to a position linearly in joint-space. The exact
+   number and interpretation of rotation elements is robot-dependent. If the
+   blend radius is not present, then the default blend radius (set via
+   SetBlendRadius) will be used. The velocity is measured in m/sec and
+   acceleration in m/sec/sec. If the velocity is not present then the default
+   velocity (set via SetRadialSpeed) will be used (but it will be interpreted as
+   m/sec). If theacceleration is not present then the default acceleration (set
+   via SetRadialSpeed) will be used (but it will be interpreted as m/sec/sec).
   """
   rotation: List[float]
   blend_radius: float
@@ -8123,6 +8193,93 @@ class PlaceLabel:
     return obj
 
 
+class PointMeasurement:
+  """Representation of proto message PointMeasurement.
+
+   PointMeasurement is a measurement at a single point in time.
+  """
+  # The client timestamp at which the measurement was taken.
+  timestamp: int
+
+  # A space name for the measurement. Should be unique to a client so that
+  # it can be pulled out of logs easily.
+  space: str
+
+  # A name within the space for the measurement.
+  name: str
+
+  # The measurement.
+  value: Optional['Measurement']
+
+  def __init__(self, name: str = '', space: str = '', timestamp: int = 0, value: Optional['Measurement'] = None) -> None:
+    self.name = name
+    self.space = space
+    self.timestamp = timestamp
+    self.value = value
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.name:
+      assert isinstance(self.name, str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(self.name)) + '.'
+      json_data['name'] = self.name
+
+    if self.space:
+      assert isinstance(self.space, str), 'Wrong type for attribute: space. Expected: str. Got: ' + str(type(self.space)) + '.'
+      json_data['space'] = self.space
+
+    if self.timestamp:
+      assert isinstance(self.timestamp, int), 'Wrong type for attribute: timestamp. Expected: int. Got: ' + str(type(self.timestamp)) + '.'
+      json_data['timestamp'] = self.timestamp
+
+    if self.value:
+      assert self.value.__class__.__name__ == 'Measurement', 'Wrong type for attribute: value. Expected: Measurement. Got: ' + str(type(self.value)) + '.'
+      json_data['value'] = self.value.to_json()
+
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'PointMeasurement':
+    """Convert JSON to type object."""
+    obj = PointMeasurement()
+
+    expected_json_keys: List[str] = ['name', 'space', 'timestamp', 'value']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid PointMeasurement. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'name' in json_data:
+      assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
+      obj.name = json_data['name']
+
+    if 'space' in json_data:
+      assert isinstance(json_data['space'], str), 'Wrong type for attribute: space. Expected: str. Got: ' + str(type(json_data['space'])) + '.'
+      obj.space = json_data['space']
+
+    if 'timestamp' in json_data:
+      assert isinstance(json_data['timestamp'], int), 'Wrong type for attribute: timestamp. Expected: int. Got: ' + str(type(json_data['timestamp'])) + '.'
+      obj.timestamp = json_data['timestamp']
+
+    if 'value' in json_data:
+      assert isinstance(json_data['value'], dict), 'Wrong type for attribute: value. Expected: dict. Got: ' + str(type(json_data['value'])) + '.'
+      obj.value = Measurement.from_json(json_data['value'])
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.PointMeasurement) -> 'PointMeasurement':
+    """Convert PointMeasurement proto to type object."""
+    if not proto:
+      return None
+    obj = PointMeasurement()
+    obj.name = get_proto_value(proto.name)
+    obj.space = get_proto_value(proto.space)
+    obj.timestamp = get_proto_value(proto.timestamp)
+    obj.value = Measurement.from_proto(get_proto_field(proto, 'value'))
+    return obj
+
+
 class Pose2d:
   """Representation of proto message Pose2d.
 
@@ -8183,6 +8340,7 @@ class Pose2d:
 class Quaternion3d:
   """Representation of proto message Quaternion3d.
 
+   Quaternion repesents a three-dimensional rotation in a quaternion.
   """
   w: float
   x: float
@@ -8261,9 +8419,9 @@ class Quaternion3d:
 class RawArgs:
   """Representation of proto message RawArgs.
 
-   Sends the given text verbatim to the robot. Use this only when necessary. If
-   you find yourself using this often, then consider asking to add the command
-   formally to Reach Script.
+   RawArgs sends the given text verbatim to the robot. Use this only when
+   necessary. If you find yourself using this often, then consider asking to add
+   the command formally to Reach Script.
   """
   text: str
 
@@ -8309,6 +8467,7 @@ class RawArgs:
 class ReachScript:
   """Representation of proto message ReachScript.
 
+   ReachScript is a reach-script command to a robot.
   """
   # If true, the command will stop any currently executing command and start
   # executing this one.
@@ -8647,10 +8806,11 @@ class ReachScriptCapability:
 class ReachScriptCommand:
   """Representation of proto message ReachScriptCommand.
 
-   Each command should contain one of these. If there are zero, then nothing
-   happens. If there are more than one, then the result is undefined behavior.
-   In general, it will result in one and only one of the commands being
-   executed.
+   ReachScriptCommand is an individual command for reach scripts. Each
+   ReachScriptCommand should contain one argument object. If there are zero,
+   then nothing happens. If there are more than one, then the result is
+   undefined behavior. In general, it will result in one and only one of the
+   commands being executed.
   """
   set_radial_speed: Optional['SetRadialSpeedArgs']
   set_blend_radius: Optional['SetBlendRadiusArgs']
@@ -9115,6 +9275,7 @@ class ReportError:
 class RobotPowerState:
   """Representation of proto message RobotPowerState.
 
+   RobotPowerState represents a robot's power state.
   """
   is_robot_power_on: bool
 
@@ -10329,8 +10490,8 @@ class SessionInfo:
 class SetAnalogOutArgs:
   """Representation of proto message SetAnalogOutArgs.
 
-   Sets an analog output. The value must be in the range [0, 1]. Values outside
-   this range will result in undefined behavior.
+   SetAnalogOutArgs sets an analog output. The value must be in the range
+   [0, 1]. Values outside this range will result in undefined behavior.
   """
   output: int
   value: float
@@ -10387,7 +10548,7 @@ class SetAnalogOutArgs:
 class SetBlendRadiusArgs:
   """Representation of proto message SetBlendRadiusArgs.
 
-   Sets blend radius for following commands.
+   SetBlendRadiusArgs sets blend radius for following commands.
   """
   radius: float
 
@@ -10524,8 +10685,8 @@ class SetCameraIntrinsics:
 class SetDigitalOutArgs:
   """Representation of proto message SetDigitalOutArgs.
 
-   Sets a digital output. This is not a tool digital output, see
-   SetToolDigitalOutArgs for that.
+   SetDigitalOutArgs sets a digital output. This is not a tool digital output,
+   see SetToolDigitalOutArgs for that.
   """
   output: int
   value: bool
@@ -10736,7 +10897,8 @@ class SetOutput:
 class SetRadialSpeedArgs:
   """Representation of proto message SetRadialSpeedArgs.
 
-   Sets radial velocity and acceleration for following commands.
+   SetRadialSpeedArgs sets radial velocity and acceleration for following
+   commands.
   """
   velocity: float
   acceleration: float
@@ -11152,9 +11314,9 @@ class SimState:
 class SleepArgs:
   """Representation of proto message SleepArgs.
 
-   Sleeps for the given time. Sleeps (e.g. 200msec) may not be effective if
-   the latency of the robot reporting that a command is complete is on the
-   same order.
+   SleepArgs sleeps for the given time. Sleeps (e.g. 200msec) may not be
+   effective if the latency of the robot reporting that a command is complete
+   is on the same order.
   """
   seconds: float
 
@@ -11418,6 +11580,42 @@ class Snapshot:
         json_list.append(SnapshotResponse.from_proto(j))
       obj.responses = json_list
     obj.source = get_proto_value(proto.source)
+    return obj
+
+
+class SnapshotAnnotation:
+  """Representation of proto message SnapshotAnnotation.
+
+   SnapshotAnnotation is for snapshot-only annotations.
+
+  """
+
+  def __init__(self) -> None:
+    pass
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+    return json_data
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'SnapshotAnnotation':
+    """Convert JSON to type object."""
+    obj = SnapshotAnnotation()
+
+    expected_json_keys: List[str] = []
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid SnapshotAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.SnapshotAnnotation) -> 'SnapshotAnnotation':  # pylint: disable=unused-argument
+    """Convert SnapshotAnnotation proto to type object."""
+    if not proto:
+      return None
+    obj = SnapshotAnnotation()
     return obj
 
 
@@ -11705,8 +11903,9 @@ class Status:
 class StopJArgs:
   """Representation of proto message StopJArgs.
 
-   Decelerates all joint speeds to zero. The deceleration, if specified,
-   overrides the acceleration set in SetRadialSpeed for this command only.
+   StopJArgs decelerates all joint speeds to zero. The deceleration, if
+   specified, overrides the acceleration set in SetRadialSpeed for this command
+   only.
   """
   deceleration: float
 

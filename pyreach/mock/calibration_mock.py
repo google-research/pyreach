@@ -14,7 +14,7 @@
 
 """Robot mock calibration module."""
 
-from typing import Optional, List
+from typing import Optional, Tuple
 
 from pyreach import calibration
 
@@ -36,10 +36,10 @@ class CalibrationMock(calibration.Calibration):
     """
     raise NotImplementedError
 
-  def get_all_devices(self) -> List[calibration.CalibrationDevice]:
+  def get_all_devices(self) -> Tuple[calibration.CalibrationDevice, ...]:
     """Get all devices in the calibration.
 
     Returns:
-      The a list of all devices in the calibration.
+      The a tuple of all devices in the calibration.
     """
     raise NotImplementedError

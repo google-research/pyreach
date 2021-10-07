@@ -20,7 +20,7 @@
 #  https://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html
 
 import dataclasses
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
 
 
 @dataclasses.dataclass(frozen=True)
@@ -137,10 +137,10 @@ class Calibration:
     """
     raise NotImplementedError
 
-  def get_all_devices(self) -> List[CalibrationDevice]:
+  def get_all_devices(self) -> Tuple[CalibrationDevice, ...]:
     """Get all devices in the calibration.
 
     Returns:
-      The a list of all devices in the calibration.
+      The a tuple of all devices in the calibration.
     """
     raise NotImplementedError

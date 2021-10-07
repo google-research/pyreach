@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Constraints of the configuration and task space.
 
 PyReach only provides bare minimum support for the constraints right now.
 """
 
 import dataclasses
-from typing import Optional, Text, Tuple
+from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 
@@ -32,7 +31,6 @@ class JointLimit:
   Attributes:
     min: The smallest joint angle in radian.
     max: The largest joint angle in radian.
-
   """
 
   min: float
@@ -66,7 +64,7 @@ class Interactable:
     geometry: the geometry user can interact within.
   """
 
-  name: Text
+  name: str
   geometry: Geometry
 
 
@@ -86,10 +84,8 @@ class Constraints(object):
     """
     raise NotImplementedError
 
-  def get_joint_limits(
-      self,
-      device_name: str
-  ) -> Optional[Tuple[JointLimit, ...]]:
+  def get_joint_limits(self,
+                       device_name: str) -> Optional[Tuple[JointLimit, ...]]:
     """Get the joint limits for the named arm device.
 
     Args:
@@ -101,7 +97,7 @@ class Constraints(object):
     """
     raise NotImplementedError
 
-  def get_interactables(self) -> Optional[Tuple[Interactable, ...]]:
+  def get_interactables(self) -> Tuple[Interactable, ...]:
     """Get the list of interactable geometries.
 
     Returns:

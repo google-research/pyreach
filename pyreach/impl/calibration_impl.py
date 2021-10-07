@@ -455,7 +455,7 @@ class CalibrationImpl(calibration.Calibration):
     Args:
       devices: A list of calibration devices.
     """
-    self._devices = devices
+    self._devices = tuple(devices)
 
   def get_device(self, device_type: str,
                  device_name: str) -> Optional[calibration.CalibrationDevice]:
@@ -475,10 +475,10 @@ class CalibrationImpl(calibration.Calibration):
         return device
     return None
 
-  def get_all_devices(self) -> List[calibration.CalibrationDevice]:
+  def get_all_devices(self) -> Tuple[calibration.CalibrationDevice, ...]:
     """Get all devices in the calibration.
 
     Returns:
-      The a list of all devices in the calibration.
+      The a tuple of all devices in the calibration.
     """
-    return self._devices.copy()
+    return self._devices

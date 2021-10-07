@@ -59,7 +59,9 @@ class ReachDeviceOracle(reach_device.ReachDevice):
   RESPONSE_NONE: int = 0
   RESPONSE_SUCCESS: int = 1
   RESPONSE_FAIL: int = 2
-  RESPONSE_MAX: int = max(RESPONSE_NONE, RESPONSE_SUCCESS, RESPONSE_FAIL)
+  RESPONSE_PARTIAL: int = 3
+  RESPONSE_MAX: int = max(RESPONSE_NONE, RESPONSE_SUCCESS, RESPONSE_FAIL,
+                          RESPONSE_PARTIAL)
 
   def __init__(self, oracle_config: oracle_element.ReachOracle) -> None:
     """Initialize a Reach Oracle.
@@ -94,7 +96,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     self._last_ts: float = -1.0
     self._request: int = ReachDeviceOracle.REQUEST_NONE
     self._tagged_request: TaggedRequest = ReachDeviceOracle.EMPTY_TAGGED_REQUEST
-    self._pick_status: Optional[Callable[[], List[pyreach.Metric]]] = None
+    self._pick_status: Optional[Callable[[], Tuple[pyreach.Metric, ...]]] = None
     self._prediction: Optional[pyreach.Prediction] = None
     self._task_code: str = task_code
     self._intent: str = intent
@@ -229,28 +231,35 @@ class ReachDeviceOracle(reach_device.ReachDevice):
           raise pyreach.PyReachError from reach_error
         ts = prediction.time
 
-      if not self._selected_point:
-        pick_point = np.array([-1.0, -1.0])
+      if not self._selected_pick_place_point:
+        if not self._selected_point:
+          pick_point = np.array([-1.0, -1.0])
+        else:
+          pick_point = np.array(
+              [self._selected_point.x, self._selected_point.y])
       else:
-        pick_point = np.array([self._selected_point.x, self._selected_point.y])
+        pick_point = np.array([])
 
       execute_action_status: Optional[
           pyreach.PyReachStatus] = self._execute_action_status
       response: int = ReachDeviceOracle.RESPONSE_NONE
       if (execute_action_status and
           execute_action_status.status not in ("rejected", "aborted")):
-        metrics: List[pyreach.Metric] = (
-            self._pick_status() if self._pick_status else [])
+        metrics: Tuple[pyreach.Metric, ...] = (
+            self._pick_status() if self._pick_status else ())
         self._pick_status = None
         metric: pyreach.Metric
         for metric in metrics:
           key: str = metric.key
-          if key == "operator/success":
-            response = ReachDeviceOracle.RESPONSE_SUCCESS
-          elif key == "operator/failure":
-            response = ReachDeviceOracle.RESPONSE_FAIL
-          elif key == "operator/attempt":
-            pass
+          if metric.get_label("intent") != "pick":
+            if key == "operator/success":
+              response = ReachDeviceOracle.RESPONSE_SUCCESS
+            elif key == "operator/failure":
+              response = ReachDeviceOracle.RESPONSE_FAIL
+            elif key == "operator/partial":
+              response = ReachDeviceOracle.RESPONSE_PARTIAL
+            else:
+              pass
           else:
             logging.error("Gym Oracle: Unhandled metric: '%s'", key)
       elif self._selected_point:
@@ -331,6 +340,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       label: str = ""
       bin_name: str = ""
       action_name: str = ""
+      task_intent: str = ""
       request: int
       if "request" in action_dict:
         request = int(action_dict["request"])
@@ -338,16 +348,20 @@ class ReachDeviceOracle(reach_device.ReachDevice):
           label = "SingulateLeftBin"
           bin_name = "left"
           action_name = "SingulateLeftBin"
+          task_intent = "pick"
         elif request == ReachDeviceOracle.REQUEST_RIGHT_BIN:
           label = "SingulateRightBin"
           bin_name = "right"
           action_name = "SingulateRightBin"
+          task_intent = "pick"
         elif request == ReachDeviceOracle.REQUEST_KITTING:
           label = "kit"
           action_name = "Kit"
+          task_intent = "kitting"
         elif request == ReachDeviceOracle.REQUEST_DEKITTING:
           label = "dekit"
           action_name = "Kit"
+          task_intent = "dekitting"
       if not label:
         return ()
       self._request = request
@@ -413,8 +427,8 @@ class ReachDeviceOracle(reach_device.ReachDevice):
           self._intent == "pick"):
         metrics: pyreach.Metrics = host.metrics
         pick_id: str
-        read_status: Callable[[], List[pyreach.Metric]]
-        pick_id, read_status = metrics.start_pick()
+        read_status: Callable[[], Tuple[pyreach.Metric, ...]]
+        pick_id, read_status = metrics.start_pick(intent=task_intent)
 
         if not isinstance(selected_point_3d, list):
           raise pyreach.PyReachError(

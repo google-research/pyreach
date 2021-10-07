@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Reach arm element used for configuration."""
 
 import dataclasses
@@ -19,9 +18,16 @@ import dataclasses
 from pyreach.gyms import reach_element
 
 
+class ReachAction:
+  """Reach task action values."""
+  NO_CHANGE = 0
+  START = 1
+  STOP = 2
+
+
 @dataclasses.dataclass(frozen=True)
-class ReachTextInstructions(reach_element.ReachElement):
-  """Text instructions configuration class.
+class ReachTask(reach_element.ReachElement):
+  """Task configuration class.
 
   Attributes:
     reach_name: The name of the corresponding device on the Reach server. This
@@ -30,11 +36,6 @@ class ReachTextInstructions(reach_element.ReachElement):
       observactions elements that have this flag set otherwise the next
       observation is asynchronous.  This argument is optional and defaults to
       False.
-    task_disable: If False, the "task_enable" key is available in the action
-      space; otherwise "task_enable" is not present.  This value defaults
-      to False, which make the action space "task_enable" key show up.
-      In general, all new Gym environments should set this to True and
-      use the Task Device instead.
   """
+
   is_synchronous: bool = False
-  task_disable: bool = False

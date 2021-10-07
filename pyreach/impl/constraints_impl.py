@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Constraints implementation."""
 
 import json
@@ -24,6 +23,7 @@ from scipy.spatial import transform  # type: ignore
 import shapely.geometry  # type: ignore
 
 from pyreach import constraints
+from pyreach import core
 from pyreach.common.base import transform_util
 from pyreach.impl import device_base
 
@@ -59,92 +59,48 @@ class ConstraintDevice:
     return "Device('" + self._device_type + "', '" + self._device_name + "')"
 
 
-class Geometry:
-  """Geometry base class."""
-
-  def __init__(self) -> None:
-    """Construct a Geometry."""
-    pass
-
-
-class Box(Geometry):
+class BoxImpl(constraints.Box):
   """Represents a Box constraint geometry."""
-
-  _x: float
-  _y: float
-  _z: float
-  _rx: float
-  _ry: float
-  _rz: float
-  _sx: float
-  _sy: float
-  _sz: float
-  _vertices: List[np.array]
-
-  def __init__(
-      self, x: float, y: float, z: float, rx: float, ry: float,
-      rz: float, sx: float, sy: float, sz: float
-  ) -> None:
-    """Init a Box Geometry.
-
-    Args:
-      x: The box position x in meters.
-      y: The box position y in meters.
-      z: The box position z in meters.
-      rx: The box rotation x in axis-angle format.
-      ry: The box rotation y in axis-angle format.
-      rz: The box rotation z in axis-angle format.
-      sx: The box scale x in meters.
-      sy: The box scale y in meters.
-      sz: The box scale z in meters.
-    """
-    super().__init__()
-    self._x = x
-    self._y = y
-    self._z = z
-    self._rx = rx
-    self._ry = ry
-    self._rz = rz
-    self._sx = sx
-    self._sy = sy
-    self._sz = sz
-    self._vertices = self._init_vertices()
 
   def get_position(self) -> List[float]:
     """Return the box center position."""
-    return [self._x, self._y, self._z]
+    return self.pose.position.as_list()
 
   def get_rotation(self) -> List[float]:
     """Return the axis/angle of the box."""
-    return [self._rx, self._ry, self._rz]
+    return self.pose.orientation.axis_angle.as_list()
 
   def get_scale(self) -> List[float]:
     """Return the size of the box."""
-    return [self._sx, self._sy, self._sz]
+    return self.scale.as_list()
 
   def get_vertices(self) -> List[np.array]:
     """Return the vertices of the box."""
-    return self._vertices
-
-  def _init_vertices(self) -> List[np.array]:
-    """Return init vertices."""
     self._vertices = []
     self._vertices.append(
-        np.array([-self._sx / 2, -self._sy / 2, -self._sz / 2], dtype=np.float))
+        np.array([-self.scale.x / 2, -self.scale.y / 2, -self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([-self._sx / 2, self._sy / 2, -self._sz / 2], dtype=np.float))
+        np.array([-self.scale.x / 2, self.scale.y / 2, -self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([self._sx / 2, self._sy / 2, -self._sz / 2], dtype=np.float))
+        np.array([self.scale.x / 2, self.scale.y / 2, -self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([self._sx / 2, -self._sy / 2, -self._sz / 2], dtype=np.float))
+        np.array([self.scale.x / 2, -self.scale.y / 2, -self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([-self._sx / 2, -self._sy / 2, self._sz / 2], dtype=np.float))
+        np.array([-self.scale.x / 2, -self.scale.y / 2, self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([-self._sx / 2, self._sy / 2, self._sz / 2], dtype=np.float))
+        np.array([-self.scale.x / 2, self.scale.y / 2, self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([self._sx / 2, self._sy / 2, self._sz / 2], dtype=np.float))
+        np.array([self.scale.x / 2, self.scale.y / 2, self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(
-        np.array([self._sx / 2, -self._sy / 2, self._sz / 2], dtype=np.float))
+        np.array([self.scale.x / 2, -self.scale.y / 2, self.scale.z / 2],
+                 dtype=np.float))
     self._vertices.append(np.array([0, 0, 0], dtype=np.float))
     rotation = transform.Rotation.from_euler(
         "zxy", np.array(self.get_rotation()), degrees=True).as_rotvec()
@@ -154,7 +110,8 @@ class Box(Geometry):
     return self._vertices
 
   @classmethod
-  def from_json(cls, from_json: Dict[str, Any]) -> Optional[Geometry]:
+  def from_json(cls, from_json: Dict[str,
+                                     Any]) -> Optional[constraints.Geometry]:
     """Convert JSON into into a Constraints Box Geometry.
 
     Args:
@@ -163,27 +120,37 @@ class Box(Geometry):
     Returns:
       constraint geometry.
     """
-    args = []
+    args: Dict[str, List[float]] = {"position": [], "rotation": [], "scale": []}
     for d, fvs in [("position", ["x", "y", "z"]),
                    ("rotation", ["rx", "ry", "rz"]), ("scale", ["x", "y",
                                                                 "z"])]:
       if not isinstance(from_json.get(d, {}), dict):
+        logging.warning("was not a dictionary in Box: %s, %s", d, from_json)
         return None
       for fv in fvs:
         a = from_json.get(d, {}).get(fv, 0.0)
-        args.append(a)
         if not isinstance(a, (float, int)):
+          logging.warning("value was not a float in Box: %s, %s, %s, %s", d, fv,
+                          a, from_json)
           return None
+        args[d].append(float(a))
       for fv in from_json.get(d, {}):
         if fv not in fvs:
           logging.warning("extra value in Box: %s, %s, %s", d, fv, from_json)
     for d in from_json:
       if d not in ["position", "rotation", "scale", "type"]:
         logging.warning("extra value in Box: %s, %s", d, from_json)
-    return Box(*args)  # pylint: disable=no-value-for-parameter
+    rot = [x * math.pi / 180.0 for x in args["rotation"]]
+    return BoxImpl(
+        core.Pose(
+            core.Translation.from_list(args["position"]),
+            core.Rotation(
+                core.AxisAngle.from_list(
+                    transform_util.euler_to_axis_angle(*rot).tolist()))),
+        core.Scale.from_list(args["scale"]))
 
 
-class Plane(Geometry):
+class Plane(constraints.Geometry):
   """Represents a Plane constraint."""
 
   _d: float
@@ -223,7 +190,8 @@ class Plane(Geometry):
     return self._z
 
   @classmethod
-  def from_json(cls, from_json: Dict[str, Any]) -> Optional[Geometry]:
+  def from_json(cls, from_json: Dict[str,
+                                     Any]) -> Optional[constraints.Geometry]:
     """Extract the plane geometry from a JSON dictionary.
 
     Args:
@@ -252,7 +220,7 @@ class Plane(Geometry):
     return Plane(*args)  # pylint: disable=no-value-for-parameter
 
 
-class Composite(Geometry):
+class Composite(constraints.Geometry):
   """Represents a geometries list that has been repositioned and rotated."""
 
   _subtype: str
@@ -262,12 +230,11 @@ class Composite(Geometry):
   _rx: float
   _ry: float
   _rz: float
-  _geometries: List[Geometry]
+  _geometries: List[constraints.Geometry]
 
-  def __init__(
-      self, subtype: str, x: float, y: float, z: float, rx: float,
-      ry: float, rz: float, geometries: List[Geometry]
-  ) -> None:
+  def __init__(self, subtype: str, x: float, y: float, z: float, rx: float,
+               ry: float, rz: float,
+               geometries: List[constraints.Geometry]) -> None:
     """Init a Composite Geometry Constraint.
 
     Args:
@@ -290,7 +257,7 @@ class Composite(Geometry):
     self._rz = rz
     self._geometries = geometries
 
-  def get_geometries(self) -> List[Geometry]:
+  def get_geometries(self) -> List[constraints.Geometry]:
     """Return the Geometries list."""
     return self._geometries.copy()
 
@@ -307,7 +274,8 @@ class Composite(Geometry):
     return self._subtype
 
   @classmethod
-  def from_json(cls, from_json: Dict[str, Any]) -> Optional[Geometry]:
+  def from_json(cls, from_json: Dict[str,
+                                     Any]) -> Optional[constraints.Geometry]:
     """Extract a Composite Geometry Constraint from a JSON message.
 
     Args:
@@ -351,7 +319,7 @@ class Composite(Geometry):
         from_json.get("rotation", {}).get("rz", 0.0), geometries)
 
 
-def load_geometry(from_json: Dict[str, Any]) -> Optional[Geometry]:
+def load_geometry(from_json: Dict[str, Any]) -> Optional[constraints.Geometry]:
   """Load a geometry from some JSON.
 
   Args:
@@ -364,7 +332,7 @@ def load_geometry(from_json: Dict[str, Any]) -> Optional[Geometry]:
   if from_json.get("type") == "composite":
     return Composite.from_json(from_json)
   elif from_json.get("type") == "box":
-    return Box.from_json(from_json)
+    return BoxImpl.from_json(from_json)
   elif from_json.get("type") == "plane":
     return Plane.from_json(from_json)
   return None
@@ -373,12 +341,10 @@ def load_geometry(from_json: Dict[str, Any]) -> Optional[Geometry]:
 class ConstraintObject(ConstraintDevice):
   """Constraints object."""
 
-  _geometry: Geometry
+  _geometry: constraints.Geometry
 
-  def __init__(
-      self, device_type: str, device_name: str,
-      geometry: Geometry
-  ) -> None:
+  def __init__(self, device_type: str, device_name: str,
+               geometry: constraints.Geometry) -> None:
     """Init the Object.
 
     Args:
@@ -389,7 +355,7 @@ class ConstraintObject(ConstraintDevice):
     super().__init__(device_type, device_name)
     self._geometry = geometry
 
-  def get_geometry(self) -> Geometry:
+  def get_geometry(self) -> constraints.Geometry:
     """Return the Geometry."""
     return self._geometry
 
@@ -426,12 +392,10 @@ class ConstraintObject(ConstraintDevice):
 class Interactable(ConstraintDevice):
   """Interactable object in constraints."""
 
-  _geometry: Geometry
+  _geometry: constraints.Geometry
 
-  def __init__(
-      self, device_type: str, device_name: str,
-      geometry: Geometry
-  ) -> None:
+  def __init__(self, device_type: str, device_name: str,
+               geometry: constraints.Geometry) -> None:
     """Init an Interactble.
 
     Args:
@@ -442,7 +406,7 @@ class Interactable(ConstraintDevice):
     ConstraintDevice.__init__(self, device_type, device_name)
     self._geometry = geometry
 
-  def get_geometry(self) -> Geometry:
+  def get_geometry(self) -> constraints.Geometry:
     """Return the Geometry of the Interactable."""
     return self._geometry
 
@@ -482,10 +446,8 @@ class ConstraintRobot(ConstraintDevice):
 
   _joint_limits: List[constraints.JointLimit]
 
-  def __init__(
-      self, device_type: str, device_name: str,
-      joint_limits: List[constraints.JointLimit]
-  ) -> None:
+  def __init__(self, device_type: str, device_name: str,
+               joint_limits: List[constraints.JointLimit]) -> None:
     """Init the Robot type, name and joint limits.
 
     Args:
@@ -557,13 +519,11 @@ class ConstraintsImpl(constraints.Constraints):
   def __str__(self) -> str:
     """Return a string for Constraints."""
     devices_text = ",".join([str(device) for device in self._devices])
-    return ("Constraints(_devices=[" +
-            devices_text + "], _bins=" + str(self._bins) + ")")
+    return ("Constraints(_devices=[" + devices_text + "], _bins=" +
+            str(self._bins) + ")")
 
-  def _get_device(
-      self, device_type: str,
-      device_name: str
-  ) -> Optional[ConstraintDevice]:
+  def _get_device(self, device_type: str,
+                  device_name: str) -> Optional[ConstraintDevice]:
     """Lookup a device.
 
     Args:
@@ -580,10 +540,8 @@ class ConstraintsImpl(constraints.Constraints):
         return device
     return None
 
-  def _construct_bin(
-      self,
-      device_name: str
-  ) -> Optional[shapely.geometry.Polygon]:
+  def _construct_bin(self,
+                     device_name: str) -> Optional[shapely.geometry.Polygon]:
     object_constraint = self._get_device("object", device_name)
     if object_constraint is None:
       logging.warning(
@@ -597,7 +555,7 @@ class ConstraintsImpl(constraints.Constraints):
           "Interactable or Object: %s", device_name)
       return None
 
-    composite_geometry: Geometry = object_constraint.get_geometry()
+    composite_geometry: constraints.Geometry = object_constraint.get_geometry()
     if not isinstance(composite_geometry, Composite):
       logging.warning(
           "Bin geometry is not composite in constraint with "
@@ -618,7 +576,7 @@ class ConstraintsImpl(constraints.Constraints):
 
     points: List[Tuple[float, float]] = []
     for geo in geometries:
-      if not isinstance(geo, Box):
+      if not isinstance(geo, BoxImpl):
         logging.warning(
             "Geometry is not of type Box in composite constraint "
             "with name: %s", device_name)
@@ -657,6 +615,21 @@ class ConstraintsImpl(constraints.Constraints):
       return None
 
     return device.get_joint_limits()
+
+  def get_interactables(self) -> Tuple[constraints.Interactable, ...]:
+    """Get the list of interactable geometries.
+
+    Returns:
+      Limits of all the interactable geometries if available.
+
+    """
+    interactables: List[constraints.Interactable] = []
+    for dev in self._devices:
+      if isinstance(dev, Interactable):
+        if isinstance(dev.get_geometry(), constraints.Box):
+          interactables.append(
+              constraints.Interactable(dev.device_name, dev.get_geometry()))
+    return tuple(interactables)
 
 
 class ConstraintsDevice(device_base.DeviceBase):

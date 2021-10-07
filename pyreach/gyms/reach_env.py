@@ -26,6 +26,7 @@ import pyreach
 from pyreach import factory
 from pyreach import internal
 from pyreach import snapshot as lib_snapshot
+from pyreach.gyms import annotation_element
 from pyreach.gyms import arm_element
 from pyreach.gyms import color_camera_element
 from pyreach.gyms import core as gyms_core
@@ -34,12 +35,15 @@ from pyreach.gyms import force_torque_sensor_element
 from pyreach.gyms import oracle_element
 from pyreach.gyms import reach_element
 from pyreach.gyms import server_element
+from pyreach.gyms import task_element
 from pyreach.gyms import text_instructions_element
 from pyreach.gyms import vacuum_element
+from pyreach.gyms.annotation_element import ReachAnnotation  # pylint: disable=unused-import
 from pyreach.gyms.arm_element import ReachArm  # pylint: disable=unused-import
 from pyreach.gyms.color_camera_element import ReachColorCamera  # pylint: disable=unused-import
 from pyreach.gyms.depth_camera_element import ReachDepthCamera  # pylint: disable=unused-import
 
+from pyreach.gyms.devices.annotation_device import ReachDeviceAnnotation
 from pyreach.gyms.devices.arm_device import ReachDeviceArm
 from pyreach.gyms.devices.color_camera_device import ReachDeviceColorCamera
 from pyreach.gyms.devices.depth_camera_device import ReachDeviceDepthCamera
@@ -48,6 +52,7 @@ from pyreach.gyms.devices.oracle_device import ReachDeviceOracle
 from pyreach.gyms.devices.reach_device import ReachDevice
 from pyreach.gyms.devices.reach_device import ReachDeviceSynchronous
 from pyreach.gyms.devices.server_device import ReachDeviceServer
+from pyreach.gyms.devices.task_device import ReachDeviceTask
 from pyreach.gyms.devices.text_instructions_device import ReachDeviceTextInstructions
 from pyreach.gyms.devices.vacuum_device import ReachDeviceVacuum
 
@@ -55,6 +60,7 @@ from pyreach.gyms.force_torque_sensor_element import ReachForceTorqueSensor  # p
 from pyreach.gyms.oracle_element import ReachOracle  # pylint: disable=unused-import
 from pyreach.gyms.reach_element import ReachElement
 from pyreach.gyms.server_element import ReachServer  # pylint: disable=unused-import
+from pyreach.gyms.task_element import ReachTask  # pylint: disable=unused-import
 from pyreach.gyms.text_instructions_element import ReachTextInstructions  # pylint: disable=unused-import
 from pyreach.gyms.vacuum_element import ReachVacuum  # pylint: disable=unused-import
 from pyreach.gyms.vacuum_element import ReachVacuumState  # pylint: disable=unused-import
@@ -156,6 +162,7 @@ class ReachEnv(gym.Env):  # type: ignore
         "host.arm.state",
         "host.arm.status",
         "host.arm.to_joints",
+        "host.arm.stop",
         "host.arm.to_pose",
         "host.color",
         "host.depth",
@@ -196,7 +203,9 @@ class ReachEnv(gym.Env):  # type: ignore
       elements: Dict[str, ReachDevice] = {}
 
       for config_name, config_element in pyreach_config.items():
-        if isinstance(config_element, arm_element.ReachArm):
+        if isinstance(config_element, annotation_element.ReachAnnotation):
+          element = ReachDeviceAnnotation(config_element)
+        elif isinstance(config_element, arm_element.ReachArm):
           element = ReachDeviceArm(config_element)
         elif isinstance(config_element, color_camera_element.ReachColorCamera):
           element = ReachDeviceColorCamera(config_element)
@@ -209,6 +218,10 @@ class ReachEnv(gym.Env):  # type: ignore
           element = ReachDeviceOracle(config_element)
         elif isinstance(config_element, server_element.ReachServer):
           element = ReachDeviceServer(config_element)
+        elif isinstance(config_element, task_element.ReachTask):
+          element = ReachDeviceTask(config_element)
+        elif isinstance(config_element, task_element.ReachTask):
+          element = ReachDeviceTask(config_element)
         elif isinstance(config_element,
                         text_instructions_element.ReachTextInstructions):
           element = ReachDeviceTextInstructions(config_element)
@@ -217,7 +230,7 @@ class ReachEnv(gym.Env):  # type: ignore
 
         if not isinstance(element, ReachDevice):
           raise pyreach.PyReachError(
-              f"Unexpected configuration element {element}")
+              f"Unexpected configuration element {config_name}:{element}")
         elements[config_name] = element
 
         element.set_task_params(task_params)

@@ -45,12 +45,12 @@ import time
 from typing import Any, Optional, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
 
 from pyreach.gyms import core
 from pyreach.gyms.envs.benchmark_kitting import BenchmarkKittingWrapper
 
-FINAL_INSTRUCTION_TIMEOUT_SECONDS = 15.0
+MAX_ATTEMPTS_KITTING = 7
+MAX_ATTEMPTS_DEKITTING = 8
 
 
 class KittingAgent:
@@ -61,28 +61,7 @@ class KittingAgent:
     self.env = None
 
   # pylint: disable=unused-argument
-  def i_think_im_done_based_on(self, current_instruction: Optional[np.ndarray],
-                               observation: core.Observation) -> bool:
-    """Decides whether you're done with the current instruction.
-
-    This is a completely random function right now.
-    Fill me in!
-
-    Args:
-      current_instruction: the current instruction to follow.
-      observation: the current observation.
-
-    Returns:
-      True if the episode is done.
-    """
-    if current_instruction is None:
-      return False
-    rnd_num = np.random.randint(0, 100) % 10
-    if rnd_num > 4:
-      return True
-    return False
-
-  def agent_reward_function(
+  def kitting_reward_function(
       self, action: core.Action,
       observation: core.Observation) -> Tuple[float, bool]:
     """Reward function for environment.
@@ -98,19 +77,20 @@ class KittingAgent:
     Returns:
       A tuple of (reward, done) to return from step().
     """
-    assert isinstance(observation, (dict, collections.OrderedDict))
-    text_instructions: Any = observation["text_instructions"]
-    assert isinstance(text_instructions, (dict, collections.OrderedDict))
-    current_instruction: Any = text_instructions["instruction"]
-    assert isinstance(current_instruction, np.ndarray)
+    assert isinstance(observation, dict)
+    if "oracle" in observation:
+      if "response" in observation["oracle"]:
+        metric: int = observation["oracle"]["response"]
+        if metric == 1:
+          return 1.0, True
+        return 0.0, False
 
-    if self.i_think_im_done_based_on(current_instruction, observation):
-      print("I think I'm done")
-      return 1.0, True
-    return 0.0, False
+    # All other cases indicate something going wrong.
+    return -1.0, False
 
+  # pylint: disable=unused-argument
   def calculate_action(self, observation: core.Observation,
-                       current_instruction: np.ndarray) -> core.Action:
+                       current_instruction: str) -> core.Action:
     """Do something based on the observation and the current instruction.
 
     This is random for now.
@@ -127,7 +107,7 @@ class KittingAgent:
       The next action of the agent.
     """
     assert isinstance(self.env, BenchmarkKittingWrapper)
-    kitting_mode: int = self.env.switch_modes()
+    kitting_mode: int = self.env.set_mode(current_instruction)
 
     action = collections.OrderedDict(
         {"oracle": collections.OrderedDict({"request": kitting_mode})})
@@ -140,39 +120,46 @@ class KittingAgent:
     self.env.set_agent_id("kitting-example-v0")
 
     prev_instruction = None
+    current_instruction: str = ""
+    done = False
 
     print(f"{time.time()}: Resetting environment, please wait")
     obs = self.env.reset()
 
     print(f"{time.time()}: Running policy")
     while obs is not None:
+
+      if prev_instruction and not done:
+        obs, _, _, _ = env.ask_for_new_instruction(obs)
+
       done = False
-      new_instruction_deadline: Optional[float]
-      new_instruction_deadline = time.time() + FINAL_INSTRUCTION_TIMEOUT_SECONDS
+      text_instructions: Any = obs["text_instructions"]
+      instruction: Any = text_instructions["instruction"]
+
+      text = bytes([x for x in instruction if x != 0]).decode("utf-8")
+      if text != prev_instruction:
+        print(f"{time.time()}: New instruction to handle: '{text}'")
+        prev_instruction = text
+        step = 0
+
+        if "Empty" in text:
+          current_instruction = "dekitting"
+        elif "Complete" in text:
+          current_instruction = "kitting"
 
       # done will get set when time for the instruction runs out.
-      while obs is not None and not done:
-        text_instructions: Any = obs["text_instructions"]
-        instruction: Any = text_instructions["instruction"]
+      while ((current_instruction == "dekitting" and
+              step < MAX_ATTEMPTS_DEKITTING) or
+             (current_instruction == "kitting" and
+              step < MAX_ATTEMPTS_KITTING)) and not done:
 
-        text = bytes([x for x in instruction if x != 0]).decode("utf-8")
-        if text != prev_instruction:
-          print(f"{time.time()}: New instruction to handle: '{text}'")
-          prev_instruction = text
-          new_instruction_deadline = None
-
-        if new_instruction_deadline is not None:
-          if time.time() > new_instruction_deadline:
-            print(f"{time.time()}: No more instructions!")
-            return
-
-        next_action = self.calculate_action(obs, instruction)
+        next_action = self.calculate_action(obs, current_instruction)
 
         obs, _, done, _ = self.env.step(next_action)
+        step += 1
 
         if done:
           print(f"{time.time()}: Step returned done")
-          break
 
 
 def main() -> None:
@@ -181,7 +168,7 @@ def main() -> None:
 
   with gym.make(
       "benchmark-kitting-v0",
-      reward_done_function=agent.agent_reward_function) as env:
+      reward_done_function=agent.kitting_reward_function) as env:
 
     agent.run(BenchmarkKittingWrapper(env))
 

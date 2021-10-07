@@ -1968,7 +1968,13 @@ class ArmImpl(arm.Arm):
             step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
           continue
         elif step.get_set_capability():
-          if step.get_set_capability_io_type() == "DigitalOutput":
+          if step.get_set_capability_type(
+          ) == "point-reached" and step.get_set_capability_name(
+          ) == "place-point":
+            commands.append(
+                _SetOutput("", step.get_set_capability_type(),
+                           step.get_set_capability_name(), [], []))
+          elif step.get_set_capability_io_type() == "DigitalOutput":
             if step.get_set_capability_type(
             ) == "vacuum" or step.get_set_capability_type() == "blowoff":
               commands.append(

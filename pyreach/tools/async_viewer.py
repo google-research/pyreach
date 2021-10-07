@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Camera viewer over reach connect.
 
 Example invocations -
@@ -84,6 +83,11 @@ def main() -> None:
       default=False,
       action="store_true",
       help="Disables the crosshair at centre of images.")
+  parser.add_argument(
+      "--request_oracles",
+      default=False,
+      action="store_true",
+      help="Send inference requests to the oracle devices.")
   args = parser.parse_args()
 
   uwidth: int = args.uwidth
@@ -104,7 +108,8 @@ def main() -> None:
       use_tags=args.tags,
       show_detections=True,
       quiet=False,
-      show_crosshair=not args.disable_crosshair)
+      show_crosshair=not args.disable_crosshair,
+      request_oracles=args.request_oracles)
   control.run()
 
 

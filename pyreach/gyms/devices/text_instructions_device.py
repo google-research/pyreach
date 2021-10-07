@@ -15,7 +15,7 @@
 """Implementation of PyReach Gym Vacuum Device."""
 
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -31,7 +31,9 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
   """Represents some text instructions.
 
   Attributes:
-    action_space: An empty dictionary which is obviously ignored.
+    action_space: An action space that can be configured to have a "task_enable"
+      field.  When configured to be present this field is Gym Discrete space
+      that can contain 0 o 1.
     observation_space: A Gym observation space with "ts" and "text" fields. The
       text field is a Gym MultiDiscrete space that is 1024 long with each
       element capable of holding in a value from 0-127.  The text instruction is
@@ -51,7 +53,10 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     reach_name: str = text_instructions_config.reach_name
     is_synchronous: bool = text_instructions_config.is_synchronous
 
-    action_space: gym.spaces.Dict = gym.spaces.Dict({})
+    action_dict: Dict[str, Any] = {}
+    if not text_instructions_config.task_disable:
+      action_dict = {"task_enable": gym.spaces.Discrete(2)}
+    action_space: gym.spaces.Dict = gym.spaces.Dict(action_dict)
     observation_space: gym.spaces.Dict = gym.spaces.Dict({
         "ts": gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
         "instruction": gym.spaces.MultiDiscrete(1024 * [255]),
@@ -63,6 +68,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     self._text_instructions: Optional[pyreach.TextInstructions] = None
     self._counter: int = 0
     self._task_enable: bool = False
+    self._task_disable: bool = text_instructions_config.task_disable
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -147,22 +153,23 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
         The list of gym action snapshots.
     """
     with self._timers_select({"!agent*", "gym.text"}):
-      action_dict: gyms_core.ActionDict = self._get_action_dict(action)
-      if "task_enable" in action_dict:
-        task_enable: bool = bool(int(action_dict["task_enable"]))
-        if self._task_enable != task_enable:
-          # State needs to change.
-          task_params: Dict[str, str] = self.get_task_params()
-          if task_enable:
-            # Send a start task message.
-            host.logger.start_task(task_params)
-          else:
-            # Send an end task message.
-            host.logger.end_task(task_params)
-          self._task_enable = task_enable
-          return (lib_snapshot.SnapshotGymLoggerAction("operator", "", False,
-                                                       task_enable,
-                                                       task_params),)
+      task_disable: bool = self._task_disable
+      if not task_disable:
+        action_dict: gyms_core.ActionDict = self._get_action_dict(action)
+        if "task_enable" in action_dict:
+          task_enable: bool = bool(int(action_dict["task_enable"]))
+          if self._task_enable != task_enable:
+            # State needs to change.
+            task_params: Dict[str, str] = self.get_task_params()
+            if task_enable:
+              # Send a start task message.
+              host.logger.start_task(task_params)
+            else:
+              # Send an end task message.
+              host.logger.end_task(task_params)
+            self._task_enable = task_enable
+            return (lib_snapshot.SnapshotGymLoggerAction(
+                "operator", "", False, task_enable, task_params),)
       return ()
 
   def start_observation(self, host: pyreach.Host) -> bool:

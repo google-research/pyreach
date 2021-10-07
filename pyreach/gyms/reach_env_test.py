@@ -16,18 +16,206 @@
 
 import collections
 import math
+import sys
 from typing import Any, Dict, Set, Tuple
 import unittest
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
+import pyreach
 from pyreach import host
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import reach_env
+from pyreach.gyms import task_element
 from pyreach.gyms.registration import register
 from pyreach.mock import host_mock
 
 GYMS_PATH = ""
+
+
+class GymAnnotationEnv(reach_env.ReachEnv):
+  """Configure a Gym environment with an client annotations."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init GymAnnotationEnv."""
+    pyreach_config: Dict[str, reach_env.ReachElement] = {
+        "annotation":
+            reach_env.ReachAnnotation(
+                reach_name="robot",
+                maximum_size=257,
+                is_synchronous=is_synchronous)
+    }
+
+    mock_host: host.Host = host_mock.HostMock()
+    assert isinstance(mock_host, host.Host)
+    assert isinstance(mock_host, host_mock.HostMock)
+    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+
+
+class GymAnnotationSyncEnv(GymAnnotationEnv):
+  """Configure a Gym environment with synchronous client annotations."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init a synchronous client annotations."""
+    super().__init__(is_synchronous=is_synchronous, **kwargs)
+
+
+class GymAnnotationAsyncEnv(GymAnnotationEnv):
+  """Configure a Gym environment with asynchronous client annotations."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init an asynchronous client annotations."""
+    super().__init__(is_synchronous=False, **kwargs)
+
+
+class TestGymAnnotationEnv(unittest.TestCase):
+  """Test the Gym Annotation environments."""
+
+  def test_asynchronous_annotation_register(self) -> None:
+    """Test asynchronous Annotations registration."""
+    self.annotations_register_test(is_synchronous=False)
+
+  def test_synchronous_annotation_register(self) -> None:
+    """Test synchronous Annotations registration."""
+    self.annotations_register_test(is_synchronous=True)
+
+  def annotations_register_test(self, is_synchronous: bool = True) -> None:
+    """Test Gym AnnotationsElement."""
+    env_id_name: str = "{0}_annotations_element_env-v0".format(
+        "sync" if is_synchronous else "async")
+    class_name: str = "GymAnnotation{0}Env".format(
+        "Sync" if is_synchronous else "Async")
+    entry_point: str = GYMS_PATH + "reach_env_test:" + class_name
+    register(
+        id=env_id_name,
+        entry_point=entry_point,
+        max_episode_steps=200,
+        reward_threshold=25.0)
+
+    env: Any
+    with gym.make(env_id_name) as env:
+      assert isinstance(env, gym.Env), env
+
+      # Verifity action and observation spaces are correct:
+      maximum_size: int = 257
+      action_space: Any = env.action_space
+      assert isinstance(action_space, gym.spaces.Space)
+      action_match: Dict[str, Any] = {
+          "annotation": {
+              "data": maximum_size * (256,),
+              "disable": 1,
+          }
+      }
+      assert space_match(action_space, action_match, ("action",))
+
+      observation_space: Any = env.observation_space
+      assert isinstance(observation_space, gym.spaces.Space)
+      observation_match: Dict[str, Any] = {
+          "annotation": {
+              "data": maximum_size * (256,),
+              "maximum_size": maximum_size,
+              "ts": np.array(sys.maxsize),
+          }
+      }
+      assert space_match(observation_space, observation_match, ("observation",))
+
+      # Simulate a reset().
+      reset_observation: gyms_core.Observation = env.reset()
+      empty_match: Dict[str, Any] = {"annotation": {}}
+      assert action_observation_eq(
+          reset_observation,
+          empty_match), (f"Initial reset observation is incorrect: "
+                         f"reset_observation={reset_observation} "
+                         f"empty_match={empty_match}")
+
+      # Step 1: No "annotation" sub-dictionary is present.
+      observation: gyms_core.Observation
+      done: bool
+      action1: Dict[str, Any] = {}
+      observation, _, done, _ = env.step(action1)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match), "Step 1: failed"
+
+      # Step 2: An empty empty "annotation" with empty "data" entry:
+      action2: Dict[str, Any] = {"annotation": {"data": bytes()}}
+      observation, _, done, _ = env.step(action2)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match), "Step 2 failed"
+
+      # Step 3: First annotation with non-empty "data".
+      # The "latin-1" encoding is 1-to-1 string character to byte conversion.
+      hello_world: bytes = "Hello, World!".encode("latin-1")
+      action3: Dict[str, Any] = {"annotation": {"data": hello_world}}
+      observation, _, done, _ = env.step(action3)
+      assert action_observation_eq(observation, empty_match), "Step 3: failed"
+
+      # Step 4: Another empty annotation.
+      action4: Dict[str, Any] = {}
+      observation, _, done, _ = env.step(action4)
+      assert action_observation_eq(observation, empty_match), "Step 4: failed"
+
+      # Step 5: Annother annotation with a tuple instead.
+      action5: Dict[str, Any] = {"annotation": {"data": tuple(hello_world)}}
+      observation, _, done, _ = env.step(action5)
+      assert action_observation_eq(observation, empty_match), "Step 5: failed"
+
+      # Step 6: An tuple annotation padded with some pad values (pad=256).
+      action6: Dict[str, Any] = {
+          "annotation": {
+              "data": tuple(hello_world) + (
+                  256,
+                  256,
+              ),
+          }
+      }
+      observation, _, done, _ = env.step(action6)
+      assert action_observation_eq(observation, empty_match), "Step 6: failed"
+
+      # Step 7: A fully padded tuple.
+      action7: Dict[str, Any] = {
+          "annotation": {
+              "data": (tuple(hello_world) + (maximum_size - len(hello_world)) *
+                       (256,))
+          }
+      }
+      observation, _, done, _ = env.step(action7)
+      assert action_observation_eq(observation, empty_match), "Step 7: failed"
+
+      # Step 8: Verify that disable field works.
+      # The mock will fail if the (123,) gets processed.
+      action8: Dict[str, Any] = {
+          "annotation": {
+              "data": tuple(hello_world) + (ord("!"),),
+              "disable": 123456,
+          }
+      }
+      observation, _, done, _ = env.step(action8)
+      assert action_observation_eq(observation, empty_match), "Step 8: failed"
+
+      # Step 9: Check for missing data.
+      action9: Dict[str, Any] = {"annotation": {}}
+      try:
+        observation, _, done, _ = env.step(action9)
+      except pyreach.core.PyReachError as error:
+        assert str(error) == "Annotation is missing 'data'", (
+            f"Step 9: Error is present, but has wrong message: '{str(error)}'")
+      else:
+        assert False, "Step9: Did not throw expected exception."
+
+      # Step 10: Check for extra field.
+      action10: Dict[str, Any] = {
+          "annotation": {
+              "data": hello_world,
+              "bogus": 0,
+          }
+      }
+      try:
+        observation, _, done, _ = env.step(action10)
+      except pyreach.core.PyReachError as error:
+        assert str(error) == "Unexpected key 'bogus' for annotation.", (
+            f"Step 10: Error is present, but has wrong message: '{str(error)}'")
+      else:
+        assert False, "Step 10: Did not throw expected exception."
 
 
 class GymArmEnv(reach_env.ReachEnv):
@@ -626,6 +814,134 @@ class GymServerEnv(reach_env.ReachEnv):
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
 
 
+class GymTaskEnv(reach_env.ReachEnv):
+  """Configure a Gym environment with an task."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init GymTaskEnv."""
+    pyreach_config: Dict[str, reach_env.ReachElement] = {
+        "task":
+            reach_env.ReachTask(
+                reach_name="robot", is_synchronous=is_synchronous)
+    }
+
+    mock_host: host.Host = host_mock.HostMock()
+    assert isinstance(mock_host, host.Host)
+    assert isinstance(mock_host, host_mock.HostMock)
+    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+
+
+class GymTaskSyncEnv(GymTaskEnv):
+  """Configure a Gym environment with a synchronous task."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init a synchronous task."""
+    super().__init__(is_synchronous=is_synchronous, **kwargs)
+
+
+class GymTaskAsyncEnv(GymTaskEnv):
+  """Configure a Gym environment with a synchronous task."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init an asynchronous task."""
+    super().__init__(is_synchronous=False, **kwargs)
+
+
+class TestGymTaskEnv(unittest.TestCase):
+  """Test the Gym TaskElement environments."""
+
+  def test_asynchronous_task_register(self) -> None:
+    """Test asynchronous Task registration."""
+    self.task_register_test(is_synchronous=False)
+
+  def test_synchronous_task_register(self) -> None:
+    """Test synchronous Task registration."""
+    self.task_register_test(is_synchronous=True)
+
+  def task_register_test(self, is_synchronous: bool = True) -> None:
+    """Test Gym TaskElement."""
+    env_id_name: str = "{0}_task_element_env-v0".format(
+        "sync" if is_synchronous else "async")
+    class_name: str = "GymTask{0}Env".format(
+        "Sync" if is_synchronous else "Async")
+    entry_point: str = GYMS_PATH + "reach_env_test:" + class_name
+    register(
+        id=env_id_name,
+        entry_point=entry_point,
+        max_episode_steps=200,
+        reward_threshold=25.0)
+
+    env: Any
+    with gym.make(env_id_name) as env:
+      assert isinstance(env, gym.Env), env
+
+      action_space: Any = env.action_space
+      assert isinstance(action_space, gym.spaces.Space)
+      action_match: Dict[str, Any] = {"task": {"action": 0}}
+      assert space_match(action_space, action_match, ("action",))
+
+      observation_space: Any = env.observation_space
+      assert isinstance(observation_space, gym.spaces.Space)
+      empty_match: Dict[str, Any] = {"task": {}}
+      assert space_match(observation_space, empty_match, ("observation",))
+
+      action_no_change: Dict[str, Any] = {
+          "action": {
+              "task": task_element.ReachAction.NO_CHANGE,
+          }
+      }
+      action_start: Dict[str, Any] = {
+          "action": {
+              "task": task_element.ReachAction.START,
+          }
+      }
+      action_stop: Dict[str, Any] = {
+          "action": {
+              "task": task_element.ReachAction.STOP,
+          }
+      }
+
+      # Simulate a reset():
+      observation: gyms_core.Observation = env.reset()
+      assert action_observation_eq(observation, empty_match, "reset")
+
+      # Step 1: No change when not started:
+      done: bool
+      observation, _, done, _ = env.step(action_no_change)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 1")
+
+      # Step 2: Start when not started:
+      observation, _, done, _ = env.step(action_start)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 2")
+
+      # Step 3: Start again when already  started:
+      observation, _, done, _ = env.step(action_start)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 3")
+
+      # Step 4: No change when started:
+      observation, _, done, _ = env.step(action_no_change)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 4")
+
+      # Step 5: Stop when started:
+      observation, _, done, _ = env.step(action_stop)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 5")
+
+      # Step 6: Stop when already stopped:
+      observation, _, done, _ = env.step(action_stop)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 6")
+
+      # Step 7: No change when already stoped:
+      observation, _, done, _ = env.step(action_no_change)
+      assert not done, "Should not be done"
+      assert action_observation_eq(observation, empty_match, "Step 7")
+
+
 class TestGymServerEnv(unittest.TestCase):
   """Test GymServerEnv."""
 
@@ -728,7 +1044,11 @@ class TestGymTextInstructionsEnv(unittest.TestCase):
 
       action_space: Any = env.action_space
       assert isinstance(action_space, gym.spaces.Space)
-      action_match: Dict[str, Any] = {"textinstructions": {}}
+      action_match: Dict[str, Any] = {
+          "textinstructions": {
+              "task_enable": 0,
+          },
+      }
       assert space_match(action_space, action_match, ("action",))
 
       observation_space: Any = env.observation_space
@@ -984,11 +1304,12 @@ def space_match(space: gym.spaces.Space,
           "{0}: gym.spaces.Space not found".format(sub_where))
       sub_action_observation = action_observation[index]
       match &= space_match(sub_space, sub_action_observation, sub_where)
+      if not match:
+        assert False, f"Space mismatch at {index}"
     return match
 
-  assert False, "Unrecognized '{0}' space={1} action_observation={2}".format(
-      where, type(space), type(action_observation))
-  return False
+  assert False, (f"Unrecognized where={where} space={type(space)} "
+                 f"action_observation={type(action_observation)}")
 
 
 def action_observation_eq(ao1: Any, ao2: Any, trace: str = "") -> bool:

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Basic types for PyReach."""
 
 import dataclasses
@@ -317,6 +316,51 @@ class Scale(object):
   x: float = 1.0
   y: float = 1.0
   z: float = 1.0
+
+  def as_tuple(self) -> Tuple[float, float, float]:
+    """Return the scale as a tuple.
+
+    Returns:
+      The scale as a three-element (x, y, z) tuple.
+    """
+    return (self.x, self.y, self.z)
+
+  def as_list(self) -> List[float]:
+    """Return the scale as a list.
+
+    Returns:
+      The scale as a three-element (x, y, z) list.
+    """
+    return list(self.as_tuple())
+
+  @classmethod
+  def from_tuple(cls, scale: Tuple[float, float, float]) -> "Scale":
+    """Return scale from a tuple.
+
+    Args:
+      scale: The scale as a three-element (x, y, z) tuple.
+
+    Returns:
+      The scale.
+    """
+    return Scale(x=scale[0], y=scale[1], z=scale[2])
+
+  @classmethod
+  def from_list(cls, scale: List[float]) -> "Scale":
+    """Return scale from a list.
+
+    Args:
+      scale: The scale as a three-element (x, y, z) list.
+
+    Raises:
+      ValueError: if the list is not a three-element list.
+
+    Returns:
+      The scale.
+    """
+    if len(scale) != 3:
+      raise ValueError("Scale must be three elements.")
+    return Scale(x=scale[0], y=scale[1], z=scale[2])
 
 
 class Rotation(object):

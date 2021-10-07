@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for generating metrics related log entries in the Reach server log.
 
 This interface allows generation of special log records that is used for
@@ -19,7 +18,7 @@ metrics calculation.
 """
 
 import dataclasses
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 
 @dataclasses.dataclass(frozen=True)
@@ -33,7 +32,6 @@ class Metric:
     float_value: The float value.
     labels: The labels list.
     event_params: The event params list.
-
   """
 
   time: float
@@ -90,13 +88,15 @@ class Metrics(object):
 
   def start_pick(
       self,
+      intent: Optional[str] = None,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[Metric], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None
-  ) -> Tuple[str, Callable[[], List[Metric]]]:
+  ) -> Tuple[str, Callable[[], Tuple[Metric, ...]]]:
     """Start listening for data from a pick event.
 
     Args:
+      intent: the intent for the last command. If None, will accept any.
       timeout: Optional.
       callback: Optional, will be called when a metric arrives.
       finished_callback: Optional, will be called when the last metric for the

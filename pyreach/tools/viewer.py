@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Viewer displays camera images for a Reach workcell."""
 
 from typing import List
@@ -59,7 +58,8 @@ def main(argv: List[str]) -> None:  # pylint: disable=unused-argument
       show_undistortion=False,
       use_tags=flags.FLAGS.t,
       show_detections=False,
-      quiet=True)
+      quiet=True,
+      request_oracles=True)
   control.run()
 
 
