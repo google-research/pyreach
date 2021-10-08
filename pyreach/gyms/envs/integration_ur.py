@@ -78,7 +78,15 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
 
   def _movej(self,
              joints: np.ndarray) -> Tuple[core.Observation, float, bool, Any]:
-    action = {"arm": {"command": 1, "joint_angles": joints, "synchronous": 1}}
+    action = {
+        "arm": {
+            "command": 1,
+            "joint_angles": joints,
+            "synchronous": 1,
+            "velocity": 1.05,
+            "acceleration": 1.4
+        }
+    }
     return super().step(action)
 
   def _stow_workcell(self) -> core.Observation:
