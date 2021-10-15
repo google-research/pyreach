@@ -200,6 +200,7 @@ class ReachEnv(gym.Env):  # type: ignore
       config_element: reach_element.ReachElement
       config_names: Set[str] = set()
       config_name: str
+      arm_elements: List[ReachDeviceArm] = []
       elements: Dict[str, ReachDevice] = {}
 
       for config_name, config_element in pyreach_config.items():
@@ -207,6 +208,7 @@ class ReachEnv(gym.Env):  # type: ignore
           element = ReachDeviceAnnotation(config_element)
         elif isinstance(config_element, arm_element.ReachArm):
           element = ReachDeviceArm(config_element)
+          arm_elements.append(element)
         elif isinstance(config_element, color_camera_element.ReachColorCamera):
           element = ReachDeviceColorCamera(config_element)
         elif isinstance(config_element, depth_camera_element.ReachDepthCamera):
@@ -278,6 +280,7 @@ class ReachEnv(gym.Env):  # type: ignore
       self._metadata: Dict[str, Any] = {}  # Explicitly for agent debugging
       self._reach_synchronous = reach_synchronous
       self._reward_range: Tuple[float, float] = (-float("inf"), float("inf"))
+      self._arm_elements: Tuple[ReachDeviceArm, ...] = tuple(arm_elements)
       self._elements: Dict[str, ReachDevice] = elements
       self._pyreach_config: Dict[str, ReachElement] = (pyreach_config)
       self._text_instruction: Optional[ReachDeviceTextInstructions] = None
@@ -354,6 +357,11 @@ class ReachEnv(gym.Env):  # type: ignore
       reward: float
       done: bool
       reward, done = self._reward_done_function(action, observation)
+
+      # E-stop and P-stop in the arms can force an early done:
+      arm_device: ReachDeviceArm
+      for arm_device in self._arm_elements:
+        done |= arm_device.get_early_done()
 
       # Snapshot the observation here.
       self._step += 1

@@ -15,12 +15,14 @@
 """Implementation of PyReach Gym Color Camera Device."""
 
 import sys
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
+from pyreach import calibration
+from pyreach import color_camera
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import color_camera_element
 from pyreach.gyms import core as gyms_core
@@ -48,23 +50,46 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     shape: Tuple[int, int] = color_camera_config.shape
     force_fit: bool = color_camera_config.force_fit
     is_synchronous: bool = color_camera_config.is_synchronous
+    calibration_enable: bool = color_camera_config.calibration_enable
+    lens_model: Optional[str] = color_camera_config.lens_model
+    link_name: Optional[str] = color_camera_config.link_name
 
     if len(shape) != 2:
       raise pyreach.PyReachError("ColorCamera shape is {shape}, not (DX,DY)")
     color_shape: Tuple[int, int, int] = shape + (3,)
-    observation_space: gym.spaces.Dict = gym.spaces.Dict({
+    observation_dict: Dict[str, Any] = {
         "ts":
             gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
         "color":
             gym.spaces.Box(low=0, high=255, shape=color_shape, dtype=np.uint8),
-    })
+    }
+    if calibration_enable:
+      lens_models: Tuple[str, ...] = ("fisheye", "pinhole")
+      if lens_model not in lens_models:
+        raise pyreach.PyReachError(
+            f"Lens modle ('{lens_model}' not one of {lens_models}")
+      calibration_space: gym.space.Dict = gym.spaces.Dict({
+          "distortion":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(5,)),
+          "distortion_depth":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(7,)),
+          "extrinsics":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(6,)),
+          "intrinsics":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(4,))
+      })
+      observation_dict["calibration"] = calibration_space
     action_space: gym.spaces.Dict = gym.spaces.Dict({})
+    observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
     super().__init__(reach_name, action_space, observation_space,
                      is_synchronous)
     self._color_camera: Optional[pyreach.ColorCamera] = None
     self._force_fit: bool = force_fit
     self._shape: Tuple[int, int, int] = color_shape
+    self._calibration_enable: bool = calibration_enable
+    self._lens_model: str = lens_model if lens_model else ""
+    self._link_name: str = link_name if link_name else ""
 
   def __str__(self) -> str:
     """Return string representation of a Reach Color Camera."""
@@ -116,9 +141,9 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
       pyreach.PyReachError when an image does not match the specified shape.
 
     """
-    color_camera: pyreach.ColorCamera = self._get_color_camera(host)
+    camera: pyreach.ColorCamera = self._get_color_camera(host)
     with self._timers_select({"!agent*", "!gym*", "host.color"}):
-      color_frame: Optional[pyreach.ColorFrame] = color_camera.image()
+      color_frame: Optional[color_camera.ColorFrame] = camera.image()
     with self._timers_select({"!agent*", "gym.color"}):
       image: np.ndarray
       ts: float = 0.0
@@ -135,10 +160,68 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               "Internal Error: Returned color camera image for "
               f"'{self.config_name}' is {image.shape}, "
               f"not desired {self._shape}")
-      observation: gyms_core.Observation = {
-          "ts": gyms_core.Timestamp.new(ts),
-          "color": image,
-      }
+
+      calibration_camera: calibration.CalibrationCamera
+      if self._calibration_enable:
+        if not color_frame:
+          raise pyreach.PyReachError(
+              "Internal Error: Missing image needed for calibration.")
+        camera_calibration: Optional[calibration.Calibration] = (
+            color_frame.calibration)
+        if not camera_calibration:
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have camera calibration.")
+
+        # Some mypy dancing here:
+        calibration_device: Any = camera_calibration.get_device(
+            color_frame.device_type, color_frame.device_name)
+        assert isinstance(calibration_device, calibration.CalibrationCamera)
+        calibration_camera = calibration_device
+
+        if not calibration_camera:
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have a calibration device.")
+        if not isinstance(calibration_camera, calibration.CalibrationCamera):
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have a calibration camera")
+        if calibration_camera.width != self._shape[1]:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width {calibration_camera.width} "
+              f"!= {self._shape[1]}")
+        if calibration_camera.height != self._shape[0]:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width {calibration_camera.height} "
+              f"!= {self._shape[0]}")
+        if calibration_camera.lens_model != self._lens_model:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width ''{calibration_camera.lens_model}' "
+              f"!= '{self._lens_model}'")
+        if calibration_camera.link_name != self._link_name:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width '{calibration_camera.link_name}' "
+              f"!= '{self._link_name}'")
+
+      # mypy treats observation as immutable, disallowing incremental changes.
+      observation: gyms_core.Observation
+      if self._calibration_enable:
+        assert isinstance(calibration_camera, calibration.CalibrationCamera)
+        observation = {
+            "ts": gyms_core.Timestamp.new(ts),
+            "color": image,
+            "calibration": {
+                "distortion": np.array(calibration_camera.distortion),
+                "distortion_depth":
+                    (np.array(calibration_camera.distortion_depth)),
+                "extrinsics": np.array(calibration_camera.extrinsics),
+                "intrinsics": np.array(calibration_camera.intrinsics),
+            }
+        }
+      else:
+        observation = {
+            "ts": gyms_core.Timestamp.new(ts),
+            "color": image,
+        }
+
       snapshot_reference: Tuple[lib_snapshot.SnapshotReference, ...] = ()
       if color_frame:
         snapshot_reference = (lib_snapshot.SnapshotReference(
@@ -147,7 +230,7 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
 
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""
-    color_camera: pyreach.ColorCamera = self._get_color_camera(host)
+    camera: pyreach.ColorCamera = self._get_color_camera(host)
     with self._timers.select({"!agent*", "gym.color"}):
-      self._add_update_callback(color_camera.add_update_callback)
+      self._add_update_callback(camera.add_update_callback)
     return True

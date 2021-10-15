@@ -11,22 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for generating client annotations."""
 
 from typing import Callable, Optional
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
 
 
 class ClientAnnotation:
   """ClientAnnotation generates annotations of the logs from the client."""
 
-  def annotate(
-      self,
-      annotation: logs_pb2.ClientAnnotation  # type: ignore
-  ) -> core.PyReachStatus:
+  def annotate(self,
+               annotation: logs_pb2.ClientAnnotation) -> core.PyReachStatus:
     """Annotate the logs with the given client annotation.
 
     Args:
@@ -39,9 +36,8 @@ class ClientAnnotation:
 
   def async_annotate(
       self,
-      annotation: logs_pb2.ClientAnnotation,  # type: ignore
-      callback: Optional[Callable[[core.PyReachStatus], None]] = None
-  ) -> None:
+      annotation: logs_pb2.ClientAnnotation,
+      callback: Optional[Callable[[core.PyReachStatus], None]] = None) -> None:
     """Annotate the logs with the given client annotation.
 
     Args:

@@ -21,6 +21,7 @@ import numpy as np  # type: ignore
 from pyreach import calibration as cal
 from pyreach import color_camera
 from pyreach import core
+from pyreach.mock import calibration_mock as cal_mock
 
 
 class ColorFrameMock(color_camera.ColorFrame):
@@ -137,8 +138,10 @@ class ColorCameraMock(color_camera.ColorCamera):
   def image(self) -> Optional[color_camera.ColorFrame]:
     """Return the latest image if it exists."""
     color_frame_mock: ColorFrameMock = ColorFrameMock(
-        1.0, 0, "device_type", "device_name",
-        np.zeros((3, 5, 3), dtype=np.uint8), None)
+        1.0, 0, "device_type", "device_name", np.zeros((3, 5, 3),
+                                                       dtype=np.uint8),
+        cal_mock.CalibrationMock("device_type", "device_name",
+                                 "color_camera_link_name"))
     color_frame: color_camera.ColorFrame = color_frame_mock
     return color_frame
 

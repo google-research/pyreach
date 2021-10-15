@@ -116,10 +116,15 @@ def reverse_snapshot(
                   for data in action.logger_action_params.event_params
               ]),
           ))
-    elif action.logger_action_params is not None:
-      logging.warning(
-          "reversing a SnapshotGymClientAnnotationAction is  "
-          "currently unsupported due to protobuf compatibility issues")
+    elif action.client_annotation_action_params is not None:
+      annotation = action.client_annotation_action_params.annotation
+      assert annotation
+      gym_actions.append(
+          SnapshotGymClientAnnotationAction(
+              device_type=action.device_type,
+              device_name=action.device_name,
+              synchronous=action.synchronous,
+              annotation=annotation.to_proto()))
     else:
       gym_actions.append(
           SnapshotGymAction(

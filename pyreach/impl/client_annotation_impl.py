@@ -11,14 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for generating client annotations."""
 
 import logging  # type: ignore
 import queue  # pylint: disable=unused-import
 from typing import Callable, Optional, Tuple
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import client_annotation
 from pyreach import core
 from pyreach.common.python import types_gen
@@ -45,8 +44,7 @@ class ClientAnnotationDevice(requester.Requester[core.PyReachStatus]):
     return self, ClientAnnotationImpl(self)
 
   def send_annotation(
-      self,
-      annotation: logs_pb2.ClientAnnotation  # type: ignore
+      self, annotation: logs_pb2.ClientAnnotation
   ) -> ("queue.Queue[Optional[Tuple[types_gen.DeviceData, "
         "Optional[core.PyReachStatus]]]]"):
     """Annotate the logs with the given client annotation.
@@ -61,6 +59,7 @@ class ClientAnnotationDevice(requester.Requester[core.PyReachStatus]):
       A queue of response.
     """
     data_annotation = types_gen.ClientAnnotation.from_proto(annotation)
+    assert data_annotation
     if data_annotation.interval_start or data_annotation.interval_end:
       raise core.PyReachError(
           "Interval annotations must be sent via the logger device")
@@ -86,10 +85,8 @@ class ClientAnnotationImpl(client_annotation.ClientAnnotation):
     """
     self._device = device
 
-  def annotate(
-      self,
-      annotation: logs_pb2.ClientAnnotation  # type: ignore
-  ) -> core.PyReachStatus:
+  def annotate(self,
+               annotation: logs_pb2.ClientAnnotation) -> core.PyReachStatus:
     """Annotate the logs with the given client annotation.
 
     Args:
@@ -116,9 +113,8 @@ class ClientAnnotationImpl(client_annotation.ClientAnnotation):
 
   def async_annotate(
       self,
-      annotation: logs_pb2.ClientAnnotation,  # type: ignore
-      callback: Optional[Callable[[core.PyReachStatus], None]] = None
-  ) -> None:
+      annotation: logs_pb2.ClientAnnotation,
+      callback: Optional[Callable[[core.PyReachStatus], None]] = None) -> None:
     """Annotate the logs with the given client annotation.
 
     Args:

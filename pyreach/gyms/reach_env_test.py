@@ -24,6 +24,7 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 import pyreach
 from pyreach import host
+from pyreach.gyms import arm_element
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import reach_env
 from pyreach.gyms import task_element
@@ -236,7 +237,9 @@ class GymArmEnv(reach_env.ReachEnv):
                 high_joint_angles=high_joint_angles,
                 apply_tip_adjust_transform=False,
                 is_synchronous=is_synchronous,
-                response_queue_length=response_queue_length),
+                response_queue_length=response_queue_length,
+                p_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
+                e_stop_mode=arm_element.ReachStopMode.STOP_DONE),
     }
 
     mock_host: host.Host = host_mock.HostMock()
@@ -338,12 +341,13 @@ class TestGymArmEnv(unittest.TestCase):
       assert space_match(action_space, action_match, ("action",))
       assert space_match(observation_space, observation_match, ("observation",))
 
+      # Step 0: reset.
       observation: gyms_core.Observation = env.reset()
-      assert space_match(observation_space, observation_match, ("reset",))
-      assert action_observation_eq(observation, observation_match)
+      assert space_match(observation_space, observation_match,
+                         ("Step 0",)), "Step 0: obs. match"
 
-      # Now do some steps:
       if not is_synchronous:
+        # Step 1: To Joints; no errors:
         to_joints_action: gyms_core.Action = {
             "arm": {
                 "command": 1,
@@ -351,6 +355,10 @@ class TestGymArmEnv(unittest.TestCase):
                 "joint_angles": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
             }
         }
+        assert space_match(
+            action_space, to_joints_action, ("Step 1: action",),
+            exact=False), "Step 1: Bad action space"
+
         response1 = {
             "ts": gyms_core.Timestamp.new(0.0),
             "id": 1,
@@ -372,15 +380,36 @@ class TestGymArmEnv(unittest.TestCase):
                 "ts": gyms_core.Timestamp.new(0.0),
             }
         }
-
         assert space_match(
-            action_space, to_joints_action, ("to_joints",),
-            exact=False), "Invalid action"
+            observation_space,
+            to_joints_observation, ("Step 1: Obs space",),
+            exact=False)
+
         done: bool
         observation, _, done, _ = env.step(to_joints_action)
+        assert not done, "Step 1: Done wrong"
         assert action_observation_eq(observation,
-                                     to_joints_observation), observation
-        _ = done
+                                     to_joints_observation), "Step 1: Obs match"
+
+        # Step 2: To Joints; protective stop:
+        observation, _, done, _ = env.step(to_joints_action)
+        assert not done, "Step2: Done wrong"
+        to_joints_observation["arm"]["status"] = (
+            arm_element.ReachResponse.RESPONSE_PSTOP)
+        assert space_match(
+            observation_space,
+            to_joints_observation, ("Step 2: obs space",),
+            exact=False)
+
+        # Step 3: To Joints; emergency stop with force to Done:
+        observation, _, done, _ = env.step(to_joints_action)
+        assert done, "Step3: Done wrong"
+        to_joints_observation["arm"]["status"] = (
+            arm_element.ReachResponse.RESPONSE_ESTOP)
+        assert space_match(
+            observation_space,
+            to_joints_observation, ("Step 3: obs space",),
+            exact=False)
 
 
 class GymColorCameraEnv(reach_env.ReachEnv):
@@ -393,13 +422,24 @@ class GymColorCameraEnv(reach_env.ReachEnv):
             reach_env.ReachColorCamera(
                 reach_name="ColorCamera",
                 shape=(3, 5),
-                is_synchronous=is_synchronous)
+                is_synchronous=is_synchronous,
+                calibration_enable=True,
+                lens_model="fisheye",
+                link_name="color_camera_link_name")
     }
 
     mock_host: host.Host = host_mock.HostMock()
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
-    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+    calibration: Dict[str, Any] = {
+        "lens_model": "fisheye",
+        "link_name": "urdf_link",
+    }
+    super().__init__(
+        pyreach_config=pyreach_config,
+        host=mock_host,
+        calibration=calibration,
+        **kwargs)
 
 
 class GymColorCameraSyncEnv(GymColorCameraEnv):
@@ -456,16 +496,18 @@ class TestGymColorCameraEnv(unittest.TestCase):
       assert isinstance(observation_space, gym.spaces.Space)
       observation_match: Dict[str, Any] = {
           "colorcamera": {
-              "color":
-                  np.array([[(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                             (0, 0, 0)],
-                            [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                             (0, 0, 0)],
-                            [(0, 0, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0),
-                             (0, 0, 0)]],
-                           dtype=np.uint8),
-              "ts":
-                  gyms_core.Timestamp.new(1.0),
+              "color": np.zeros(shape=(3, 5, 3), dtype=np.uint8),
+              "ts": gyms_core.Timestamp.new(1.0),
+              "calibration": {
+                  "distortion":
+                      np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                  "distortion_depth":
+                      np.array([11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0]),
+                  "extrinsics":
+                      np.array([21.0, 22.0, 23.0, 24.0, 25.0, 26.0]),
+                  "intrinsics":
+                      np.array([31.0, 32.0, 33.0, 34.0]),
+              }
           }
       }
       assert space_match(observation_space, observation_match, ("observation",))
@@ -493,13 +535,24 @@ class GymDepthCameraEnv(reach_env.ReachEnv):
                 reach_name="DepthCamera",
                 shape=(3, 5),
                 is_synchronous=is_synchronous,
-                color_enabled=color_enabled)
+                color_enabled=color_enabled,
+                calibration_enable=True,
+                lens_model="fisheye",
+                link_name="depth_camera_link_name")
     }
 
     mock_host: host.Host = host_mock.HostMock()
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
-    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+    calibration: Dict[str, Any] = {
+        "lens_model": "fisheye",
+        "link_name": "urdf_link",
+    }
+    super().__init__(
+        pyreach_config=pyreach_config,
+        host=mock_host,
+        calibration=calibration,
+        **kwargs)
 
 
 class GymDepthCameraSyncEnv(GymDepthCameraEnv):
@@ -581,11 +634,18 @@ class TestGymDepthCameraEnv(unittest.TestCase):
       assert isinstance(observation_space, gym.spaces.Space)
       observation_match: Dict[str, Any] = {
           "depthcamera": {
-              "depth":
-                  np.array([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
-                           dtype=np.uint8),
-              "ts":
-                  gyms_core.Timestamp.new(1.0),
+              "depth": np.zeros(shape=(3, 5), dtype=np.uint16),
+              "ts": gyms_core.Timestamp.new(1.0),
+              "calibration": {
+                  "distortion":
+                      np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                  "distortion_depth":
+                      np.array([11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0]),
+                  "extrinsics":
+                      np.array([21.0, 22.0, 23.0, 24.0, 25.0, 26.0]),
+                  "intrinsics":
+                      np.array([31.0, 32.0, 33.0, 34.0]),
+              }
           }
       }
       if color_enabled:
@@ -1348,7 +1408,8 @@ def action_observation_eq(ao1: Any, ao2: Any, trace: str = "") -> bool:
       return False
     if ao1.dtype != ao2.dtype:
       if trace:
-        print(f"{trace}dtypes mismatche{ao1.dtype} !+ {ao2.dtype}")
+        print(f"{trace}dtypes mismatch {ao1.dtype} != {ao2.dtype} "
+              f"{ao1.shape} {ao2.shape}")
         return False
     if not ao1.shape:
       return ao1 == ao2

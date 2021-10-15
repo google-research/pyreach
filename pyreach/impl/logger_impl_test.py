@@ -198,6 +198,8 @@ class TestPyReachLogger(unittest.TestCase):
           types_gen.CommandData(
               device_type="client-annotation",
               data_type="client-annotation",
+              client_annotation=types_gen.ClientAnnotation(
+                  snapshot_annotation=types_gen.SnapshotAnnotation()),
               snapshot=types_gen.Snapshot(
                   source="pyreach-test",
                   device_data_refs=[types_gen.DeviceDataRef(ts=2000, seq=1)],

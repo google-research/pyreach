@@ -15,7 +15,7 @@
 """Reach color camera element used for configuration."""
 
 import dataclasses
-from typing import Tuple
+from typing import Optional, Tuple
 
 from pyreach.gyms import reach_element
 
@@ -37,7 +37,15 @@ class ReachColorCamera(reach_element.ReachElement):
       time. Instead, a PyReach exception is raised when the shape mismatch is
       first detected.  Setting force_fit to True avoids the exception and simply
       crops the image to shape.
+    calibration_enable: If True, enable calibration observations.
+    lens_mode: When calibration is enabled, this needs to be either "pinhole" of
+      "fisheye".
+    link_name: When calibration is enabled, this should specify the URDF link
+      name to use for getting the camera pose.
   """
   shape: Tuple[int, int]
   force_fit: bool = False
   is_synchronous: bool = False
+  calibration_enable: bool = False
+  lens_model: Optional[str] = None
+  link_name: Optional[str] = None

@@ -15,12 +15,14 @@
 """Implementation of PyReach Gym Depth Camera Device."""
 
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
+from pyreach import calibration
+from pyreach import depth_camera
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import depth_camera_element
@@ -50,6 +52,9 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     color_enabled: bool = depth_camera_config.color_enabled
     force_fit: bool = depth_camera_config.force_fit
     is_synchronous: bool = depth_camera_config.is_synchronous
+    calibration_enable: bool = depth_camera_config.calibration_enable
+    lens_model: Optional[str] = depth_camera_config.lens_model
+    link_name: Optional[str] = depth_camera_config.link_name
 
     if len(shape) != 2:
       raise pyreach.PyReachError(f"Depth camera has shape {shape}, not (DX,DY)")
@@ -57,7 +62,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     color_shape: Tuple[int, int, int] = shape + (3,)
 
     observation_space_dict: Dict[str, gym.spaces.Space]
-    observation_space_dict = {
+    observation_dict: Dict[str, Any] = {
         "ts":
             gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
         "depth":
@@ -69,10 +74,28 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
             )
     }
     if color_enabled:
-      observation_space_dict["color"] = gym.spaces.Box(
+      observation_dict["color"] = gym.spaces.Box(
           low=0, high=255, shape=color_shape, dtype=np.uint8)
+
+    if calibration_enable:
+      lens_models: Tuple[str, ...] = ("fisheye", "pinhole")
+      if lens_model not in lens_models:
+        raise pyreach.PyReachError(
+            f"Lens modle ('{lens_model}' not one of {lens_models}")
+      calibration_space: gym.space.Dict = gym.spaces.Dict({
+          "distortion":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(5,)),
+          "distortion_depth":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(7,)),
+          "extrinsics":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(6,)),
+          "intrinsics":
+              gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(4,))
+      })
+      observation_dict["calibration"] = calibration_space
+
     action_space: gym.spaces.Dict = gym.spaces.Dict({})
-    observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_space_dict)
+    observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
     super().__init__(reach_name, action_space, observation_space,
                      is_synchronous)
@@ -81,6 +104,9 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     self._force_fit: bool = force_fit
     self._color_shape: Tuple[int, int, int] = color_shape
     self._color_enabled: bool = color_enabled
+    self._calibration_enable: bool = calibration_enable
+    self._lens_model: str = lens_model if lens_model else ""
+    self._link_name: str = link_name if link_name else ""
 
   def __str__(self) -> str:
     """Return a string representation of ReachDeviceDepthCamera."""
@@ -147,7 +173,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
         color/depth image shapes and the actual ones obtained.
 
     """
-    depth_camera: pyreach.DepthCamera = self._get_depth_camera(host)
+    camera: pyreach.DepthCamera = self._get_depth_camera(host)
     with self._timers_select({"!agent*", "gym.depth"}):
       reach_name: str = self._reach_name
       force_fit: bool = self._force_fit
@@ -158,7 +184,8 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
       color_image: Optional[np.ndarray] = None
       depth_image: np.ndarray
       with self._timers.select({"!agent*", "!gym*", "host.depth"}):
-        depth_frame: Optional[pyreach.DepthFrame] = depth_camera.image()
+        depth_frame: Optional[depth_camera.DepthFrame] = camera.image()
+
       snapshot_reference: Tuple[lib_snapshot.SnapshotReference, ...] = ()
       if depth_frame is None:
         depth_image = np.zeros(shape=self._depth_shape, dtype=np.uint16)
@@ -188,17 +215,62 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
               f"Returned color camera image for '{reach_name}' "
               f"is {color_image.shape}, not desired {color_shape}")
 
-      result: Dict[str, np.ndarray] = {
+      observation: Dict[str, Any] = {
           "ts": gyms_core.Timestamp.new(ts),
           "depth": depth_image,
       }
       if color_image is not None:
-        result["color"] = color_image
-      return result, snapshot_reference, ()
+        observation["color"] = color_image
+
+      if self._calibration_enable:
+        if not depth_frame:
+          raise pyreach.PyReachError(
+              "Internal Error: Missing image needed for calibration.")
+        camera_calibration: Optional[calibration.Calibration] = (
+            depth_frame.calibration)
+        if not camera_calibration:
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have camera calibration.")
+        calibration_camera: Union[None, calibration.CalibrationDevice,
+                                  calibration.CalibrationCamera]
+        calibration_camera = camera_calibration.get_device(
+            depth_frame.device_type, depth_frame.device_name)
+
+        if not calibration_camera:
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have a calibration device.")
+        if not isinstance(calibration_camera, calibration.CalibrationCamera):
+          raise pyreach.PyReachError(
+              "Internal Error: Image does not have a calibration camera")
+        if calibration_camera.width != depth_shape[1]:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width {calibration_camera.width} "
+              f"!= {depth_shape[1]}")
+        if calibration_camera.height != depth_shape[0]:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width {calibration_camera.height} "
+              f"!= {depth_shape[0]}")
+        if calibration_camera.lens_model != self._lens_model:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width ''{calibration_camera.lens_model}' "
+              f"!= '{self._lens_model}'")
+        if calibration_camera.link_name != self._link_name:
+          raise pyreach.PyReachError(
+              f"Internal Error: Width '{calibration_camera.link_name}' "
+              f"!= '{self._link_name}'")
+
+        observation["calibration"] = {
+            "distortion": np.array(calibration_camera.distortion),
+            "distortion_depth": np.array(calibration_camera.distortion_depth),
+            "extrinsics": np.array(calibration_camera.extrinsics),
+            "intrinsics": np.array(calibration_camera.intrinsics),
+        }
+
+      return observation, snapshot_reference, ()
 
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""
-    depth_camera: pyreach.DepthCamera = self._get_depth_camera(host)
+    camera: pyreach.DepthCamera = self._get_depth_camera(host)
     with self._timers.select({"!agent*", "gym.depth"}):
-      self._add_update_callback(depth_camera.add_update_callback)
+      self._add_update_callback(camera.add_update_callback)
     return True

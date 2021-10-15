@@ -15,7 +15,7 @@
 """Reach depth camera element used for configuration."""
 
 import dataclasses
-from typing import Tuple
+from typing import Optional, Tuple
 
 from pyreach.gyms import reach_element
 
@@ -27,8 +27,7 @@ class ReachDepthCamera(reach_element.ReachElement):
   Attributes:
     reach_name: Name of the depth camera.  This name must match the name used by
       the remote robot host (e.g. "photoneo", "realsense", etc.)
-    shape: The shape (dx, dy) of the depth image.  The ndarray shape is extended
-      to (dx, dy, 3).  The depth image has values of np.uint16.
+    shape: The shape (dx, dy) of the depth image with a type of np.unint8.
     color_enabled: If True, color images are enabled.  The ndarray shape same as
       the depth camera shape (i.e.  (dx, dy, 3).) The pixel values are np.uint8.
     force_fit: If True, any misconfigured cameras are simply cropped to shape.
@@ -40,8 +39,15 @@ class ReachDepthCamera(reach_element.ReachElement):
       time. Instead, a PyReach exception is raised when the shape mismatch is
       first detected.  Setting force_fit to True avoids the exception and simply
       crops the image to shape.
+    lens_mode: When calibration is enabled, this needs to be either "pinhole" of
+      "fisheye".
+    link_name: When calibration is enabled, this should specify the URDF link
+      name to use for getting the camera pose.
   """
   shape: Tuple[int, int]
   color_enabled: bool
   force_fit: bool = False
   is_synchronous: bool = False
+  calibration_enable: bool = False
+  lens_model: Optional[str] = None
+  link_name: Optional[str] = None

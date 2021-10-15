@@ -26,7 +26,9 @@ class TestLoggerMock(unittest.TestCase):
   def test_logger(self) -> None:
     """Test the MockLogger."""
     mock_calibration: calibration_mock.CalibrationMock
-    mock_calibration = calibration_mock.CalibrationMock()
+    mock_calibration = calibration_mock.CalibrationMock("device_type",
+                                                        "device_name",
+                                                        "link_name")
     assert isinstance(mock_calibration, calibration_mock.CalibrationMock)
     assert isinstance(mock_calibration, calibration.Calibration)
 

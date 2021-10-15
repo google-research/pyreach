@@ -18,25 +18,9 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
-from google.protobuf import duration_pb2
-from google.protobuf import timestamp_pb2
 from pyreach.common.proto_gen import logs_pb2  # type: ignore
 
 # This file is generated with a Reach proto2json converter. DO NOT EDIT.
-
-
-def get_proto_value(field):
-  if isinstance(field, timestamp_pb2.Timestamp):
-    return int(field.seconds * 1000 + field.nanos / 1000000)
-  if isinstance(field, duration_pb2.Duration):
-    return field.seconds * 1 + field.nanos / 1000000000
-  return field
-
-
-def get_proto_field(obj, field):
-  if not obj.HasField(field):
-    return None
-  return getattr(obj, field)
 
 
 class AcquireImageArgs:
@@ -84,6 +68,19 @@ class AcquireImageArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.AcquireImageArgs':
+    """Convert AcquireImageArgs to proto."""
+    proto = logs_pb2.AcquireImageArgs()
+    if self.tag:
+      proto.tag = self.tag
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.mode:
+      proto.mode = self.mode
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'AcquireImageArgs':
     """Convert JSON to type object."""
@@ -113,15 +110,19 @@ class AcquireImageArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.AcquireImageArgs) -> 'AcquireImageArgs':
+  def from_proto(proto: logs_pb2.AcquireImageArgs) -> Optional['AcquireImageArgs']:
     """Convert AcquireImageArgs proto to type object."""
     if not proto:
       return None
     obj = AcquireImageArgs()
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.mode = get_proto_value(proto.mode)
-    obj.tag = get_proto_value(proto.tag)
+    if proto.HasField('tag'):
+      obj.tag = proto.tag
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('mode'):
+      obj.mode = proto.mode
     return obj
 
 
@@ -161,6 +162,16 @@ class AddObject:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.AddObject':
+    """Convert AddObject to proto."""
+    proto = logs_pb2.AddObject()
+    if self.py_id:
+      proto.id = self.py_id
+    if self.py_type:
+      proto.type = self.py_type
+    proto.pose_xyzxyzw.extend(self.pose_xyzxyzw)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'AddObject':
     """Convert JSON to type object."""
@@ -190,18 +201,17 @@ class AddObject:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.AddObject) -> 'AddObject':
+  def from_proto(proto: logs_pb2.AddObject) -> Optional['AddObject']:
     """Convert AddObject proto to type object."""
     if not proto:
       return None
     obj = AddObject()
-    if proto.pose_xyzxyzw:
-      json_list = []
-      for j in proto.pose_xyzxyzw:
-        json_list.append(j)
-      obj.pose_xyzxyzw = json_list
-    obj.py_id = get_proto_value(proto.id)
-    obj.py_type = get_proto_value(proto.type)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    for obj_pose_xyzxyzw in proto.pose_xyzxyzw:
+      obj.pose_xyzxyzw.append(obj_pose_xyzxyzw)
     return obj
 
 
@@ -253,6 +263,18 @@ class AnalogBank:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.AnalogBank':
+    """Convert AnalogBank to proto."""
+    proto = logs_pb2.AnalogBank()
+    if self.space:
+      proto.space = self.space
+    if self.output:
+      proto.output = self.output
+    if self.start:
+      proto.start = self.start
+    proto.state.extend(self.state)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'AnalogBank':
     """Convert JSON to type object."""
@@ -286,19 +308,19 @@ class AnalogBank:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.AnalogBank) -> 'AnalogBank':
+  def from_proto(proto: logs_pb2.AnalogBank) -> Optional['AnalogBank']:
     """Convert AnalogBank proto to type object."""
     if not proto:
       return None
     obj = AnalogBank()
-    obj.output = get_proto_value(proto.output)
-    obj.space = get_proto_value(proto.space)
-    obj.start = get_proto_value(proto.start)
-    if proto.state:
-      json_list = []
-      for j in proto.state:
-        json_list.append(j)
-      obj.state = json_list
+    if proto.HasField('space'):
+      obj.space = proto.space
+    if proto.HasField('output'):
+      obj.output = proto.output
+    if proto.HasField('start'):
+      obj.start = proto.start
+    for obj_state in proto.state:
+      obj.state.append(obj_state)
     return obj
 
 
@@ -448,6 +470,51 @@ class ArmActionParams:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ArmActionParams':
+    """Convert ArmActionParams to proto."""
+    proto = logs_pb2.ArmActionParams()
+    if self.command:
+      proto.command = self.command
+    if self.cid:
+      proto.cid = self.cid
+    proto.joint_angles.extend(self.joint_angles)
+    proto.pose.extend(self.pose)
+    if self.reach_action:
+      proto.reach_action = self.reach_action
+    if self.use_linear:
+      proto.use_linear = self.use_linear
+    if self.velocity:
+      proto.velocity = self.velocity
+    if self.acceleration:
+      proto.acceleration = self.acceleration
+    if self.timeout_sec:
+      proto.timeout_sec = self.timeout_sec
+    if self.action_name:
+      proto.action_name = self.action_name
+    if self.use_unity_ik:
+      proto.use_unity_ik = self.use_unity_ik
+    if self.intent:
+      proto.intent = self.intent
+    if self.success_type:
+      proto.success_type = self.success_type
+    if self.pick_id:
+      proto.pick_id = self.pick_id
+    if self.apply_tip_adjust_transform:
+      proto.apply_tip_adjust_transform = self.apply_tip_adjust_transform
+    if self.servo:
+      proto.servo = self.servo
+    if self.servo_t_secs:
+      proto.servo_t_secs = self.servo_t_secs
+    if self.servo_lookahead_time_secs:
+      proto.servo_lookahead_time_secs = self.servo_lookahead_time_secs
+    if self.servo_gain:
+      proto.servo_gain = self.servo_gain
+    if self.allow_uncalibrated:
+      proto.allow_uncalibrated = self.allow_uncalibrated
+    if self.controller_name:
+      proto.controller_name = self.controller_name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ArmActionParams':
     """Convert JSON to type object."""
@@ -552,40 +619,53 @@ class ArmActionParams:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ArmActionParams) -> 'ArmActionParams':
+  def from_proto(proto: logs_pb2.ArmActionParams) -> Optional['ArmActionParams']:
     """Convert ArmActionParams proto to type object."""
     if not proto:
       return None
     obj = ArmActionParams()
-    obj.acceleration = get_proto_value(proto.acceleration)
-    obj.action_name = get_proto_value(proto.action_name)
-    obj.allow_uncalibrated = get_proto_value(proto.allow_uncalibrated)
-    obj.apply_tip_adjust_transform = get_proto_value(proto.apply_tip_adjust_transform)
-    obj.cid = get_proto_value(proto.cid)
-    obj.command = get_proto_value(proto.command)
-    obj.controller_name = get_proto_value(proto.controller_name)
-    obj.intent = get_proto_value(proto.intent)
-    if proto.joint_angles:
-      json_list = []
-      for j in proto.joint_angles:
-        json_list.append(j)
-      obj.joint_angles = json_list
-    obj.pick_id = get_proto_value(proto.pick_id)
-    if proto.pose:
-      json_list = []
-      for j in proto.pose:
-        json_list.append(j)
-      obj.pose = json_list
-    obj.reach_action = get_proto_value(proto.reach_action)
-    obj.servo = get_proto_value(proto.servo)
-    obj.servo_gain = get_proto_value(proto.servo_gain)
-    obj.servo_lookahead_time_secs = get_proto_value(proto.servo_lookahead_time_secs)
-    obj.servo_t_secs = get_proto_value(proto.servo_t_secs)
-    obj.success_type = get_proto_value(proto.success_type)
-    obj.timeout_sec = get_proto_value(proto.timeout_sec)
-    obj.use_linear = get_proto_value(proto.use_linear)
-    obj.use_unity_ik = get_proto_value(proto.use_unity_ik)
-    obj.velocity = get_proto_value(proto.velocity)
+    if proto.HasField('command'):
+      obj.command = proto.command
+    if proto.HasField('cid'):
+      obj.cid = proto.cid
+    for obj_joint_angles in proto.joint_angles:
+      obj.joint_angles.append(obj_joint_angles)
+    for obj_pose in proto.pose:
+      obj.pose.append(obj_pose)
+    if proto.HasField('reach_action'):
+      obj.reach_action = proto.reach_action
+    if proto.HasField('use_linear'):
+      obj.use_linear = proto.use_linear
+    if proto.HasField('velocity'):
+      obj.velocity = proto.velocity
+    if proto.HasField('acceleration'):
+      obj.acceleration = proto.acceleration
+    if proto.HasField('timeout_sec'):
+      obj.timeout_sec = proto.timeout_sec
+    if proto.HasField('action_name'):
+      obj.action_name = proto.action_name
+    if proto.HasField('use_unity_ik'):
+      obj.use_unity_ik = proto.use_unity_ik
+    if proto.HasField('intent'):
+      obj.intent = proto.intent
+    if proto.HasField('success_type'):
+      obj.success_type = proto.success_type
+    if proto.HasField('pick_id'):
+      obj.pick_id = proto.pick_id
+    if proto.HasField('apply_tip_adjust_transform'):
+      obj.apply_tip_adjust_transform = proto.apply_tip_adjust_transform
+    if proto.HasField('servo'):
+      obj.servo = proto.servo
+    if proto.HasField('servo_t_secs'):
+      obj.servo_t_secs = proto.servo_t_secs
+    if proto.HasField('servo_lookahead_time_secs'):
+      obj.servo_lookahead_time_secs = proto.servo_lookahead_time_secs
+    if proto.HasField('servo_gain'):
+      obj.servo_gain = proto.servo_gain
+    if proto.HasField('allow_uncalibrated'):
+      obj.allow_uncalibrated = proto.allow_uncalibrated
+    if proto.HasField('controller_name'):
+      obj.controller_name = proto.controller_name
     return obj
 
 
@@ -610,6 +690,13 @@ class AudioRequest:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.AudioRequest':
+    """Convert AudioRequest to proto."""
+    proto = logs_pb2.AudioRequest()
+    if self.text_cue:
+      proto.text_cue = self.text_cue
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'AudioRequest':
     """Convert JSON to type object."""
@@ -627,12 +714,13 @@ class AudioRequest:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.AudioRequest) -> 'AudioRequest':
+  def from_proto(proto: logs_pb2.AudioRequest) -> Optional['AudioRequest']:
     """Convert AudioRequest proto to type object."""
     if not proto:
       return None
     obj = AudioRequest()
-    obj.text_cue = get_proto_value(proto.text_cue)
+    if proto.HasField('text_cue'):
+      obj.text_cue = proto.text_cue
     return obj
 
 
@@ -681,6 +769,16 @@ class CameraShiftDetection:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.CameraShiftDetection':
+    """Convert CameraShiftDetection to proto."""
+    proto = logs_pb2.CameraShiftDetection()
+    if self.max_shift:
+      proto.max_shift = self.max_shift
+    if self.max_shift_object:
+      proto.max_shift_object.CopyFrom(self.max_shift_object.to_proto())
+    proto.shifts_per_detection.extend([v.to_proto() for v in self.shifts_per_detection])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'CameraShiftDetection':
     """Convert JSON to type object."""
@@ -710,18 +808,17 @@ class CameraShiftDetection:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.CameraShiftDetection) -> 'CameraShiftDetection':
+  def from_proto(proto: logs_pb2.CameraShiftDetection) -> Optional['CameraShiftDetection']:
     """Convert CameraShiftDetection proto to type object."""
     if not proto:
       return None
     obj = CameraShiftDetection()
-    obj.max_shift = get_proto_value(proto.max_shift)
-    obj.max_shift_object = DetectionKey.from_proto(get_proto_field(proto, 'max_shift_object'))
-    if proto.shifts_per_detection:
-      json_list = []
-      for j in proto.shifts_per_detection:
-        json_list.append(ShiftPerDetection.from_proto(j))
-      obj.shifts_per_detection = json_list
+    if proto.HasField('max_shift'):
+      obj.max_shift = proto.max_shift
+    if proto.HasField('max_shift_object'):
+      obj.max_shift_object = DetectionKey.from_proto(proto.max_shift_object)
+    for obj_shifts_per_detection in proto.shifts_per_detection:
+      obj.shifts_per_detection.append(ShiftPerDetection.from_proto(obj_shifts_per_detection))
     return obj
 
 
@@ -764,6 +861,17 @@ class CapabilityState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.CapabilityState':
+    """Convert CapabilityState to proto."""
+    proto = logs_pb2.CapabilityState()
+    if self.pin:
+      proto.pin = self.pin
+    if self.int_value:
+      proto.int_value = self.int_value
+    if self.float_value:
+      proto.float_value = self.float_value
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'CapabilityState':
     """Convert JSON to type object."""
@@ -789,14 +897,17 @@ class CapabilityState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.CapabilityState) -> 'CapabilityState':
+  def from_proto(proto: logs_pb2.CapabilityState) -> Optional['CapabilityState']:
     """Convert CapabilityState proto to type object."""
     if not proto:
       return None
     obj = CapabilityState()
-    obj.float_value = get_proto_value(proto.float_value)
-    obj.int_value = get_proto_value(proto.int_value)
-    obj.pin = get_proto_value(proto.pin)
+    if proto.HasField('pin'):
+      obj.pin = proto.pin
+    if proto.HasField('int_value'):
+      obj.int_value = proto.int_value
+    if proto.HasField('float_value'):
+      obj.float_value = proto.float_value
     return obj
 
 
@@ -867,6 +978,26 @@ class ClientAnnotation:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ClientAnnotation':
+    """Convert ClientAnnotation to proto."""
+    proto = logs_pb2.ClientAnnotation()
+    if self.associated_server_ts:
+      proto.associated_server_ts.seconds = int(self.associated_server_ts / 1000)
+      proto.associated_server_ts.nanos = int(self.associated_server_ts % 1000) * 1000000
+    if self.log_channel_id:
+      proto.log_channel_id = self.log_channel_id
+    if self.interval_start:
+      proto.interval_start.CopyFrom(self.interval_start.to_proto())
+    if self.interval_end:
+      proto.interval_end.CopyFrom(self.interval_end.to_proto())
+    if self.text_annotation:
+      proto.text_annotation.CopyFrom(self.text_annotation.to_proto())
+    if self.snapshot_annotation:
+      proto.snapshot_annotation.CopyFrom(self.snapshot_annotation.to_proto())
+    if self.point_measurement:
+      proto.point_measurement.CopyFrom(self.point_measurement.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ClientAnnotation':
     """Convert JSON to type object."""
@@ -908,18 +1039,25 @@ class ClientAnnotation:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ClientAnnotation) -> 'ClientAnnotation':
+  def from_proto(proto: logs_pb2.ClientAnnotation) -> Optional['ClientAnnotation']:
     """Convert ClientAnnotation proto to type object."""
     if not proto:
       return None
     obj = ClientAnnotation()
-    obj.associated_server_ts = get_proto_value(proto.associated_server_ts)
-    obj.interval_end = IntervalEnd.from_proto(get_proto_field(proto, 'interval_end'))
-    obj.interval_start = IntervalStart.from_proto(get_proto_field(proto, 'interval_start'))
-    obj.log_channel_id = get_proto_value(proto.log_channel_id)
-    obj.point_measurement = PointMeasurement.from_proto(get_proto_field(proto, 'point_measurement'))
-    obj.snapshot_annotation = SnapshotAnnotation.from_proto(get_proto_field(proto, 'snapshot_annotation'))
-    obj.text_annotation = TextAnnotation.from_proto(get_proto_field(proto, 'text_annotation'))
+    if proto.HasField('associated_server_ts'):
+      obj.associated_server_ts = int(proto.associated_server_ts.seconds * 1000) + int(proto.associated_server_ts.nanos / 1000000)
+    if proto.HasField('log_channel_id'):
+      obj.log_channel_id = proto.log_channel_id
+    if proto.HasField('interval_start'):
+      obj.interval_start = IntervalStart.from_proto(proto.interval_start)
+    if proto.HasField('interval_end'):
+      obj.interval_end = IntervalEnd.from_proto(proto.interval_end)
+    if proto.HasField('text_annotation'):
+      obj.text_annotation = TextAnnotation.from_proto(proto.text_annotation)
+    if proto.HasField('snapshot_annotation'):
+      obj.snapshot_annotation = SnapshotAnnotation.from_proto(proto.snapshot_annotation)
+    if proto.HasField('point_measurement'):
+      obj.point_measurement = PointMeasurement.from_proto(proto.point_measurement)
     return obj
 
 
@@ -943,6 +1081,13 @@ class ClientAnnotationActionParams:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ClientAnnotationActionParams':
+    """Convert ClientAnnotationActionParams to proto."""
+    proto = logs_pb2.ClientAnnotationActionParams()
+    if self.annotation:
+      proto.annotation.CopyFrom(self.annotation.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ClientAnnotationActionParams':
     """Convert JSON to type object."""
@@ -960,12 +1105,13 @@ class ClientAnnotationActionParams:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ClientAnnotationActionParams) -> 'ClientAnnotationActionParams':
+  def from_proto(proto: logs_pb2.ClientAnnotationActionParams) -> Optional['ClientAnnotationActionParams']:
     """Convert ClientAnnotationActionParams proto to type object."""
     if not proto:
       return None
     obj = ClientAnnotationActionParams()
-    obj.annotation = ClientAnnotation.from_proto(get_proto_field(proto, 'annotation'))
+    if proto.HasField('annotation'):
+      obj.annotation = ClientAnnotation.from_proto(proto.annotation)
     return obj
 
 
@@ -993,6 +1139,12 @@ class ClientSessionStart:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ClientSessionStart':
+    """Convert ClientSessionStart to proto."""
+    proto = logs_pb2.ClientSessionStart()
+    proto.accept_depth_encoding.extend(self.accept_depth_encoding)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ClientSessionStart':
     """Convert JSON to type object."""
@@ -1014,16 +1166,13 @@ class ClientSessionStart:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ClientSessionStart) -> 'ClientSessionStart':
+  def from_proto(proto: logs_pb2.ClientSessionStart) -> Optional['ClientSessionStart']:
     """Convert ClientSessionStart proto to type object."""
     if not proto:
       return None
     obj = ClientSessionStart()
-    if proto.accept_depth_encoding:
-      json_list = []
-      for j in proto.accept_depth_encoding:
-        json_list.append(j)
-      obj.accept_depth_encoding = json_list
+    for obj_accept_depth_encoding in proto.accept_depth_encoding:
+      obj.accept_depth_encoding.append(obj_accept_depth_encoding)
     return obj
 
 
@@ -1507,6 +1656,176 @@ class CommandData:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.CommandData':
+    """Convert CommandData to proto."""
+    proto = logs_pb2.CommandData()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    if self.tag:
+      proto.tag = self.tag
+    if self.ts:
+      proto.ts.seconds = int(self.ts / 1000)
+      proto.ts.nanos = int(self.ts % 1000) * 1000000
+    if self.origin:
+      proto.origin = self.origin
+    if self.origin_type:
+      proto.origin_type = self.origin_type
+    if self.origin_transport_type:
+      proto.origin_transport_type = self.origin_transport_type
+    if self.origin_client:
+      proto.origin_client = self.origin_client
+    if self.origin_control:
+      proto.origin_control = self.origin_control
+    if self.seq:
+      proto.seq = self.seq
+    if self.snapshot:
+      proto.snapshot.CopyFrom(self.snapshot.to_proto())
+    if self.data_type == 'metadata':
+      if self.metadata:
+        proto.metadata.CopyFrom(self.metadata.to_proto())
+    if self.data_type == 'key-value':
+      proto_key_value = logs_pb2.KeyValue()
+      if self.key:
+        proto_key_value.key = self.key
+      if self.value:
+        proto_key_value.value = self.value
+      if self.int_value:
+        proto_key_value.int_value = self.int_value
+      if self.float_value:
+        proto_key_value.float_value = self.float_value
+      proto.key_value.CopyFrom(proto_key_value)
+    if self.data_type == 'key-value-request':
+      proto_key_value_request = logs_pb2.KeyValue()
+      if self.key:
+        proto_key_value_request.key = self.key
+      if self.value:
+        proto_key_value_request.value = self.value
+      if self.int_value:
+        proto_key_value_request.int_value = self.int_value
+      if self.float_value:
+        proto_key_value_request.float_value = self.float_value
+      proto.key_value_request.CopyFrom(proto_key_value_request)
+    if self.data_type == 'session-info':
+      if self.session_info:
+        proto.session_info.CopyFrom(self.session_info.to_proto())
+    if self.data_type == 'trigger':
+      proto_trigger = logs_pb2.EmptyMessage()
+      proto.trigger.CopyFrom(proto_trigger)
+    if self.data_type == 'i-see-data':
+      proto_i_see_data = logs_pb2.EmptyMessage()
+      proto.i_see_data.CopyFrom(proto_i_see_data)
+    if self.data_type == 'ping':
+      proto_ping = logs_pb2.EmptyMessage()
+      proto.ping.CopyFrom(proto_ping)
+    if self.data_type == 'client-session-end':
+      proto_client_session_end = logs_pb2.EmptyMessage()
+      proto.client_session_end.CopyFrom(proto_client_session_end)
+    if self.data_type == 'connected-clients-request':
+      proto_connected_clients_request = logs_pb2.EmptyMessage()
+      proto.connected_clients_request.CopyFrom(proto_connected_clients_request)
+    if self.data_type == 'start-shutdown':
+      proto_start_shutdown = logs_pb2.EmptyMessage()
+      proto.start_shutdown.CopyFrom(proto_start_shutdown)
+    if self.data_type == 'finish-shutdown':
+      proto_finish_shutdown = logs_pb2.EmptyMessage()
+      proto.finish_shutdown.CopyFrom(proto_finish_shutdown)
+    if self.data_type == 'hangup':
+      proto_hangup = logs_pb2.EmptyMessage()
+      proto.hangup.CopyFrom(proto_hangup)
+    if self.data_type == 'client-session-start':
+      if self.client_session_start:
+        proto.client_session_start.CopyFrom(self.client_session_start.to_proto())
+    if self.data_type == 'client-annotation':
+      if self.client_annotation:
+        proto.client_annotation.CopyFrom(self.client_annotation.to_proto())
+    if self.data_type == 'pipeline-description-request':
+      proto_pipeline_description_request = logs_pb2.EmptyMessage()
+      proto.pipeline_description_request.CopyFrom(proto_pipeline_description_request)
+    if self.data_type == 'machine-interfaces-request':
+      proto_machine_interfaces_request = logs_pb2.EmptyMessage()
+      proto.machine_interfaces_request.CopyFrom(proto_machine_interfaces_request)
+    if self.data_type == 'text-instruction-request':
+      proto_text_instruction_request = logs_pb2.EmptyMessage()
+      proto.text_instruction_request.CopyFrom(proto_text_instruction_request)
+    if self.data_type == 'stream-request':
+      if self.stream_request:
+        proto.stream_request.CopyFrom(self.stream_request.to_proto())
+    if self.data_type == 'controller-descriptions-request':
+      proto_controller_descriptions_request = logs_pb2.EmptyMessage()
+      proto.controller_descriptions_request.CopyFrom(proto_controller_descriptions_request)
+    if self.script:
+      proto.script = self.script
+    if self.data_type == 'reach-script' or self.data_type == 'run-script' or self.data_type == 'ur-command':
+      if self.reach_script:
+        proto.reach_script.CopyFrom(self.reach_script.to_proto())
+    if self.cmd:
+      proto.cmd = self.cmd
+    proto.args.extend(self.args)
+    if self.progress:
+      proto.progress = self.progress
+    if self.message:
+      proto.message = self.message
+    if self.error:
+      proto.error = self.error
+    if self.detailed_error:
+      proto.detailed_error = self.detailed_error
+    if self.intent:
+      proto.intent = self.intent
+    if self.success_type:
+      proto.success_type = self.success_type
+    if self.x:
+      proto.x = self.x
+    if self.y:
+      proto.y = self.y
+    if self.exp:
+      proto.exp.CopyFrom(self.exp.to_proto())
+    proto.exp_array.extend([v.to_proto() for v in self.exp_array])
+    if self.event_duration:
+      proto.event_duration.seconds = int(self.event_duration)
+      proto.event_duration.nanos = int(self.event_duration * 1000000000) % 1000000000
+    if self.data_type == 'event' or self.data_type == 'event-start' or self.data_type == 'pointer-event':
+      if self.event_name:
+        proto.event_name = self.event_name
+    proto.event_labels.extend(self.event_labels)
+    proto.event_params.extend([v.to_proto() for v in self.event_params])
+    if self.pick_id:
+      proto.pick_id = self.pick_id
+    if self.experiment_token:
+      proto.experiment_token = self.experiment_token
+    if self.data_type == 'history-request':
+      if self.history:
+        proto.history.CopyFrom(self.history.to_proto())
+    if self.text_cue:
+      proto.text_cue = self.text_cue
+    if self.data_type == 'audio-request-mute' or self.data_type == 'audio-request-unmute' or self.data_type == 'frame-request' or self.data_type == 'webrtc-audio-request' or self.data_type == 'audio-request-invalid':
+      if self.webrtc_audio_request:
+        proto.webrtc_audio_request.CopyFrom(self.webrtc_audio_request.to_proto())
+    if self.data_type == 'sim-cheat-command':
+      if self.sim_action:
+        proto.sim_action.CopyFrom(self.sim_action.to_proto())
+    if self.data_type == 'inference-request':
+      proto_inference_request = logs_pb2.InferenceRequest()
+      if self.prediction_type:
+        proto_inference_request.prediction_type = self.prediction_type
+      if self.request_type:
+        proto_inference_request.request_type = self.request_type
+      if self.task_code:
+        proto_inference_request.task_code = self.task_code
+      if self.intent:
+        proto_inference_request.intent = self.intent
+      if self.label:
+        proto_inference_request.label = self.label
+      if self.robot_id:
+        proto_inference_request.robot_id = self.robot_id
+      if self.success_type:
+        proto_inference_request.success_type = self.success_type
+      proto.inference_request.CopyFrom(proto_inference_request)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'CommandData':
     """Convert JSON to type object."""
@@ -1733,77 +2052,150 @@ class CommandData:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.CommandData) -> 'CommandData':
+  def from_proto(proto: logs_pb2.CommandData) -> Optional['CommandData']:
     """Convert CommandData proto to type object."""
     if not proto:
       return None
     obj = CommandData()
-    if proto.args:
-      json_list = []
-      for j in proto.args:
-        json_list.append(j)
-      obj.args = json_list
-    obj.client_annotation = ClientAnnotation.from_proto(get_proto_field(proto, 'client_annotation'))
-    obj.client_session_start = ClientSessionStart.from_proto(get_proto_field(proto, 'client_session_start'))
-    obj.cmd = get_proto_value(proto.cmd)
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.detailed_error = get_proto_value(proto.detailed_error)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.error = get_proto_value(proto.error)
-    obj.event_duration = get_proto_value(proto.event_duration)
-    if proto.event_labels:
-      json_list = []
-      for j in proto.event_labels:
-        json_list.append(j)
-      obj.event_labels = json_list
-    obj.event_name = get_proto_value(proto.event_name)
-    if proto.event_params:
-      json_list = []
-      for j in proto.event_params:
-        json_list.append(KeyValue.from_proto(j))
-      obj.event_params = json_list
-    obj.exp = ExperimentalCommandData.from_proto(get_proto_field(proto, 'exp'))
-    if proto.exp_array:
-      json_list = []
-      for j in proto.exp_array:
-        json_list.append(ExperimentalCommandData.from_proto(j))
-      obj.exp_array = json_list
-    obj.experiment_token = get_proto_value(proto.experiment_token)
-    obj.float_value = get_proto_value(proto.key_value.float_value)
-    obj.history = History.from_proto(get_proto_field(proto, 'history'))
-    obj.int_value = get_proto_value(proto.key_value.int_value)
-    obj.intent = get_proto_value(proto.intent)
-    obj.key = get_proto_value(proto.key_value.key)
-    obj.label = get_proto_value(proto.inference_request.label)
-    obj.message = get_proto_value(proto.message)
-    obj.metadata = Metadata.from_proto(get_proto_field(proto, 'metadata'))
-    obj.origin = get_proto_value(proto.origin)
-    obj.origin_client = get_proto_value(proto.origin_client)
-    obj.origin_control = get_proto_value(proto.origin_control)
-    obj.origin_transport_type = get_proto_value(proto.origin_transport_type)
-    obj.origin_type = get_proto_value(proto.origin_type)
-    obj.pick_id = get_proto_value(proto.pick_id)
-    obj.prediction_type = get_proto_value(proto.inference_request.prediction_type)
-    obj.progress = get_proto_value(proto.progress)
-    obj.reach_script = ReachScript.from_proto(get_proto_field(proto, 'reach_script'))
-    obj.request_type = get_proto_value(proto.inference_request.request_type)
-    obj.robot_id = get_proto_value(proto.inference_request.robot_id)
-    obj.script = get_proto_value(proto.script)
-    obj.seq = get_proto_value(proto.seq)
-    obj.session_info = SessionInfo.from_proto(get_proto_field(proto, 'session_info'))
-    obj.sim_action = SimAction.from_proto(get_proto_field(proto, 'sim_action'))
-    obj.snapshot = Snapshot.from_proto(get_proto_field(proto, 'snapshot'))
-    obj.stream_request = StreamRequest.from_proto(get_proto_field(proto, 'stream_request'))
-    obj.success_type = get_proto_value(proto.success_type)
-    obj.tag = get_proto_value(proto.tag)
-    obj.task_code = get_proto_value(proto.inference_request.task_code)
-    obj.text_cue = get_proto_value(proto.text_cue)
-    obj.ts = get_proto_value(proto.ts)
-    obj.value = get_proto_value(proto.key_value.value)
-    obj.webrtc_audio_request = WebrtcAudioRequest.from_proto(get_proto_field(proto, 'webrtc_audio_request'))
-    obj.x = get_proto_value(proto.x)
-    obj.y = get_proto_value(proto.y)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
+    if proto.HasField('tag'):
+      obj.tag = proto.tag
+    if proto.HasField('ts'):
+      obj.ts = int(proto.ts.seconds * 1000) + int(proto.ts.nanos / 1000000)
+    if proto.HasField('origin'):
+      obj.origin = proto.origin
+    if proto.HasField('origin_type'):
+      obj.origin_type = proto.origin_type
+    if proto.HasField('origin_transport_type'):
+      obj.origin_transport_type = proto.origin_transport_type
+    if proto.HasField('origin_client'):
+      obj.origin_client = proto.origin_client
+    if proto.HasField('origin_control'):
+      obj.origin_control = proto.origin_control
+    if proto.HasField('seq'):
+      obj.seq = proto.seq
+    if proto.HasField('snapshot'):
+      obj.snapshot = Snapshot.from_proto(proto.snapshot)
+    if proto.HasField('metadata'):
+      obj.metadata = Metadata.from_proto(proto.metadata)
+    if proto.HasField('key_value'):
+      if proto.key_value.HasField('key'):
+        obj.key = proto.key_value.key
+      if proto.key_value.HasField('value'):
+        obj.value = proto.key_value.value
+      if proto.key_value.HasField('int_value'):
+        obj.int_value = proto.key_value.int_value
+      if proto.key_value.HasField('float_value'):
+        obj.float_value = proto.key_value.float_value
+    if proto.HasField('key_value_request'):
+      if proto.key_value_request.HasField('key'):
+        obj.key = proto.key_value_request.key
+      if proto.key_value_request.HasField('value'):
+        obj.value = proto.key_value_request.value
+      if proto.key_value_request.HasField('int_value'):
+        obj.int_value = proto.key_value_request.int_value
+      if proto.key_value_request.HasField('float_value'):
+        obj.float_value = proto.key_value_request.float_value
+    if proto.HasField('session_info'):
+      obj.session_info = SessionInfo.from_proto(proto.session_info)
+    if proto.HasField('trigger'):
+      pass  # skip empty message
+    if proto.HasField('i_see_data'):
+      pass  # skip empty message
+    if proto.HasField('ping'):
+      pass  # skip empty message
+    if proto.HasField('client_session_end'):
+      pass  # skip empty message
+    if proto.HasField('connected_clients_request'):
+      pass  # skip empty message
+    if proto.HasField('start_shutdown'):
+      pass  # skip empty message
+    if proto.HasField('finish_shutdown'):
+      pass  # skip empty message
+    if proto.HasField('hangup'):
+      pass  # skip empty message
+    if proto.HasField('client_session_start'):
+      obj.client_session_start = ClientSessionStart.from_proto(proto.client_session_start)
+    if proto.HasField('client_annotation'):
+      obj.client_annotation = ClientAnnotation.from_proto(proto.client_annotation)
+    if proto.HasField('pipeline_description_request'):
+      pass  # skip empty message
+    if proto.HasField('machine_interfaces_request'):
+      pass  # skip empty message
+    if proto.HasField('text_instruction_request'):
+      pass  # skip empty message
+    if proto.HasField('stream_request'):
+      obj.stream_request = StreamRequest.from_proto(proto.stream_request)
+    if proto.HasField('controller_descriptions_request'):
+      pass  # skip empty message
+    if proto.HasField('script'):
+      obj.script = proto.script
+    if proto.HasField('reach_script'):
+      obj.reach_script = ReachScript.from_proto(proto.reach_script)
+    if proto.HasField('cmd'):
+      obj.cmd = proto.cmd
+    for obj_args in proto.args:
+      obj.args.append(obj_args)
+    if proto.HasField('progress'):
+      obj.progress = proto.progress
+    if proto.HasField('message'):
+      obj.message = proto.message
+    if proto.HasField('error'):
+      obj.error = proto.error
+    if proto.HasField('detailed_error'):
+      obj.detailed_error = proto.detailed_error
+    if proto.HasField('intent'):
+      obj.intent = proto.intent
+    if proto.HasField('success_type'):
+      obj.success_type = proto.success_type
+    if proto.HasField('x'):
+      obj.x = proto.x
+    if proto.HasField('y'):
+      obj.y = proto.y
+    if proto.HasField('exp'):
+      obj.exp = ExperimentalCommandData.from_proto(proto.exp)
+    for obj_exp_array in proto.exp_array:
+      obj.exp_array.append(ExperimentalCommandData.from_proto(obj_exp_array))
+    if proto.HasField('event_duration'):
+      obj.event_duration = float(proto.event_duration.seconds) + float(proto.event_duration.nanos) / 1000000000.0
+    if proto.HasField('event_name'):
+      obj.event_name = proto.event_name
+    for obj_event_labels in proto.event_labels:
+      obj.event_labels.append(obj_event_labels)
+    for obj_event_params in proto.event_params:
+      obj.event_params.append(KeyValue.from_proto(obj_event_params))
+    if proto.HasField('pick_id'):
+      obj.pick_id = proto.pick_id
+    if proto.HasField('experiment_token'):
+      obj.experiment_token = proto.experiment_token
+    if proto.HasField('history'):
+      obj.history = History.from_proto(proto.history)
+    if proto.HasField('text_cue'):
+      obj.text_cue = proto.text_cue
+    if proto.HasField('webrtc_audio_request'):
+      obj.webrtc_audio_request = WebrtcAudioRequest.from_proto(proto.webrtc_audio_request)
+    if proto.HasField('sim_action'):
+      obj.sim_action = SimAction.from_proto(proto.sim_action)
+    if proto.HasField('inference_request'):
+      if proto.inference_request.HasField('prediction_type'):
+        obj.prediction_type = proto.inference_request.prediction_type
+      if proto.inference_request.HasField('request_type'):
+        obj.request_type = proto.inference_request.request_type
+      if proto.inference_request.HasField('task_code'):
+        obj.task_code = proto.inference_request.task_code
+      if proto.inference_request.HasField('intent'):
+        obj.intent = proto.inference_request.intent
+      if proto.inference_request.HasField('label'):
+        obj.label = proto.inference_request.label
+      if proto.inference_request.HasField('robot_id'):
+        obj.robot_id = proto.inference_request.robot_id
+      if proto.inference_request.HasField('success_type'):
+        obj.success_type = proto.inference_request.success_type
     return obj
 
 
@@ -1839,6 +2231,14 @@ class CompressedDepth:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.CompressedDepth':
+    """Convert CompressedDepth to proto."""
+    proto = logs_pb2.CompressedDepth()
+    if self.depth:
+      proto.depth = self.depth
+    proto.encodings.extend(self.encodings)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'CompressedDepth':
     """Convert JSON to type object."""
@@ -1864,17 +2264,15 @@ class CompressedDepth:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.CompressedDepth) -> 'CompressedDepth':
+  def from_proto(proto: logs_pb2.CompressedDepth) -> Optional['CompressedDepth']:
     """Convert CompressedDepth proto to type object."""
     if not proto:
       return None
     obj = CompressedDepth()
-    obj.depth = get_proto_value(proto.depth)
-    if proto.encodings:
-      json_list = []
-      for j in proto.encodings:
-        json_list.append(j)
-      obj.encodings = json_list
+    if proto.HasField('depth'):
+      obj.depth = proto.depth
+    for obj_encodings in proto.encodings:
+      obj.encodings.append(obj_encodings)
     return obj
 
 
@@ -1920,6 +2318,17 @@ class ConnectedClient:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ConnectedClient':
+    """Convert ConnectedClient to proto."""
+    proto = logs_pb2.ConnectedClient()
+    if self.uid:
+      proto.uid = self.uid
+    if self.is_current:
+      proto.is_current = self.is_current
+    if self.control_session_active:
+      proto.control_session_active = self.control_session_active
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ConnectedClient':
     """Convert JSON to type object."""
@@ -1945,14 +2354,17 @@ class ConnectedClient:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ConnectedClient) -> 'ConnectedClient':
+  def from_proto(proto: logs_pb2.ConnectedClient) -> Optional['ConnectedClient']:
     """Convert ConnectedClient proto to type object."""
     if not proto:
       return None
     obj = ConnectedClient()
-    obj.control_session_active = get_proto_value(proto.control_session_active)
-    obj.is_current = get_proto_value(proto.is_current)
-    obj.uid = get_proto_value(proto.uid)
+    if proto.HasField('uid'):
+      obj.uid = proto.uid
+    if proto.HasField('is_current'):
+      obj.is_current = proto.is_current
+    if proto.HasField('control_session_active'):
+      obj.control_session_active = proto.control_session_active
     return obj
 
 
@@ -1984,6 +2396,12 @@ class ConnectedClients:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ConnectedClients':
+    """Convert ConnectedClients to proto."""
+    proto = logs_pb2.ConnectedClients()
+    proto.clients.extend([v.to_proto() for v in self.clients])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ConnectedClients':
     """Convert JSON to type object."""
@@ -2005,16 +2423,13 @@ class ConnectedClients:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ConnectedClients) -> 'ConnectedClients':
+  def from_proto(proto: logs_pb2.ConnectedClients) -> Optional['ConnectedClients']:
     """Convert ConnectedClients proto to type object."""
     if not proto:
       return None
     obj = ConnectedClients()
-    if proto.clients:
-      json_list = []
-      for j in proto.clients:
-        json_list.append(ConnectedClient.from_proto(j))
-      obj.clients = json_list
+    for obj_clients in proto.clients:
+      obj.clients.append(ConnectedClient.from_proto(obj_clients))
     return obj
 
 
@@ -2039,6 +2454,13 @@ class ControllerDescription:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ControllerDescription':
+    """Convert ControllerDescription to proto."""
+    proto = logs_pb2.ControllerDescription()
+    if self.name:
+      proto.name = self.name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ControllerDescription':
     """Convert JSON to type object."""
@@ -2056,12 +2478,13 @@ class ControllerDescription:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ControllerDescription) -> 'ControllerDescription':
+  def from_proto(proto: logs_pb2.ControllerDescription) -> Optional['ControllerDescription']:
     """Convert ControllerDescription proto to type object."""
     if not proto:
       return None
     obj = ControllerDescription()
-    obj.name = get_proto_value(proto.name)
+    if proto.HasField('name'):
+      obj.name = proto.name
     return obj
 
 
@@ -2093,6 +2516,12 @@ class ControllerDescriptions:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ControllerDescriptions':
+    """Convert ControllerDescriptions to proto."""
+    proto = logs_pb2.ControllerDescriptions()
+    proto.descriptions.extend([v.to_proto() for v in self.descriptions])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ControllerDescriptions':
     """Convert JSON to type object."""
@@ -2114,16 +2543,13 @@ class ControllerDescriptions:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ControllerDescriptions) -> 'ControllerDescriptions':
+  def from_proto(proto: logs_pb2.ControllerDescriptions) -> Optional['ControllerDescriptions']:
     """Convert ControllerDescriptions proto to type object."""
     if not proto:
       return None
     obj = ControllerDescriptions()
-    if proto.descriptions:
-      json_list = []
-      for j in proto.descriptions:
-        json_list.append(ControllerDescription.from_proto(j))
-      obj.descriptions = json_list
+    for obj_descriptions in proto.descriptions:
+      obj.descriptions.append(ControllerDescription.from_proto(obj_descriptions))
     return obj
 
 
@@ -2150,6 +2576,13 @@ class ConveyorState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ConveyorState':
+    """Convert ConveyorState to proto."""
+    proto = logs_pb2.ConveyorState()
+    if self.is_object_detected:
+      proto.is_object_detected = self.is_object_detected
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ConveyorState':
     """Convert JSON to type object."""
@@ -2167,12 +2600,13 @@ class ConveyorState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ConveyorState) -> 'ConveyorState':
+  def from_proto(proto: logs_pb2.ConveyorState) -> Optional['ConveyorState']:
     """Convert ConveyorState proto to type object."""
     if not proto:
       return None
     obj = ConveyorState()
-    obj.is_object_detected = get_proto_value(proto.is_object_detected)
+    if proto.HasField('is_object_detected'):
+      obj.is_object_detected = proto.is_object_detected
     return obj
 
 
@@ -2197,6 +2631,13 @@ class DeleteObject:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DeleteObject':
+    """Convert DeleteObject to proto."""
+    proto = logs_pb2.DeleteObject()
+    if self.py_id:
+      proto.id = self.py_id
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DeleteObject':
     """Convert JSON to type object."""
@@ -2214,12 +2655,13 @@ class DeleteObject:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DeleteObject) -> 'DeleteObject':
+  def from_proto(proto: logs_pb2.DeleteObject) -> Optional['DeleteObject']:
     """Convert DeleteObject proto to type object."""
     if not proto:
       return None
     obj = DeleteObject()
-    obj.py_id = get_proto_value(proto.id)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
     return obj
 
 
@@ -2267,6 +2709,16 @@ class Detection:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Detection':
+    """Convert Detection to proto."""
+    proto = logs_pb2.Detection()
+    if self.source:
+      proto.source.CopyFrom(self.source.to_proto())
+    proto.detections.extend([v.to_proto() for v in self.detections])
+    if self.camera_shift:
+      proto.camera_shift.CopyFrom(self.camera_shift.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Detection':
     """Convert JSON to type object."""
@@ -2296,18 +2748,17 @@ class Detection:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Detection) -> 'Detection':
+  def from_proto(proto: logs_pb2.Detection) -> Optional['Detection']:
     """Convert Detection proto to type object."""
     if not proto:
       return None
     obj = Detection()
-    obj.camera_shift = CameraShiftDetection.from_proto(get_proto_field(proto, 'camera_shift'))
-    if proto.detections:
-      json_list = []
-      for j in proto.detections:
-        json_list.append(DetectionEntry.from_proto(j))
-      obj.detections = json_list
-    obj.source = SourceImage.from_proto(get_proto_field(proto, 'source'))
+    if proto.HasField('source'):
+      obj.source = SourceImage.from_proto(proto.source)
+    for obj_detections in proto.detections:
+      obj.detections.append(DetectionEntry.from_proto(obj_detections))
+    if proto.HasField('camera_shift'):
+      obj.camera_shift = CameraShiftDetection.from_proto(proto.camera_shift)
     return obj
 
 
@@ -2345,6 +2796,14 @@ class DetectionAprilGroupAprilTag:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DetectionAprilGroupAprilTag':
+    """Convert DetectionAprilGroupAprilTag to proto."""
+    proto = logs_pb2.DetectionAprilGroupAprilTag()
+    if self.py_id:
+      proto.id = self.py_id
+    proto.corners.extend(self.corners)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DetectionAprilGroupAprilTag':
     """Convert JSON to type object."""
@@ -2370,17 +2829,15 @@ class DetectionAprilGroupAprilTag:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DetectionAprilGroupAprilTag) -> 'DetectionAprilGroupAprilTag':
+  def from_proto(proto: logs_pb2.DetectionAprilGroupAprilTag) -> Optional['DetectionAprilGroupAprilTag']:
     """Convert DetectionAprilGroupAprilTag proto to type object."""
     if not proto:
       return None
     obj = DetectionAprilGroupAprilTag()
-    if proto.corners:
-      json_list = []
-      for j in proto.corners:
-        json_list.append(j)
-      obj.corners = json_list
-    obj.py_id = get_proto_value(proto.id)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    for obj_corners in proto.corners:
+      obj.corners.append(obj_corners)
     return obj
 
 
@@ -2412,6 +2869,12 @@ class DetectionAprilGroupInfo:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DetectionAprilGroupInfo':
+    """Convert DetectionAprilGroupInfo to proto."""
+    proto = logs_pb2.DetectionAprilGroupInfo()
+    proto.april_tags.extend([v.to_proto() for v in self.april_tags])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DetectionAprilGroupInfo':
     """Convert JSON to type object."""
@@ -2433,16 +2896,13 @@ class DetectionAprilGroupInfo:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DetectionAprilGroupInfo) -> 'DetectionAprilGroupInfo':
+  def from_proto(proto: logs_pb2.DetectionAprilGroupInfo) -> Optional['DetectionAprilGroupInfo']:
     """Convert DetectionAprilGroupInfo proto to type object."""
     if not proto:
       return None
     obj = DetectionAprilGroupInfo()
-    if proto.april_tags:
-      json_list = []
-      for j in proto.april_tags:
-        json_list.append(DetectionAprilGroupAprilTag.from_proto(j))
-      obj.april_tags = json_list
+    for obj_april_tags in proto.april_tags:
+      obj.april_tags.append(DetectionAprilGroupAprilTag.from_proto(obj_april_tags))
     return obj
 
 
@@ -2518,6 +2978,20 @@ class DetectionEntry:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DetectionEntry':
+    """Convert DetectionEntry to proto."""
+    proto = logs_pb2.DetectionEntry()
+    if self.py_id:
+      proto.id = self.py_id
+    if self.py_type:
+      proto.type = self.py_type
+    proto.corners.extend(self.corners)
+    proto.extrinsics.extend(self.extrinsics)
+    proto.intrinsics.extend(self.intrinsics)
+    if self.april_group:
+      proto.april_group.CopyFrom(self.april_group.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DetectionEntry':
     """Convert JSON to type object."""
@@ -2565,29 +3039,23 @@ class DetectionEntry:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DetectionEntry) -> 'DetectionEntry':
+  def from_proto(proto: logs_pb2.DetectionEntry) -> Optional['DetectionEntry']:
     """Convert DetectionEntry proto to type object."""
     if not proto:
       return None
     obj = DetectionEntry()
-    obj.april_group = DetectionAprilGroupInfo.from_proto(get_proto_field(proto, 'april_group'))
-    if proto.corners:
-      json_list = []
-      for j in proto.corners:
-        json_list.append(j)
-      obj.corners = json_list
-    if proto.extrinsics:
-      json_list = []
-      for j in proto.extrinsics:
-        json_list.append(j)
-      obj.extrinsics = json_list
-    if proto.intrinsics:
-      json_list = []
-      for j in proto.intrinsics:
-        json_list.append(j)
-      obj.intrinsics = json_list
-    obj.py_id = get_proto_value(proto.id)
-    obj.py_type = get_proto_value(proto.type)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    for obj_corners in proto.corners:
+      obj.corners.append(obj_corners)
+    for obj_extrinsics in proto.extrinsics:
+      obj.extrinsics.append(obj_extrinsics)
+    for obj_intrinsics in proto.intrinsics:
+      obj.intrinsics.append(obj_intrinsics)
+    if proto.HasField('april_group'):
+      obj.april_group = DetectionAprilGroupInfo.from_proto(proto.april_group)
     return obj
 
 
@@ -2622,6 +3090,15 @@ class DetectionKey:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DetectionKey':
+    """Convert DetectionKey to proto."""
+    proto = logs_pb2.DetectionKey()
+    if self.py_id:
+      proto.id = self.py_id
+    if self.py_type:
+      proto.type = self.py_type
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DetectionKey':
     """Convert JSON to type object."""
@@ -2643,13 +3120,15 @@ class DetectionKey:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DetectionKey) -> 'DetectionKey':
+  def from_proto(proto: logs_pb2.DetectionKey) -> Optional['DetectionKey']:
     """Convert DetectionKey proto to type object."""
     if not proto:
       return None
     obj = DetectionKey()
-    obj.py_id = get_proto_value(proto.id)
-    obj.py_type = get_proto_value(proto.type)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    if proto.HasField('type'):
+      obj.py_type = proto.type
     return obj
 
 
@@ -3961,6 +4440,544 @@ class DeviceData:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DeviceData':
+    """Convert DeviceData to proto."""
+    proto = logs_pb2.DeviceData()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    if self.hint:
+      proto.hint = self.hint
+    if self.label:
+      proto.label = self.label
+    if self.tag:
+      proto.tag = self.tag
+    proto.send_to_clients.extend([v.to_proto() for v in self.send_to_clients])
+    if self.inhibit_frame_send:
+      proto.inhibit_frame_send = self.inhibit_frame_send
+    if self.inhibit_frame_save:
+      proto.inhibit_frame_save = self.inhibit_frame_save
+    if self.ts:
+      proto.ts.seconds = int(self.ts / 1000)
+      proto.ts.nanos = int(self.ts % 1000) * 1000000
+    if self.local_ts:
+      proto.local_ts.seconds = int(self.local_ts / 1000)
+      proto.local_ts.nanos = int(self.local_ts % 1000) * 1000000
+    if self.remote_ts:
+      proto.remote_ts.seconds = int(self.remote_ts / 1000)
+      proto.remote_ts.nanos = int(self.remote_ts % 1000) * 1000000
+    if self.experiment_token:
+      proto.experiment_token = self.experiment_token
+    proto.event_params.extend([v.to_proto() for v in self.event_params])
+    proto.message_last_timestamps.extend([v.to_proto() for v in self.message_last_timestamps])
+    if self.seq:
+      proto.seq = self.seq
+    if self.data_type == 'color':
+      proto_color = logs_pb2.Color()
+      if self.color:
+        proto_color.color = self.color
+      proto_color.color_intrinsics.extend(self.color_intrinsics)
+      proto.color.CopyFrom(proto_color)
+    if self.data_type == 'color-depth':
+      proto_color_depth = logs_pb2.ColorDepth()
+      if self.color:
+        proto_color_depth.color = self.color
+      proto_color_depth.color_intrinsics.extend(self.color_intrinsics)
+      if self.depth:
+        proto_color_depth.depth = self.depth
+      proto_color_depth.depth_intrinsics.extend(self.depth_intrinsics)
+      if self.upload_depth:
+        proto_color_depth.upload_depth = self.upload_depth
+      if self.uncompressed_depth:
+        proto_color_depth.uncompressed_depth = self.uncompressed_depth
+      proto_color_depth.compressed_depth.extend([v.to_proto() for v in self.compressed_depth])
+      proto.color_depth.CopyFrom(proto_color_depth)
+    if self.data_type == 'key-value':
+      proto_key_value = logs_pb2.KeyValue()
+      if self.key:
+        proto_key_value.key = self.key
+      if self.value:
+        proto_key_value.value = self.value
+      if self.int_value:
+        proto_key_value.int_value = self.int_value
+      if self.float_value:
+        proto_key_value.float_value = self.float_value
+      proto.key_value.CopyFrom(proto_key_value)
+    if self.data_type == 'prediction':
+      proto_prediction = logs_pb2.Prediction()
+      if self.color:
+        proto_prediction.color = self.color
+      proto_prediction.pick_points.extend([v.to_proto() for v in self.pick_points])
+      proto_prediction.position_3d.extend([v.to_proto() for v in self.position_3d])
+      proto_prediction.quaternion_3d.extend([v.to_proto() for v in self.quaternion_3d])
+      proto_prediction.place_position_3d.extend([v.to_proto() for v in self.place_position_3d])
+      proto_prediction.place_quaternion_3d.extend([v.to_proto() for v in self.place_quaternion_3d])
+      proto_prediction.confidence.extend(self.confidence)
+      proto_prediction_inference_request = logs_pb2.InferenceRequest()
+      if self.prediction_type:
+        proto_prediction_inference_request.prediction_type = self.prediction_type
+      if self.request_type:
+        proto_prediction_inference_request.request_type = self.request_type
+      if self.task_code:
+        proto_prediction_inference_request.task_code = self.task_code
+      if self.intent:
+        proto_prediction_inference_request.intent = self.intent
+      if self.label:
+        proto_prediction_inference_request.label = self.label
+      if self.robot_id:
+        proto_prediction_inference_request.robot_id = self.robot_id
+      if self.success_type:
+        proto_prediction_inference_request.success_type = self.success_type
+      proto_prediction.inference_request.CopyFrom(proto_prediction_inference_request)
+      if self.color_ts:
+        proto_prediction.color_ts.seconds = int(self.color_ts / 1000)
+        proto_prediction.color_ts.nanos = int(self.color_ts % 1000) * 1000000
+      if self.depth_ts:
+        proto_prediction.depth_ts.seconds = int(self.depth_ts / 1000)
+        proto_prediction.depth_ts.nanos = int(self.depth_ts % 1000) * 1000000
+      if self.error:
+        proto_prediction.error = self.error
+      proto.prediction.CopyFrom(proto_prediction)
+    if self.data_type == 'ur-state':
+      proto_ur_state = logs_pb2.UrState()
+      proto_ur_state.pose.extend(self.pose)
+      proto_ur_state.joints.extend(self.joints)
+      proto_ur_state.force.extend(self.force)
+      proto_ur_state.torque.extend(self.torque)
+      if self.robot_dexterity:
+        proto_ur_state.robot_dexterity = self.robot_dexterity
+      if self.is_robot_power_on:
+        proto_ur_state.is_robot_power_on = self.is_robot_power_on
+      proto_ur_state_robot_stop_state = logs_pb2.RobotStopState()
+      if self.is_emergency_stopped:
+        proto_ur_state_robot_stop_state.is_emergency_stopped = self.is_emergency_stopped
+      if self.is_protective_stopped:
+        proto_ur_state_robot_stop_state.is_protective_stopped = self.is_protective_stopped
+      if self.is_safeguard_stopped:
+        proto_ur_state_robot_stop_state.is_safeguard_stopped = self.is_safeguard_stopped
+      if self.is_reduced_mode:
+        proto_ur_state_robot_stop_state.is_reduced_mode = self.is_reduced_mode
+      if self.safety_message:
+        proto_ur_state_robot_stop_state.safety_message = self.safety_message
+      proto_ur_state.robot_stop_state.CopyFrom(proto_ur_state_robot_stop_state)
+      if self.is_program_running:
+        proto_ur_state.is_program_running = self.is_program_running
+      proto_ur_state.digital_in.extend(self.digital_in)
+      proto_ur_state.sensor_in.extend(self.sensor_in)
+      proto_ur_state.digital_out.extend(self.digital_out)
+      proto_ur_state.analog_in.extend(self.analog_in)
+      proto_ur_state.analog_out.extend(self.analog_out)
+      proto_ur_state.tool_digital_in.extend(self.tool_digital_in)
+      proto_ur_state.tool_digital_out.extend(self.tool_digital_out)
+      proto_ur_state.tool_analog_in.extend(self.tool_analog_in)
+      proto_ur_state.tool_analog_out.extend(self.tool_analog_out)
+      if self.board_temp_c:
+        proto_ur_state.board_temp_c = self.board_temp_c
+      if self.robot_voltage_v:
+        proto_ur_state.robot_voltage_v = self.robot_voltage_v
+      if self.robot_current_a:
+        proto_ur_state.robot_current_a = self.robot_current_a
+      if self.board_io_current_a:
+        proto_ur_state.board_io_current_a = self.board_io_current_a
+      if self.tool_temp_c:
+        proto_ur_state.tool_temp_c = self.tool_temp_c
+      if self.tool_voltage_v:
+        proto_ur_state.tool_voltage_v = self.tool_voltage_v
+      if self.tool_current_a:
+        proto_ur_state.tool_current_a = self.tool_current_a
+      proto_ur_state.joint_voltages_v.extend(self.joint_voltages_v)
+      proto_ur_state.joint_currents_a.extend(self.joint_currents_a)
+      proto_ur_state.joint_temps_c.extend(self.joint_temps_c)
+      if self.robot_mode:
+        proto_ur_state.robot_mode = self.robot_mode
+      if self.program_counter:
+        proto_ur_state.program_counter = self.program_counter
+      proto_ur_state.digital_bank.extend([v.to_proto() for v in self.digital_bank])
+      proto_ur_state.analog_bank.extend([v.to_proto() for v in self.analog_bank])
+      proto_ur_state.integer_bank.extend([v.to_proto() for v in self.integer_bank])
+      if self.last_terminated_program:
+        proto_ur_state.last_terminated_program = self.last_terminated_program
+      proto.ur_state.CopyFrom(proto_ur_state)
+    if self.data_type == 'conveyor-state':
+      proto_conveyor_state = logs_pb2.ConveyorState()
+      if self.is_object_detected:
+        proto_conveyor_state.is_object_detected = self.is_object_detected
+      proto.conveyor_state.CopyFrom(proto_conveyor_state)
+    if self.data_type == 'conveyor-state-update':
+      proto_conveyor_state_update = logs_pb2.ConveyorState()
+      if self.is_object_detected:
+        proto_conveyor_state_update.is_object_detected = self.is_object_detected
+      proto.conveyor_state_update.CopyFrom(proto_conveyor_state_update)
+    if self.data_type == 'tool-state':
+      proto_tool_state = logs_pb2.ToolState()
+      if self.vacuum_level_pa:
+        proto_tool_state.vacuum_level_pa = self.vacuum_level_pa
+      if self.on:
+        proto_tool_state.on = self.on
+      proto.tool_state.CopyFrom(proto_tool_state)
+    if self.data_type == 'tool-state-update':
+      proto_tool_state_update = logs_pb2.ToolState()
+      if self.vacuum_level_pa:
+        proto_tool_state_update.vacuum_level_pa = self.vacuum_level_pa
+      if self.on:
+        proto_tool_state_update.on = self.on
+      proto.tool_state_update.CopyFrom(proto_tool_state_update)
+    if self.data_type == 'status':
+      proto_status = logs_pb2.Status()
+      if self.status:
+        proto_status.status = self.status
+      if self.script:
+        proto_status.script = self.script
+      if self.error:
+        proto_status.error = self.error
+      if self.progress:
+        proto_status.progress = self.progress
+      if self.message:
+        proto_status.message = self.message
+      if self.code:
+        proto_status.code = self.code
+      proto.status.CopyFrom(proto_status)
+    if self.data_type == 'session-info':
+      proto_session_info = logs_pb2.SessionInfo()
+      if self.operator_uid:
+        proto_session_info.operator_uid = self.operator_uid
+      if self.operator_type:
+        proto_session_info.operator_type = self.operator_type
+      if self.session_id:
+        proto_session_info.session_id = self.session_id
+      if self.start_time:
+        proto_session_info.start_time.seconds = int(self.start_time / 1000)
+        proto_session_info.start_time.nanos = int(self.start_time % 1000) * 1000000
+      if self.robot_name:
+        proto_session_info.robot_name = self.robot_name
+      if self.client_os:
+        proto_session_info.client_os = self.client_os
+      if self.ui_version:
+        proto_session_info.ui_version = self.ui_version
+      if self.calibration_version:
+        proto_session_info.calibration_version = self.calibration_version
+      proto_session_info.accept_depth_encoding.extend(self.accept_depth_encoding)
+      if self.relay:
+        proto_session_info.relay = self.relay
+      if self.actionsets_version:
+        proto_session_info.actionsets_version = self.actionsets_version
+      if self.safety_version:
+        proto_session_info.safety_version = self.safety_version
+      if self.workcell_io_version:
+        proto_session_info.workcell_io_version = self.workcell_io_version
+      if self.transport:
+        proto_session_info.transport = self.transport
+      if self.client_session_uid:
+        proto_session_info.client_session_uid = self.client_session_uid
+      if self.workcell_setup_version:
+        proto_session_info.workcell_setup_version = self.workcell_setup_version
+      if self.constraints_version:
+        proto_session_info.constraints_version = self.constraints_version
+      proto.session_info.CopyFrom(proto_session_info)
+    if self.data_type == 'pick-label':
+      if self.pick_label:
+        proto.pick_label.CopyFrom(self.pick_label.to_proto())
+    if self.data_type == 'place-label':
+      if self.place_label:
+        proto.place_label.CopyFrom(self.place_label.to_proto())
+    if self.data_type == 'level':
+      proto_level = logs_pb2.Level()
+      if self.level:
+        proto_level.level = self.level
+      proto.level.CopyFrom(proto_level)
+    if self.data_type == 'protective-stop-state':
+      proto_protective_stop_state = logs_pb2.ProtectiveStopState()
+      if self.is_protective_stopped:
+        proto_protective_stop_state.is_protective_stopped = self.is_protective_stopped
+      if self.safety_message:
+        proto_protective_stop_state.safety_message = self.safety_message
+      proto.protective_stop_state.CopyFrom(proto_protective_stop_state)
+    if self.data_type == 'protective-stop-state-update':
+      proto_protective_stop_state_update = logs_pb2.ProtectiveStopState()
+      if self.is_protective_stopped:
+        proto_protective_stop_state_update.is_protective_stopped = self.is_protective_stopped
+      if self.safety_message:
+        proto_protective_stop_state_update.safety_message = self.safety_message
+      proto.protective_stop_state_update.CopyFrom(proto_protective_stop_state_update)
+    if self.data_type == 'safeguard-stop-state':
+      proto_safeguard_stop_state = logs_pb2.SafeguardStopState()
+      if self.is_safeguard_stopped:
+        proto_safeguard_stop_state.is_safeguard_stopped = self.is_safeguard_stopped
+      if self.safety_message:
+        proto_safeguard_stop_state.safety_message = self.safety_message
+      proto.safeguard_stop_state.CopyFrom(proto_safeguard_stop_state)
+    if self.data_type == 'safeguard-stop-state-update':
+      proto_safeguard_stop_state_update = logs_pb2.SafeguardStopState()
+      if self.is_safeguard_stopped:
+        proto_safeguard_stop_state_update.is_safeguard_stopped = self.is_safeguard_stopped
+      if self.safety_message:
+        proto_safeguard_stop_state_update.safety_message = self.safety_message
+      proto.safeguard_stop_state_update.CopyFrom(proto_safeguard_stop_state_update)
+    if self.data_type == 'emergency-stop-state':
+      proto_emergency_stop_state = logs_pb2.EmergencyStopState()
+      if self.is_emergency_stopped:
+        proto_emergency_stop_state.is_emergency_stopped = self.is_emergency_stopped
+      if self.safety_message:
+        proto_emergency_stop_state.safety_message = self.safety_message
+      proto.emergency_stop_state.CopyFrom(proto_emergency_stop_state)
+    if self.data_type == 'emergency-stop-state-update':
+      proto_emergency_stop_state_update = logs_pb2.EmergencyStopState()
+      if self.is_emergency_stopped:
+        proto_emergency_stop_state_update.is_emergency_stopped = self.is_emergency_stopped
+      if self.safety_message:
+        proto_emergency_stop_state_update.safety_message = self.safety_message
+      proto.emergency_stop_state_update.CopyFrom(proto_emergency_stop_state_update)
+    if self.data_type == 'robot-power-state':
+      if self.robot_power_state:
+        proto.robot_power_state.CopyFrom(self.robot_power_state.to_proto())
+    if self.data_type == 'robot-power-state-update':
+      if self.robot_power_state_update:
+        proto.robot_power_state_update.CopyFrom(self.robot_power_state_update.to_proto())
+    if self.data_type == 'metric':
+      proto_metric = logs_pb2.Metric()
+      if self.metric_value:
+        proto_metric.value.CopyFrom(self.metric_value.to_proto())
+      proto_metric.labels.extend([v.to_proto() for v in self.labels])
+      proto.metric.CopyFrom(proto_metric)
+    if self.data_type == 'reach-script-status':
+      proto_reach_script_status = logs_pb2.Status()
+      if self.status:
+        proto_reach_script_status.status = self.status
+      if self.script:
+        proto_reach_script_status.script = self.script
+      if self.error:
+        proto_reach_script_status.error = self.error
+      if self.progress:
+        proto_reach_script_status.progress = self.progress
+      if self.message:
+        proto_reach_script_status.message = self.message
+      if self.code:
+        proto_reach_script_status.code = self.code
+      proto.reach_script_status.CopyFrom(proto_reach_script_status)
+    if self.data_type == 'cmd-status':
+      proto_cmd_status = logs_pb2.Status()
+      if self.status:
+        proto_cmd_status.status = self.status
+      if self.script:
+        proto_cmd_status.script = self.script
+      if self.error:
+        proto_cmd_status.error = self.error
+      if self.progress:
+        proto_cmd_status.progress = self.progress
+      if self.message:
+        proto_cmd_status.message = self.message
+      if self.code:
+        proto_cmd_status.code = self.code
+      proto.cmd_status.CopyFrom(proto_cmd_status)
+    if self.data_type == 'vacuum-pressure-state':
+      proto_vacuum_pressure_state = logs_pb2.ToolState()
+      if self.vacuum_level_pa:
+        proto_vacuum_pressure_state.vacuum_level_pa = self.vacuum_level_pa
+      if self.on:
+        proto_vacuum_pressure_state.on = self.on
+      proto.vacuum_pressure_state.CopyFrom(proto_vacuum_pressure_state)
+    if self.data_type == 'vacuum-pressure-update':
+      proto_vacuum_pressure_update = logs_pb2.ToolState()
+      if self.vacuum_level_pa:
+        proto_vacuum_pressure_update.vacuum_level_pa = self.vacuum_level_pa
+      if self.on:
+        proto_vacuum_pressure_update.on = self.on
+      proto.vacuum_pressure_update.CopyFrom(proto_vacuum_pressure_update)
+    if self.data_type == 'downlink-status':
+      proto_downlink_status = logs_pb2.Status()
+      if self.status:
+        proto_downlink_status.status = self.status
+      if self.script:
+        proto_downlink_status.script = self.script
+      if self.error:
+        proto_downlink_status.error = self.error
+      if self.progress:
+        proto_downlink_status.progress = self.progress
+      if self.message:
+        proto_downlink_status.message = self.message
+      if self.code:
+        proto_downlink_status.code = self.code
+      proto.downlink_status.CopyFrom(proto_downlink_status)
+    if self.data_type == 'sensor-state':
+      proto_sensor_state = logs_pb2.IOState()
+      proto_sensor_state.state.extend([v.to_proto() for v in self.state])
+      proto.sensor_state.CopyFrom(proto_sensor_state)
+    if self.data_type == 'sensor-state-update':
+      proto_sensor_state_update = logs_pb2.IOState()
+      proto_sensor_state_update.state.extend([v.to_proto() for v in self.state])
+      proto.sensor_state_update.CopyFrom(proto_sensor_state_update)
+    if self.data_type == 'output-state':
+      proto_output_state = logs_pb2.IOState()
+      proto_output_state.state.extend([v.to_proto() for v in self.state])
+      proto.output_state.CopyFrom(proto_output_state)
+    if self.data_type == 'output-state-update':
+      proto_output_state_update = logs_pb2.IOState()
+      proto_output_state_update.state.extend([v.to_proto() for v in self.state])
+      proto.output_state_update.CopyFrom(proto_output_state_update)
+    if self.data_type == 'health-check':
+      proto_health_check = logs_pb2.EmptyMessage()
+      proto.health_check.CopyFrom(proto_health_check)
+    if self.data_type == 'history':
+      if self.history:
+        proto.history.CopyFrom(self.history.to_proto())
+    if self.data_type == 'audio-request-mute':
+      if self.audio_request_mute:
+        proto.audio_request_mute.CopyFrom(self.audio_request_mute.to_proto())
+    if self.data_type == 'audio-request-unmute':
+      if self.audio_request_unmute:
+        proto.audio_request_unmute.CopyFrom(self.audio_request_unmute.to_proto())
+    if self.data_type == 'error':
+      proto_error = logs_pb2.Status()
+      if self.status:
+        proto_error.status = self.status
+      if self.script:
+        proto_error.script = self.script
+      if self.error:
+        proto_error.error = self.error
+      if self.progress:
+        proto_error.progress = self.progress
+      if self.message:
+        proto_error.message = self.message
+      if self.code:
+        proto_error.code = self.code
+      proto.error.CopyFrom(proto_error)
+    if self.data_type == 'webrtc-audio-response':
+      if self.webrtc_audio_response:
+        proto.webrtc_audio_response.CopyFrom(self.webrtc_audio_response.to_proto())
+    if self.data_type == 'metadata':
+      if self.metadata:
+        proto.metadata.CopyFrom(self.metadata.to_proto())
+    if self.data_type == 'sim-state':
+      if self.sim_state:
+        proto.sim_state.CopyFrom(self.sim_state.to_proto())
+    if self.data_type == 'device-status':
+      proto_device_status = logs_pb2.Status()
+      if self.status:
+        proto_device_status.status = self.status
+      if self.script:
+        proto_device_status.script = self.script
+      if self.error:
+        proto_device_status.error = self.error
+      if self.progress:
+        proto_device_status.progress = self.progress
+      if self.message:
+        proto_device_status.message = self.message
+      if self.code:
+        proto_device_status.code = self.code
+      proto.device_status.CopyFrom(proto_device_status)
+    if self.data_type == 'webrtc-audio-request':
+      if self.webrtc_audio_request:
+        proto.webrtc_audio_request.CopyFrom(self.webrtc_audio_request.to_proto())
+    if self.data_type == 'sim-instance-segmentation':
+      if self.sim_instance_segmentation:
+        proto.sim_instance_segmentation.CopyFrom(self.sim_instance_segmentation.to_proto())
+    if self.data_type == 'exposure-complete':
+      proto_exposure_complete = logs_pb2.EmptyMessage()
+      proto.exposure_complete.CopyFrom(proto_exposure_complete)
+    if self.data_type == 'start-shutdown':
+      proto_start_shutdown = logs_pb2.EmptyMessage()
+      proto.start_shutdown.CopyFrom(proto_start_shutdown)
+    if self.data_type == 'finish-shutdown':
+      proto_finish_shutdown = logs_pb2.EmptyMessage()
+      proto.finish_shutdown.CopyFrom(proto_finish_shutdown)
+    if self.data_type == 'hangup':
+      proto_hangup = logs_pb2.EmptyMessage()
+      proto.hangup.CopyFrom(proto_hangup)
+    if self.data_type == 'connected-clients':
+      if self.connected_clients:
+        proto.connected_clients.CopyFrom(self.connected_clients.to_proto())
+    if self.data_type == 'detection':
+      if self.detection:
+        proto.detection.CopyFrom(self.detection.to_proto())
+    if self.data_type == 'robot-state':
+      proto_robot_state = logs_pb2.RobotState()
+      proto_robot_state.pose.extend(self.pose)
+      proto_robot_state.joints.extend(self.joints)
+      proto_robot_state.force.extend(self.force)
+      proto_robot_state.torque.extend(self.torque)
+      if self.robot_dexterity:
+        proto_robot_state.robot_dexterity = self.robot_dexterity
+      if self.is_robot_power_on:
+        proto_robot_state.is_robot_power_on = self.is_robot_power_on
+      proto_robot_state_robot_stop_state = logs_pb2.RobotStopState()
+      if self.is_emergency_stopped:
+        proto_robot_state_robot_stop_state.is_emergency_stopped = self.is_emergency_stopped
+      if self.is_protective_stopped:
+        proto_robot_state_robot_stop_state.is_protective_stopped = self.is_protective_stopped
+      if self.is_safeguard_stopped:
+        proto_robot_state_robot_stop_state.is_safeguard_stopped = self.is_safeguard_stopped
+      if self.is_reduced_mode:
+        proto_robot_state_robot_stop_state.is_reduced_mode = self.is_reduced_mode
+      if self.safety_message:
+        proto_robot_state_robot_stop_state.safety_message = self.safety_message
+      proto_robot_state.robot_stop_state.CopyFrom(proto_robot_state_robot_stop_state)
+      if self.is_program_running:
+        proto_robot_state.is_program_running = self.is_program_running
+      proto_robot_state.digital_in.extend(self.digital_in)
+      proto_robot_state.sensor_in.extend(self.sensor_in)
+      proto_robot_state.digital_out.extend(self.digital_out)
+      proto_robot_state.analog_in.extend(self.analog_in)
+      proto_robot_state.analog_out.extend(self.analog_out)
+      proto_robot_state.tool_digital_in.extend(self.tool_digital_in)
+      proto_robot_state.tool_digital_out.extend(self.tool_digital_out)
+      proto_robot_state.tool_analog_in.extend(self.tool_analog_in)
+      proto_robot_state.tool_analog_out.extend(self.tool_analog_out)
+      if self.board_temp_c:
+        proto_robot_state.board_temp_c = self.board_temp_c
+      if self.robot_voltage_v:
+        proto_robot_state.robot_voltage_v = self.robot_voltage_v
+      if self.robot_current_a:
+        proto_robot_state.robot_current_a = self.robot_current_a
+      if self.board_io_current_a:
+        proto_robot_state.board_io_current_a = self.board_io_current_a
+      if self.tool_temp_c:
+        proto_robot_state.tool_temp_c = self.tool_temp_c
+      if self.tool_voltage_v:
+        proto_robot_state.tool_voltage_v = self.tool_voltage_v
+      if self.tool_current_a:
+        proto_robot_state.tool_current_a = self.tool_current_a
+      proto_robot_state.joint_voltages_v.extend(self.joint_voltages_v)
+      proto_robot_state.joint_currents_a.extend(self.joint_currents_a)
+      proto_robot_state.joint_temps_c.extend(self.joint_temps_c)
+      if self.robot_mode:
+        proto_robot_state.robot_mode = self.robot_mode
+      if self.program_counter:
+        proto_robot_state.program_counter = self.program_counter
+      proto_robot_state.digital_bank.extend([v.to_proto() for v in self.digital_bank])
+      proto_robot_state.analog_bank.extend([v.to_proto() for v in self.analog_bank])
+      proto_robot_state.integer_bank.extend([v.to_proto() for v in self.integer_bank])
+      if self.last_terminated_program:
+        proto_robot_state.last_terminated_program = self.last_terminated_program
+      proto.robot_state.CopyFrom(proto_robot_state)
+    if self.data_type == 'client-annotation':
+      if self.client_annotation:
+        proto.client_annotation.CopyFrom(self.client_annotation.to_proto())
+    if self.data_type == 'pipeline-description':
+      if self.pipeline_description:
+        proto.pipeline_description.CopyFrom(self.pipeline_description.to_proto())
+    if self.data_type == 'machine-interfaces':
+      if self.machine_interfaces:
+        proto.machine_interfaces.CopyFrom(self.machine_interfaces.to_proto())
+    if self.data_type == 'machine-description':
+      if self.machine_description:
+        proto.machine_description.CopyFrom(self.machine_description.to_proto())
+    if self.data_type == 'text-instruction':
+      if self.text_instruction:
+        proto.text_instruction.CopyFrom(self.text_instruction.to_proto())
+    if self.data_type == 'report-error':
+      if self.report_error:
+        proto.report_error.CopyFrom(self.report_error.to_proto())
+    if self.data_type == 'health':
+      if self.health:
+        proto.health.CopyFrom(self.health.to_proto())
+    if self.data_type == 'controller-descriptions':
+      if self.controller_descriptions:
+        proto.controller_descriptions.CopyFrom(self.controller_descriptions.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DeviceData':
     """Convert JSON to type object."""
@@ -4597,277 +5614,503 @@ class DeviceData:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DeviceData) -> 'DeviceData':
+  def from_proto(proto: logs_pb2.DeviceData) -> Optional['DeviceData']:
     """Convert DeviceData proto to type object."""
     if not proto:
       return None
     obj = DeviceData()
-    if proto.session_info.accept_depth_encoding:
-      json_list = []
-      for j in proto.session_info.accept_depth_encoding:
-        json_list.append(j)
-      obj.accept_depth_encoding = json_list
-    obj.actionsets_version = get_proto_value(proto.session_info.actionsets_version)
-    if proto.ur_state.analog_bank:
-      json_list = []
-      for j in proto.ur_state.analog_bank:
-        json_list.append(AnalogBank.from_proto(j))
-      obj.analog_bank = json_list
-    if proto.ur_state.analog_in:
-      json_list = []
-      for j in proto.ur_state.analog_in:
-        json_list.append(j)
-      obj.analog_in = json_list
-    if proto.ur_state.analog_out:
-      json_list = []
-      for j in proto.ur_state.analog_out:
-        json_list.append(j)
-      obj.analog_out = json_list
-    obj.audio_request_mute = AudioRequest.from_proto(get_proto_field(proto, 'audio_request_mute'))
-    obj.audio_request_unmute = AudioRequest.from_proto(get_proto_field(proto, 'audio_request_unmute'))
-    obj.board_io_current_a = get_proto_value(proto.ur_state.board_io_current_a)
-    obj.board_temp_c = get_proto_value(proto.ur_state.board_temp_c)
-    obj.calibration_version = get_proto_value(proto.session_info.calibration_version)
-    obj.client_annotation = ClientAnnotation.from_proto(get_proto_field(proto, 'client_annotation'))
-    obj.client_os = get_proto_value(proto.session_info.client_os)
-    obj.client_session_uid = get_proto_value(proto.session_info.client_session_uid)
-    obj.code = get_proto_value(proto.status.code)
-    obj.color = get_proto_value(proto.color.color)
-    if proto.color.color_intrinsics:
-      json_list = []
-      for j in proto.color.color_intrinsics:
-        json_list.append(j)
-      obj.color_intrinsics = json_list
-    obj.color_ts = get_proto_value(proto.prediction.color_ts)
-    if proto.color_depth.compressed_depth:
-      json_list = []
-      for j in proto.color_depth.compressed_depth:
-        json_list.append(CompressedDepth.from_proto(j))
-      obj.compressed_depth = json_list
-    if proto.prediction.confidence:
-      json_list = []
-      for j in proto.prediction.confidence:
-        json_list.append(j)
-      obj.confidence = json_list
-    obj.connected_clients = ConnectedClients.from_proto(get_proto_field(proto, 'connected_clients'))
-    obj.constraints_version = get_proto_value(proto.session_info.constraints_version)
-    obj.controller_descriptions = ControllerDescriptions.from_proto(get_proto_field(proto, 'controller_descriptions'))
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.depth = get_proto_value(proto.color_depth.depth)
-    if proto.color_depth.depth_intrinsics:
-      json_list = []
-      for j in proto.color_depth.depth_intrinsics:
-        json_list.append(j)
-      obj.depth_intrinsics = json_list
-    obj.depth_ts = get_proto_value(proto.prediction.depth_ts)
-    obj.detection = Detection.from_proto(get_proto_field(proto, 'detection'))
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    if proto.ur_state.digital_bank:
-      json_list = []
-      for j in proto.ur_state.digital_bank:
-        json_list.append(DigitalBank.from_proto(j))
-      obj.digital_bank = json_list
-    if proto.ur_state.digital_in:
-      json_list = []
-      for j in proto.ur_state.digital_in:
-        json_list.append(j)
-      obj.digital_in = json_list
-    if proto.ur_state.digital_out:
-      json_list = []
-      for j in proto.ur_state.digital_out:
-        json_list.append(j)
-      obj.digital_out = json_list
-    obj.error = get_proto_value(proto.status.error)
-    if proto.event_params:
-      json_list = []
-      for j in proto.event_params:
-        json_list.append(KeyValue.from_proto(j))
-      obj.event_params = json_list
-    obj.experiment_token = get_proto_value(proto.experiment_token)
-    obj.float_value = get_proto_value(proto.key_value.float_value)
-    if proto.ur_state.force:
-      json_list = []
-      for j in proto.ur_state.force:
-        json_list.append(j)
-      obj.force = json_list
-    obj.health = Health.from_proto(get_proto_field(proto, 'health'))
-    obj.hint = get_proto_value(proto.hint)
-    obj.history = History.from_proto(get_proto_field(proto, 'history'))
-    obj.inhibit_frame_save = get_proto_value(proto.inhibit_frame_save)
-    obj.inhibit_frame_send = get_proto_value(proto.inhibit_frame_send)
-    obj.int_value = get_proto_value(proto.key_value.int_value)
-    if proto.ur_state.integer_bank:
-      json_list = []
-      for j in proto.ur_state.integer_bank:
-        json_list.append(IntegerBank.from_proto(j))
-      obj.integer_bank = json_list
-    obj.intent = get_proto_value(proto.prediction.inference_request.intent)
-    obj.is_emergency_stopped = get_proto_value(proto.ur_state.robot_stop_state.is_emergency_stopped)
-    obj.is_object_detected = get_proto_value(proto.conveyor_state.is_object_detected)
-    obj.is_program_running = get_proto_value(proto.ur_state.is_program_running)
-    obj.is_protective_stopped = get_proto_value(proto.ur_state.robot_stop_state.is_protective_stopped)
-    obj.is_reduced_mode = get_proto_value(proto.ur_state.robot_stop_state.is_reduced_mode)
-    obj.is_robot_power_on = get_proto_value(proto.ur_state.is_robot_power_on)
-    obj.is_safeguard_stopped = get_proto_value(proto.ur_state.robot_stop_state.is_safeguard_stopped)
-    if proto.ur_state.joint_currents_a:
-      json_list = []
-      for j in proto.ur_state.joint_currents_a:
-        json_list.append(j)
-      obj.joint_currents_a = json_list
-    if proto.ur_state.joint_temps_c:
-      json_list = []
-      for j in proto.ur_state.joint_temps_c:
-        json_list.append(j)
-      obj.joint_temps_c = json_list
-    if proto.ur_state.joint_voltages_v:
-      json_list = []
-      for j in proto.ur_state.joint_voltages_v:
-        json_list.append(j)
-      obj.joint_voltages_v = json_list
-    if proto.ur_state.joints:
-      json_list = []
-      for j in proto.ur_state.joints:
-        json_list.append(j)
-      obj.joints = json_list
-    obj.key = get_proto_value(proto.key_value.key)
-    obj.label = get_proto_value(proto.label)
-    if proto.metric.labels:
-      json_list = []
-      for j in proto.metric.labels:
-        json_list.append(KeyValue.from_proto(j))
-      obj.labels = json_list
-    obj.last_terminated_program = get_proto_value(proto.ur_state.last_terminated_program)
-    obj.level = get_proto_value(proto.level.level)
-    obj.local_ts = get_proto_value(proto.local_ts)
-    obj.machine_description = MachineDescription.from_proto(get_proto_field(proto, 'machine_description'))
-    obj.machine_interfaces = MachineInterfaces.from_proto(get_proto_field(proto, 'machine_interfaces'))
-    obj.message = get_proto_value(proto.status.message)
-    if proto.message_last_timestamps:
-      json_list = []
-      for j in proto.message_last_timestamps:
-        json_list.append(MessageLastTimestamp.from_proto(j))
-      obj.message_last_timestamps = json_list
-    obj.metadata = Metadata.from_proto(get_proto_field(proto, 'metadata'))
-    obj.metric_value = KeyValue.from_proto(get_proto_field(proto.metric, 'value'))
-    obj.on = get_proto_value(proto.tool_state.on)
-    obj.operator_type = get_proto_value(proto.session_info.operator_type)
-    obj.operator_uid = get_proto_value(proto.session_info.operator_uid)
-    obj.pick_label = PickLabel.from_proto(get_proto_field(proto, 'pick_label'))
-    if proto.prediction.pick_points:
-      json_list = []
-      for j in proto.prediction.pick_points:
-        json_list.append(PickPoint.from_proto(j))
-      obj.pick_points = json_list
-    obj.pipeline_description = PipelineDescription.from_proto(get_proto_field(proto, 'pipeline_description'))
-    obj.place_label = PlaceLabel.from_proto(get_proto_field(proto, 'place_label'))
-    if proto.prediction.place_position_3d:
-      json_list = []
-      for j in proto.prediction.place_position_3d:
-        json_list.append(Vec3d.from_proto(j))
-      obj.place_position_3d = json_list
-    if proto.prediction.place_quaternion_3d:
-      json_list = []
-      for j in proto.prediction.place_quaternion_3d:
-        json_list.append(Quaternion3d.from_proto(j))
-      obj.place_quaternion_3d = json_list
-    if proto.ur_state.pose:
-      json_list = []
-      for j in proto.ur_state.pose:
-        json_list.append(j)
-      obj.pose = json_list
-    if proto.prediction.position_3d:
-      json_list = []
-      for j in proto.prediction.position_3d:
-        json_list.append(Vec3d.from_proto(j))
-      obj.position_3d = json_list
-    obj.prediction_type = get_proto_value(proto.prediction.inference_request.prediction_type)
-    obj.program_counter = get_proto_value(proto.ur_state.program_counter)
-    obj.progress = get_proto_value(proto.status.progress)
-    if proto.prediction.quaternion_3d:
-      json_list = []
-      for j in proto.prediction.quaternion_3d:
-        json_list.append(Quaternion3d.from_proto(j))
-      obj.quaternion_3d = json_list
-    obj.relay = get_proto_value(proto.session_info.relay)
-    obj.remote_ts = get_proto_value(proto.remote_ts)
-    obj.report_error = ReportError.from_proto(get_proto_field(proto, 'report_error'))
-    obj.request_type = get_proto_value(proto.prediction.inference_request.request_type)
-    obj.robot_current_a = get_proto_value(proto.ur_state.robot_current_a)
-    obj.robot_dexterity = get_proto_value(proto.ur_state.robot_dexterity)
-    obj.robot_id = get_proto_value(proto.prediction.inference_request.robot_id)
-    obj.robot_mode = get_proto_value(proto.ur_state.robot_mode)
-    obj.robot_name = get_proto_value(proto.session_info.robot_name)
-    obj.robot_power_state = RobotPowerState.from_proto(get_proto_field(proto, 'robot_power_state'))
-    obj.robot_power_state_update = RobotPowerState.from_proto(get_proto_field(proto, 'robot_power_state_update'))
-    obj.robot_voltage_v = get_proto_value(proto.ur_state.robot_voltage_v)
-    obj.safety_message = get_proto_value(proto.ur_state.robot_stop_state.safety_message)
-    obj.safety_version = get_proto_value(proto.session_info.safety_version)
-    obj.script = get_proto_value(proto.status.script)
-    if proto.send_to_clients:
-      json_list = []
-      for j in proto.send_to_clients:
-        json_list.append(SendToClient.from_proto(j))
-      obj.send_to_clients = json_list
-    if proto.ur_state.sensor_in:
-      json_list = []
-      for j in proto.ur_state.sensor_in:
-        json_list.append(j)
-      obj.sensor_in = json_list
-    obj.seq = get_proto_value(proto.seq)
-    obj.session_id = get_proto_value(proto.session_info.session_id)
-    obj.sim_instance_segmentation = SimInstanceSegmentation.from_proto(get_proto_field(proto, 'sim_instance_segmentation'))
-    obj.sim_state = SimState.from_proto(get_proto_field(proto, 'sim_state'))
-    obj.start_time = get_proto_value(proto.session_info.start_time)
-    if proto.sensor_state.state:
-      json_list = []
-      for j in proto.sensor_state.state:
-        json_list.append(CapabilityState.from_proto(j))
-      obj.state = json_list
-    obj.status = get_proto_value(proto.status.status)
-    obj.success_type = get_proto_value(proto.prediction.inference_request.success_type)
-    obj.tag = get_proto_value(proto.tag)
-    obj.task_code = get_proto_value(proto.prediction.inference_request.task_code)
-    obj.text_instruction = TextInstruction.from_proto(get_proto_field(proto, 'text_instruction'))
-    if proto.ur_state.tool_analog_in:
-      json_list = []
-      for j in proto.ur_state.tool_analog_in:
-        json_list.append(j)
-      obj.tool_analog_in = json_list
-    if proto.ur_state.tool_analog_out:
-      json_list = []
-      for j in proto.ur_state.tool_analog_out:
-        json_list.append(j)
-      obj.tool_analog_out = json_list
-    obj.tool_current_a = get_proto_value(proto.ur_state.tool_current_a)
-    if proto.ur_state.tool_digital_in:
-      json_list = []
-      for j in proto.ur_state.tool_digital_in:
-        json_list.append(j)
-      obj.tool_digital_in = json_list
-    if proto.ur_state.tool_digital_out:
-      json_list = []
-      for j in proto.ur_state.tool_digital_out:
-        json_list.append(j)
-      obj.tool_digital_out = json_list
-    obj.tool_temp_c = get_proto_value(proto.ur_state.tool_temp_c)
-    obj.tool_voltage_v = get_proto_value(proto.ur_state.tool_voltage_v)
-    if proto.ur_state.torque:
-      json_list = []
-      for j in proto.ur_state.torque:
-        json_list.append(j)
-      obj.torque = json_list
-    obj.transport = get_proto_value(proto.session_info.transport)
-    obj.ts = get_proto_value(proto.ts)
-    obj.ui_version = get_proto_value(proto.session_info.ui_version)
-    obj.uncompressed_depth = get_proto_value(proto.color_depth.uncompressed_depth)
-    obj.upload_depth = get_proto_value(proto.color_depth.upload_depth)
-    obj.vacuum_level_pa = get_proto_value(proto.tool_state.vacuum_level_pa)
-    obj.value = get_proto_value(proto.key_value.value)
-    obj.webrtc_audio_request = WebrtcAudioRequest.from_proto(get_proto_field(proto, 'webrtc_audio_request'))
-    obj.webrtc_audio_response = WebrtcAudioResponse.from_proto(get_proto_field(proto, 'webrtc_audio_response'))
-    obj.workcell_io_version = get_proto_value(proto.session_info.workcell_io_version)
-    obj.workcell_setup_version = get_proto_value(proto.session_info.workcell_setup_version)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
+    if proto.HasField('hint'):
+      obj.hint = proto.hint
+    if proto.HasField('label'):
+      obj.label = proto.label
+    if proto.HasField('tag'):
+      obj.tag = proto.tag
+    for obj_send_to_clients in proto.send_to_clients:
+      obj.send_to_clients.append(SendToClient.from_proto(obj_send_to_clients))
+    if proto.HasField('inhibit_frame_send'):
+      obj.inhibit_frame_send = proto.inhibit_frame_send
+    if proto.HasField('inhibit_frame_save'):
+      obj.inhibit_frame_save = proto.inhibit_frame_save
+    if proto.HasField('ts'):
+      obj.ts = int(proto.ts.seconds * 1000) + int(proto.ts.nanos / 1000000)
+    if proto.HasField('local_ts'):
+      obj.local_ts = int(proto.local_ts.seconds * 1000) + int(proto.local_ts.nanos / 1000000)
+    if proto.HasField('remote_ts'):
+      obj.remote_ts = int(proto.remote_ts.seconds * 1000) + int(proto.remote_ts.nanos / 1000000)
+    if proto.HasField('experiment_token'):
+      obj.experiment_token = proto.experiment_token
+    for obj_event_params in proto.event_params:
+      obj.event_params.append(KeyValue.from_proto(obj_event_params))
+    for obj_message_last_timestamps in proto.message_last_timestamps:
+      obj.message_last_timestamps.append(MessageLastTimestamp.from_proto(obj_message_last_timestamps))
+    if proto.HasField('seq'):
+      obj.seq = proto.seq
+    if proto.HasField('color'):
+      if proto.color.HasField('color'):
+        obj.color = proto.color.color
+      for obj_color_intrinsics in proto.color.color_intrinsics:
+        obj.color_intrinsics.append(obj_color_intrinsics)
+    if proto.HasField('color_depth'):
+      if proto.color_depth.HasField('color'):
+        obj.color = proto.color_depth.color
+      for obj_color_intrinsics in proto.color_depth.color_intrinsics:
+        obj.color_intrinsics.append(obj_color_intrinsics)
+      if proto.color_depth.HasField('depth'):
+        obj.depth = proto.color_depth.depth
+      for obj_depth_intrinsics in proto.color_depth.depth_intrinsics:
+        obj.depth_intrinsics.append(obj_depth_intrinsics)
+      if proto.color_depth.HasField('upload_depth'):
+        obj.upload_depth = proto.color_depth.upload_depth
+      if proto.color_depth.HasField('uncompressed_depth'):
+        obj.uncompressed_depth = proto.color_depth.uncompressed_depth
+      for obj_compressed_depth in proto.color_depth.compressed_depth:
+        obj.compressed_depth.append(CompressedDepth.from_proto(obj_compressed_depth))
+    if proto.HasField('key_value'):
+      if proto.key_value.HasField('key'):
+        obj.key = proto.key_value.key
+      if proto.key_value.HasField('value'):
+        obj.value = proto.key_value.value
+      if proto.key_value.HasField('int_value'):
+        obj.int_value = proto.key_value.int_value
+      if proto.key_value.HasField('float_value'):
+        obj.float_value = proto.key_value.float_value
+    if proto.HasField('prediction'):
+      if proto.prediction.HasField('color'):
+        obj.color = proto.prediction.color
+      for obj_pick_points in proto.prediction.pick_points:
+        obj.pick_points.append(PickPoint.from_proto(obj_pick_points))
+      for obj_position_3d in proto.prediction.position_3d:
+        obj.position_3d.append(Vec3d.from_proto(obj_position_3d))
+      for obj_quaternion_3d in proto.prediction.quaternion_3d:
+        obj.quaternion_3d.append(Quaternion3d.from_proto(obj_quaternion_3d))
+      for obj_place_position_3d in proto.prediction.place_position_3d:
+        obj.place_position_3d.append(Vec3d.from_proto(obj_place_position_3d))
+      for obj_place_quaternion_3d in proto.prediction.place_quaternion_3d:
+        obj.place_quaternion_3d.append(Quaternion3d.from_proto(obj_place_quaternion_3d))
+      for obj_confidence in proto.prediction.confidence:
+        obj.confidence.append(obj_confidence)
+      if proto.prediction.HasField('inference_request'):
+        if proto.prediction.inference_request.HasField('prediction_type'):
+          obj.prediction_type = proto.prediction.inference_request.prediction_type
+        if proto.prediction.inference_request.HasField('request_type'):
+          obj.request_type = proto.prediction.inference_request.request_type
+        if proto.prediction.inference_request.HasField('task_code'):
+          obj.task_code = proto.prediction.inference_request.task_code
+        if proto.prediction.inference_request.HasField('intent'):
+          obj.intent = proto.prediction.inference_request.intent
+        if proto.prediction.inference_request.HasField('label'):
+          obj.label = proto.prediction.inference_request.label
+        if proto.prediction.inference_request.HasField('robot_id'):
+          obj.robot_id = proto.prediction.inference_request.robot_id
+        if proto.prediction.inference_request.HasField('success_type'):
+          obj.success_type = proto.prediction.inference_request.success_type
+      if proto.prediction.HasField('color_ts'):
+        obj.color_ts = int(proto.prediction.color_ts.seconds * 1000) + int(proto.prediction.color_ts.nanos / 1000000)
+      if proto.prediction.HasField('depth_ts'):
+        obj.depth_ts = int(proto.prediction.depth_ts.seconds * 1000) + int(proto.prediction.depth_ts.nanos / 1000000)
+      if proto.prediction.HasField('error'):
+        obj.error = proto.prediction.error
+    if proto.HasField('ur_state'):
+      for obj_pose in proto.ur_state.pose:
+        obj.pose.append(obj_pose)
+      for obj_joints in proto.ur_state.joints:
+        obj.joints.append(obj_joints)
+      for obj_force in proto.ur_state.force:
+        obj.force.append(obj_force)
+      for obj_torque in proto.ur_state.torque:
+        obj.torque.append(obj_torque)
+      if proto.ur_state.HasField('robot_dexterity'):
+        obj.robot_dexterity = proto.ur_state.robot_dexterity
+      if proto.ur_state.HasField('is_robot_power_on'):
+        obj.is_robot_power_on = proto.ur_state.is_robot_power_on
+      if proto.ur_state.HasField('robot_stop_state'):
+        if proto.ur_state.robot_stop_state.HasField('is_emergency_stopped'):
+          obj.is_emergency_stopped = proto.ur_state.robot_stop_state.is_emergency_stopped
+        if proto.ur_state.robot_stop_state.HasField('is_protective_stopped'):
+          obj.is_protective_stopped = proto.ur_state.robot_stop_state.is_protective_stopped
+        if proto.ur_state.robot_stop_state.HasField('is_safeguard_stopped'):
+          obj.is_safeguard_stopped = proto.ur_state.robot_stop_state.is_safeguard_stopped
+        if proto.ur_state.robot_stop_state.HasField('is_reduced_mode'):
+          obj.is_reduced_mode = proto.ur_state.robot_stop_state.is_reduced_mode
+        if proto.ur_state.robot_stop_state.HasField('safety_message'):
+          obj.safety_message = proto.ur_state.robot_stop_state.safety_message
+      if proto.ur_state.HasField('is_program_running'):
+        obj.is_program_running = proto.ur_state.is_program_running
+      for obj_digital_in in proto.ur_state.digital_in:
+        obj.digital_in.append(obj_digital_in)
+      for obj_sensor_in in proto.ur_state.sensor_in:
+        obj.sensor_in.append(obj_sensor_in)
+      for obj_digital_out in proto.ur_state.digital_out:
+        obj.digital_out.append(obj_digital_out)
+      for obj_analog_in in proto.ur_state.analog_in:
+        obj.analog_in.append(obj_analog_in)
+      for obj_analog_out in proto.ur_state.analog_out:
+        obj.analog_out.append(obj_analog_out)
+      for obj_tool_digital_in in proto.ur_state.tool_digital_in:
+        obj.tool_digital_in.append(obj_tool_digital_in)
+      for obj_tool_digital_out in proto.ur_state.tool_digital_out:
+        obj.tool_digital_out.append(obj_tool_digital_out)
+      for obj_tool_analog_in in proto.ur_state.tool_analog_in:
+        obj.tool_analog_in.append(obj_tool_analog_in)
+      for obj_tool_analog_out in proto.ur_state.tool_analog_out:
+        obj.tool_analog_out.append(obj_tool_analog_out)
+      if proto.ur_state.HasField('board_temp_c'):
+        obj.board_temp_c = proto.ur_state.board_temp_c
+      if proto.ur_state.HasField('robot_voltage_v'):
+        obj.robot_voltage_v = proto.ur_state.robot_voltage_v
+      if proto.ur_state.HasField('robot_current_a'):
+        obj.robot_current_a = proto.ur_state.robot_current_a
+      if proto.ur_state.HasField('board_io_current_a'):
+        obj.board_io_current_a = proto.ur_state.board_io_current_a
+      if proto.ur_state.HasField('tool_temp_c'):
+        obj.tool_temp_c = proto.ur_state.tool_temp_c
+      if proto.ur_state.HasField('tool_voltage_v'):
+        obj.tool_voltage_v = proto.ur_state.tool_voltage_v
+      if proto.ur_state.HasField('tool_current_a'):
+        obj.tool_current_a = proto.ur_state.tool_current_a
+      for obj_joint_voltages_v in proto.ur_state.joint_voltages_v:
+        obj.joint_voltages_v.append(obj_joint_voltages_v)
+      for obj_joint_currents_a in proto.ur_state.joint_currents_a:
+        obj.joint_currents_a.append(obj_joint_currents_a)
+      for obj_joint_temps_c in proto.ur_state.joint_temps_c:
+        obj.joint_temps_c.append(obj_joint_temps_c)
+      if proto.ur_state.HasField('robot_mode'):
+        obj.robot_mode = proto.ur_state.robot_mode
+      if proto.ur_state.HasField('program_counter'):
+        obj.program_counter = proto.ur_state.program_counter
+      for obj_digital_bank in proto.ur_state.digital_bank:
+        obj.digital_bank.append(DigitalBank.from_proto(obj_digital_bank))
+      for obj_analog_bank in proto.ur_state.analog_bank:
+        obj.analog_bank.append(AnalogBank.from_proto(obj_analog_bank))
+      for obj_integer_bank in proto.ur_state.integer_bank:
+        obj.integer_bank.append(IntegerBank.from_proto(obj_integer_bank))
+      if proto.ur_state.HasField('last_terminated_program'):
+        obj.last_terminated_program = proto.ur_state.last_terminated_program
+    if proto.HasField('conveyor_state'):
+      if proto.conveyor_state.HasField('is_object_detected'):
+        obj.is_object_detected = proto.conveyor_state.is_object_detected
+    if proto.HasField('conveyor_state_update'):
+      if proto.conveyor_state_update.HasField('is_object_detected'):
+        obj.is_object_detected = proto.conveyor_state_update.is_object_detected
+    if proto.HasField('tool_state'):
+      if proto.tool_state.HasField('vacuum_level_pa'):
+        obj.vacuum_level_pa = proto.tool_state.vacuum_level_pa
+      if proto.tool_state.HasField('on'):
+        obj.on = proto.tool_state.on
+    if proto.HasField('tool_state_update'):
+      if proto.tool_state_update.HasField('vacuum_level_pa'):
+        obj.vacuum_level_pa = proto.tool_state_update.vacuum_level_pa
+      if proto.tool_state_update.HasField('on'):
+        obj.on = proto.tool_state_update.on
+    if proto.HasField('status'):
+      if proto.status.HasField('status'):
+        obj.status = proto.status.status
+      if proto.status.HasField('script'):
+        obj.script = proto.status.script
+      if proto.status.HasField('error'):
+        obj.error = proto.status.error
+      if proto.status.HasField('progress'):
+        obj.progress = proto.status.progress
+      if proto.status.HasField('message'):
+        obj.message = proto.status.message
+      if proto.status.HasField('code'):
+        obj.code = proto.status.code
+    if proto.HasField('session_info'):
+      if proto.session_info.HasField('operator_uid'):
+        obj.operator_uid = proto.session_info.operator_uid
+      if proto.session_info.HasField('operator_type'):
+        obj.operator_type = proto.session_info.operator_type
+      if proto.session_info.HasField('session_id'):
+        obj.session_id = proto.session_info.session_id
+      if proto.session_info.HasField('start_time'):
+        obj.start_time = int(proto.session_info.start_time.seconds * 1000) + int(proto.session_info.start_time.nanos / 1000000)
+      if proto.session_info.HasField('robot_name'):
+        obj.robot_name = proto.session_info.robot_name
+      if proto.session_info.HasField('client_os'):
+        obj.client_os = proto.session_info.client_os
+      if proto.session_info.HasField('ui_version'):
+        obj.ui_version = proto.session_info.ui_version
+      if proto.session_info.HasField('calibration_version'):
+        obj.calibration_version = proto.session_info.calibration_version
+      for obj_accept_depth_encoding in proto.session_info.accept_depth_encoding:
+        obj.accept_depth_encoding.append(obj_accept_depth_encoding)
+      if proto.session_info.HasField('relay'):
+        obj.relay = proto.session_info.relay
+      if proto.session_info.HasField('actionsets_version'):
+        obj.actionsets_version = proto.session_info.actionsets_version
+      if proto.session_info.HasField('safety_version'):
+        obj.safety_version = proto.session_info.safety_version
+      if proto.session_info.HasField('workcell_io_version'):
+        obj.workcell_io_version = proto.session_info.workcell_io_version
+      if proto.session_info.HasField('transport'):
+        obj.transport = proto.session_info.transport
+      if proto.session_info.HasField('client_session_uid'):
+        obj.client_session_uid = proto.session_info.client_session_uid
+      if proto.session_info.HasField('workcell_setup_version'):
+        obj.workcell_setup_version = proto.session_info.workcell_setup_version
+      if proto.session_info.HasField('constraints_version'):
+        obj.constraints_version = proto.session_info.constraints_version
+    if proto.HasField('pick_label'):
+      obj.pick_label = PickLabel.from_proto(proto.pick_label)
+    if proto.HasField('place_label'):
+      obj.place_label = PlaceLabel.from_proto(proto.place_label)
+    if proto.HasField('level'):
+      if proto.level.HasField('level'):
+        obj.level = proto.level.level
+    if proto.HasField('protective_stop_state'):
+      if proto.protective_stop_state.HasField('is_protective_stopped'):
+        obj.is_protective_stopped = proto.protective_stop_state.is_protective_stopped
+      if proto.protective_stop_state.HasField('safety_message'):
+        obj.safety_message = proto.protective_stop_state.safety_message
+    if proto.HasField('protective_stop_state_update'):
+      if proto.protective_stop_state_update.HasField('is_protective_stopped'):
+        obj.is_protective_stopped = proto.protective_stop_state_update.is_protective_stopped
+      if proto.protective_stop_state_update.HasField('safety_message'):
+        obj.safety_message = proto.protective_stop_state_update.safety_message
+    if proto.HasField('safeguard_stop_state'):
+      if proto.safeguard_stop_state.HasField('is_safeguard_stopped'):
+        obj.is_safeguard_stopped = proto.safeguard_stop_state.is_safeguard_stopped
+      if proto.safeguard_stop_state.HasField('safety_message'):
+        obj.safety_message = proto.safeguard_stop_state.safety_message
+    if proto.HasField('safeguard_stop_state_update'):
+      if proto.safeguard_stop_state_update.HasField('is_safeguard_stopped'):
+        obj.is_safeguard_stopped = proto.safeguard_stop_state_update.is_safeguard_stopped
+      if proto.safeguard_stop_state_update.HasField('safety_message'):
+        obj.safety_message = proto.safeguard_stop_state_update.safety_message
+    if proto.HasField('emergency_stop_state'):
+      if proto.emergency_stop_state.HasField('is_emergency_stopped'):
+        obj.is_emergency_stopped = proto.emergency_stop_state.is_emergency_stopped
+      if proto.emergency_stop_state.HasField('safety_message'):
+        obj.safety_message = proto.emergency_stop_state.safety_message
+    if proto.HasField('emergency_stop_state_update'):
+      if proto.emergency_stop_state_update.HasField('is_emergency_stopped'):
+        obj.is_emergency_stopped = proto.emergency_stop_state_update.is_emergency_stopped
+      if proto.emergency_stop_state_update.HasField('safety_message'):
+        obj.safety_message = proto.emergency_stop_state_update.safety_message
+    if proto.HasField('robot_power_state'):
+      obj.robot_power_state = RobotPowerState.from_proto(proto.robot_power_state)
+    if proto.HasField('robot_power_state_update'):
+      obj.robot_power_state_update = RobotPowerState.from_proto(proto.robot_power_state_update)
+    if proto.HasField('metric'):
+      if proto.metric.HasField('value'):
+        obj.metric_value = KeyValue.from_proto(proto.metric.value)
+      for obj_labels in proto.metric.labels:
+        obj.labels.append(KeyValue.from_proto(obj_labels))
+    if proto.HasField('reach_script_status'):
+      if proto.reach_script_status.HasField('status'):
+        obj.status = proto.reach_script_status.status
+      if proto.reach_script_status.HasField('script'):
+        obj.script = proto.reach_script_status.script
+      if proto.reach_script_status.HasField('error'):
+        obj.error = proto.reach_script_status.error
+      if proto.reach_script_status.HasField('progress'):
+        obj.progress = proto.reach_script_status.progress
+      if proto.reach_script_status.HasField('message'):
+        obj.message = proto.reach_script_status.message
+      if proto.reach_script_status.HasField('code'):
+        obj.code = proto.reach_script_status.code
+    if proto.HasField('cmd_status'):
+      if proto.cmd_status.HasField('status'):
+        obj.status = proto.cmd_status.status
+      if proto.cmd_status.HasField('script'):
+        obj.script = proto.cmd_status.script
+      if proto.cmd_status.HasField('error'):
+        obj.error = proto.cmd_status.error
+      if proto.cmd_status.HasField('progress'):
+        obj.progress = proto.cmd_status.progress
+      if proto.cmd_status.HasField('message'):
+        obj.message = proto.cmd_status.message
+      if proto.cmd_status.HasField('code'):
+        obj.code = proto.cmd_status.code
+    if proto.HasField('vacuum_pressure_state'):
+      if proto.vacuum_pressure_state.HasField('vacuum_level_pa'):
+        obj.vacuum_level_pa = proto.vacuum_pressure_state.vacuum_level_pa
+      if proto.vacuum_pressure_state.HasField('on'):
+        obj.on = proto.vacuum_pressure_state.on
+    if proto.HasField('vacuum_pressure_update'):
+      if proto.vacuum_pressure_update.HasField('vacuum_level_pa'):
+        obj.vacuum_level_pa = proto.vacuum_pressure_update.vacuum_level_pa
+      if proto.vacuum_pressure_update.HasField('on'):
+        obj.on = proto.vacuum_pressure_update.on
+    if proto.HasField('downlink_status'):
+      if proto.downlink_status.HasField('status'):
+        obj.status = proto.downlink_status.status
+      if proto.downlink_status.HasField('script'):
+        obj.script = proto.downlink_status.script
+      if proto.downlink_status.HasField('error'):
+        obj.error = proto.downlink_status.error
+      if proto.downlink_status.HasField('progress'):
+        obj.progress = proto.downlink_status.progress
+      if proto.downlink_status.HasField('message'):
+        obj.message = proto.downlink_status.message
+      if proto.downlink_status.HasField('code'):
+        obj.code = proto.downlink_status.code
+    if proto.HasField('sensor_state'):
+      for obj_state in proto.sensor_state.state:
+        obj.state.append(CapabilityState.from_proto(obj_state))
+    if proto.HasField('sensor_state_update'):
+      for obj_state in proto.sensor_state_update.state:
+        obj.state.append(CapabilityState.from_proto(obj_state))
+    if proto.HasField('output_state'):
+      for obj_state in proto.output_state.state:
+        obj.state.append(CapabilityState.from_proto(obj_state))
+    if proto.HasField('output_state_update'):
+      for obj_state in proto.output_state_update.state:
+        obj.state.append(CapabilityState.from_proto(obj_state))
+    if proto.HasField('health_check'):
+      pass  # skip empty message
+    if proto.HasField('history'):
+      obj.history = History.from_proto(proto.history)
+    if proto.HasField('audio_request_mute'):
+      obj.audio_request_mute = AudioRequest.from_proto(proto.audio_request_mute)
+    if proto.HasField('audio_request_unmute'):
+      obj.audio_request_unmute = AudioRequest.from_proto(proto.audio_request_unmute)
+    if proto.HasField('error'):
+      if proto.error.HasField('status'):
+        obj.status = proto.error.status
+      if proto.error.HasField('script'):
+        obj.script = proto.error.script
+      if proto.error.HasField('error'):
+        obj.error = proto.error.error
+      if proto.error.HasField('progress'):
+        obj.progress = proto.error.progress
+      if proto.error.HasField('message'):
+        obj.message = proto.error.message
+      if proto.error.HasField('code'):
+        obj.code = proto.error.code
+    if proto.HasField('webrtc_audio_response'):
+      obj.webrtc_audio_response = WebrtcAudioResponse.from_proto(proto.webrtc_audio_response)
+    if proto.HasField('metadata'):
+      obj.metadata = Metadata.from_proto(proto.metadata)
+    if proto.HasField('sim_state'):
+      obj.sim_state = SimState.from_proto(proto.sim_state)
+    if proto.HasField('device_status'):
+      if proto.device_status.HasField('status'):
+        obj.status = proto.device_status.status
+      if proto.device_status.HasField('script'):
+        obj.script = proto.device_status.script
+      if proto.device_status.HasField('error'):
+        obj.error = proto.device_status.error
+      if proto.device_status.HasField('progress'):
+        obj.progress = proto.device_status.progress
+      if proto.device_status.HasField('message'):
+        obj.message = proto.device_status.message
+      if proto.device_status.HasField('code'):
+        obj.code = proto.device_status.code
+    if proto.HasField('webrtc_audio_request'):
+      obj.webrtc_audio_request = WebrtcAudioRequest.from_proto(proto.webrtc_audio_request)
+    if proto.HasField('sim_instance_segmentation'):
+      obj.sim_instance_segmentation = SimInstanceSegmentation.from_proto(proto.sim_instance_segmentation)
+    if proto.HasField('exposure_complete'):
+      pass  # skip empty message
+    if proto.HasField('start_shutdown'):
+      pass  # skip empty message
+    if proto.HasField('finish_shutdown'):
+      pass  # skip empty message
+    if proto.HasField('hangup'):
+      pass  # skip empty message
+    if proto.HasField('connected_clients'):
+      obj.connected_clients = ConnectedClients.from_proto(proto.connected_clients)
+    if proto.HasField('detection'):
+      obj.detection = Detection.from_proto(proto.detection)
+    if proto.HasField('robot_state'):
+      for obj_pose in proto.robot_state.pose:
+        obj.pose.append(obj_pose)
+      for obj_joints in proto.robot_state.joints:
+        obj.joints.append(obj_joints)
+      for obj_force in proto.robot_state.force:
+        obj.force.append(obj_force)
+      for obj_torque in proto.robot_state.torque:
+        obj.torque.append(obj_torque)
+      if proto.robot_state.HasField('robot_dexterity'):
+        obj.robot_dexterity = proto.robot_state.robot_dexterity
+      if proto.robot_state.HasField('is_robot_power_on'):
+        obj.is_robot_power_on = proto.robot_state.is_robot_power_on
+      if proto.robot_state.HasField('robot_stop_state'):
+        if proto.robot_state.robot_stop_state.HasField('is_emergency_stopped'):
+          obj.is_emergency_stopped = proto.robot_state.robot_stop_state.is_emergency_stopped
+        if proto.robot_state.robot_stop_state.HasField('is_protective_stopped'):
+          obj.is_protective_stopped = proto.robot_state.robot_stop_state.is_protective_stopped
+        if proto.robot_state.robot_stop_state.HasField('is_safeguard_stopped'):
+          obj.is_safeguard_stopped = proto.robot_state.robot_stop_state.is_safeguard_stopped
+        if proto.robot_state.robot_stop_state.HasField('is_reduced_mode'):
+          obj.is_reduced_mode = proto.robot_state.robot_stop_state.is_reduced_mode
+        if proto.robot_state.robot_stop_state.HasField('safety_message'):
+          obj.safety_message = proto.robot_state.robot_stop_state.safety_message
+      if proto.robot_state.HasField('is_program_running'):
+        obj.is_program_running = proto.robot_state.is_program_running
+      for obj_digital_in in proto.robot_state.digital_in:
+        obj.digital_in.append(obj_digital_in)
+      for obj_sensor_in in proto.robot_state.sensor_in:
+        obj.sensor_in.append(obj_sensor_in)
+      for obj_digital_out in proto.robot_state.digital_out:
+        obj.digital_out.append(obj_digital_out)
+      for obj_analog_in in proto.robot_state.analog_in:
+        obj.analog_in.append(obj_analog_in)
+      for obj_analog_out in proto.robot_state.analog_out:
+        obj.analog_out.append(obj_analog_out)
+      for obj_tool_digital_in in proto.robot_state.tool_digital_in:
+        obj.tool_digital_in.append(obj_tool_digital_in)
+      for obj_tool_digital_out in proto.robot_state.tool_digital_out:
+        obj.tool_digital_out.append(obj_tool_digital_out)
+      for obj_tool_analog_in in proto.robot_state.tool_analog_in:
+        obj.tool_analog_in.append(obj_tool_analog_in)
+      for obj_tool_analog_out in proto.robot_state.tool_analog_out:
+        obj.tool_analog_out.append(obj_tool_analog_out)
+      if proto.robot_state.HasField('board_temp_c'):
+        obj.board_temp_c = proto.robot_state.board_temp_c
+      if proto.robot_state.HasField('robot_voltage_v'):
+        obj.robot_voltage_v = proto.robot_state.robot_voltage_v
+      if proto.robot_state.HasField('robot_current_a'):
+        obj.robot_current_a = proto.robot_state.robot_current_a
+      if proto.robot_state.HasField('board_io_current_a'):
+        obj.board_io_current_a = proto.robot_state.board_io_current_a
+      if proto.robot_state.HasField('tool_temp_c'):
+        obj.tool_temp_c = proto.robot_state.tool_temp_c
+      if proto.robot_state.HasField('tool_voltage_v'):
+        obj.tool_voltage_v = proto.robot_state.tool_voltage_v
+      if proto.robot_state.HasField('tool_current_a'):
+        obj.tool_current_a = proto.robot_state.tool_current_a
+      for obj_joint_voltages_v in proto.robot_state.joint_voltages_v:
+        obj.joint_voltages_v.append(obj_joint_voltages_v)
+      for obj_joint_currents_a in proto.robot_state.joint_currents_a:
+        obj.joint_currents_a.append(obj_joint_currents_a)
+      for obj_joint_temps_c in proto.robot_state.joint_temps_c:
+        obj.joint_temps_c.append(obj_joint_temps_c)
+      if proto.robot_state.HasField('robot_mode'):
+        obj.robot_mode = proto.robot_state.robot_mode
+      if proto.robot_state.HasField('program_counter'):
+        obj.program_counter = proto.robot_state.program_counter
+      for obj_digital_bank in proto.robot_state.digital_bank:
+        obj.digital_bank.append(DigitalBank.from_proto(obj_digital_bank))
+      for obj_analog_bank in proto.robot_state.analog_bank:
+        obj.analog_bank.append(AnalogBank.from_proto(obj_analog_bank))
+      for obj_integer_bank in proto.robot_state.integer_bank:
+        obj.integer_bank.append(IntegerBank.from_proto(obj_integer_bank))
+      if proto.robot_state.HasField('last_terminated_program'):
+        obj.last_terminated_program = proto.robot_state.last_terminated_program
+    if proto.HasField('client_annotation'):
+      obj.client_annotation = ClientAnnotation.from_proto(proto.client_annotation)
+    if proto.HasField('pipeline_description'):
+      obj.pipeline_description = PipelineDescription.from_proto(proto.pipeline_description)
+    if proto.HasField('machine_interfaces'):
+      obj.machine_interfaces = MachineInterfaces.from_proto(proto.machine_interfaces)
+    if proto.HasField('machine_description'):
+      obj.machine_description = MachineDescription.from_proto(proto.machine_description)
+    if proto.HasField('text_instruction'):
+      obj.text_instruction = TextInstruction.from_proto(proto.text_instruction)
+    if proto.HasField('report_error'):
+      obj.report_error = ReportError.from_proto(proto.report_error)
+    if proto.HasField('health'):
+      obj.health = Health.from_proto(proto.health)
+    if proto.HasField('controller_descriptions'):
+      obj.controller_descriptions = ControllerDescriptions.from_proto(proto.controller_descriptions)
     return obj
 
 
@@ -4910,6 +6153,20 @@ class DeviceDataRef:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DeviceDataRef':
+    """Convert DeviceDataRef to proto."""
+    proto = logs_pb2.DeviceDataRef()
+    if self.ts:
+      proto.ts.seconds = int(self.ts / 1000)
+      proto.ts.nanos = int(self.ts % 1000) * 1000000
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.seq:
+      proto.seq = self.seq
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DeviceDataRef':
     """Convert JSON to type object."""
@@ -4939,15 +6196,19 @@ class DeviceDataRef:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DeviceDataRef) -> 'DeviceDataRef':
+  def from_proto(proto: logs_pb2.DeviceDataRef) -> Optional['DeviceDataRef']:
     """Convert DeviceDataRef proto to type object."""
     if not proto:
       return None
     obj = DeviceDataRef()
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.seq = get_proto_value(proto.seq)
-    obj.ts = get_proto_value(proto.ts)
+    if proto.HasField('ts'):
+      obj.ts = int(proto.ts.seconds * 1000) + int(proto.ts.nanos / 1000000)
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('seq'):
+      obj.seq = proto.seq
     return obj
 
 
@@ -4999,6 +6260,18 @@ class DigitalBank:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.DigitalBank':
+    """Convert DigitalBank to proto."""
+    proto = logs_pb2.DigitalBank()
+    if self.space:
+      proto.space = self.space
+    if self.output:
+      proto.output = self.output
+    if self.start:
+      proto.start = self.start
+    proto.state.extend(self.state)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'DigitalBank':
     """Convert JSON to type object."""
@@ -5032,19 +6305,19 @@ class DigitalBank:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.DigitalBank) -> 'DigitalBank':
+  def from_proto(proto: logs_pb2.DigitalBank) -> Optional['DigitalBank']:
     """Convert DigitalBank proto to type object."""
     if not proto:
       return None
     obj = DigitalBank()
-    obj.output = get_proto_value(proto.output)
-    obj.space = get_proto_value(proto.space)
-    obj.start = get_proto_value(proto.start)
-    if proto.state:
-      json_list = []
-      for j in proto.state:
-        json_list.append(j)
-      obj.state = json_list
+    if proto.HasField('space'):
+      obj.space = proto.space
+    if proto.HasField('output'):
+      obj.output = proto.output
+    if proto.HasField('start'):
+      obj.start = proto.start
+    for obj_state in proto.state:
+      obj.state.append(obj_state)
     return obj
 
 
@@ -5139,6 +6412,30 @@ class ExperimentalCommandData:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ExperimentalCommandData':
+    """Convert ExperimentalCommandData to proto."""
+    proto = logs_pb2.ExperimentalCommandData()
+    if self.label:
+      proto.label = self.label
+    if self.depth_ts:
+      proto.depth_ts.seconds = int(self.depth_ts / 1000)
+      proto.depth_ts.nanos = int(self.depth_ts % 1000) * 1000000
+    if self.pose_2d:
+      proto.pose_2d.CopyFrom(self.pose_2d.to_proto())
+    if self.position_3d:
+      proto.position_3d.CopyFrom(self.position_3d.to_proto())
+    if self.quaternion_3d:
+      proto.quaternion_3d.CopyFrom(self.quaternion_3d.to_proto())
+    proto.tags.extend(self.tags)
+    if self.user_ts:
+      proto.user_ts.seconds = int(self.user_ts / 1000)
+      proto.user_ts.nanos = int(self.user_ts % 1000) * 1000000
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ExperimentalCommandData':
     """Convert JSON to type object."""
@@ -5192,24 +6489,29 @@ class ExperimentalCommandData:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ExperimentalCommandData) -> 'ExperimentalCommandData':
+  def from_proto(proto: logs_pb2.ExperimentalCommandData) -> Optional['ExperimentalCommandData']:
     """Convert ExperimentalCommandData proto to type object."""
     if not proto:
       return None
     obj = ExperimentalCommandData()
-    obj.depth_ts = get_proto_value(proto.depth_ts)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.label = get_proto_value(proto.label)
-    obj.pose_2d = Pose2d.from_proto(get_proto_field(proto, 'pose_2d'))
-    obj.position_3d = Vec3d.from_proto(get_proto_field(proto, 'position_3d'))
-    obj.quaternion_3d = Quaternion3d.from_proto(get_proto_field(proto, 'quaternion_3d'))
-    if proto.tags:
-      json_list = []
-      for j in proto.tags:
-        json_list.append(j)
-      obj.tags = json_list
-    obj.user_ts = get_proto_value(proto.user_ts)
+    if proto.HasField('label'):
+      obj.label = proto.label
+    if proto.HasField('depth_ts'):
+      obj.depth_ts = int(proto.depth_ts.seconds * 1000) + int(proto.depth_ts.nanos / 1000000)
+    if proto.HasField('pose_2d'):
+      obj.pose_2d = Pose2d.from_proto(proto.pose_2d)
+    if proto.HasField('position_3d'):
+      obj.position_3d = Vec3d.from_proto(proto.position_3d)
+    if proto.HasField('quaternion_3d'):
+      obj.quaternion_3d = Quaternion3d.from_proto(proto.quaternion_3d)
+    for obj_tags in proto.tags:
+      obj.tags.append(obj_tags)
+    if proto.HasField('user_ts'):
+      obj.user_ts = int(proto.user_ts.seconds * 1000) + int(proto.user_ts.nanos / 1000000)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
     return obj
 
 
@@ -5245,6 +6547,13 @@ class ForceLimits:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ForceLimits':
+    """Convert ForceLimits to proto."""
+    proto = logs_pb2.ForceLimits()
+    proto.maximum.extend(self.maximum)
+    proto.minimum.extend(self.minimum)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ForceLimits':
     """Convert JSON to type object."""
@@ -5273,21 +6582,15 @@ class ForceLimits:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ForceLimits) -> 'ForceLimits':
+  def from_proto(proto: logs_pb2.ForceLimits) -> Optional['ForceLimits']:
     """Convert ForceLimits proto to type object."""
     if not proto:
       return None
     obj = ForceLimits()
-    if proto.maximum:
-      json_list = []
-      for j in proto.maximum:
-        json_list.append(j)
-      obj.maximum = json_list
-    if proto.minimum:
-      json_list = []
-      for j in proto.minimum:
-        json_list.append(j)
-      obj.minimum = json_list
+    for obj_maximum in proto.maximum:
+      obj.maximum.append(obj_maximum)
+    for obj_minimum in proto.minimum:
+      obj.minimum.append(obj_minimum)
     return obj
 
 
@@ -5308,6 +6611,11 @@ class GetAllObjectPoses:
     json_data: Dict[str, Any] = dict()
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.GetAllObjectPoses':
+    """Convert GetAllObjectPoses to proto."""
+    proto = logs_pb2.GetAllObjectPoses()
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'GetAllObjectPoses':
     """Convert JSON to type object."""
@@ -5321,7 +6629,7 @@ class GetAllObjectPoses:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.GetAllObjectPoses) -> 'GetAllObjectPoses':  # pylint: disable=unused-argument
+  def from_proto(proto: logs_pb2.GetAllObjectPoses) -> Optional['GetAllObjectPoses']:
     """Convert GetAllObjectPoses proto to type object."""
     if not proto:
       return None
@@ -5350,6 +6658,13 @@ class GetSegmentedImage:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.GetSegmentedImage':
+    """Convert GetSegmentedImage to proto."""
+    proto = logs_pb2.GetSegmentedImage()
+    if self.device_key:
+      proto.device_key = self.device_key
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'GetSegmentedImage':
     """Convert JSON to type object."""
@@ -5367,12 +6682,13 @@ class GetSegmentedImage:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.GetSegmentedImage) -> 'GetSegmentedImage':
+  def from_proto(proto: logs_pb2.GetSegmentedImage) -> Optional['GetSegmentedImage']:
     """Convert GetSegmentedImage proto to type object."""
     if not proto:
       return None
     obj = GetSegmentedImage()
-    obj.device_key = get_proto_value(proto.device_key)
+    if proto.HasField('device_key'):
+      obj.device_key = proto.device_key
     return obj
 
 
@@ -5432,6 +6748,25 @@ class GymAction:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.GymAction':
+    """Convert GymAction to proto."""
+    proto = logs_pb2.GymAction()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.synchronous:
+      proto.synchronous = self.synchronous
+    if self.arm_action_params:
+      proto.arm_action_params.CopyFrom(self.arm_action_params.to_proto())
+    if self.vacuum_action_params:
+      proto.vacuum_action_params.CopyFrom(self.vacuum_action_params.to_proto())
+    if self.logger_action_params:
+      proto.logger_action_params.CopyFrom(self.logger_action_params.to_proto())
+    if self.client_annotation_action_params:
+      proto.client_annotation_action_params.CopyFrom(self.client_annotation_action_params.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'GymAction':
     """Convert JSON to type object."""
@@ -5473,18 +6808,25 @@ class GymAction:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.GymAction) -> 'GymAction':
+  def from_proto(proto: logs_pb2.GymAction) -> Optional['GymAction']:
     """Convert GymAction proto to type object."""
     if not proto:
       return None
     obj = GymAction()
-    obj.arm_action_params = ArmActionParams.from_proto(get_proto_field(proto, 'arm_action_params'))
-    obj.client_annotation_action_params = ClientAnnotationActionParams.from_proto(get_proto_field(proto, 'client_annotation_action_params'))
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.logger_action_params = LoggerActionParams.from_proto(get_proto_field(proto, 'logger_action_params'))
-    obj.synchronous = get_proto_value(proto.synchronous)
-    obj.vacuum_action_params = VacuumActionParams.from_proto(get_proto_field(proto, 'vacuum_action_params'))
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('synchronous'):
+      obj.synchronous = proto.synchronous
+    if proto.HasField('arm_action_params'):
+      obj.arm_action_params = ArmActionParams.from_proto(proto.arm_action_params)
+    if proto.HasField('vacuum_action_params'):
+      obj.vacuum_action_params = VacuumActionParams.from_proto(proto.vacuum_action_params)
+    if proto.HasField('logger_action_params'):
+      obj.logger_action_params = LoggerActionParams.from_proto(proto.logger_action_params)
+    if proto.HasField('client_annotation_action_params'):
+      obj.client_annotation_action_params = ClientAnnotationActionParams.from_proto(proto.client_annotation_action_params)
     return obj
 
 
@@ -5520,6 +6862,17 @@ class Health:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Health':
+    """Convert Health to proto."""
+    proto = logs_pb2.Health()
+    if self.interval_length_ms:
+      proto.interval_length_ms = self.interval_length_ms
+    if self.display_name:
+      proto.display_name = self.display_name
+    if self.heart_beats:
+      proto.heart_beats.CopyFrom(self.heart_beats.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Health':
     """Convert JSON to type object."""
@@ -5545,14 +6898,17 @@ class Health:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Health) -> 'Health':
+  def from_proto(proto: logs_pb2.Health) -> Optional['Health']:
     """Convert Health proto to type object."""
     if not proto:
       return None
     obj = Health()
-    obj.display_name = get_proto_value(proto.display_name)
-    obj.heart_beats = HeartBeats.from_proto(get_proto_field(proto, 'heart_beats'))
-    obj.interval_length_ms = get_proto_value(proto.interval_length_ms)
+    if proto.HasField('interval_length_ms'):
+      obj.interval_length_ms = proto.interval_length_ms
+    if proto.HasField('display_name'):
+      obj.display_name = proto.display_name
+    if proto.HasField('heart_beats'):
+      obj.heart_beats = HeartBeats.from_proto(proto.heart_beats)
     return obj
 
 
@@ -5583,6 +6939,15 @@ class HealthState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.HealthState':
+    """Convert HealthState to proto."""
+    proto = logs_pb2.HealthState()
+    if self.ok:
+      proto.ok = self.ok
+    if self.info:
+      proto.info = self.info
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'HealthState':
     """Convert JSON to type object."""
@@ -5604,13 +6969,15 @@ class HealthState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.HealthState) -> 'HealthState':
+  def from_proto(proto: logs_pb2.HealthState) -> Optional['HealthState']:
     """Convert HealthState proto to type object."""
     if not proto:
       return None
     obj = HealthState()
-    obj.info = get_proto_value(proto.info)
-    obj.ok = get_proto_value(proto.ok)
+    if proto.HasField('ok'):
+      obj.ok = proto.ok
+    if proto.HasField('info'):
+      obj.info = proto.info
     return obj
 
 
@@ -5695,6 +7062,33 @@ class HeartBeats:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.HeartBeats':
+    """Convert HeartBeats to proto."""
+    proto = logs_pb2.HeartBeats()
+    if self.any_camera:
+      proto.any_camera.CopyFrom(self.any_camera.to_proto())
+    if self.depth_camera:
+      proto.depth_camera.CopyFrom(self.depth_camera.to_proto())
+    if self.color_camera:
+      proto.color_camera.CopyFrom(self.color_camera.to_proto())
+    if self.not_estopped:
+      proto.not_estopped.CopyFrom(self.not_estopped.to_proto())
+    if self.not_pstopped:
+      proto.not_pstopped.CopyFrom(self.not_pstopped.to_proto())
+    if self.not_safeguardstopped:
+      proto.not_safeguardstopped.CopyFrom(self.not_safeguardstopped.to_proto())
+    if self.joints:
+      proto.joints.CopyFrom(self.joints.to_proto())
+    if self.movement:
+      proto.movement.CopyFrom(self.movement.to_proto())
+    if self.client_connected:
+      proto.client_connected.CopyFrom(self.client_connected.to_proto())
+    if self.no_reach_script_failure:
+      proto.no_reach_script_failure.CopyFrom(self.no_reach_script_failure.to_proto())
+    if self.teleop_generates_metric:
+      proto.teleop_generates_metric.CopyFrom(self.teleop_generates_metric.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'HeartBeats':
     """Convert JSON to type object."""
@@ -5752,22 +7146,33 @@ class HeartBeats:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.HeartBeats) -> 'HeartBeats':
+  def from_proto(proto: logs_pb2.HeartBeats) -> Optional['HeartBeats']:
     """Convert HeartBeats proto to type object."""
     if not proto:
       return None
     obj = HeartBeats()
-    obj.any_camera = HealthState.from_proto(get_proto_field(proto, 'any_camera'))
-    obj.client_connected = HealthState.from_proto(get_proto_field(proto, 'client_connected'))
-    obj.color_camera = HealthState.from_proto(get_proto_field(proto, 'color_camera'))
-    obj.depth_camera = HealthState.from_proto(get_proto_field(proto, 'depth_camera'))
-    obj.joints = HealthState.from_proto(get_proto_field(proto, 'joints'))
-    obj.movement = HealthState.from_proto(get_proto_field(proto, 'movement'))
-    obj.no_reach_script_failure = HealthState.from_proto(get_proto_field(proto, 'no_reach_script_failure'))
-    obj.not_estopped = HealthState.from_proto(get_proto_field(proto, 'not_estopped'))
-    obj.not_pstopped = HealthState.from_proto(get_proto_field(proto, 'not_pstopped'))
-    obj.not_safeguardstopped = HealthState.from_proto(get_proto_field(proto, 'not_safeguardstopped'))
-    obj.teleop_generates_metric = HealthState.from_proto(get_proto_field(proto, 'teleop_generates_metric'))
+    if proto.HasField('any_camera'):
+      obj.any_camera = HealthState.from_proto(proto.any_camera)
+    if proto.HasField('depth_camera'):
+      obj.depth_camera = HealthState.from_proto(proto.depth_camera)
+    if proto.HasField('color_camera'):
+      obj.color_camera = HealthState.from_proto(proto.color_camera)
+    if proto.HasField('not_estopped'):
+      obj.not_estopped = HealthState.from_proto(proto.not_estopped)
+    if proto.HasField('not_pstopped'):
+      obj.not_pstopped = HealthState.from_proto(proto.not_pstopped)
+    if proto.HasField('not_safeguardstopped'):
+      obj.not_safeguardstopped = HealthState.from_proto(proto.not_safeguardstopped)
+    if proto.HasField('joints'):
+      obj.joints = HealthState.from_proto(proto.joints)
+    if proto.HasField('movement'):
+      obj.movement = HealthState.from_proto(proto.movement)
+    if proto.HasField('client_connected'):
+      obj.client_connected = HealthState.from_proto(proto.client_connected)
+    if proto.HasField('no_reach_script_failure'):
+      obj.no_reach_script_failure = HealthState.from_proto(proto.no_reach_script_failure)
+    if proto.HasField('teleop_generates_metric'):
+      obj.teleop_generates_metric = HealthState.from_proto(proto.teleop_generates_metric)
     return obj
 
 
@@ -5820,6 +7225,18 @@ class History:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.History':
+    """Convert History to proto."""
+    proto = logs_pb2.History()
+    if self.key:
+      proto.key = self.key
+    proto.values.extend(self.values)
+    if self.history_start:
+      proto.history_start = self.history_start
+    if self.history_end:
+      proto.history_end = self.history_end
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'History':
     """Convert JSON to type object."""
@@ -5853,19 +7270,19 @@ class History:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.History) -> 'History':
+  def from_proto(proto: logs_pb2.History) -> Optional['History']:
     """Convert History proto to type object."""
     if not proto:
       return None
     obj = History()
-    obj.history_end = get_proto_value(proto.history_end)
-    obj.history_start = get_proto_value(proto.history_start)
-    obj.key = get_proto_value(proto.key)
-    if proto.values:
-      json_list = []
-      for j in proto.values:
-        json_list.append(j)
-      obj.values = json_list
+    if proto.HasField('key'):
+      obj.key = proto.key
+    for obj_values in proto.values:
+      obj.values.append(obj_values)
+    if proto.HasField('history_start'):
+      obj.history_start = proto.history_start
+    if proto.HasField('history_end'):
+      obj.history_end = proto.history_end
     return obj
 
 
@@ -5900,6 +7317,12 @@ class IOState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.IOState':
+    """Convert IOState to proto."""
+    proto = logs_pb2.IOState()
+    proto.state.extend([v.to_proto() for v in self.state])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'IOState':
     """Convert JSON to type object."""
@@ -5921,16 +7344,13 @@ class IOState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.IOState) -> 'IOState':
+  def from_proto(proto: logs_pb2.IOState) -> Optional['IOState']:
     """Convert IOState proto to type object."""
     if not proto:
       return None
     obj = IOState()
-    if proto.state:
-      json_list = []
-      for j in proto.state:
-        json_list.append(CapabilityState.from_proto(j))
-      obj.state = json_list
+    for obj_state in proto.state:
+      obj.state.append(CapabilityState.from_proto(obj_state))
     return obj
 
 
@@ -5982,6 +7402,18 @@ class IntegerBank:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.IntegerBank':
+    """Convert IntegerBank to proto."""
+    proto = logs_pb2.IntegerBank()
+    if self.space:
+      proto.space = self.space
+    if self.output:
+      proto.output = self.output
+    if self.start:
+      proto.start = self.start
+    proto.state.extend(self.state)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'IntegerBank':
     """Convert JSON to type object."""
@@ -6015,19 +7447,19 @@ class IntegerBank:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.IntegerBank) -> 'IntegerBank':
+  def from_proto(proto: logs_pb2.IntegerBank) -> Optional['IntegerBank']:
     """Convert IntegerBank proto to type object."""
     if not proto:
       return None
     obj = IntegerBank()
-    obj.output = get_proto_value(proto.output)
-    obj.space = get_proto_value(proto.space)
-    obj.start = get_proto_value(proto.start)
-    if proto.state:
-      json_list = []
-      for j in proto.state:
-        json_list.append(j)
-      obj.state = json_list
+    if proto.HasField('space'):
+      obj.space = proto.space
+    if proto.HasField('output'):
+      obj.output = proto.output
+    if proto.HasField('start'):
+      obj.start = proto.start
+    for obj_state in proto.state:
+      obj.state.append(obj_state)
     return obj
 
 
@@ -6069,6 +7501,19 @@ class IntervalEnd:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.IntervalEnd':
+    """Convert IntervalEnd to proto."""
+    proto = logs_pb2.IntervalEnd()
+    if self.name:
+      proto.name = self.name
+    if self.start_ts:
+      proto.start_ts.seconds = int(self.start_ts / 1000)
+      proto.start_ts.nanos = int(self.start_ts % 1000) * 1000000
+    if self.end_ts:
+      proto.end_ts.seconds = int(self.end_ts / 1000)
+      proto.end_ts.nanos = int(self.end_ts % 1000) * 1000000
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'IntervalEnd':
     """Convert JSON to type object."""
@@ -6094,14 +7539,17 @@ class IntervalEnd:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.IntervalEnd) -> 'IntervalEnd':
+  def from_proto(proto: logs_pb2.IntervalEnd) -> Optional['IntervalEnd']:
     """Convert IntervalEnd proto to type object."""
     if not proto:
       return None
     obj = IntervalEnd()
-    obj.end_ts = get_proto_value(proto.end_ts)
-    obj.name = get_proto_value(proto.name)
-    obj.start_ts = get_proto_value(proto.start_ts)
+    if proto.HasField('name'):
+      obj.name = proto.name
+    if proto.HasField('start_ts'):
+      obj.start_ts = int(proto.start_ts.seconds * 1000) + int(proto.start_ts.nanos / 1000000)
+    if proto.HasField('end_ts'):
+      obj.end_ts = int(proto.end_ts.seconds * 1000) + int(proto.end_ts.nanos / 1000000)
     return obj
 
 
@@ -6127,6 +7575,13 @@ class IntervalStart:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.IntervalStart':
+    """Convert IntervalStart to proto."""
+    proto = logs_pb2.IntervalStart()
+    if self.name:
+      proto.name = self.name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'IntervalStart':
     """Convert JSON to type object."""
@@ -6144,12 +7599,13 @@ class IntervalStart:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.IntervalStart) -> 'IntervalStart':
+  def from_proto(proto: logs_pb2.IntervalStart) -> Optional['IntervalStart']:
     """Convert IntervalStart proto to type object."""
     if not proto:
       return None
     obj = IntervalStart()
-    obj.name = get_proto_value(proto.name)
+    if proto.HasField('name'):
+      obj.name = proto.name
     return obj
 
 
@@ -6191,6 +7647,19 @@ class KeyValue:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.KeyValue':
+    """Convert KeyValue to proto."""
+    proto = logs_pb2.KeyValue()
+    if self.key:
+      proto.key = self.key
+    if self.value:
+      proto.value = self.value
+    if self.int_value:
+      proto.int_value = self.int_value
+    if self.float_value:
+      proto.float_value = self.float_value
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'KeyValue':
     """Convert JSON to type object."""
@@ -6220,15 +7689,19 @@ class KeyValue:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.KeyValue) -> 'KeyValue':
+  def from_proto(proto: logs_pb2.KeyValue) -> Optional['KeyValue']:
     """Convert KeyValue proto to type object."""
     if not proto:
       return None
     obj = KeyValue()
-    obj.float_value = get_proto_value(proto.float_value)
-    obj.int_value = get_proto_value(proto.int_value)
-    obj.key = get_proto_value(proto.key)
-    obj.value = get_proto_value(proto.value)
+    if proto.HasField('key'):
+      obj.key = proto.key
+    if proto.HasField('value'):
+      obj.value = proto.value
+    if proto.HasField('int_value'):
+      obj.int_value = proto.int_value
+    if proto.HasField('float_value'):
+      obj.float_value = proto.float_value
     return obj
 
 
@@ -6272,6 +7745,16 @@ class Limits:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Limits':
+    """Convert Limits to proto."""
+    proto = logs_pb2.Limits()
+    if self.force:
+      proto.force.CopyFrom(self.force.to_proto())
+    if self.torque:
+      proto.torque.CopyFrom(self.torque.to_proto())
+    proto.sensor.extend([v.to_proto() for v in self.sensor])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Limits':
     """Convert JSON to type object."""
@@ -6301,18 +7784,17 @@ class Limits:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Limits) -> 'Limits':
+  def from_proto(proto: logs_pb2.Limits) -> Optional['Limits']:
     """Convert Limits proto to type object."""
     if not proto:
       return None
     obj = Limits()
-    obj.force = ForceLimits.from_proto(get_proto_field(proto, 'force'))
-    if proto.sensor:
-      json_list = []
-      for j in proto.sensor:
-        json_list.append(SensorLimits.from_proto(j))
-      obj.sensor = json_list
-    obj.torque = TorqueLimits.from_proto(get_proto_field(proto, 'torque'))
+    if proto.HasField('force'):
+      obj.force = ForceLimits.from_proto(proto.force)
+    if proto.HasField('torque'):
+      obj.torque = TorqueLimits.from_proto(proto.torque)
+    for obj_sensor in proto.sensor:
+      obj.sensor.append(SensorLimits.from_proto(obj_sensor))
     return obj
 
 
@@ -6349,6 +7831,14 @@ class LoggerActionParams:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.LoggerActionParams':
+    """Convert LoggerActionParams to proto."""
+    proto = logs_pb2.LoggerActionParams()
+    if self.is_start:
+      proto.is_start = self.is_start
+    proto.event_params.extend([v.to_proto() for v in self.event_params])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'LoggerActionParams':
     """Convert JSON to type object."""
@@ -6374,17 +7864,15 @@ class LoggerActionParams:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.LoggerActionParams) -> 'LoggerActionParams':
+  def from_proto(proto: logs_pb2.LoggerActionParams) -> Optional['LoggerActionParams']:
     """Convert LoggerActionParams proto to type object."""
     if not proto:
       return None
     obj = LoggerActionParams()
-    if proto.event_params:
-      json_list = []
-      for j in proto.event_params:
-        json_list.append(KeyValue.from_proto(j))
-      obj.event_params = json_list
-    obj.is_start = get_proto_value(proto.is_start)
+    if proto.HasField('is_start'):
+      obj.is_start = proto.is_start
+    for obj_event_params in proto.event_params:
+      obj.event_params.append(KeyValue.from_proto(obj_event_params))
     return obj
 
 
@@ -6416,6 +7904,12 @@ class MachineDescription:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MachineDescription':
+    """Convert MachineDescription to proto."""
+    proto = logs_pb2.MachineDescription()
+    proto.interfaces.extend([v.to_proto() for v in self.interfaces])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MachineDescription':
     """Convert JSON to type object."""
@@ -6437,16 +7931,13 @@ class MachineDescription:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MachineDescription) -> 'MachineDescription':
+  def from_proto(proto: logs_pb2.MachineDescription) -> Optional['MachineDescription']:
     """Convert MachineDescription proto to type object."""
     if not proto:
       return None
     obj = MachineDescription()
-    if proto.interfaces:
-      json_list = []
-      for j in proto.interfaces:
-        json_list.append(MachineInterface.from_proto(j))
-      obj.interfaces = json_list
+    for obj_interfaces in proto.interfaces:
+      obj.interfaces.append(MachineInterface.from_proto(obj_interfaces))
     return obj
 
 
@@ -6524,6 +8015,24 @@ class MachineInterface:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MachineInterface':
+    """Convert MachineInterface to proto."""
+    proto = logs_pb2.MachineInterface()
+    if self.py_type:
+      proto.type = self.py_type
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    proto.keys.extend(self.keys)
+    if self.replaces:
+      proto.replaces = self.replaces
+    if self.stop_propagation:
+      proto.stop_propagation = self.stop_propagation
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MachineInterface':
     """Convert JSON to type object."""
@@ -6569,22 +8078,25 @@ class MachineInterface:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MachineInterface) -> 'MachineInterface':
+  def from_proto(proto: logs_pb2.MachineInterface) -> Optional['MachineInterface']:
     """Convert MachineInterface proto to type object."""
     if not proto:
       return None
     obj = MachineInterface()
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    if proto.keys:
-      json_list = []
-      for j in proto.keys:
-        json_list.append(j)
-      obj.keys = json_list
-    obj.py_type = get_proto_value(proto.type)
-    obj.replaces = get_proto_value(proto.replaces)
-    obj.stop_propagation = get_proto_value(proto.stop_propagation)
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
+    for obj_keys in proto.keys:
+      obj.keys.append(obj_keys)
+    if proto.HasField('replaces'):
+      obj.replaces = proto.replaces
+    if proto.HasField('stop_propagation'):
+      obj.stop_propagation = proto.stop_propagation
     return obj
 
 
@@ -6616,6 +8128,12 @@ class MachineInterfaces:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MachineInterfaces':
+    """Convert MachineInterfaces to proto."""
+    proto = logs_pb2.MachineInterfaces()
+    proto.interfaces.extend([v.to_proto() for v in self.interfaces])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MachineInterfaces':
     """Convert JSON to type object."""
@@ -6637,16 +8155,13 @@ class MachineInterfaces:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MachineInterfaces) -> 'MachineInterfaces':
+  def from_proto(proto: logs_pb2.MachineInterfaces) -> Optional['MachineInterfaces']:
     """Convert MachineInterfaces proto to type object."""
     if not proto:
       return None
     obj = MachineInterfaces()
-    if proto.interfaces:
-      json_list = []
-      for j in proto.interfaces:
-        json_list.append(MachineInterface.from_proto(j))
-      obj.interfaces = json_list
+    for obj_interfaces in proto.interfaces:
+      obj.interfaces.append(MachineInterface.from_proto(obj_interfaces))
     return obj
 
 
@@ -6670,6 +8185,13 @@ class Measurement:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Measurement':
+    """Convert Measurement to proto."""
+    proto = logs_pb2.Measurement()
+    if self.seconds:
+      proto.seconds = self.seconds
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Measurement':
     """Convert JSON to type object."""
@@ -6687,12 +8209,13 @@ class Measurement:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Measurement) -> 'Measurement':
+  def from_proto(proto: logs_pb2.Measurement) -> Optional['Measurement']:
     """Convert Measurement proto to type object."""
     if not proto:
       return None
     obj = Measurement()
-    obj.seconds = get_proto_value(proto.seconds)
+    if proto.HasField('seconds'):
+      obj.seconds = proto.seconds
     return obj
 
 
@@ -6742,6 +8265,22 @@ class MessageLastTimestamp:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MessageLastTimestamp':
+    """Convert MessageLastTimestamp to proto."""
+    proto = logs_pb2.MessageLastTimestamp()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    if self.key:
+      proto.key = self.key
+    if self.last_ts:
+      proto.last_ts.seconds = int(self.last_ts / 1000)
+      proto.last_ts.nanos = int(self.last_ts % 1000) * 1000000
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MessageLastTimestamp':
     """Convert JSON to type object."""
@@ -6775,16 +8314,21 @@ class MessageLastTimestamp:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MessageLastTimestamp) -> 'MessageLastTimestamp':
+  def from_proto(proto: logs_pb2.MessageLastTimestamp) -> Optional['MessageLastTimestamp']:
     """Convert MessageLastTimestamp proto to type object."""
     if not proto:
       return None
     obj = MessageLastTimestamp()
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.key = get_proto_value(proto.key)
-    obj.last_ts = get_proto_value(proto.last_ts)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
+    if proto.HasField('key'):
+      obj.key = proto.key
+    if proto.HasField('last_ts'):
+      obj.last_ts = int(proto.last_ts.seconds * 1000) + int(proto.last_ts.nanos / 1000000)
     return obj
 
 
@@ -6833,6 +8377,19 @@ class Metadata:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Metadata':
+    """Convert Metadata to proto."""
+    proto = logs_pb2.Metadata()
+    if self.comment:
+      proto.comment = self.comment
+    if self.begin_file:
+      proto.begin_file = self.begin_file
+    if self.end_file:
+      proto.end_file = self.end_file
+    if self.real_time_logs:
+      proto.real_time_logs = self.real_time_logs
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Metadata':
     """Convert JSON to type object."""
@@ -6862,15 +8419,19 @@ class Metadata:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Metadata) -> 'Metadata':
+  def from_proto(proto: logs_pb2.Metadata) -> Optional['Metadata']:
     """Convert Metadata proto to type object."""
     if not proto:
       return None
     obj = Metadata()
-    obj.begin_file = get_proto_value(proto.begin_file)
-    obj.comment = get_proto_value(proto.comment)
-    obj.end_file = get_proto_value(proto.end_file)
-    obj.real_time_logs = get_proto_value(proto.real_time_logs)
+    if proto.HasField('comment'):
+      obj.comment = proto.comment
+    if proto.HasField('begin_file'):
+      obj.begin_file = proto.begin_file
+    if proto.HasField('end_file'):
+      obj.end_file = proto.end_file
+    if proto.HasField('real_time_logs'):
+      obj.real_time_logs = proto.real_time_logs
     return obj
 
 
@@ -6908,6 +8469,14 @@ class Metric:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Metric':
+    """Convert Metric to proto."""
+    proto = logs_pb2.Metric()
+    if self.metric_value:
+      proto.value.CopyFrom(self.metric_value.to_proto())
+    proto.labels.extend([v.to_proto() for v in self.labels])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Metric':
     """Convert JSON to type object."""
@@ -6933,17 +8502,15 @@ class Metric:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Metric) -> 'Metric':
+  def from_proto(proto: logs_pb2.Metric) -> Optional['Metric']:
     """Convert Metric proto to type object."""
     if not proto:
       return None
     obj = Metric()
-    if proto.labels:
-      json_list = []
-      for j in proto.labels:
-        json_list.append(KeyValue.from_proto(j))
-      obj.labels = json_list
-    obj.metric_value = KeyValue.from_proto(get_proto_field(proto, 'value'))
+    if proto.HasField('value'):
+      obj.metric_value = KeyValue.from_proto(proto.value)
+    for obj_labels in proto.labels:
+      obj.labels.append(KeyValue.from_proto(obj_labels))
     return obj
 
 
@@ -6974,6 +8541,12 @@ class MoveJPathArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MoveJPathArgs':
+    """Convert MoveJPathArgs to proto."""
+    proto = logs_pb2.MoveJPathArgs()
+    proto.waypoints.extend([v.to_proto() for v in self.waypoints])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MoveJPathArgs':
     """Convert JSON to type object."""
@@ -6995,16 +8568,13 @@ class MoveJPathArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MoveJPathArgs) -> 'MoveJPathArgs':
+  def from_proto(proto: logs_pb2.MoveJPathArgs) -> Optional['MoveJPathArgs']:
     """Convert MoveJPathArgs proto to type object."""
     if not proto:
       return None
     obj = MoveJPathArgs()
-    if proto.waypoints:
-      json_list = []
-      for j in proto.waypoints:
-        json_list.append(MoveJWaypointArgs.from_proto(j))
-      obj.waypoints = json_list
+    for obj_waypoints in proto.waypoints:
+      obj.waypoints.append(MoveJWaypointArgs.from_proto(obj_waypoints))
     return obj
 
 
@@ -7138,6 +8708,28 @@ class MoveJWaypointArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MoveJWaypointArgs':
+    """Convert MoveJWaypointArgs to proto."""
+    proto = logs_pb2.MoveJWaypointArgs()
+    proto.rotation.extend(self.rotation)
+    if self.blend_radius:
+      proto.blend_radius = self.blend_radius
+    if self.velocity:
+      proto.velocity = self.velocity
+    if self.acceleration:
+      proto.acceleration = self.acceleration
+    if self.limits:
+      proto.limits.CopyFrom(self.limits.to_proto())
+    if self.servo:
+      proto.servo = self.servo
+    if self.servo_t_secs:
+      proto.servo_t_secs = self.servo_t_secs
+    if self.servo_lookahead_time_secs:
+      proto.servo_lookahead_time_secs = self.servo_lookahead_time_secs
+    if self.servo_gain:
+      proto.servo_gain = self.servo_gain
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MoveJWaypointArgs':
     """Convert JSON to type object."""
@@ -7191,24 +8783,29 @@ class MoveJWaypointArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MoveJWaypointArgs) -> 'MoveJWaypointArgs':
+  def from_proto(proto: logs_pb2.MoveJWaypointArgs) -> Optional['MoveJWaypointArgs']:
     """Convert MoveJWaypointArgs proto to type object."""
     if not proto:
       return None
     obj = MoveJWaypointArgs()
-    obj.acceleration = get_proto_value(proto.acceleration)
-    obj.blend_radius = get_proto_value(proto.blend_radius)
-    obj.limits = Limits.from_proto(get_proto_field(proto, 'limits'))
-    if proto.rotation:
-      json_list = []
-      for j in proto.rotation:
-        json_list.append(j)
-      obj.rotation = json_list
-    obj.servo = get_proto_value(proto.servo)
-    obj.servo_gain = get_proto_value(proto.servo_gain)
-    obj.servo_lookahead_time_secs = get_proto_value(proto.servo_lookahead_time_secs)
-    obj.servo_t_secs = get_proto_value(proto.servo_t_secs)
-    obj.velocity = get_proto_value(proto.velocity)
+    for obj_rotation in proto.rotation:
+      obj.rotation.append(obj_rotation)
+    if proto.HasField('blend_radius'):
+      obj.blend_radius = proto.blend_radius
+    if proto.HasField('velocity'):
+      obj.velocity = proto.velocity
+    if proto.HasField('acceleration'):
+      obj.acceleration = proto.acceleration
+    if proto.HasField('limits'):
+      obj.limits = Limits.from_proto(proto.limits)
+    if proto.HasField('servo'):
+      obj.servo = proto.servo
+    if proto.HasField('servo_t_secs'):
+      obj.servo_t_secs = proto.servo_t_secs
+    if proto.HasField('servo_lookahead_time_secs'):
+      obj.servo_lookahead_time_secs = proto.servo_lookahead_time_secs
+    if proto.HasField('servo_gain'):
+      obj.servo_gain = proto.servo_gain
     return obj
 
 
@@ -7239,6 +8836,12 @@ class MoveLPathArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MoveLPathArgs':
+    """Convert MoveLPathArgs to proto."""
+    proto = logs_pb2.MoveLPathArgs()
+    proto.waypoints.extend([v.to_proto() for v in self.waypoints])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MoveLPathArgs':
     """Convert JSON to type object."""
@@ -7260,16 +8863,13 @@ class MoveLPathArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MoveLPathArgs) -> 'MoveLPathArgs':
+  def from_proto(proto: logs_pb2.MoveLPathArgs) -> Optional['MoveLPathArgs']:
     """Convert MoveLPathArgs proto to type object."""
     if not proto:
       return None
     obj = MoveLPathArgs()
-    if proto.waypoints:
-      json_list = []
-      for j in proto.waypoints:
-        json_list.append(MoveLWaypointArgs.from_proto(j))
-      obj.waypoints = json_list
+    for obj_waypoints in proto.waypoints:
+      obj.waypoints.append(MoveLWaypointArgs.from_proto(obj_waypoints))
     return obj
 
 
@@ -7338,6 +8938,22 @@ class MoveLWaypointArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MoveLWaypointArgs':
+    """Convert MoveLWaypointArgs to proto."""
+    proto = logs_pb2.MoveLWaypointArgs()
+    proto.rotation.extend(self.rotation)
+    if self.blend_radius:
+      proto.blend_radius = self.blend_radius
+    if self.velocity:
+      proto.velocity = self.velocity
+    if self.acceleration:
+      proto.acceleration = self.acceleration
+    if self.limits:
+      proto.limits.CopyFrom(self.limits.to_proto())
+    if self.servo:
+      proto.servo = self.servo
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MoveLWaypointArgs':
     """Convert JSON to type object."""
@@ -7379,21 +8995,23 @@ class MoveLWaypointArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MoveLWaypointArgs) -> 'MoveLWaypointArgs':
+  def from_proto(proto: logs_pb2.MoveLWaypointArgs) -> Optional['MoveLWaypointArgs']:
     """Convert MoveLWaypointArgs proto to type object."""
     if not proto:
       return None
     obj = MoveLWaypointArgs()
-    obj.acceleration = get_proto_value(proto.acceleration)
-    obj.blend_radius = get_proto_value(proto.blend_radius)
-    obj.limits = Limits.from_proto(get_proto_field(proto, 'limits'))
-    if proto.rotation:
-      json_list = []
-      for j in proto.rotation:
-        json_list.append(j)
-      obj.rotation = json_list
-    obj.servo = get_proto_value(proto.servo)
-    obj.velocity = get_proto_value(proto.velocity)
+    for obj_rotation in proto.rotation:
+      obj.rotation.append(obj_rotation)
+    if proto.HasField('blend_radius'):
+      obj.blend_radius = proto.blend_radius
+    if proto.HasField('velocity'):
+      obj.velocity = proto.velocity
+    if proto.HasField('acceleration'):
+      obj.acceleration = proto.acceleration
+    if proto.HasField('limits'):
+      obj.limits = Limits.from_proto(proto.limits)
+    if proto.HasField('servo'):
+      obj.servo = proto.servo
     return obj
 
 
@@ -7424,6 +9042,12 @@ class MovePosePathArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MovePosePathArgs':
+    """Convert MovePosePathArgs to proto."""
+    proto = logs_pb2.MovePosePathArgs()
+    proto.waypoints.extend([v.to_proto() for v in self.waypoints])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MovePosePathArgs':
     """Convert JSON to type object."""
@@ -7445,16 +9069,13 @@ class MovePosePathArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MovePosePathArgs) -> 'MovePosePathArgs':
+  def from_proto(proto: logs_pb2.MovePosePathArgs) -> Optional['MovePosePathArgs']:
     """Convert MovePosePathArgs proto to type object."""
     if not proto:
       return None
     obj = MovePosePathArgs()
-    if proto.waypoints:
-      json_list = []
-      for j in proto.waypoints:
-        json_list.append(MovePoseWaypointArgs.from_proto(j))
-      obj.waypoints = json_list
+    for obj_waypoints in proto.waypoints:
+      obj.waypoints.append(MovePoseWaypointArgs.from_proto(obj_waypoints))
     return obj
 
 
@@ -7533,6 +9154,25 @@ class MovePoseWaypointArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.MovePoseWaypointArgs':
+    """Convert MovePoseWaypointArgs to proto."""
+    proto = logs_pb2.MovePoseWaypointArgs()
+    if self.translation:
+      proto.translation.CopyFrom(self.translation.to_proto())
+    if self.rotation:
+      proto.rotation.CopyFrom(self.rotation.to_proto())
+    if self.linear:
+      proto.linear = self.linear
+    if self.blend_radius:
+      proto.blend_radius = self.blend_radius
+    if self.velocity:
+      proto.velocity = self.velocity
+    if self.acceleration:
+      proto.acceleration = self.acceleration
+    if self.limits:
+      proto.limits.CopyFrom(self.limits.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'MovePoseWaypointArgs':
     """Convert JSON to type object."""
@@ -7574,18 +9214,25 @@ class MovePoseWaypointArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.MovePoseWaypointArgs) -> 'MovePoseWaypointArgs':
+  def from_proto(proto: logs_pb2.MovePoseWaypointArgs) -> Optional['MovePoseWaypointArgs']:
     """Convert MovePoseWaypointArgs proto to type object."""
     if not proto:
       return None
     obj = MovePoseWaypointArgs()
-    obj.acceleration = get_proto_value(proto.acceleration)
-    obj.blend_radius = get_proto_value(proto.blend_radius)
-    obj.limits = Limits.from_proto(get_proto_field(proto, 'limits'))
-    obj.linear = get_proto_value(proto.linear)
-    obj.rotation = Vec3d.from_proto(get_proto_field(proto, 'rotation'))
-    obj.translation = Vec3d.from_proto(get_proto_field(proto, 'translation'))
-    obj.velocity = get_proto_value(proto.velocity)
+    if proto.HasField('translation'):
+      obj.translation = Vec3d.from_proto(proto.translation)
+    if proto.HasField('rotation'):
+      obj.rotation = Vec3d.from_proto(proto.rotation)
+    if proto.HasField('linear'):
+      obj.linear = proto.linear
+    if proto.HasField('blend_radius'):
+      obj.blend_radius = proto.blend_radius
+    if proto.HasField('velocity'):
+      obj.velocity = proto.velocity
+    if proto.HasField('acceleration'):
+      obj.acceleration = proto.acceleration
+    if proto.HasField('limits'):
+      obj.limits = Limits.from_proto(proto.limits)
     return obj
 
 
@@ -7641,6 +9288,17 @@ class ObjectState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ObjectState':
+    """Convert ObjectState to proto."""
+    proto = logs_pb2.ObjectState()
+    if self.py_id:
+      proto.id = self.py_id
+    if self.object_name:
+      proto.object_name = self.object_name
+    proto.pose_xyzxyzw.extend(self.pose_xyzxyzw)
+    proto.linear_vel.extend(self.linear_vel)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ObjectState':
     """Convert JSON to type object."""
@@ -7677,23 +9335,19 @@ class ObjectState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ObjectState) -> 'ObjectState':
+  def from_proto(proto: logs_pb2.ObjectState) -> Optional['ObjectState']:
     """Convert ObjectState proto to type object."""
     if not proto:
       return None
     obj = ObjectState()
-    if proto.linear_vel:
-      json_list = []
-      for j in proto.linear_vel:
-        json_list.append(j)
-      obj.linear_vel = json_list
-    obj.object_name = get_proto_value(proto.object_name)
-    if proto.pose_xyzxyzw:
-      json_list = []
-      for j in proto.pose_xyzxyzw:
-        json_list.append(j)
-      obj.pose_xyzxyzw = json_list
-    obj.py_id = get_proto_value(proto.id)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    if proto.HasField('object_name'):
+      obj.object_name = proto.object_name
+    for obj_pose_xyzxyzw in proto.pose_xyzxyzw:
+      obj.pose_xyzxyzw.append(obj_pose_xyzxyzw)
+    for obj_linear_vel in proto.linear_vel:
+      obj.linear_vel.append(obj_linear_vel)
     return obj
 
 
@@ -7828,6 +9482,30 @@ class PickLabel:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.PickLabel':
+    """Convert PickLabel to proto."""
+    proto = logs_pb2.PickLabel()
+    if self.label:
+      proto.label = self.label
+    if self.depth_ts:
+      proto.depth_ts.seconds = int(self.depth_ts / 1000)
+      proto.depth_ts.nanos = int(self.depth_ts % 1000) * 1000000
+    proto.device_data_ref.extend([v.to_proto() for v in self.device_data_ref])
+    proto.user_data_ref.extend([v.to_proto() for v in self.user_data_ref])
+    proto.pose_2d.extend([v.to_proto() for v in self.pose_2d])
+    proto.position_3d.extend([v.to_proto() for v in self.position_3d])
+    proto.quaternion_3d.extend([v.to_proto() for v in self.quaternion_3d])
+    if self.task_code:
+      proto.task_code = self.task_code
+    if self.pick_id:
+      proto.pick_id = self.pick_id
+    proto.tags.extend(self.tags)
+    if self.intent:
+      proto.intent = self.intent
+    if self.success_type:
+      proto.success_type = self.success_type
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'PickLabel':
     """Convert JSON to type object."""
@@ -7908,47 +9586,35 @@ class PickLabel:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.PickLabel) -> 'PickLabel':
+  def from_proto(proto: logs_pb2.PickLabel) -> Optional['PickLabel']:
     """Convert PickLabel proto to type object."""
     if not proto:
       return None
     obj = PickLabel()
-    obj.depth_ts = get_proto_value(proto.depth_ts)
-    if proto.device_data_ref:
-      json_list = []
-      for j in proto.device_data_ref:
-        json_list.append(DeviceDataRef.from_proto(j))
-      obj.device_data_ref = json_list
-    obj.intent = get_proto_value(proto.intent)
-    obj.label = get_proto_value(proto.label)
-    obj.pick_id = get_proto_value(proto.pick_id)
-    if proto.pose_2d:
-      json_list = []
-      for j in proto.pose_2d:
-        json_list.append(Pose2d.from_proto(j))
-      obj.pose_2d = json_list
-    if proto.position_3d:
-      json_list = []
-      for j in proto.position_3d:
-        json_list.append(Vec3d.from_proto(j))
-      obj.position_3d = json_list
-    if proto.quaternion_3d:
-      json_list = []
-      for j in proto.quaternion_3d:
-        json_list.append(Quaternion3d.from_proto(j))
-      obj.quaternion_3d = json_list
-    obj.success_type = get_proto_value(proto.success_type)
-    if proto.tags:
-      json_list = []
-      for j in proto.tags:
-        json_list.append(j)
-      obj.tags = json_list
-    obj.task_code = get_proto_value(proto.task_code)
-    if proto.user_data_ref:
-      json_list = []
-      for j in proto.user_data_ref:
-        json_list.append(DeviceDataRef.from_proto(j))
-      obj.user_data_ref = json_list
+    if proto.HasField('label'):
+      obj.label = proto.label
+    if proto.HasField('depth_ts'):
+      obj.depth_ts = int(proto.depth_ts.seconds * 1000) + int(proto.depth_ts.nanos / 1000000)
+    for obj_device_data_ref in proto.device_data_ref:
+      obj.device_data_ref.append(DeviceDataRef.from_proto(obj_device_data_ref))
+    for obj_user_data_ref in proto.user_data_ref:
+      obj.user_data_ref.append(DeviceDataRef.from_proto(obj_user_data_ref))
+    for obj_pose_2d in proto.pose_2d:
+      obj.pose_2d.append(Pose2d.from_proto(obj_pose_2d))
+    for obj_position_3d in proto.position_3d:
+      obj.position_3d.append(Vec3d.from_proto(obj_position_3d))
+    for obj_quaternion_3d in proto.quaternion_3d:
+      obj.quaternion_3d.append(Quaternion3d.from_proto(obj_quaternion_3d))
+    if proto.HasField('task_code'):
+      obj.task_code = proto.task_code
+    if proto.HasField('pick_id'):
+      obj.pick_id = proto.pick_id
+    for obj_tags in proto.tags:
+      obj.tags.append(obj_tags)
+    if proto.HasField('intent'):
+      obj.intent = proto.intent
+    if proto.HasField('success_type'):
+      obj.success_type = proto.success_type
     return obj
 
 
@@ -7978,6 +9644,15 @@ class PickPoint:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.PickPoint':
+    """Convert PickPoint to proto."""
+    proto = logs_pb2.PickPoint()
+    if self.x:
+      proto.x = self.x
+    if self.y:
+      proto.y = self.y
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'PickPoint':
     """Convert JSON to type object."""
@@ -7999,13 +9674,15 @@ class PickPoint:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.PickPoint) -> 'PickPoint':
+  def from_proto(proto: logs_pb2.PickPoint) -> Optional['PickPoint']:
     """Convert PickPoint proto to type object."""
     if not proto:
       return None
     obj = PickPoint()
-    obj.x = get_proto_value(proto.x)
-    obj.y = get_proto_value(proto.y)
+    if proto.HasField('x'):
+      obj.x = proto.x
+    if proto.HasField('y'):
+      obj.y = proto.y
     return obj
 
 
@@ -8037,6 +9714,12 @@ class PipelineDescription:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.PipelineDescription':
+    """Convert PipelineDescription to proto."""
+    proto = logs_pb2.PipelineDescription()
+    proto.descriptions.extend([v.to_proto() for v in self.descriptions])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'PipelineDescription':
     """Convert JSON to type object."""
@@ -8058,16 +9741,13 @@ class PipelineDescription:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.PipelineDescription) -> 'PipelineDescription':
+  def from_proto(proto: logs_pb2.PipelineDescription) -> Optional['PipelineDescription']:
     """Convert PipelineDescription proto to type object."""
     if not proto:
       return None
     obj = PipelineDescription()
-    if proto.descriptions:
-      json_list = []
-      for j in proto.descriptions:
-        json_list.append(MachineDescription.from_proto(j))
-      obj.descriptions = json_list
+    for obj_descriptions in proto.descriptions:
+      obj.descriptions.append(MachineDescription.from_proto(obj_descriptions))
     return obj
 
 
@@ -8130,6 +9810,16 @@ class PlaceLabel:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.PlaceLabel':
+    """Convert PlaceLabel to proto."""
+    proto = logs_pb2.PlaceLabel()
+    if self.label:
+      proto.label = self.label
+    proto.pose_2d.extend([v.to_proto() for v in self.pose_2d])
+    proto.position_3d.extend([v.to_proto() for v in self.position_3d])
+    proto.quaternion_3d.extend([v.to_proto() for v in self.quaternion_3d])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'PlaceLabel':
     """Convert JSON to type object."""
@@ -8169,27 +9859,19 @@ class PlaceLabel:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.PlaceLabel) -> 'PlaceLabel':
+  def from_proto(proto: logs_pb2.PlaceLabel) -> Optional['PlaceLabel']:
     """Convert PlaceLabel proto to type object."""
     if not proto:
       return None
     obj = PlaceLabel()
-    obj.label = get_proto_value(proto.label)
-    if proto.pose_2d:
-      json_list = []
-      for j in proto.pose_2d:
-        json_list.append(Pose2d.from_proto(j))
-      obj.pose_2d = json_list
-    if proto.position_3d:
-      json_list = []
-      for j in proto.position_3d:
-        json_list.append(Vec3d.from_proto(j))
-      obj.position_3d = json_list
-    if proto.quaternion_3d:
-      json_list = []
-      for j in proto.quaternion_3d:
-        json_list.append(Quaternion3d.from_proto(j))
-      obj.quaternion_3d = json_list
+    if proto.HasField('label'):
+      obj.label = proto.label
+    for obj_pose_2d in proto.pose_2d:
+      obj.pose_2d.append(Pose2d.from_proto(obj_pose_2d))
+    for obj_position_3d in proto.position_3d:
+      obj.position_3d.append(Vec3d.from_proto(obj_position_3d))
+    for obj_quaternion_3d in proto.quaternion_3d:
+      obj.quaternion_3d.append(Quaternion3d.from_proto(obj_quaternion_3d))
     return obj
 
 
@@ -8239,6 +9921,20 @@ class PointMeasurement:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.PointMeasurement':
+    """Convert PointMeasurement to proto."""
+    proto = logs_pb2.PointMeasurement()
+    if self.timestamp:
+      proto.timestamp.seconds = int(self.timestamp / 1000)
+      proto.timestamp.nanos = int(self.timestamp % 1000) * 1000000
+    if self.space:
+      proto.space = self.space
+    if self.name:
+      proto.name = self.name
+    if self.value:
+      proto.value.CopyFrom(self.value.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'PointMeasurement':
     """Convert JSON to type object."""
@@ -8268,15 +9964,19 @@ class PointMeasurement:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.PointMeasurement) -> 'PointMeasurement':
+  def from_proto(proto: logs_pb2.PointMeasurement) -> Optional['PointMeasurement']:
     """Convert PointMeasurement proto to type object."""
     if not proto:
       return None
     obj = PointMeasurement()
-    obj.name = get_proto_value(proto.name)
-    obj.space = get_proto_value(proto.space)
-    obj.timestamp = get_proto_value(proto.timestamp)
-    obj.value = Measurement.from_proto(get_proto_field(proto, 'value'))
+    if proto.HasField('timestamp'):
+      obj.timestamp = int(proto.timestamp.seconds * 1000) + int(proto.timestamp.nanos / 1000000)
+    if proto.HasField('space'):
+      obj.space = proto.space
+    if proto.HasField('name'):
+      obj.name = proto.name
+    if proto.HasField('value'):
+      obj.value = Measurement.from_proto(proto.value)
     return obj
 
 
@@ -8306,6 +10006,15 @@ class Pose2d:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Pose2d':
+    """Convert Pose2d to proto."""
+    proto = logs_pb2.Pose2d()
+    if self.x:
+      proto.x = self.x
+    if self.y:
+      proto.y = self.y
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Pose2d':
     """Convert JSON to type object."""
@@ -8327,13 +10036,15 @@ class Pose2d:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Pose2d) -> 'Pose2d':
+  def from_proto(proto: logs_pb2.Pose2d) -> Optional['Pose2d']:
     """Convert Pose2d proto to type object."""
     if not proto:
       return None
     obj = Pose2d()
-    obj.x = get_proto_value(proto.x)
-    obj.y = get_proto_value(proto.y)
+    if proto.HasField('x'):
+      obj.x = proto.x
+    if proto.HasField('y'):
+      obj.y = proto.y
     return obj
 
 
@@ -8375,6 +10086,19 @@ class Quaternion3d:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Quaternion3d':
+    """Convert Quaternion3d to proto."""
+    proto = logs_pb2.Quaternion3d()
+    if self.w:
+      proto.w = self.w
+    if self.x:
+      proto.x = self.x
+    if self.y:
+      proto.y = self.y
+    if self.z:
+      proto.z = self.z
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Quaternion3d':
     """Convert JSON to type object."""
@@ -8404,15 +10128,19 @@ class Quaternion3d:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Quaternion3d) -> 'Quaternion3d':
+  def from_proto(proto: logs_pb2.Quaternion3d) -> Optional['Quaternion3d']:
     """Convert Quaternion3d proto to type object."""
     if not proto:
       return None
     obj = Quaternion3d()
-    obj.w = get_proto_value(proto.w)
-    obj.x = get_proto_value(proto.x)
-    obj.y = get_proto_value(proto.y)
-    obj.z = get_proto_value(proto.z)
+    if proto.HasField('w'):
+      obj.w = proto.w
+    if proto.HasField('x'):
+      obj.x = proto.x
+    if proto.HasField('y'):
+      obj.y = proto.y
+    if proto.HasField('z'):
+      obj.z = proto.z
     return obj
 
 
@@ -8438,6 +10166,13 @@ class RawArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.RawArgs':
+    """Convert RawArgs to proto."""
+    proto = logs_pb2.RawArgs()
+    if self.text:
+      proto.text = self.text
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'RawArgs':
     """Convert JSON to type object."""
@@ -8455,12 +10190,13 @@ class RawArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.RawArgs) -> 'RawArgs':
+  def from_proto(proto: logs_pb2.RawArgs) -> Optional['RawArgs']:
     """Convert RawArgs proto to type object."""
     if not proto:
       return None
     obj = RawArgs()
-    obj.text = get_proto_value(proto.text)
+    if proto.HasField('text'):
+      obj.text = proto.text
     return obj
 
 
@@ -8525,6 +10261,20 @@ class ReachScript:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScript':
+    """Convert ReachScript to proto."""
+    proto = logs_pb2.ReachScript()
+    if self.preemptive:
+      proto.preemptive = self.preemptive
+    proto.commands.extend([v.to_proto() for v in self.commands])
+    if self.version:
+      proto.version = self.version
+    if self.preemptive_reason:
+      proto.preemptive_reason = self.preemptive_reason
+    if self.calibration_requirement:
+      proto.calibration_requirement.CopyFrom(self.calibration_requirement.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScript':
     """Convert JSON to type object."""
@@ -8562,20 +10312,21 @@ class ReachScript:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScript) -> 'ReachScript':
+  def from_proto(proto: logs_pb2.ReachScript) -> Optional['ReachScript']:
     """Convert ReachScript proto to type object."""
     if not proto:
       return None
     obj = ReachScript()
-    obj.calibration_requirement = ReachScriptCalibrationRequirement.from_proto(get_proto_field(proto, 'calibration_requirement'))
-    if proto.commands:
-      json_list = []
-      for j in proto.commands:
-        json_list.append(ReachScriptCommand.from_proto(j))
-      obj.commands = json_list
-    obj.preemptive = get_proto_value(proto.preemptive)
-    obj.preemptive_reason = get_proto_value(proto.preemptive_reason)
-    obj.version = get_proto_value(proto.version)
+    if proto.HasField('preemptive'):
+      obj.preemptive = proto.preemptive
+    for obj_commands in proto.commands:
+      obj.commands.append(ReachScriptCommand.from_proto(obj_commands))
+    if proto.HasField('version'):
+      obj.version = proto.version
+    if proto.HasField('preemptive_reason'):
+      obj.preemptive_reason = proto.preemptive_reason
+    if proto.HasField('calibration_requirement'):
+      obj.calibration_requirement = ReachScriptCalibrationRequirement.from_proto(proto.calibration_requirement)
     return obj
 
 
@@ -8628,6 +10379,17 @@ class ReachScriptBooleanExpression:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptBooleanExpression':
+    """Convert ReachScriptBooleanExpression to proto."""
+    proto = logs_pb2.ReachScriptBooleanExpression()
+    if self.op:
+      proto.op = self.op
+    if self.arg1:
+      proto.arg1.CopyFrom(self.arg1.to_proto())
+    if self.arg2:
+      proto.arg2.CopyFrom(self.arg2.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptBooleanExpression':
     """Convert JSON to type object."""
@@ -8653,14 +10415,17 @@ class ReachScriptBooleanExpression:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptBooleanExpression) -> 'ReachScriptBooleanExpression':
+  def from_proto(proto: logs_pb2.ReachScriptBooleanExpression) -> Optional['ReachScriptBooleanExpression']:
     """Convert ReachScriptBooleanExpression proto to type object."""
     if not proto:
       return None
     obj = ReachScriptBooleanExpression()
-    obj.arg1 = ReachScriptExpression.from_proto(get_proto_field(proto, 'arg1'))
-    obj.arg2 = ReachScriptExpression.from_proto(get_proto_field(proto, 'arg2'))
-    obj.op = get_proto_value(proto.op)
+    if proto.HasField('op'):
+      obj.op = proto.op
+    if proto.HasField('arg1'):
+      obj.arg1 = ReachScriptExpression.from_proto(proto.arg1)
+    if proto.HasField('arg2'):
+      obj.arg2 = ReachScriptExpression.from_proto(proto.arg2)
     return obj
 
 
@@ -8687,6 +10452,13 @@ class ReachScriptCalibrationRequirement:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptCalibrationRequirement':
+    """Convert ReachScriptCalibrationRequirement to proto."""
+    proto = logs_pb2.ReachScriptCalibrationRequirement()
+    if self.allow_uncalibrated:
+      proto.allow_uncalibrated = self.allow_uncalibrated
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptCalibrationRequirement':
     """Convert JSON to type object."""
@@ -8704,12 +10476,13 @@ class ReachScriptCalibrationRequirement:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptCalibrationRequirement) -> 'ReachScriptCalibrationRequirement':
+  def from_proto(proto: logs_pb2.ReachScriptCalibrationRequirement) -> Optional['ReachScriptCalibrationRequirement']:
     """Convert ReachScriptCalibrationRequirement proto to type object."""
     if not proto:
       return None
     obj = ReachScriptCalibrationRequirement()
-    obj.allow_uncalibrated = get_proto_value(proto.allow_uncalibrated)
+    if proto.HasField('allow_uncalibrated'):
+      obj.allow_uncalibrated = proto.allow_uncalibrated
     return obj
 
 
@@ -8759,6 +10532,16 @@ class ReachScriptCapability:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptCapability':
+    """Convert ReachScriptCapability to proto."""
+    proto = logs_pb2.ReachScriptCapability()
+    if self.py_type:
+      proto.type = self.py_type
+    if self.name:
+      proto.name = self.name
+    proto.state.extend([v.to_proto() for v in self.state])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptCapability':
     """Convert JSON to type object."""
@@ -8788,18 +10571,17 @@ class ReachScriptCapability:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptCapability) -> 'ReachScriptCapability':
+  def from_proto(proto: logs_pb2.ReachScriptCapability) -> Optional['ReachScriptCapability']:
     """Convert ReachScriptCapability proto to type object."""
     if not proto:
       return None
     obj = ReachScriptCapability()
-    obj.name = get_proto_value(proto.name)
-    obj.py_type = get_proto_value(proto.type)
-    if proto.state:
-      json_list = []
-      for j in proto.state:
-        json_list.append(CapabilityState.from_proto(j))
-      obj.state = json_list
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    if proto.HasField('name'):
+      obj.name = proto.name
+    for obj_state in proto.state:
+      obj.state.append(CapabilityState.from_proto(obj_state))
     return obj
 
 
@@ -8921,6 +10703,43 @@ class ReachScriptCommand:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptCommand':
+    """Convert ReachScriptCommand to proto."""
+    proto = logs_pb2.ReachScriptCommand()
+    if self.set_radial_speed:
+      proto.set_radial_speed.CopyFrom(self.set_radial_speed.to_proto())
+    if self.set_blend_radius:
+      proto.set_blend_radius.CopyFrom(self.set_blend_radius.to_proto())
+    if self.move_j_path:
+      proto.move_j_path.CopyFrom(self.move_j_path.to_proto())
+    if self.move_l_path:
+      proto.move_l_path.CopyFrom(self.move_l_path.to_proto())
+    if self.stop_j:
+      proto.stop_j.CopyFrom(self.stop_j.to_proto())
+    if self.set_digital_out:
+      proto.set_digital_out.CopyFrom(self.set_digital_out.to_proto())
+    if self.set_analog_out:
+      proto.set_analog_out.CopyFrom(self.set_analog_out.to_proto())
+    if self.set_tool_digital_out:
+      proto.set_tool_digital_out.CopyFrom(self.set_tool_digital_out.to_proto())
+    if self.sleep:
+      proto.sleep.CopyFrom(self.sleep.to_proto())
+    if self.raw:
+      proto.raw.CopyFrom(self.raw.to_proto())
+    if self.acquire_image:
+      proto.acquire_image.CopyFrom(self.acquire_image.to_proto())
+    if self.set_output:
+      proto.set_output.CopyFrom(self.set_output.to_proto())
+    if self.sync:
+      proto.sync.CopyFrom(self.sync.to_proto())
+    if self.move_pose_path:
+      proto.move_pose_path.CopyFrom(self.move_pose_path.to_proto())
+    if self.wait:
+      proto.wait.CopyFrom(self.wait.to_proto())
+    if self.controller_name:
+      proto.controller_name = self.controller_name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptCommand':
     """Convert JSON to type object."""
@@ -8998,27 +10817,43 @@ class ReachScriptCommand:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptCommand) -> 'ReachScriptCommand':
+  def from_proto(proto: logs_pb2.ReachScriptCommand) -> Optional['ReachScriptCommand']:
     """Convert ReachScriptCommand proto to type object."""
     if not proto:
       return None
     obj = ReachScriptCommand()
-    obj.acquire_image = AcquireImageArgs.from_proto(get_proto_field(proto, 'acquire_image'))
-    obj.controller_name = get_proto_value(proto.controller_name)
-    obj.move_j_path = MoveJPathArgs.from_proto(get_proto_field(proto, 'move_j_path'))
-    obj.move_l_path = MoveLPathArgs.from_proto(get_proto_field(proto, 'move_l_path'))
-    obj.move_pose_path = MovePosePathArgs.from_proto(get_proto_field(proto, 'move_pose_path'))
-    obj.raw = RawArgs.from_proto(get_proto_field(proto, 'raw'))
-    obj.set_analog_out = SetAnalogOutArgs.from_proto(get_proto_field(proto, 'set_analog_out'))
-    obj.set_blend_radius = SetBlendRadiusArgs.from_proto(get_proto_field(proto, 'set_blend_radius'))
-    obj.set_digital_out = SetDigitalOutArgs.from_proto(get_proto_field(proto, 'set_digital_out'))
-    obj.set_output = SetOutput.from_proto(get_proto_field(proto, 'set_output'))
-    obj.set_radial_speed = SetRadialSpeedArgs.from_proto(get_proto_field(proto, 'set_radial_speed'))
-    obj.set_tool_digital_out = SetDigitalOutArgs.from_proto(get_proto_field(proto, 'set_tool_digital_out'))
-    obj.sleep = SleepArgs.from_proto(get_proto_field(proto, 'sleep'))
-    obj.stop_j = StopJArgs.from_proto(get_proto_field(proto, 'stop_j'))
-    obj.sync = SyncArgs.from_proto(get_proto_field(proto, 'sync'))
-    obj.wait = WaitArgs.from_proto(get_proto_field(proto, 'wait'))
+    if proto.HasField('set_radial_speed'):
+      obj.set_radial_speed = SetRadialSpeedArgs.from_proto(proto.set_radial_speed)
+    if proto.HasField('set_blend_radius'):
+      obj.set_blend_radius = SetBlendRadiusArgs.from_proto(proto.set_blend_radius)
+    if proto.HasField('move_j_path'):
+      obj.move_j_path = MoveJPathArgs.from_proto(proto.move_j_path)
+    if proto.HasField('move_l_path'):
+      obj.move_l_path = MoveLPathArgs.from_proto(proto.move_l_path)
+    if proto.HasField('stop_j'):
+      obj.stop_j = StopJArgs.from_proto(proto.stop_j)
+    if proto.HasField('set_digital_out'):
+      obj.set_digital_out = SetDigitalOutArgs.from_proto(proto.set_digital_out)
+    if proto.HasField('set_analog_out'):
+      obj.set_analog_out = SetAnalogOutArgs.from_proto(proto.set_analog_out)
+    if proto.HasField('set_tool_digital_out'):
+      obj.set_tool_digital_out = SetDigitalOutArgs.from_proto(proto.set_tool_digital_out)
+    if proto.HasField('sleep'):
+      obj.sleep = SleepArgs.from_proto(proto.sleep)
+    if proto.HasField('raw'):
+      obj.raw = RawArgs.from_proto(proto.raw)
+    if proto.HasField('acquire_image'):
+      obj.acquire_image = AcquireImageArgs.from_proto(proto.acquire_image)
+    if proto.HasField('set_output'):
+      obj.set_output = SetOutput.from_proto(proto.set_output)
+    if proto.HasField('sync'):
+      obj.sync = SyncArgs.from_proto(proto.sync)
+    if proto.HasField('move_pose_path'):
+      obj.move_pose_path = MovePosePathArgs.from_proto(proto.move_pose_path)
+    if proto.HasField('wait'):
+      obj.wait = WaitArgs.from_proto(proto.wait)
+    if proto.HasField('controller_name'):
+      obj.controller_name = proto.controller_name
     return obj
 
 
@@ -9050,6 +10885,15 @@ class ReachScriptConst:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptConst':
+    """Convert ReachScriptConst to proto."""
+    proto = logs_pb2.ReachScriptConst()
+    if self.capability:
+      proto.capability.CopyFrom(self.capability.to_proto())
+    if self.bool_value:
+      proto.bool_value = self.bool_value
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptConst':
     """Convert JSON to type object."""
@@ -9071,13 +10915,15 @@ class ReachScriptConst:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptConst) -> 'ReachScriptConst':
+  def from_proto(proto: logs_pb2.ReachScriptConst) -> Optional['ReachScriptConst']:
     """Convert ReachScriptConst proto to type object."""
     if not proto:
       return None
     obj = ReachScriptConst()
-    obj.bool_value = get_proto_value(proto.bool_value)
-    obj.capability = ReachScriptCapability.from_proto(get_proto_field(proto, 'capability'))
+    if proto.HasField('capability'):
+      obj.capability = ReachScriptCapability.from_proto(proto.capability)
+    if proto.HasField('bool_value'):
+      obj.bool_value = proto.bool_value
     return obj
 
 
@@ -9119,6 +10965,17 @@ class ReachScriptExpression:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptExpression':
+    """Convert ReachScriptExpression to proto."""
+    proto = logs_pb2.ReachScriptExpression()
+    if self.bool_expr:
+      proto.bool_expr.CopyFrom(self.bool_expr.to_proto())
+    if self.var_expr:
+      proto.var_expr.CopyFrom(self.var_expr.to_proto())
+    if self.const_expr:
+      proto.const_expr.CopyFrom(self.const_expr.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptExpression':
     """Convert JSON to type object."""
@@ -9144,14 +11001,17 @@ class ReachScriptExpression:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptExpression) -> 'ReachScriptExpression':
+  def from_proto(proto: logs_pb2.ReachScriptExpression) -> Optional['ReachScriptExpression']:
     """Convert ReachScriptExpression proto to type object."""
     if not proto:
       return None
     obj = ReachScriptExpression()
-    obj.bool_expr = ReachScriptBooleanExpression.from_proto(get_proto_field(proto, 'bool_expr'))
-    obj.const_expr = ReachScriptConst.from_proto(get_proto_field(proto, 'const_expr'))
-    obj.var_expr = ReachScriptVar.from_proto(get_proto_field(proto, 'var_expr'))
+    if proto.HasField('bool_expr'):
+      obj.bool_expr = ReachScriptBooleanExpression.from_proto(proto.bool_expr)
+    if proto.HasField('var_expr'):
+      obj.var_expr = ReachScriptVar.from_proto(proto.var_expr)
+    if proto.HasField('const_expr'):
+      obj.const_expr = ReachScriptConst.from_proto(proto.const_expr)
     return obj
 
 
@@ -9178,6 +11038,13 @@ class ReachScriptVar:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReachScriptVar':
+    """Convert ReachScriptVar to proto."""
+    proto = logs_pb2.ReachScriptVar()
+    if self.capability:
+      proto.capability.CopyFrom(self.capability.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptVar':
     """Convert JSON to type object."""
@@ -9195,12 +11062,13 @@ class ReachScriptVar:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReachScriptVar) -> 'ReachScriptVar':
+  def from_proto(proto: logs_pb2.ReachScriptVar) -> Optional['ReachScriptVar']:
     """Convert ReachScriptVar proto to type object."""
     if not proto:
       return None
     obj = ReachScriptVar()
-    obj.capability = ReachScriptCapability.from_proto(get_proto_field(proto, 'capability'))
+    if proto.HasField('capability'):
+      obj.capability = ReachScriptCapability.from_proto(proto.capability)
     return obj
 
 
@@ -9233,6 +11101,14 @@ class ReportError:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ReportError':
+    """Convert ReportError to proto."""
+    proto = logs_pb2.ReportError()
+    if self.error:
+      proto.error = self.error
+    proto.tags.extend(self.tags)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ReportError':
     """Convert JSON to type object."""
@@ -9258,17 +11134,15 @@ class ReportError:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ReportError) -> 'ReportError':
+  def from_proto(proto: logs_pb2.ReportError) -> Optional['ReportError']:
     """Convert ReportError proto to type object."""
     if not proto:
       return None
     obj = ReportError()
-    obj.error = get_proto_value(proto.error)
-    if proto.tags:
-      json_list = []
-      for j in proto.tags:
-        json_list.append(j)
-      obj.tags = json_list
+    if proto.HasField('error'):
+      obj.error = proto.error
+    for obj_tags in proto.tags:
+      obj.tags.append(obj_tags)
     return obj
 
 
@@ -9292,6 +11166,13 @@ class RobotPowerState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.RobotPowerState':
+    """Convert RobotPowerState to proto."""
+    proto = logs_pb2.RobotPowerState()
+    if self.is_robot_power_on:
+      proto.is_robot_power_on = self.is_robot_power_on
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'RobotPowerState':
     """Convert JSON to type object."""
@@ -9309,12 +11190,13 @@ class RobotPowerState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.RobotPowerState) -> 'RobotPowerState':
+  def from_proto(proto: logs_pb2.RobotPowerState) -> Optional['RobotPowerState']:
     """Convert RobotPowerState proto to type object."""
     if not proto:
       return None
     obj = RobotPowerState()
-    obj.is_robot_power_on = get_proto_value(proto.is_robot_power_on)
+    if proto.HasField('is_robot_power_on'):
+      obj.is_robot_power_on = proto.is_robot_power_on
     return obj
 
 
@@ -9654,6 +11536,68 @@ class RobotState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.RobotState':
+    """Convert RobotState to proto."""
+    proto = logs_pb2.RobotState()
+    proto.pose.extend(self.pose)
+    proto.joints.extend(self.joints)
+    proto.force.extend(self.force)
+    proto.torque.extend(self.torque)
+    if self.robot_dexterity:
+      proto.robot_dexterity = self.robot_dexterity
+    if self.is_robot_power_on:
+      proto.is_robot_power_on = self.is_robot_power_on
+    proto_robot_stop_state = logs_pb2.RobotStopState()
+    if self.is_emergency_stopped:
+      proto_robot_stop_state.is_emergency_stopped = self.is_emergency_stopped
+    if self.is_protective_stopped:
+      proto_robot_stop_state.is_protective_stopped = self.is_protective_stopped
+    if self.is_safeguard_stopped:
+      proto_robot_stop_state.is_safeguard_stopped = self.is_safeguard_stopped
+    if self.is_reduced_mode:
+      proto_robot_stop_state.is_reduced_mode = self.is_reduced_mode
+    if self.safety_message:
+      proto_robot_stop_state.safety_message = self.safety_message
+    proto.robot_stop_state.CopyFrom(proto_robot_stop_state)
+    if self.is_program_running:
+      proto.is_program_running = self.is_program_running
+    proto.digital_in.extend(self.digital_in)
+    proto.sensor_in.extend(self.sensor_in)
+    proto.digital_out.extend(self.digital_out)
+    proto.analog_in.extend(self.analog_in)
+    proto.analog_out.extend(self.analog_out)
+    proto.tool_digital_in.extend(self.tool_digital_in)
+    proto.tool_digital_out.extend(self.tool_digital_out)
+    proto.tool_analog_in.extend(self.tool_analog_in)
+    proto.tool_analog_out.extend(self.tool_analog_out)
+    if self.board_temp_c:
+      proto.board_temp_c = self.board_temp_c
+    if self.robot_voltage_v:
+      proto.robot_voltage_v = self.robot_voltage_v
+    if self.robot_current_a:
+      proto.robot_current_a = self.robot_current_a
+    if self.board_io_current_a:
+      proto.board_io_current_a = self.board_io_current_a
+    if self.tool_temp_c:
+      proto.tool_temp_c = self.tool_temp_c
+    if self.tool_voltage_v:
+      proto.tool_voltage_v = self.tool_voltage_v
+    if self.tool_current_a:
+      proto.tool_current_a = self.tool_current_a
+    proto.joint_voltages_v.extend(self.joint_voltages_v)
+    proto.joint_currents_a.extend(self.joint_currents_a)
+    proto.joint_temps_c.extend(self.joint_temps_c)
+    if self.robot_mode:
+      proto.robot_mode = self.robot_mode
+    if self.program_counter:
+      proto.program_counter = self.program_counter
+    proto.digital_bank.extend([v.to_proto() for v in self.digital_bank])
+    proto.analog_bank.extend([v.to_proto() for v in self.analog_bank])
+    proto.integer_bank.extend([v.to_proto() for v in self.integer_bank])
+    if self.last_terminated_program:
+      proto.last_terminated_program = self.last_terminated_program
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'RobotState':
     """Convert JSON to type object."""
@@ -9873,124 +11817,86 @@ class RobotState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.RobotState) -> 'RobotState':
+  def from_proto(proto: logs_pb2.RobotState) -> Optional['RobotState']:
     """Convert RobotState proto to type object."""
     if not proto:
       return None
     obj = RobotState()
-    if proto.analog_bank:
-      json_list = []
-      for j in proto.analog_bank:
-        json_list.append(AnalogBank.from_proto(j))
-      obj.analog_bank = json_list
-    if proto.analog_in:
-      json_list = []
-      for j in proto.analog_in:
-        json_list.append(j)
-      obj.analog_in = json_list
-    if proto.analog_out:
-      json_list = []
-      for j in proto.analog_out:
-        json_list.append(j)
-      obj.analog_out = json_list
-    obj.board_io_current_a = get_proto_value(proto.board_io_current_a)
-    obj.board_temp_c = get_proto_value(proto.board_temp_c)
-    if proto.digital_bank:
-      json_list = []
-      for j in proto.digital_bank:
-        json_list.append(DigitalBank.from_proto(j))
-      obj.digital_bank = json_list
-    if proto.digital_in:
-      json_list = []
-      for j in proto.digital_in:
-        json_list.append(j)
-      obj.digital_in = json_list
-    if proto.digital_out:
-      json_list = []
-      for j in proto.digital_out:
-        json_list.append(j)
-      obj.digital_out = json_list
-    if proto.force:
-      json_list = []
-      for j in proto.force:
-        json_list.append(j)
-      obj.force = json_list
-    if proto.integer_bank:
-      json_list = []
-      for j in proto.integer_bank:
-        json_list.append(IntegerBank.from_proto(j))
-      obj.integer_bank = json_list
-    obj.is_emergency_stopped = get_proto_value(proto.robot_stop_state.is_emergency_stopped)
-    obj.is_program_running = get_proto_value(proto.is_program_running)
-    obj.is_protective_stopped = get_proto_value(proto.robot_stop_state.is_protective_stopped)
-    obj.is_reduced_mode = get_proto_value(proto.robot_stop_state.is_reduced_mode)
-    obj.is_robot_power_on = get_proto_value(proto.is_robot_power_on)
-    obj.is_safeguard_stopped = get_proto_value(proto.robot_stop_state.is_safeguard_stopped)
-    if proto.joint_currents_a:
-      json_list = []
-      for j in proto.joint_currents_a:
-        json_list.append(j)
-      obj.joint_currents_a = json_list
-    if proto.joint_temps_c:
-      json_list = []
-      for j in proto.joint_temps_c:
-        json_list.append(j)
-      obj.joint_temps_c = json_list
-    if proto.joint_voltages_v:
-      json_list = []
-      for j in proto.joint_voltages_v:
-        json_list.append(j)
-      obj.joint_voltages_v = json_list
-    if proto.joints:
-      json_list = []
-      for j in proto.joints:
-        json_list.append(j)
-      obj.joints = json_list
-    obj.last_terminated_program = get_proto_value(proto.last_terminated_program)
-    if proto.pose:
-      json_list = []
-      for j in proto.pose:
-        json_list.append(j)
-      obj.pose = json_list
-    obj.program_counter = get_proto_value(proto.program_counter)
-    obj.robot_current_a = get_proto_value(proto.robot_current_a)
-    obj.robot_dexterity = get_proto_value(proto.robot_dexterity)
-    obj.robot_mode = get_proto_value(proto.robot_mode)
-    obj.robot_voltage_v = get_proto_value(proto.robot_voltage_v)
-    obj.safety_message = get_proto_value(proto.robot_stop_state.safety_message)
-    if proto.sensor_in:
-      json_list = []
-      for j in proto.sensor_in:
-        json_list.append(j)
-      obj.sensor_in = json_list
-    if proto.tool_analog_in:
-      json_list = []
-      for j in proto.tool_analog_in:
-        json_list.append(j)
-      obj.tool_analog_in = json_list
-    if proto.tool_analog_out:
-      json_list = []
-      for j in proto.tool_analog_out:
-        json_list.append(j)
-      obj.tool_analog_out = json_list
-    obj.tool_current_a = get_proto_value(proto.tool_current_a)
-    if proto.tool_digital_in:
-      json_list = []
-      for j in proto.tool_digital_in:
-        json_list.append(j)
-      obj.tool_digital_in = json_list
-    if proto.tool_digital_out:
-      json_list = []
-      for j in proto.tool_digital_out:
-        json_list.append(j)
-      obj.tool_digital_out = json_list
-    obj.tool_temp_c = get_proto_value(proto.tool_temp_c)
-    obj.tool_voltage_v = get_proto_value(proto.tool_voltage_v)
-    if proto.torque:
-      json_list = []
-      for j in proto.torque:
-        json_list.append(j)
-      obj.torque = json_list
+    for obj_pose in proto.pose:
+      obj.pose.append(obj_pose)
+    for obj_joints in proto.joints:
+      obj.joints.append(obj_joints)
+    for obj_force in proto.force:
+      obj.force.append(obj_force)
+    for obj_torque in proto.torque:
+      obj.torque.append(obj_torque)
+    if proto.HasField('robot_dexterity'):
+      obj.robot_dexterity = proto.robot_dexterity
+    if proto.HasField('is_robot_power_on'):
+      obj.is_robot_power_on = proto.is_robot_power_on
+    if proto.HasField('robot_stop_state'):
+      if proto.robot_stop_state.HasField('is_emergency_stopped'):
+        obj.is_emergency_stopped = proto.robot_stop_state.is_emergency_stopped
+      if proto.robot_stop_state.HasField('is_protective_stopped'):
+        obj.is_protective_stopped = proto.robot_stop_state.is_protective_stopped
+      if proto.robot_stop_state.HasField('is_safeguard_stopped'):
+        obj.is_safeguard_stopped = proto.robot_stop_state.is_safeguard_stopped
+      if proto.robot_stop_state.HasField('is_reduced_mode'):
+        obj.is_reduced_mode = proto.robot_stop_state.is_reduced_mode
+      if proto.robot_stop_state.HasField('safety_message'):
+        obj.safety_message = proto.robot_stop_state.safety_message
+    if proto.HasField('is_program_running'):
+      obj.is_program_running = proto.is_program_running
+    for obj_digital_in in proto.digital_in:
+      obj.digital_in.append(obj_digital_in)
+    for obj_sensor_in in proto.sensor_in:
+      obj.sensor_in.append(obj_sensor_in)
+    for obj_digital_out in proto.digital_out:
+      obj.digital_out.append(obj_digital_out)
+    for obj_analog_in in proto.analog_in:
+      obj.analog_in.append(obj_analog_in)
+    for obj_analog_out in proto.analog_out:
+      obj.analog_out.append(obj_analog_out)
+    for obj_tool_digital_in in proto.tool_digital_in:
+      obj.tool_digital_in.append(obj_tool_digital_in)
+    for obj_tool_digital_out in proto.tool_digital_out:
+      obj.tool_digital_out.append(obj_tool_digital_out)
+    for obj_tool_analog_in in proto.tool_analog_in:
+      obj.tool_analog_in.append(obj_tool_analog_in)
+    for obj_tool_analog_out in proto.tool_analog_out:
+      obj.tool_analog_out.append(obj_tool_analog_out)
+    if proto.HasField('board_temp_c'):
+      obj.board_temp_c = proto.board_temp_c
+    if proto.HasField('robot_voltage_v'):
+      obj.robot_voltage_v = proto.robot_voltage_v
+    if proto.HasField('robot_current_a'):
+      obj.robot_current_a = proto.robot_current_a
+    if proto.HasField('board_io_current_a'):
+      obj.board_io_current_a = proto.board_io_current_a
+    if proto.HasField('tool_temp_c'):
+      obj.tool_temp_c = proto.tool_temp_c
+    if proto.HasField('tool_voltage_v'):
+      obj.tool_voltage_v = proto.tool_voltage_v
+    if proto.HasField('tool_current_a'):
+      obj.tool_current_a = proto.tool_current_a
+    for obj_joint_voltages_v in proto.joint_voltages_v:
+      obj.joint_voltages_v.append(obj_joint_voltages_v)
+    for obj_joint_currents_a in proto.joint_currents_a:
+      obj.joint_currents_a.append(obj_joint_currents_a)
+    for obj_joint_temps_c in proto.joint_temps_c:
+      obj.joint_temps_c.append(obj_joint_temps_c)
+    if proto.HasField('robot_mode'):
+      obj.robot_mode = proto.robot_mode
+    if proto.HasField('program_counter'):
+      obj.program_counter = proto.program_counter
+    for obj_digital_bank in proto.digital_bank:
+      obj.digital_bank.append(DigitalBank.from_proto(obj_digital_bank))
+    for obj_analog_bank in proto.analog_bank:
+      obj.analog_bank.append(AnalogBank.from_proto(obj_analog_bank))
+    for obj_integer_bank in proto.integer_bank:
+      obj.integer_bank.append(IntegerBank.from_proto(obj_integer_bank))
+    if proto.HasField('last_terminated_program'):
+      obj.last_terminated_program = proto.last_terminated_program
     return obj
 
 
@@ -10040,6 +11946,21 @@ class RobotStopState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.RobotStopState':
+    """Convert RobotStopState to proto."""
+    proto = logs_pb2.RobotStopState()
+    if self.is_emergency_stopped:
+      proto.is_emergency_stopped = self.is_emergency_stopped
+    if self.is_protective_stopped:
+      proto.is_protective_stopped = self.is_protective_stopped
+    if self.is_safeguard_stopped:
+      proto.is_safeguard_stopped = self.is_safeguard_stopped
+    if self.is_reduced_mode:
+      proto.is_reduced_mode = self.is_reduced_mode
+    if self.safety_message:
+      proto.safety_message = self.safety_message
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'RobotStopState':
     """Convert JSON to type object."""
@@ -10073,16 +11994,21 @@ class RobotStopState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.RobotStopState) -> 'RobotStopState':
+  def from_proto(proto: logs_pb2.RobotStopState) -> Optional['RobotStopState']:
     """Convert RobotStopState proto to type object."""
     if not proto:
       return None
     obj = RobotStopState()
-    obj.is_emergency_stopped = get_proto_value(proto.is_emergency_stopped)
-    obj.is_protective_stopped = get_proto_value(proto.is_protective_stopped)
-    obj.is_reduced_mode = get_proto_value(proto.is_reduced_mode)
-    obj.is_safeguard_stopped = get_proto_value(proto.is_safeguard_stopped)
-    obj.safety_message = get_proto_value(proto.safety_message)
+    if proto.HasField('is_emergency_stopped'):
+      obj.is_emergency_stopped = proto.is_emergency_stopped
+    if proto.HasField('is_protective_stopped'):
+      obj.is_protective_stopped = proto.is_protective_stopped
+    if proto.HasField('is_safeguard_stopped'):
+      obj.is_safeguard_stopped = proto.is_safeguard_stopped
+    if proto.HasField('is_reduced_mode'):
+      obj.is_reduced_mode = proto.is_reduced_mode
+    if proto.HasField('safety_message'):
+      obj.safety_message = proto.safety_message
     return obj
 
 
@@ -10115,6 +12041,15 @@ class SendToClient:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SendToClient':
+    """Convert SendToClient to proto."""
+    proto = logs_pb2.SendToClient()
+    if self.uid:
+      proto.uid = self.uid
+    if self.tag:
+      proto.tag = self.tag
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SendToClient':
     """Convert JSON to type object."""
@@ -10136,13 +12071,15 @@ class SendToClient:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SendToClient) -> 'SendToClient':
+  def from_proto(proto: logs_pb2.SendToClient) -> Optional['SendToClient']:
     """Convert SendToClient proto to type object."""
     if not proto:
       return None
     obj = SendToClient()
-    obj.tag = get_proto_value(proto.tag)
-    obj.uid = get_proto_value(proto.uid)
+    if proto.HasField('uid'):
+      obj.uid = proto.uid
+    if proto.HasField('tag'):
+      obj.tag = proto.tag
     return obj
 
 
@@ -10190,6 +12127,21 @@ class SensorLimits:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SensorLimits':
+    """Convert SensorLimits to proto."""
+    proto = logs_pb2.SensorLimits()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.value:
+      proto.value.CopyFrom(self.value.to_proto())
+    if self.maximum:
+      proto.maximum.CopyFrom(self.maximum.to_proto())
+    if self.minimum:
+      proto.minimum.CopyFrom(self.minimum.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SensorLimits':
     """Convert JSON to type object."""
@@ -10223,16 +12175,21 @@ class SensorLimits:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SensorLimits) -> 'SensorLimits':
+  def from_proto(proto: logs_pb2.SensorLimits) -> Optional['SensorLimits']:
     """Convert SensorLimits proto to type object."""
     if not proto:
       return None
     obj = SensorLimits()
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.maximum = CapabilityState.from_proto(get_proto_field(proto, 'maximum'))
-    obj.minimum = CapabilityState.from_proto(get_proto_field(proto, 'minimum'))
-    obj.value = CapabilityState.from_proto(get_proto_field(proto, 'value'))
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('value'):
+      obj.value = CapabilityState.from_proto(proto.value)
+    if proto.HasField('maximum'):
+      obj.maximum = CapabilityState.from_proto(proto.maximum)
+    if proto.HasField('minimum'):
+      obj.minimum = CapabilityState.from_proto(proto.minimum)
     return obj
 
 
@@ -10373,6 +12330,45 @@ class SessionInfo:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SessionInfo':
+    """Convert SessionInfo to proto."""
+    proto = logs_pb2.SessionInfo()
+    if self.operator_uid:
+      proto.operator_uid = self.operator_uid
+    if self.operator_type:
+      proto.operator_type = self.operator_type
+    if self.session_id:
+      proto.session_id = self.session_id
+    if self.start_time:
+      proto.start_time.seconds = int(self.start_time / 1000)
+      proto.start_time.nanos = int(self.start_time % 1000) * 1000000
+    if self.robot_name:
+      proto.robot_name = self.robot_name
+    if self.client_os:
+      proto.client_os = self.client_os
+    if self.ui_version:
+      proto.ui_version = self.ui_version
+    if self.calibration_version:
+      proto.calibration_version = self.calibration_version
+    proto.accept_depth_encoding.extend(self.accept_depth_encoding)
+    if self.relay:
+      proto.relay = self.relay
+    if self.actionsets_version:
+      proto.actionsets_version = self.actionsets_version
+    if self.safety_version:
+      proto.safety_version = self.safety_version
+    if self.workcell_io_version:
+      proto.workcell_io_version = self.workcell_io_version
+    if self.transport:
+      proto.transport = self.transport
+    if self.client_session_uid:
+      proto.client_session_uid = self.client_session_uid
+    if self.workcell_setup_version:
+      proto.workcell_setup_version = self.workcell_setup_version
+    if self.constraints_version:
+      proto.constraints_version = self.constraints_version
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SessionInfo':
     """Convert JSON to type object."""
@@ -10458,32 +12454,45 @@ class SessionInfo:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SessionInfo) -> 'SessionInfo':
+  def from_proto(proto: logs_pb2.SessionInfo) -> Optional['SessionInfo']:
     """Convert SessionInfo proto to type object."""
     if not proto:
       return None
     obj = SessionInfo()
-    if proto.accept_depth_encoding:
-      json_list = []
-      for j in proto.accept_depth_encoding:
-        json_list.append(j)
-      obj.accept_depth_encoding = json_list
-    obj.actionsets_version = get_proto_value(proto.actionsets_version)
-    obj.calibration_version = get_proto_value(proto.calibration_version)
-    obj.client_os = get_proto_value(proto.client_os)
-    obj.client_session_uid = get_proto_value(proto.client_session_uid)
-    obj.constraints_version = get_proto_value(proto.constraints_version)
-    obj.operator_type = get_proto_value(proto.operator_type)
-    obj.operator_uid = get_proto_value(proto.operator_uid)
-    obj.relay = get_proto_value(proto.relay)
-    obj.robot_name = get_proto_value(proto.robot_name)
-    obj.safety_version = get_proto_value(proto.safety_version)
-    obj.session_id = get_proto_value(proto.session_id)
-    obj.start_time = get_proto_value(proto.start_time)
-    obj.transport = get_proto_value(proto.transport)
-    obj.ui_version = get_proto_value(proto.ui_version)
-    obj.workcell_io_version = get_proto_value(proto.workcell_io_version)
-    obj.workcell_setup_version = get_proto_value(proto.workcell_setup_version)
+    if proto.HasField('operator_uid'):
+      obj.operator_uid = proto.operator_uid
+    if proto.HasField('operator_type'):
+      obj.operator_type = proto.operator_type
+    if proto.HasField('session_id'):
+      obj.session_id = proto.session_id
+    if proto.HasField('start_time'):
+      obj.start_time = int(proto.start_time.seconds * 1000) + int(proto.start_time.nanos / 1000000)
+    if proto.HasField('robot_name'):
+      obj.robot_name = proto.robot_name
+    if proto.HasField('client_os'):
+      obj.client_os = proto.client_os
+    if proto.HasField('ui_version'):
+      obj.ui_version = proto.ui_version
+    if proto.HasField('calibration_version'):
+      obj.calibration_version = proto.calibration_version
+    for obj_accept_depth_encoding in proto.accept_depth_encoding:
+      obj.accept_depth_encoding.append(obj_accept_depth_encoding)
+    if proto.HasField('relay'):
+      obj.relay = proto.relay
+    if proto.HasField('actionsets_version'):
+      obj.actionsets_version = proto.actionsets_version
+    if proto.HasField('safety_version'):
+      obj.safety_version = proto.safety_version
+    if proto.HasField('workcell_io_version'):
+      obj.workcell_io_version = proto.workcell_io_version
+    if proto.HasField('transport'):
+      obj.transport = proto.transport
+    if proto.HasField('client_session_uid'):
+      obj.client_session_uid = proto.client_session_uid
+    if proto.HasField('workcell_setup_version'):
+      obj.workcell_setup_version = proto.workcell_setup_version
+    if proto.HasField('constraints_version'):
+      obj.constraints_version = proto.constraints_version
     return obj
 
 
@@ -10514,6 +12523,15 @@ class SetAnalogOutArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetAnalogOutArgs':
+    """Convert SetAnalogOutArgs to proto."""
+    proto = logs_pb2.SetAnalogOutArgs()
+    if self.output:
+      proto.output = self.output
+    if self.value:
+      proto.value = self.value
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetAnalogOutArgs':
     """Convert JSON to type object."""
@@ -10535,13 +12553,15 @@ class SetAnalogOutArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetAnalogOutArgs) -> 'SetAnalogOutArgs':
+  def from_proto(proto: logs_pb2.SetAnalogOutArgs) -> Optional['SetAnalogOutArgs']:
     """Convert SetAnalogOutArgs proto to type object."""
     if not proto:
       return None
     obj = SetAnalogOutArgs()
-    obj.output = get_proto_value(proto.output)
-    obj.value = get_proto_value(proto.value)
+    if proto.HasField('output'):
+      obj.output = proto.output
+    if proto.HasField('value'):
+      obj.value = proto.value
     return obj
 
 
@@ -10565,6 +12585,13 @@ class SetBlendRadiusArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetBlendRadiusArgs':
+    """Convert SetBlendRadiusArgs to proto."""
+    proto = logs_pb2.SetBlendRadiusArgs()
+    if self.radius:
+      proto.radius = self.radius
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetBlendRadiusArgs':
     """Convert JSON to type object."""
@@ -10582,12 +12609,13 @@ class SetBlendRadiusArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetBlendRadiusArgs) -> 'SetBlendRadiusArgs':
+  def from_proto(proto: logs_pb2.SetBlendRadiusArgs) -> Optional['SetBlendRadiusArgs']:
     """Convert SetBlendRadiusArgs proto to type object."""
     if not proto:
       return None
     obj = SetBlendRadiusArgs()
-    obj.radius = get_proto_value(proto.radius)
+    if proto.HasField('radius'):
+      obj.radius = proto.radius
     return obj
 
 
@@ -10633,6 +12661,18 @@ class SetCameraIntrinsics:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetCameraIntrinsics':
+    """Convert SetCameraIntrinsics to proto."""
+    proto = logs_pb2.SetCameraIntrinsics()
+    if self.py_id:
+      proto.id = self.py_id
+    proto.intrinsics.extend(self.intrinsics)
+    if self.near_clip:
+      proto.near_clip = self.near_clip
+    if self.far_clip:
+      proto.far_clip = self.far_clip
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetCameraIntrinsics':
     """Convert JSON to type object."""
@@ -10666,19 +12706,19 @@ class SetCameraIntrinsics:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetCameraIntrinsics) -> 'SetCameraIntrinsics':
+  def from_proto(proto: logs_pb2.SetCameraIntrinsics) -> Optional['SetCameraIntrinsics']:
     """Convert SetCameraIntrinsics proto to type object."""
     if not proto:
       return None
     obj = SetCameraIntrinsics()
-    obj.far_clip = get_proto_value(proto.far_clip)
-    if proto.intrinsics:
-      json_list = []
-      for j in proto.intrinsics:
-        json_list.append(j)
-      obj.intrinsics = json_list
-    obj.near_clip = get_proto_value(proto.near_clip)
-    obj.py_id = get_proto_value(proto.id)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    for obj_intrinsics in proto.intrinsics:
+      obj.intrinsics.append(obj_intrinsics)
+    if proto.HasField('near_clip'):
+      obj.near_clip = proto.near_clip
+    if proto.HasField('far_clip'):
+      obj.far_clip = proto.far_clip
     return obj
 
 
@@ -10709,6 +12749,15 @@ class SetDigitalOutArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetDigitalOutArgs':
+    """Convert SetDigitalOutArgs to proto."""
+    proto = logs_pb2.SetDigitalOutArgs()
+    if self.output:
+      proto.output = self.output
+    if self.value:
+      proto.value = self.value
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetDigitalOutArgs':
     """Convert JSON to type object."""
@@ -10730,13 +12779,15 @@ class SetDigitalOutArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetDigitalOutArgs) -> 'SetDigitalOutArgs':
+  def from_proto(proto: logs_pb2.SetDigitalOutArgs) -> Optional['SetDigitalOutArgs']:
     """Convert SetDigitalOutArgs proto to type object."""
     if not proto:
       return None
     obj = SetDigitalOutArgs()
-    obj.output = get_proto_value(proto.output)
-    obj.value = get_proto_value(proto.value)
+    if proto.HasField('output'):
+      obj.output = proto.output
+    if proto.HasField('value'):
+      obj.value = proto.value
     return obj
 
 
@@ -10770,6 +12821,14 @@ class SetObjectPose:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetObjectPose':
+    """Convert SetObjectPose to proto."""
+    proto = logs_pb2.SetObjectPose()
+    if self.py_id:
+      proto.id = self.py_id
+    proto.pose_xyzxyzw.extend(self.pose_xyzxyzw)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetObjectPose':
     """Convert JSON to type object."""
@@ -10795,17 +12854,15 @@ class SetObjectPose:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetObjectPose) -> 'SetObjectPose':
+  def from_proto(proto: logs_pb2.SetObjectPose) -> Optional['SetObjectPose']:
     """Convert SetObjectPose proto to type object."""
     if not proto:
       return None
     obj = SetObjectPose()
-    if proto.pose_xyzxyzw:
-      json_list = []
-      for j in proto.pose_xyzxyzw:
-        json_list.append(j)
-      obj.pose_xyzxyzw = json_list
-    obj.py_id = get_proto_value(proto.id)
+    if proto.HasField('id'):
+      obj.py_id = proto.id
+    for obj_pose_xyzxyzw in proto.pose_xyzxyzw:
+      obj.pose_xyzxyzw.append(obj_pose_xyzxyzw)
     return obj
 
 
@@ -10850,6 +12907,16 @@ class SetOutput:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetOutput':
+    """Convert SetOutput to proto."""
+    proto = logs_pb2.SetOutput()
+    if self.py_type:
+      proto.type = self.py_type
+    if self.name:
+      proto.name = self.name
+    proto.args.extend([v.to_proto() for v in self.args])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetOutput':
     """Convert JSON to type object."""
@@ -10879,18 +12946,17 @@ class SetOutput:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetOutput) -> 'SetOutput':
+  def from_proto(proto: logs_pb2.SetOutput) -> Optional['SetOutput']:
     """Convert SetOutput proto to type object."""
     if not proto:
       return None
     obj = SetOutput()
-    if proto.args:
-      json_list = []
-      for j in proto.args:
-        json_list.append(CapabilityState.from_proto(j))
-      obj.args = json_list
-    obj.name = get_proto_value(proto.name)
-    obj.py_type = get_proto_value(proto.type)
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    if proto.HasField('name'):
+      obj.name = proto.name
+    for obj_args in proto.args:
+      obj.args.append(CapabilityState.from_proto(obj_args))
     return obj
 
 
@@ -10921,6 +12987,15 @@ class SetRadialSpeedArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SetRadialSpeedArgs':
+    """Convert SetRadialSpeedArgs to proto."""
+    proto = logs_pb2.SetRadialSpeedArgs()
+    if self.velocity:
+      proto.velocity = self.velocity
+    if self.acceleration:
+      proto.acceleration = self.acceleration
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SetRadialSpeedArgs':
     """Convert JSON to type object."""
@@ -10942,13 +13017,15 @@ class SetRadialSpeedArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SetRadialSpeedArgs) -> 'SetRadialSpeedArgs':
+  def from_proto(proto: logs_pb2.SetRadialSpeedArgs) -> Optional['SetRadialSpeedArgs']:
     """Convert SetRadialSpeedArgs proto to type object."""
     if not proto:
       return None
     obj = SetRadialSpeedArgs()
-    obj.acceleration = get_proto_value(proto.acceleration)
-    obj.velocity = get_proto_value(proto.velocity)
+    if proto.HasField('velocity'):
+      obj.velocity = proto.velocity
+    if proto.HasField('acceleration'):
+      obj.acceleration = proto.acceleration
     return obj
 
 
@@ -11001,6 +13078,19 @@ class ShiftPerDetection:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ShiftPerDetection':
+    """Convert ShiftPerDetection to proto."""
+    proto = logs_pb2.ShiftPerDetection()
+    if self.detection_key:
+      proto.detection_key.CopyFrom(self.detection_key.to_proto())
+    if self.shift_type:
+      proto.shift_type = self.shift_type
+    if self.shift_amount:
+      proto.shift_amount = self.shift_amount
+    if self.is_object_detected:
+      proto.is_object_detected = self.is_object_detected
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ShiftPerDetection':
     """Convert JSON to type object."""
@@ -11030,15 +13120,19 @@ class ShiftPerDetection:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ShiftPerDetection) -> 'ShiftPerDetection':
+  def from_proto(proto: logs_pb2.ShiftPerDetection) -> Optional['ShiftPerDetection']:
     """Convert ShiftPerDetection proto to type object."""
     if not proto:
       return None
     obj = ShiftPerDetection()
-    obj.detection_key = DetectionKey.from_proto(get_proto_field(proto, 'detection_key'))
-    obj.is_object_detected = get_proto_value(proto.is_object_detected)
-    obj.shift_amount = get_proto_value(proto.shift_amount)
-    obj.shift_type = get_proto_value(proto.shift_type)
+    if proto.HasField('detection_key'):
+      obj.detection_key = DetectionKey.from_proto(proto.detection_key)
+    if proto.HasField('shift_type'):
+      obj.shift_type = proto.shift_type
+    if proto.HasField('shift_amount'):
+      obj.shift_amount = proto.shift_amount
+    if proto.HasField('is_object_detected'):
+      obj.is_object_detected = proto.is_object_detected
     return obj
 
 
@@ -11093,6 +13187,23 @@ class SimAction:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SimAction':
+    """Convert SimAction to proto."""
+    proto = logs_pb2.SimAction()
+    if self.get_all_object_poses:
+      proto.get_all_object_poses.CopyFrom(self.get_all_object_poses.to_proto())
+    if self.set_object_pose:
+      proto.set_object_pose.CopyFrom(self.set_object_pose.to_proto())
+    if self.delete_object:
+      proto.delete_object.CopyFrom(self.delete_object.to_proto())
+    if self.set_camera_intrinsics:
+      proto.set_camera_intrinsics.CopyFrom(self.set_camera_intrinsics.to_proto())
+    if self.add_object:
+      proto.add_object.CopyFrom(self.add_object.to_proto())
+    if self.get_segmented_image:
+      proto.get_segmented_image.CopyFrom(self.get_segmented_image.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SimAction':
     """Convert JSON to type object."""
@@ -11130,17 +13241,23 @@ class SimAction:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SimAction) -> 'SimAction':
+  def from_proto(proto: logs_pb2.SimAction) -> Optional['SimAction']:
     """Convert SimAction proto to type object."""
     if not proto:
       return None
     obj = SimAction()
-    obj.add_object = AddObject.from_proto(get_proto_field(proto, 'add_object'))
-    obj.delete_object = DeleteObject.from_proto(get_proto_field(proto, 'delete_object'))
-    obj.get_all_object_poses = GetAllObjectPoses.from_proto(get_proto_field(proto, 'get_all_object_poses'))
-    obj.get_segmented_image = GetSegmentedImage.from_proto(get_proto_field(proto, 'get_segmented_image'))
-    obj.set_camera_intrinsics = SetCameraIntrinsics.from_proto(get_proto_field(proto, 'set_camera_intrinsics'))
-    obj.set_object_pose = SetObjectPose.from_proto(get_proto_field(proto, 'set_object_pose'))
+    if proto.HasField('get_all_object_poses'):
+      obj.get_all_object_poses = GetAllObjectPoses.from_proto(proto.get_all_object_poses)
+    if proto.HasField('set_object_pose'):
+      obj.set_object_pose = SetObjectPose.from_proto(proto.set_object_pose)
+    if proto.HasField('delete_object'):
+      obj.delete_object = DeleteObject.from_proto(proto.delete_object)
+    if proto.HasField('set_camera_intrinsics'):
+      obj.set_camera_intrinsics = SetCameraIntrinsics.from_proto(proto.set_camera_intrinsics)
+    if proto.HasField('add_object'):
+      obj.add_object = AddObject.from_proto(proto.add_object)
+    if proto.HasField('get_segmented_image'):
+      obj.get_segmented_image = GetSegmentedImage.from_proto(proto.get_segmented_image)
     return obj
 
 
@@ -11190,6 +13307,17 @@ class SimInstanceSegmentation:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SimInstanceSegmentation':
+    """Convert SimInstanceSegmentation to proto."""
+    proto = logs_pb2.SimInstanceSegmentation()
+    if self.sim_ts:
+      proto.sim_ts.seconds = int(self.sim_ts / 1000)
+      proto.sim_ts.nanos = int(self.sim_ts % 1000) * 1000000
+    if self.image_path:
+      proto.image_path = self.image_path
+    proto.relation.extend([v.to_proto() for v in self.relation])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SimInstanceSegmentation':
     """Convert JSON to type object."""
@@ -11219,18 +13347,17 @@ class SimInstanceSegmentation:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SimInstanceSegmentation) -> 'SimInstanceSegmentation':
+  def from_proto(proto: logs_pb2.SimInstanceSegmentation) -> Optional['SimInstanceSegmentation']:
     """Convert SimInstanceSegmentation proto to type object."""
     if not proto:
       return None
     obj = SimInstanceSegmentation()
-    obj.image_path = get_proto_value(proto.image_path)
-    if proto.relation:
-      json_list = []
-      for j in proto.relation:
-        json_list.append(KeyValue.from_proto(j))
-      obj.relation = json_list
-    obj.sim_ts = get_proto_value(proto.sim_ts)
+    if proto.HasField('sim_ts'):
+      obj.sim_ts = int(proto.sim_ts.seconds * 1000) + int(proto.sim_ts.nanos / 1000000)
+    if proto.HasField('image_path'):
+      obj.image_path = proto.image_path
+    for obj_relation in proto.relation:
+      obj.relation.append(KeyValue.from_proto(obj_relation))
     return obj
 
 
@@ -11272,6 +13399,15 @@ class SimState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SimState':
+    """Convert SimState to proto."""
+    proto = logs_pb2.SimState()
+    if self.sim_ts:
+      proto.sim_ts.seconds = int(self.sim_ts / 1000)
+      proto.sim_ts.nanos = int(self.sim_ts % 1000) * 1000000
+    proto.object_state.extend([v.to_proto() for v in self.object_state])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SimState':
     """Convert JSON to type object."""
@@ -11297,17 +13433,15 @@ class SimState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SimState) -> 'SimState':
+  def from_proto(proto: logs_pb2.SimState) -> Optional['SimState']:
     """Convert SimState proto to type object."""
     if not proto:
       return None
     obj = SimState()
-    if proto.object_state:
-      json_list = []
-      for j in proto.object_state:
-        json_list.append(ObjectState.from_proto(j))
-      obj.object_state = json_list
-    obj.sim_ts = get_proto_value(proto.sim_ts)
+    if proto.HasField('sim_ts'):
+      obj.sim_ts = int(proto.sim_ts.seconds * 1000) + int(proto.sim_ts.nanos / 1000000)
+    for obj_object_state in proto.object_state:
+      obj.object_state.append(ObjectState.from_proto(obj_object_state))
     return obj
 
 
@@ -11333,6 +13467,13 @@ class SleepArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SleepArgs':
+    """Convert SleepArgs to proto."""
+    proto = logs_pb2.SleepArgs()
+    if self.seconds:
+      proto.seconds = self.seconds
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SleepArgs':
     """Convert JSON to type object."""
@@ -11350,12 +13491,13 @@ class SleepArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SleepArgs) -> 'SleepArgs':
+  def from_proto(proto: logs_pb2.SleepArgs) -> Optional['SleepArgs']:
     """Convert SleepArgs proto to type object."""
     if not proto:
       return None
     obj = SleepArgs()
-    obj.seconds = get_proto_value(proto.seconds)
+    if proto.HasField('seconds'):
+      obj.seconds = proto.seconds
     return obj
 
 
@@ -11485,6 +13627,31 @@ class Snapshot:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Snapshot':
+    """Convert Snapshot to proto."""
+    proto = logs_pb2.Snapshot()
+    if self.source:
+      proto.source = self.source
+    proto.device_data_refs.extend([v.to_proto() for v in self.device_data_refs])
+    proto.responses.extend([v.to_proto() for v in self.responses])
+    if self.gym_server_ts:
+      proto.gym_server_ts.seconds = int(self.gym_server_ts / 1000)
+      proto.gym_server_ts.nanos = int(self.gym_server_ts % 1000) * 1000000
+    if self.gym_env_id:
+      proto.gym_env_id = self.gym_env_id
+    if self.gym_run_id:
+      proto.gym_run_id = self.gym_run_id
+    if self.gym_episode:
+      proto.gym_episode = self.gym_episode
+    if self.gym_step:
+      proto.gym_step = self.gym_step
+    if self.gym_reward:
+      proto.gym_reward = self.gym_reward
+    if self.gym_done:
+      proto.gym_done = self.gym_done
+    proto.gym_actions.extend([v.to_proto() for v in self.gym_actions])
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Snapshot':
     """Convert JSON to type object."""
@@ -11552,34 +13719,33 @@ class Snapshot:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Snapshot) -> 'Snapshot':
+  def from_proto(proto: logs_pb2.Snapshot) -> Optional['Snapshot']:
     """Convert Snapshot proto to type object."""
     if not proto:
       return None
     obj = Snapshot()
-    if proto.device_data_refs:
-      json_list = []
-      for j in proto.device_data_refs:
-        json_list.append(DeviceDataRef.from_proto(j))
-      obj.device_data_refs = json_list
-    if proto.gym_actions:
-      json_list = []
-      for j in proto.gym_actions:
-        json_list.append(GymAction.from_proto(j))
-      obj.gym_actions = json_list
-    obj.gym_done = get_proto_value(proto.gym_done)
-    obj.gym_env_id = get_proto_value(proto.gym_env_id)
-    obj.gym_episode = get_proto_value(proto.gym_episode)
-    obj.gym_reward = get_proto_value(proto.gym_reward)
-    obj.gym_run_id = get_proto_value(proto.gym_run_id)
-    obj.gym_server_ts = get_proto_value(proto.gym_server_ts)
-    obj.gym_step = get_proto_value(proto.gym_step)
-    if proto.responses:
-      json_list = []
-      for j in proto.responses:
-        json_list.append(SnapshotResponse.from_proto(j))
-      obj.responses = json_list
-    obj.source = get_proto_value(proto.source)
+    if proto.HasField('source'):
+      obj.source = proto.source
+    for obj_device_data_refs in proto.device_data_refs:
+      obj.device_data_refs.append(DeviceDataRef.from_proto(obj_device_data_refs))
+    for obj_responses in proto.responses:
+      obj.responses.append(SnapshotResponse.from_proto(obj_responses))
+    if proto.HasField('gym_server_ts'):
+      obj.gym_server_ts = int(proto.gym_server_ts.seconds * 1000) + int(proto.gym_server_ts.nanos / 1000000)
+    if proto.HasField('gym_env_id'):
+      obj.gym_env_id = proto.gym_env_id
+    if proto.HasField('gym_run_id'):
+      obj.gym_run_id = proto.gym_run_id
+    if proto.HasField('gym_episode'):
+      obj.gym_episode = proto.gym_episode
+    if proto.HasField('gym_step'):
+      obj.gym_step = proto.gym_step
+    if proto.HasField('gym_reward'):
+      obj.gym_reward = proto.gym_reward
+    if proto.HasField('gym_done'):
+      obj.gym_done = proto.gym_done
+    for obj_gym_actions in proto.gym_actions:
+      obj.gym_actions.append(GymAction.from_proto(obj_gym_actions))
     return obj
 
 
@@ -11598,6 +13764,11 @@ class SnapshotAnnotation:
     json_data: Dict[str, Any] = dict()
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SnapshotAnnotation':
+    """Convert SnapshotAnnotation to proto."""
+    proto = logs_pb2.SnapshotAnnotation()
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SnapshotAnnotation':
     """Convert JSON to type object."""
@@ -11611,7 +13782,7 @@ class SnapshotAnnotation:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SnapshotAnnotation) -> 'SnapshotAnnotation':  # pylint: disable=unused-argument
+  def from_proto(proto: logs_pb2.SnapshotAnnotation) -> Optional['SnapshotAnnotation']:
     """Convert SnapshotAnnotation proto to type object."""
     if not proto:
       return None
@@ -11663,6 +13834,21 @@ class SnapshotResponse:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SnapshotResponse':
+    """Convert SnapshotResponse to proto."""
+    proto = logs_pb2.SnapshotResponse()
+    if self.device_data_ref:
+      proto.device_data_ref.CopyFrom(self.device_data_ref.to_proto())
+    if self.cid:
+      proto.cid = self.cid
+    if self.status:
+      proto.status.CopyFrom(self.status.to_proto())
+    if self.gym_element_type:
+      proto.gym_element_type = self.gym_element_type
+    if self.gym_config_name:
+      proto.gym_config_name = self.gym_config_name
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SnapshotResponse':
     """Convert JSON to type object."""
@@ -11696,16 +13882,21 @@ class SnapshotResponse:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SnapshotResponse) -> 'SnapshotResponse':
+  def from_proto(proto: logs_pb2.SnapshotResponse) -> Optional['SnapshotResponse']:
     """Convert SnapshotResponse proto to type object."""
     if not proto:
       return None
     obj = SnapshotResponse()
-    obj.cid = get_proto_value(proto.cid)
-    obj.device_data_ref = DeviceDataRef.from_proto(get_proto_field(proto, 'device_data_ref'))
-    obj.gym_config_name = get_proto_value(proto.gym_config_name)
-    obj.gym_element_type = get_proto_value(proto.gym_element_type)
-    obj.status = Status.from_proto(get_proto_field(proto, 'status'))
+    if proto.HasField('device_data_ref'):
+      obj.device_data_ref = DeviceDataRef.from_proto(proto.device_data_ref)
+    if proto.HasField('cid'):
+      obj.cid = proto.cid
+    if proto.HasField('status'):
+      obj.status = Status.from_proto(proto.status)
+    if proto.HasField('gym_element_type'):
+      obj.gym_element_type = proto.gym_element_type
+    if proto.HasField('gym_config_name'):
+      obj.gym_config_name = proto.gym_config_name
     return obj
 
 
@@ -11756,6 +13947,20 @@ class SourceImage:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SourceImage':
+    """Convert SourceImage to proto."""
+    proto = logs_pb2.SourceImage()
+    if self.ts:
+      proto.ts.seconds = int(self.ts / 1000)
+      proto.ts.nanos = int(self.ts % 1000) * 1000000
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SourceImage':
     """Convert JSON to type object."""
@@ -11785,15 +13990,19 @@ class SourceImage:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SourceImage) -> 'SourceImage':
+  def from_proto(proto: logs_pb2.SourceImage) -> Optional['SourceImage']:
     """Convert SourceImage proto to type object."""
     if not proto:
       return None
     obj = SourceImage()
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.ts = get_proto_value(proto.ts)
+    if proto.HasField('ts'):
+      obj.ts = int(proto.ts.seconds * 1000) + int(proto.ts.nanos / 1000000)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
     return obj
 
 
@@ -11849,6 +14058,23 @@ class Status:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Status':
+    """Convert Status to proto."""
+    proto = logs_pb2.Status()
+    if self.status:
+      proto.status = self.status
+    if self.script:
+      proto.script = self.script
+    if self.error:
+      proto.error = self.error
+    if self.progress:
+      proto.progress = self.progress
+    if self.message:
+      proto.message = self.message
+    if self.code:
+      proto.code = self.code
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Status':
     """Convert JSON to type object."""
@@ -11886,17 +14112,23 @@ class Status:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Status) -> 'Status':
+  def from_proto(proto: logs_pb2.Status) -> Optional['Status']:
     """Convert Status proto to type object."""
     if not proto:
       return None
     obj = Status()
-    obj.code = get_proto_value(proto.code)
-    obj.error = get_proto_value(proto.error)
-    obj.message = get_proto_value(proto.message)
-    obj.progress = get_proto_value(proto.progress)
-    obj.script = get_proto_value(proto.script)
-    obj.status = get_proto_value(proto.status)
+    if proto.HasField('status'):
+      obj.status = proto.status
+    if proto.HasField('script'):
+      obj.script = proto.script
+    if proto.HasField('error'):
+      obj.error = proto.error
+    if proto.HasField('progress'):
+      obj.progress = proto.progress
+    if proto.HasField('message'):
+      obj.message = proto.message
+    if proto.HasField('code'):
+      obj.code = proto.code
     return obj
 
 
@@ -11922,6 +14154,13 @@ class StopJArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.StopJArgs':
+    """Convert StopJArgs to proto."""
+    proto = logs_pb2.StopJArgs()
+    if self.deceleration:
+      proto.deceleration = self.deceleration
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'StopJArgs':
     """Convert JSON to type object."""
@@ -11939,12 +14178,13 @@ class StopJArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.StopJArgs) -> 'StopJArgs':
+  def from_proto(proto: logs_pb2.StopJArgs) -> Optional['StopJArgs']:
     """Convert StopJArgs proto to type object."""
     if not proto:
       return None
     obj = StopJArgs()
-    obj.deceleration = get_proto_value(proto.deceleration)
+    if proto.HasField('deceleration'):
+      obj.deceleration = proto.deceleration
     return obj
 
 
@@ -11995,6 +14235,19 @@ class StreamRequest:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.StreamRequest':
+    """Convert StreamRequest to proto."""
+    proto = logs_pb2.StreamRequest()
+    if self.device_type:
+      proto.device_type = self.device_type
+    if self.device_name:
+      proto.device_name = self.device_name
+    if self.data_type:
+      proto.data_type = self.data_type
+    if self.max_rate:
+      proto.max_rate = self.max_rate
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'StreamRequest':
     """Convert JSON to type object."""
@@ -12024,15 +14277,19 @@ class StreamRequest:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.StreamRequest) -> 'StreamRequest':
+  def from_proto(proto: logs_pb2.StreamRequest) -> Optional['StreamRequest']:
     """Convert StreamRequest proto to type object."""
     if not proto:
       return None
     obj = StreamRequest()
-    obj.data_type = get_proto_value(proto.data_type)
-    obj.device_name = get_proto_value(proto.device_name)
-    obj.device_type = get_proto_value(proto.device_type)
-    obj.max_rate = get_proto_value(proto.max_rate)
+    if proto.HasField('device_type'):
+      obj.device_type = proto.device_type
+    if proto.HasField('device_name'):
+      obj.device_name = proto.device_name
+    if proto.HasField('data_type'):
+      obj.data_type = proto.data_type
+    if proto.HasField('max_rate'):
+      obj.max_rate = proto.max_rate
     return obj
 
 
@@ -12058,6 +14315,13 @@ class SyncArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.SyncArgs':
+    """Convert SyncArgs to proto."""
+    proto = logs_pb2.SyncArgs()
+    if self.seconds:
+      proto.seconds = self.seconds
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'SyncArgs':
     """Convert JSON to type object."""
@@ -12075,12 +14339,13 @@ class SyncArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.SyncArgs) -> 'SyncArgs':
+  def from_proto(proto: logs_pb2.SyncArgs) -> Optional['SyncArgs']:
     """Convert SyncArgs proto to type object."""
     if not proto:
       return None
     obj = SyncArgs()
-    obj.seconds = get_proto_value(proto.seconds)
+    if proto.HasField('seconds'):
+      obj.seconds = proto.seconds
     return obj
 
 
@@ -12115,6 +14380,15 @@ class TextAnnotation:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.TextAnnotation':
+    """Convert TextAnnotation to proto."""
+    proto = logs_pb2.TextAnnotation()
+    if self.category:
+      proto.category = self.category
+    if self.text:
+      proto.text = self.text
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'TextAnnotation':
     """Convert JSON to type object."""
@@ -12136,13 +14410,15 @@ class TextAnnotation:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.TextAnnotation) -> 'TextAnnotation':
+  def from_proto(proto: logs_pb2.TextAnnotation) -> Optional['TextAnnotation']:
     """Convert TextAnnotation proto to type object."""
     if not proto:
       return None
     obj = TextAnnotation()
-    obj.category = get_proto_value(proto.category)
-    obj.text = get_proto_value(proto.text)
+    if proto.HasField('category'):
+      obj.category = proto.category
+    if proto.HasField('text'):
+      obj.text = proto.text
     return obj
 
 
@@ -12211,6 +14487,23 @@ class TextInstruction:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.TextInstruction':
+    """Convert TextInstruction to proto."""
+    proto = logs_pb2.TextInstruction()
+    if self.intent:
+      proto.intent = self.intent
+    if self.success_type:
+      proto.success_type = self.success_type
+    if self.success_detection:
+      proto.success_detection = self.success_detection
+    if self.instruction:
+      proto.instruction = self.instruction
+    if self.uid:
+      proto.uid = self.uid
+    if self.supertask_id:
+      proto.supertask_id = self.supertask_id
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'TextInstruction':
     """Convert JSON to type object."""
@@ -12248,17 +14541,23 @@ class TextInstruction:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.TextInstruction) -> 'TextInstruction':
+  def from_proto(proto: logs_pb2.TextInstruction) -> Optional['TextInstruction']:
     """Convert TextInstruction proto to type object."""
     if not proto:
       return None
     obj = TextInstruction()
-    obj.instruction = get_proto_value(proto.instruction)
-    obj.intent = get_proto_value(proto.intent)
-    obj.success_detection = get_proto_value(proto.success_detection)
-    obj.success_type = get_proto_value(proto.success_type)
-    obj.supertask_id = get_proto_value(proto.supertask_id)
-    obj.uid = get_proto_value(proto.uid)
+    if proto.HasField('intent'):
+      obj.intent = proto.intent
+    if proto.HasField('success_type'):
+      obj.success_type = proto.success_type
+    if proto.HasField('success_detection'):
+      obj.success_detection = proto.success_detection
+    if proto.HasField('instruction'):
+      obj.instruction = proto.instruction
+    if proto.HasField('uid'):
+      obj.uid = proto.uid
+    if proto.HasField('supertask_id'):
+      obj.supertask_id = proto.supertask_id
     return obj
 
 
@@ -12289,6 +14588,15 @@ class ToolState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.ToolState':
+    """Convert ToolState to proto."""
+    proto = logs_pb2.ToolState()
+    if self.vacuum_level_pa:
+      proto.vacuum_level_pa = self.vacuum_level_pa
+    if self.on:
+      proto.on = self.on
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'ToolState':
     """Convert JSON to type object."""
@@ -12310,13 +14618,15 @@ class ToolState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.ToolState) -> 'ToolState':
+  def from_proto(proto: logs_pb2.ToolState) -> Optional['ToolState']:
     """Convert ToolState proto to type object."""
     if not proto:
       return None
     obj = ToolState()
-    obj.on = get_proto_value(proto.on)
-    obj.vacuum_level_pa = get_proto_value(proto.vacuum_level_pa)
+    if proto.HasField('vacuum_level_pa'):
+      obj.vacuum_level_pa = proto.vacuum_level_pa
+    if proto.HasField('on'):
+      obj.on = proto.on
     return obj
 
 
@@ -12352,6 +14662,13 @@ class TorqueLimits:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.TorqueLimits':
+    """Convert TorqueLimits to proto."""
+    proto = logs_pb2.TorqueLimits()
+    proto.maximum.extend(self.maximum)
+    proto.minimum.extend(self.minimum)
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'TorqueLimits':
     """Convert JSON to type object."""
@@ -12380,21 +14697,15 @@ class TorqueLimits:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.TorqueLimits) -> 'TorqueLimits':
+  def from_proto(proto: logs_pb2.TorqueLimits) -> Optional['TorqueLimits']:
     """Convert TorqueLimits proto to type object."""
     if not proto:
       return None
     obj = TorqueLimits()
-    if proto.maximum:
-      json_list = []
-      for j in proto.maximum:
-        json_list.append(j)
-      obj.maximum = json_list
-    if proto.minimum:
-      json_list = []
-      for j in proto.minimum:
-        json_list.append(j)
-      obj.minimum = json_list
+    for obj_maximum in proto.maximum:
+      obj.maximum.append(obj_maximum)
+    for obj_minimum in proto.minimum:
+      obj.minimum.append(obj_minimum)
     return obj
 
 
@@ -12733,6 +15044,68 @@ class UrState:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.UrState':
+    """Convert UrState to proto."""
+    proto = logs_pb2.UrState()
+    proto.pose.extend(self.pose)
+    proto.joints.extend(self.joints)
+    proto.force.extend(self.force)
+    proto.torque.extend(self.torque)
+    if self.robot_dexterity:
+      proto.robot_dexterity = self.robot_dexterity
+    if self.is_robot_power_on:
+      proto.is_robot_power_on = self.is_robot_power_on
+    proto_robot_stop_state = logs_pb2.RobotStopState()
+    if self.is_emergency_stopped:
+      proto_robot_stop_state.is_emergency_stopped = self.is_emergency_stopped
+    if self.is_protective_stopped:
+      proto_robot_stop_state.is_protective_stopped = self.is_protective_stopped
+    if self.is_safeguard_stopped:
+      proto_robot_stop_state.is_safeguard_stopped = self.is_safeguard_stopped
+    if self.is_reduced_mode:
+      proto_robot_stop_state.is_reduced_mode = self.is_reduced_mode
+    if self.safety_message:
+      proto_robot_stop_state.safety_message = self.safety_message
+    proto.robot_stop_state.CopyFrom(proto_robot_stop_state)
+    if self.is_program_running:
+      proto.is_program_running = self.is_program_running
+    proto.digital_in.extend(self.digital_in)
+    proto.sensor_in.extend(self.sensor_in)
+    proto.digital_out.extend(self.digital_out)
+    proto.analog_in.extend(self.analog_in)
+    proto.analog_out.extend(self.analog_out)
+    proto.tool_digital_in.extend(self.tool_digital_in)
+    proto.tool_digital_out.extend(self.tool_digital_out)
+    proto.tool_analog_in.extend(self.tool_analog_in)
+    proto.tool_analog_out.extend(self.tool_analog_out)
+    if self.board_temp_c:
+      proto.board_temp_c = self.board_temp_c
+    if self.robot_voltage_v:
+      proto.robot_voltage_v = self.robot_voltage_v
+    if self.robot_current_a:
+      proto.robot_current_a = self.robot_current_a
+    if self.board_io_current_a:
+      proto.board_io_current_a = self.board_io_current_a
+    if self.tool_temp_c:
+      proto.tool_temp_c = self.tool_temp_c
+    if self.tool_voltage_v:
+      proto.tool_voltage_v = self.tool_voltage_v
+    if self.tool_current_a:
+      proto.tool_current_a = self.tool_current_a
+    proto.joint_voltages_v.extend(self.joint_voltages_v)
+    proto.joint_currents_a.extend(self.joint_currents_a)
+    proto.joint_temps_c.extend(self.joint_temps_c)
+    if self.robot_mode:
+      proto.robot_mode = self.robot_mode
+    if self.program_counter:
+      proto.program_counter = self.program_counter
+    proto.digital_bank.extend([v.to_proto() for v in self.digital_bank])
+    proto.analog_bank.extend([v.to_proto() for v in self.analog_bank])
+    proto.integer_bank.extend([v.to_proto() for v in self.integer_bank])
+    if self.last_terminated_program:
+      proto.last_terminated_program = self.last_terminated_program
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'UrState':
     """Convert JSON to type object."""
@@ -12952,124 +15325,86 @@ class UrState:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.UrState) -> 'UrState':
+  def from_proto(proto: logs_pb2.UrState) -> Optional['UrState']:
     """Convert UrState proto to type object."""
     if not proto:
       return None
     obj = UrState()
-    if proto.analog_bank:
-      json_list = []
-      for j in proto.analog_bank:
-        json_list.append(AnalogBank.from_proto(j))
-      obj.analog_bank = json_list
-    if proto.analog_in:
-      json_list = []
-      for j in proto.analog_in:
-        json_list.append(j)
-      obj.analog_in = json_list
-    if proto.analog_out:
-      json_list = []
-      for j in proto.analog_out:
-        json_list.append(j)
-      obj.analog_out = json_list
-    obj.board_io_current_a = get_proto_value(proto.board_io_current_a)
-    obj.board_temp_c = get_proto_value(proto.board_temp_c)
-    if proto.digital_bank:
-      json_list = []
-      for j in proto.digital_bank:
-        json_list.append(DigitalBank.from_proto(j))
-      obj.digital_bank = json_list
-    if proto.digital_in:
-      json_list = []
-      for j in proto.digital_in:
-        json_list.append(j)
-      obj.digital_in = json_list
-    if proto.digital_out:
-      json_list = []
-      for j in proto.digital_out:
-        json_list.append(j)
-      obj.digital_out = json_list
-    if proto.force:
-      json_list = []
-      for j in proto.force:
-        json_list.append(j)
-      obj.force = json_list
-    if proto.integer_bank:
-      json_list = []
-      for j in proto.integer_bank:
-        json_list.append(IntegerBank.from_proto(j))
-      obj.integer_bank = json_list
-    obj.is_emergency_stopped = get_proto_value(proto.robot_stop_state.is_emergency_stopped)
-    obj.is_program_running = get_proto_value(proto.is_program_running)
-    obj.is_protective_stopped = get_proto_value(proto.robot_stop_state.is_protective_stopped)
-    obj.is_reduced_mode = get_proto_value(proto.robot_stop_state.is_reduced_mode)
-    obj.is_robot_power_on = get_proto_value(proto.is_robot_power_on)
-    obj.is_safeguard_stopped = get_proto_value(proto.robot_stop_state.is_safeguard_stopped)
-    if proto.joint_currents_a:
-      json_list = []
-      for j in proto.joint_currents_a:
-        json_list.append(j)
-      obj.joint_currents_a = json_list
-    if proto.joint_temps_c:
-      json_list = []
-      for j in proto.joint_temps_c:
-        json_list.append(j)
-      obj.joint_temps_c = json_list
-    if proto.joint_voltages_v:
-      json_list = []
-      for j in proto.joint_voltages_v:
-        json_list.append(j)
-      obj.joint_voltages_v = json_list
-    if proto.joints:
-      json_list = []
-      for j in proto.joints:
-        json_list.append(j)
-      obj.joints = json_list
-    obj.last_terminated_program = get_proto_value(proto.last_terminated_program)
-    if proto.pose:
-      json_list = []
-      for j in proto.pose:
-        json_list.append(j)
-      obj.pose = json_list
-    obj.program_counter = get_proto_value(proto.program_counter)
-    obj.robot_current_a = get_proto_value(proto.robot_current_a)
-    obj.robot_dexterity = get_proto_value(proto.robot_dexterity)
-    obj.robot_mode = get_proto_value(proto.robot_mode)
-    obj.robot_voltage_v = get_proto_value(proto.robot_voltage_v)
-    obj.safety_message = get_proto_value(proto.robot_stop_state.safety_message)
-    if proto.sensor_in:
-      json_list = []
-      for j in proto.sensor_in:
-        json_list.append(j)
-      obj.sensor_in = json_list
-    if proto.tool_analog_in:
-      json_list = []
-      for j in proto.tool_analog_in:
-        json_list.append(j)
-      obj.tool_analog_in = json_list
-    if proto.tool_analog_out:
-      json_list = []
-      for j in proto.tool_analog_out:
-        json_list.append(j)
-      obj.tool_analog_out = json_list
-    obj.tool_current_a = get_proto_value(proto.tool_current_a)
-    if proto.tool_digital_in:
-      json_list = []
-      for j in proto.tool_digital_in:
-        json_list.append(j)
-      obj.tool_digital_in = json_list
-    if proto.tool_digital_out:
-      json_list = []
-      for j in proto.tool_digital_out:
-        json_list.append(j)
-      obj.tool_digital_out = json_list
-    obj.tool_temp_c = get_proto_value(proto.tool_temp_c)
-    obj.tool_voltage_v = get_proto_value(proto.tool_voltage_v)
-    if proto.torque:
-      json_list = []
-      for j in proto.torque:
-        json_list.append(j)
-      obj.torque = json_list
+    for obj_pose in proto.pose:
+      obj.pose.append(obj_pose)
+    for obj_joints in proto.joints:
+      obj.joints.append(obj_joints)
+    for obj_force in proto.force:
+      obj.force.append(obj_force)
+    for obj_torque in proto.torque:
+      obj.torque.append(obj_torque)
+    if proto.HasField('robot_dexterity'):
+      obj.robot_dexterity = proto.robot_dexterity
+    if proto.HasField('is_robot_power_on'):
+      obj.is_robot_power_on = proto.is_robot_power_on
+    if proto.HasField('robot_stop_state'):
+      if proto.robot_stop_state.HasField('is_emergency_stopped'):
+        obj.is_emergency_stopped = proto.robot_stop_state.is_emergency_stopped
+      if proto.robot_stop_state.HasField('is_protective_stopped'):
+        obj.is_protective_stopped = proto.robot_stop_state.is_protective_stopped
+      if proto.robot_stop_state.HasField('is_safeguard_stopped'):
+        obj.is_safeguard_stopped = proto.robot_stop_state.is_safeguard_stopped
+      if proto.robot_stop_state.HasField('is_reduced_mode'):
+        obj.is_reduced_mode = proto.robot_stop_state.is_reduced_mode
+      if proto.robot_stop_state.HasField('safety_message'):
+        obj.safety_message = proto.robot_stop_state.safety_message
+    if proto.HasField('is_program_running'):
+      obj.is_program_running = proto.is_program_running
+    for obj_digital_in in proto.digital_in:
+      obj.digital_in.append(obj_digital_in)
+    for obj_sensor_in in proto.sensor_in:
+      obj.sensor_in.append(obj_sensor_in)
+    for obj_digital_out in proto.digital_out:
+      obj.digital_out.append(obj_digital_out)
+    for obj_analog_in in proto.analog_in:
+      obj.analog_in.append(obj_analog_in)
+    for obj_analog_out in proto.analog_out:
+      obj.analog_out.append(obj_analog_out)
+    for obj_tool_digital_in in proto.tool_digital_in:
+      obj.tool_digital_in.append(obj_tool_digital_in)
+    for obj_tool_digital_out in proto.tool_digital_out:
+      obj.tool_digital_out.append(obj_tool_digital_out)
+    for obj_tool_analog_in in proto.tool_analog_in:
+      obj.tool_analog_in.append(obj_tool_analog_in)
+    for obj_tool_analog_out in proto.tool_analog_out:
+      obj.tool_analog_out.append(obj_tool_analog_out)
+    if proto.HasField('board_temp_c'):
+      obj.board_temp_c = proto.board_temp_c
+    if proto.HasField('robot_voltage_v'):
+      obj.robot_voltage_v = proto.robot_voltage_v
+    if proto.HasField('robot_current_a'):
+      obj.robot_current_a = proto.robot_current_a
+    if proto.HasField('board_io_current_a'):
+      obj.board_io_current_a = proto.board_io_current_a
+    if proto.HasField('tool_temp_c'):
+      obj.tool_temp_c = proto.tool_temp_c
+    if proto.HasField('tool_voltage_v'):
+      obj.tool_voltage_v = proto.tool_voltage_v
+    if proto.HasField('tool_current_a'):
+      obj.tool_current_a = proto.tool_current_a
+    for obj_joint_voltages_v in proto.joint_voltages_v:
+      obj.joint_voltages_v.append(obj_joint_voltages_v)
+    for obj_joint_currents_a in proto.joint_currents_a:
+      obj.joint_currents_a.append(obj_joint_currents_a)
+    for obj_joint_temps_c in proto.joint_temps_c:
+      obj.joint_temps_c.append(obj_joint_temps_c)
+    if proto.HasField('robot_mode'):
+      obj.robot_mode = proto.robot_mode
+    if proto.HasField('program_counter'):
+      obj.program_counter = proto.program_counter
+    for obj_digital_bank in proto.digital_bank:
+      obj.digital_bank.append(DigitalBank.from_proto(obj_digital_bank))
+    for obj_analog_bank in proto.analog_bank:
+      obj.analog_bank.append(AnalogBank.from_proto(obj_analog_bank))
+    for obj_integer_bank in proto.integer_bank:
+      obj.integer_bank.append(IntegerBank.from_proto(obj_integer_bank))
+    if proto.HasField('last_terminated_program'):
+      obj.last_terminated_program = proto.last_terminated_program
     return obj
 
 
@@ -13093,6 +15428,13 @@ class VacuumActionParams:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.VacuumActionParams':
+    """Convert VacuumActionParams to proto."""
+    proto = logs_pb2.VacuumActionParams()
+    if self.state:
+      proto.state = self.state
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'VacuumActionParams':
     """Convert JSON to type object."""
@@ -13110,12 +15452,13 @@ class VacuumActionParams:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.VacuumActionParams) -> 'VacuumActionParams':
+  def from_proto(proto: logs_pb2.VacuumActionParams) -> Optional['VacuumActionParams']:
     """Convert VacuumActionParams proto to type object."""
     if not proto:
       return None
     obj = VacuumActionParams()
-    obj.state = get_proto_value(proto.state)
+    if proto.HasField('state'):
+      obj.state = proto.state
     return obj
 
 
@@ -13151,6 +15494,17 @@ class Vec3d:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.Vec3d':
+    """Convert Vec3d to proto."""
+    proto = logs_pb2.Vec3d()
+    if self.x:
+      proto.x = self.x
+    if self.y:
+      proto.y = self.y
+    if self.z:
+      proto.z = self.z
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'Vec3d':
     """Convert JSON to type object."""
@@ -13176,14 +15530,17 @@ class Vec3d:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.Vec3d) -> 'Vec3d':
+  def from_proto(proto: logs_pb2.Vec3d) -> Optional['Vec3d']:
     """Convert Vec3d proto to type object."""
     if not proto:
       return None
     obj = Vec3d()
-    obj.x = get_proto_value(proto.x)
-    obj.y = get_proto_value(proto.y)
-    obj.z = get_proto_value(proto.z)
+    if proto.HasField('x'):
+      obj.x = proto.x
+    if proto.HasField('y'):
+      obj.y = proto.y
+    if proto.HasField('z'):
+      obj.z = proto.z
     return obj
 
 
@@ -13225,6 +15582,17 @@ class WaitArgs:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.WaitArgs':
+    """Convert WaitArgs to proto."""
+    proto = logs_pb2.WaitArgs()
+    if self.timeout_seconds:
+      proto.timeout_seconds = self.timeout_seconds
+    if self.timeout_action:
+      proto.timeout_action.CopyFrom(self.timeout_action.to_proto())
+    if self.expr:
+      proto.expr.CopyFrom(self.expr.to_proto())
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'WaitArgs':
     """Convert JSON to type object."""
@@ -13250,14 +15618,17 @@ class WaitArgs:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.WaitArgs) -> 'WaitArgs':
+  def from_proto(proto: logs_pb2.WaitArgs) -> Optional['WaitArgs']:
     """Convert WaitArgs proto to type object."""
     if not proto:
       return None
     obj = WaitArgs()
-    obj.expr = ReachScriptBooleanExpression.from_proto(get_proto_field(proto, 'expr'))
-    obj.timeout_action = WaitTimeoutAction.from_proto(get_proto_field(proto, 'timeout_action'))
-    obj.timeout_seconds = get_proto_value(proto.timeout_seconds)
+    if proto.HasField('timeout_seconds'):
+      obj.timeout_seconds = proto.timeout_seconds
+    if proto.HasField('timeout_action'):
+      obj.timeout_action = WaitTimeoutAction.from_proto(proto.timeout_action)
+    if proto.HasField('expr'):
+      obj.expr = ReachScriptBooleanExpression.from_proto(proto.expr)
     return obj
 
 
@@ -13298,6 +15669,15 @@ class WaitTimeoutAction:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.WaitTimeoutAction':
+    """Convert WaitTimeoutAction to proto."""
+    proto = logs_pb2.WaitTimeoutAction()
+    if self.py_type:
+      proto.type = self.py_type
+    if self.abort_message:
+      proto.abort_message = self.abort_message
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'WaitTimeoutAction':
     """Convert JSON to type object."""
@@ -13319,13 +15699,15 @@ class WaitTimeoutAction:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.WaitTimeoutAction) -> 'WaitTimeoutAction':
+  def from_proto(proto: logs_pb2.WaitTimeoutAction) -> Optional['WaitTimeoutAction']:
     """Convert WaitTimeoutAction proto to type object."""
     if not proto:
       return None
     obj = WaitTimeoutAction()
-    obj.abort_message = get_proto_value(proto.abort_message)
-    obj.py_type = get_proto_value(proto.type)
+    if proto.HasField('type'):
+      obj.py_type = proto.type
+    if proto.HasField('abort_message'):
+      obj.abort_message = proto.abort_message
     return obj
 
 
@@ -13357,6 +15739,15 @@ class WebrtcAudioRequest:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.WebrtcAudioRequest':
+    """Convert WebrtcAudioRequest to proto."""
+    proto = logs_pb2.WebrtcAudioRequest()
+    if self.speaker_unmute:
+      proto.speaker_unmute = self.speaker_unmute
+    if self.microphone_unmute:
+      proto.microphone_unmute = self.microphone_unmute
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'WebrtcAudioRequest':
     """Convert JSON to type object."""
@@ -13378,13 +15769,15 @@ class WebrtcAudioRequest:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.WebrtcAudioRequest) -> 'WebrtcAudioRequest':
+  def from_proto(proto: logs_pb2.WebrtcAudioRequest) -> Optional['WebrtcAudioRequest']:
     """Convert WebrtcAudioRequest proto to type object."""
     if not proto:
       return None
     obj = WebrtcAudioRequest()
-    obj.microphone_unmute = get_proto_value(proto.microphone_unmute)
-    obj.speaker_unmute = get_proto_value(proto.speaker_unmute)
+    if proto.HasField('speaker_unmute'):
+      obj.speaker_unmute = proto.speaker_unmute
+    if proto.HasField('microphone_unmute'):
+      obj.microphone_unmute = proto.microphone_unmute
     return obj
 
 
@@ -13409,6 +15802,13 @@ class WebrtcAudioResponse:
 
     return json_data
 
+  def to_proto(self) -> 'logs_pb2.WebrtcAudioResponse':
+    """Convert WebrtcAudioResponse to proto."""
+    proto = logs_pb2.WebrtcAudioResponse()
+    if self.success:
+      proto.success = self.success
+    return proto
+
   @staticmethod
   def from_json(json_data: Dict[str, Any]) -> 'WebrtcAudioResponse':
     """Convert JSON to type object."""
@@ -13426,10 +15826,11 @@ class WebrtcAudioResponse:
     return obj
 
   @staticmethod
-  def from_proto(proto: logs_pb2.WebrtcAudioResponse) -> 'WebrtcAudioResponse':
+  def from_proto(proto: logs_pb2.WebrtcAudioResponse) -> Optional['WebrtcAudioResponse']:
     """Convert WebrtcAudioResponse proto to type object."""
     if not proto:
       return None
     obj = WebrtcAudioResponse()
-    obj.success = get_proto_value(proto.success)
+    if proto.HasField('success'):
+      obj.success = proto.success
     return obj

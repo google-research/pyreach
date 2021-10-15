@@ -20,6 +20,28 @@ from typing import Optional, Tuple
 from pyreach.gyms import reach_element
 
 
+class ReachStopMode:
+  """Arm stop mode enumeration."""
+  STOP_ERROR = 0  # Raise PyReachError on EStop/PStop (default)
+  STOP_DONE = 1  # Force step() to set Done to True
+  STOP_STATUS = 2  # Return the EStop/PStop in arm status
+
+
+class ReachResponse:
+  """Arm response code enumeration."""
+  RESPONSE_NONE: int = 0
+  RESPONSE_DONE: int = 1
+  RESPONSE_FAILED: int = 2  # Done with error other than timeout
+  RESPONSE_ABORTED: int = 3
+  RESPONSE_REJECTED: int = 4
+  RESPONSE_TIMEOUT: int = 5  # Done with timeout error.
+  RESPONSE_ESTOP: int = 6  # Emergency Stop
+  RESPONSE_PSTOP: int = 7  # Protective Stop
+  RESPONSE_MAX: int = max(RESPONSE_NONE, RESPONSE_DONE, RESPONSE_FAILED,
+                          RESPONSE_ABORTED, RESPONSE_REJECTED, RESPONSE_TIMEOUT,
+                          RESPONSE_ESTOP, RESPONSE_PSTOP)
+
+
 @dataclasses.dataclass(frozen=True)
 class ReachArm(reach_element.ReachElement):
   """Base class for for Reach arm configuration.
@@ -66,6 +88,16 @@ class ReachArm(reach_element.ReachElement):
       this list.  The empty string means "no controller".  This list must
       not empty.  By convention, the first entry is the empty string.
       If not specified, the list defaults to `("",)`
+    e_stop_mode: Specifies the Gym behavior when an emergency stop occurs.
+      0 specifies that a `PyreachError` will be raised. 1 specifies that a
+      the Gym will cause the step method to return with the Done flag set.
+      2 specifies that the arm status will indicate an E-stop condition.
+      (Default: 0)
+    p_stop_mode:  Specifies the Gym behavior when an protective stop occurs.
+      0 specifies that a `PyreachError` will be raised. 1 specifies that a
+      the Gym will cause the step method to return with the Done flag set.
+      2 specifies that the arm status will indicate a P-stop condition.
+      (Default: 0)
   """
   low_joint_angles: Tuple[float, ...] = ()
   high_joint_angles: Tuple[float, ...] = ()
@@ -74,3 +106,5 @@ class ReachArm(reach_element.ReachElement):
   response_queue_length: int = 0
   ik_lib: Optional[str] = None
   controllers: Tuple[str] = ("",)
+  e_stop_mode: int = ReachStopMode.STOP_ERROR
+  p_stop_mode: int = ReachStopMode.STOP_ERROR

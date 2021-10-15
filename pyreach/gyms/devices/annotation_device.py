@@ -120,17 +120,34 @@ class ReachDeviceAnnotation(reach_device.ReachDevice):
         if "data" not in action_dict:
           raise pyreach.PyReachError("Annotation is missing 'data'")
         action_data: Any = action_dict["data"]
+        index: int
+        end: int
         data: bytes = bytes()
         if isinstance(action_data, bytes):
           data = action_data
+        elif isinstance(action_data, (list, tuple)):
+          byte: int
+          end = -1
+          for index, byte in enumerate(action_data):
+            if byte < 0 or byte > 256:
+              raise pyreach.PyReachError(
+                  f"Annotation byte ({byte}) out of range.")
+            if end < 0 and byte == 256:
+              end = index
+          data = bytes(action_data[:end] if end >= 0 else action_data)
         elif isinstance(action_data, np.ndarray):
           shape: Tuple[int, ...] = action_data.shape
           if len(shape) != 1:
             raise pyreach.PyReachError(
-                "Annotation data must be a list of bytes.")
-          data = bytes([int(byte) for byte in action_data if 0 <= byte <= 255])
-          end: int = data.index(256)  # 0-255 are valid bytes and 256 marks end.
-          data = data[:end] if end >= 0 else data
+                "Annotation data must be a list of bytes terminated by a 256.")
+          idata = [int(byte) for byte in action_data]
+          end = idata.index(256)  # 256 marks end of data
+          data = bytes(idata[:end] if end >= 0 else idata)
+        else:
+          raise pyreach.PyReachError(
+              "Annotation data must be bytes or ndarray "
+              f"type={type(action_data)} action_data={action_data}")
+
         size: int = len(data)
         maximum_size: int = self._maximum_size
         if size > maximum_size:

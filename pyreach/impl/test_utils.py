@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Testing utilities for PyReach."""
 
 import dataclasses
@@ -26,6 +25,7 @@ import urllib.request
 import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
 
+from pyreach.common.proto_gen import logs_pb2  # type: ignore
 from pyreach.common.python import types_gen
 from pyreach.impl import client
 from pyreach.impl import device_base
@@ -1674,8 +1674,18 @@ class TestClient(client.Client):
           device_name=data.device_name,
           key=data.key)] = data.value
     self._queue.put(data)
+    protoloop = types_gen.DeviceData.from_proto(
+        logs_pb2.DeviceData.FromString(  # type: ignore
+            data.to_proto().SerializeToString()))  # type: ignore
+    assert protoloop is not None
+    assert data.to_json() == protoloop.to_json()
 
   def send_cmd(self, cmd: types_gen.CommandData) -> None:
+    protoloop = types_gen.CommandData.from_proto(
+        logs_pb2.CommandData.FromString(  # type: ignore
+            cmd.to_proto().SerializeToString()))  # type: ignore
+    assert protoloop is not None
+    assert cmd.to_json() == protoloop.to_json()
     with self._lock:
       if cmd.data_type == "key-value-request":
         value = self._key_values.get(
@@ -1760,15 +1770,35 @@ class TestDevice:
     if self._data_downloader:
       responder.set_test_image_dir(self._data_downloader.test_image_dir)
     for msg in responder.start():
+      protoloop = types_gen.DeviceData.from_proto(
+          logs_pb2.DeviceData.FromString(  # type: ignore
+              msg.to_proto().SerializeToString()))  # type: ignore
+      assert protoloop is not None
+      assert msg.to_json() == protoloop.to_json()
       self._device.sync_device_data(msg)
     self.set_callback(responder.step)
 
   def send_cmd(self, cmd: types_gen.CommandData) -> None:
+    """Send a command data to the responder or callback.
+
+    Args:
+      cmd: the command data to send.
+    """
+    protoloop_cmd = types_gen.CommandData.from_proto(
+        logs_pb2.CommandData.FromString(  # type: ignore
+            cmd.to_proto().SerializeToString()))  # type: ignore
+    assert protoloop_cmd is not None
+    assert cmd.to_json() == protoloop_cmd.to_json()
     self._cmds.append(cmd)
     if cmd.tag:
       self._tag_map[cmd.tag] = "tag-%d" % (len(self._tag_map) + 1,)
     if self._callback[0] is not None:
       for msg in self._callback[0](cmd):
+        protoloop = types_gen.DeviceData.from_proto(
+            logs_pb2.DeviceData.FromString(  # type: ignore
+                msg.to_proto().SerializeToString()))  # type: ignore
+        assert protoloop is not None
+        assert msg.to_json() == protoloop.to_json()
         self._device.sync_device_data(msg)
 
   def expect_command_data(self,
@@ -1783,6 +1813,16 @@ class TestDevice:
     assert len(cmds) == len(expect_cmds), (
         f"Expected {len(expect_cmds)}  commands, got {len(cmds)}")
     for cmd, expect_cmd in zip(cmds, expect_cmds):
+      protoloop = types_gen.CommandData.from_proto(
+          logs_pb2.CommandData.FromString(  # type: ignore
+              cmd.to_proto().SerializeToString()))  # type: ignore
+      assert protoloop is not None
+      assert cmd.to_json() == protoloop.to_json()
+      protoloop = types_gen.CommandData.from_proto(
+          logs_pb2.CommandData.FromString(  # type: ignore
+              expect_cmd.to_proto().SerializeToString()))  # type: ignore
+      assert protoloop is not None
+      assert expect_cmd.to_json() == protoloop.to_json()
       cmd_json = cmd.to_json()
       if "ts" in cmd_json:
         del cmd_json["ts"]

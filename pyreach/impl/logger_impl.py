@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of the PyReach Logger interface."""
 import logging  # type: ignore
 import queue  # pylint: disable=unused-import
@@ -183,6 +182,8 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
             ts=utils.timestamp_now(),
             device_type="client-annotation",
             data_type="client-annotation",
+            client_annotation=types_gen.ClientAnnotation(
+                snapshot_annotation=types_gen.SnapshotAnnotation()),
             snapshot=snapshot_impl.convert_snapshot(snapshot)))
 
 

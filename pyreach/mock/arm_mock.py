@@ -26,6 +26,11 @@ from pyreach import core
 class ArmMock(arm.Arm):
   """Interface of a multi-joint Arm."""
 
+  def __init__(self) -> None:
+    """Initialize Mock Arm."""
+    super().__init__()
+    self._state_index: int = 0
+
   @property
   def device_name(self) -> str:
     """Return the Arm device name."""
@@ -34,13 +39,25 @@ class ArmMock(arm.Arm):
   def state(self) -> Optional[arm.ArmState]:
     """Return the latest state of the arm."""
     joint_angles: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    position: core.Translation = core.Translation(0.0, 0.0, 0.0)
     orientation: core.AxisAngle = core.AxisAngle.from_tuple((0.0, 0.0, 0.0))
+    position: core.Translation = core.Translation(0.0, 0.0, 0.0)
     pose: core.Pose = core.Pose(position, orientation)
     force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    is_protective_stopped: bool = self._state_index == 2
+    is_emergency_stopped: bool = self._state_index == 3
+    is_safeguard_stopped: bool = False
+    is_reduced_mode: bool = False
+    safety_message: str = ""
+    is_program_running: bool = False
+    is_robot_power_on: bool = False
+    robot_mode: arm.RobotMode = arm.RobotMode.from_string("")  # DEFAULT
     state: arm.ArmState = arm.ArmState(0.0, 0, "robot", "", joint_angles, pose,
-                                       force, False, False, False, False, "",
-                                       False, False, arm.RobotMode.DEFAULT)
+                                       force, is_protective_stopped,
+                                       is_emergency_stopped,
+                                       is_safeguard_stopped, is_reduced_mode,
+                                       safety_message, is_program_running,
+                                       is_robot_power_on, robot_mode)
+    self._state_index += 1
     return state
 
   @property

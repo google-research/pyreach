@@ -55,16 +55,6 @@ class ReachDeviceArm(reach_device.ReachDevice):
       with "ts", "joint_angles", and "pose" fields.
   """
 
-  # Valid "response" values:
-  RESPONSE_NONE: int = 0
-  RESPONSE_DONE: int = 1
-  RESPONSE_FAILED: int = 2  # Done with error other than timeout
-  RESPONSE_ABORTED: int = 3
-  RESPONSE_REJECTED: int = 4
-  RESPONSE_TIMEOUT: int = 5  # Done with timeout error.
-  RESPONSE_MAX: int = max(RESPONSE_NONE, RESPONSE_DONE, RESPONSE_FAILED,
-                          RESPONSE_ABORTED, RESPONSE_REJECTED, RESPONSE_TIMEOUT)
-
   def __init__(self, arm_config: arm_element.ReachArm) -> None:
     """Initialize a Reach Arm.
 
@@ -79,6 +69,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
     response_queue_length: int = arm_config.response_queue_length
     controllers: Tuple[str, ...] = arm_config.controllers
     ik_lib: Optional[str] = arm_config.ik_lib
+    e_stop_mode: int = arm_config.e_stop_mode
+    p_stop_mode: int = arm_config.p_stop_mode
 
     if not controllers:
       raise pyreach.PyReachError("At least one controller must be specified")
@@ -129,14 +121,18 @@ class ReachDeviceArm(reach_device.ReachDevice):
         "pose":
             gym.spaces.Box(low=-100, high=100, shape=(6,)),
         "status":
-            gym.spaces.Discrete(ReachDeviceArm.RESPONSE_MAX + 1),
+            gym.spaces.Discrete(arm_element.ReachResponse.RESPONSE_MAX + 1),
     }
     if response_queue_length:
       response_space: gym.spaces.Dict = gym.spaces.Dict({
-          "ts": gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
-          "id": gym.spaces.Discrete(1 << 30),
-          "status": gym.spaces.Discrete(ReachDeviceArm.RESPONSE_MAX + 1),
-          "finished": gym.spaces.Discrete(2),
+          "ts":
+              gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
+          "id":
+              gym.spaces.Discrete(1 << 30),
+          "status":
+              gym.spaces.Discrete(arm_element.ReachResponse.RESPONSE_MAX + 1),
+          "finished":
+              gym.spaces.Discrete(2),
       })
       observation_dict["responses"] = gym.spaces.Tuple(
           (response_space,) * response_queue_length)
@@ -147,6 +143,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._arm: Optional[pyreach.Arm] = None
     self._arm_state_capturer: _ArmStateCapturer = _ArmStateCapturer()
     self._controllers: Tuple[str, ...] = controllers
+    self._early_done: bool = False
     self._high_joint_angles: Tuple[float, ...] = high_joint_angles
     self._low_joint_angles: Tuple[float, ...] = low_joint_angles
     self._joints: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -156,6 +153,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._apply_tip_adjust_transform: bool = apply_tip_adjust_transform
     self._last_command: int = 0
     self._ik_lib: Optional[str] = ik_lib
+    self._e_stop_mode: int = e_stop_mode
+    self._p_stop_mode: int = p_stop_mode
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -199,6 +198,14 @@ class ReachDeviceArm(reach_device.ReachDevice):
           self._arm.set_ik_lib(IKLibType(self._ik_lib))
         self._arm.start_streaming()
     return self._arm
+
+  def get_early_done(self) -> bool:
+    """Return an early Done flag.
+
+    Returns:
+        Return True when the arm to shut done Gym session immediately.
+    """
+    return self._early_done
 
   def fk(self,
          host: Optional[pyreach.Host],
@@ -260,12 +267,15 @@ class ReachDeviceArm(reach_device.ReachDevice):
       pyreach_status: Optional[pyreach.PyReachStatus] = self._pyreach_status
       response: int = -1
       if pyreach_status is None:
-        response = ReachDeviceArm.RESPONSE_NONE
+        response = arm_element.ReachResponse.RESPONSE_NONE
         responses.append(
             lib_snapshot.SnapshotResponse(
                 0, "arm", self.config_name,
                 lib_snapshot.SnapshotReference(0.0, 0)))
       else:
+        # Get last cached value ArmState, which should be good enough to figure
+        # out if either E-Stop or P-Stop has occurred.
+        # Snapshot this?
         responses.append(
             lib_snapshot.SnapshotResponse(0, "arm", self.config_name,
                                           pyreach_status))
@@ -273,18 +283,18 @@ class ReachDeviceArm(reach_device.ReachDevice):
         error: str = pyreach_status.error
         if status == "done":
           if error == "timeout":
-            response = ReachDeviceArm.RESPONSE_TIMEOUT
+            response = arm_element.ReachResponse.RESPONSE_TIMEOUT
           elif error:
-            response = ReachDeviceArm.RESPONSE_FAILED
+            response = arm_element.ReachResponse.RESPONSE_FAILED
           else:
-            response = ReachDeviceArm.RESPONSE_DONE
+            response = arm_element.ReachResponse.RESPONSE_DONE
         elif status == "aborted":
-          response = ReachDeviceArm.RESPONSE_ABORTED
+          response = arm_element.ReachResponse.RESPONSE_ABORTED
         else:
           logging.warning("Internal Error: Unexpected response '%s' '%s'",
                           status, error)
-          response = ReachDeviceArm.RESPONSE_FAILED
-        if not 0 <= response <= ReachDeviceArm.RESPONSE_MAX:
+          response = arm_element.ReachResponse.RESPONSE_FAILED
+        if not 0 <= response <= arm_element.ReachResponse.RESPONSE_MAX:
           raise pyreach.PyReachError(
               f"Internal Error: Bad Arm response {response}")
 
@@ -293,6 +303,25 @@ class ReachDeviceArm(reach_device.ReachDevice):
         arm_state = arm.fetch_state() if self._is_synchronous else arm.state()
 
       if arm_state is not None:
+        # Deal with E-stop and P-Stop.
+        if arm_state.is_emergency_stopped:
+          e_stop_mode: int = self._e_stop_mode
+          if e_stop_mode == arm_element.ReachStopMode.STOP_ERROR:
+            raise pyreach.PyReachError("Robot is in Protective-Stop mode")
+          response = arm_element.ReachResponse.RESPONSE_ESTOP
+          if e_stop_mode == arm_element.ReachStopMode.STOP_DONE:
+            self._early_done = True
+
+        if arm_state.is_protective_stopped:
+          p_stop_mode: int = self._p_stop_mode
+          if p_stop_mode == arm_element.ReachStopMode.STOP_ERROR:
+            raise pyreach.PyReachError("Robot is in Protective-Stop mode")
+          if p_stop_mode == arm_element.ReachStopMode.STOP_DONE:
+            response = arm_element.ReachResponse.RESPONSE_PSTOP
+            self._early_done = True
+          else:
+            response = arm_element.ReachResponse.RESPONSE_PSTOP
+
         ts = arm_state.time
         joints: Tuple[float, ...] = arm_state.joint_angles
         if self._joints_ok(joints):
@@ -371,7 +400,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
     for index in range(response_queue_length):
       timestamp: float = 0.0
       action_id = 0
-      status: int = ReachDeviceArm.RESPONSE_NONE
+      status: int = arm_element.ReachResponse.RESPONSE_NONE
       arm_response_status: Optional[core.PyReachStatus] = None
       done = False
 
@@ -666,9 +695,9 @@ class ReachDeviceArm(reach_device.ReachDevice):
             synchronous=self._is_synchronous or synchronous),)
         if self._is_synchronous or synchronous:
           with self._timers.select({"!agent*", "!gym*", "host.arm.stop"}):
-            arm.stop(deceleration=acceleration)
+            arm.stop(deceleration=acceleration, preemptive=True)
         else:
-          arm.async_stop(deceleration=acceleration)
+          arm.async_stop(deceleration=acceleration, preemptive=True)
         return cmd_tuple
 
       raise pyreach.PyReachError(
