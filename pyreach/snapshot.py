@@ -16,7 +16,7 @@
 import dataclasses
 from typing import Dict, Tuple, Union
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach.core import PyReachStatus
 
 
@@ -142,7 +142,7 @@ class SnapshotGymClientAnnotationAction(SnapshotGymAction):
   Attributes:
     annotation: the annotation written
   """
-  annotation: logs_pb2.ClientAnnotation  # type: ignore
+  annotation: logs_pb2.ClientAnnotation
 
 
 @dataclasses.dataclass(frozen=True)

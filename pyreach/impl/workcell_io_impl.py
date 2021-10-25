@@ -33,7 +33,7 @@ class WorkcellIoDevice(device_base.DeviceBase):
   logical IO names. For example, digital IO pin 1 maps to vacuum on/off.
   """
 
-  _workcell_io: Optional[workcell_io.IOConfig]  # type: ignore
+  _workcell_io: Optional[workcell_io.IOConfig]
   _workcell_lock: threading.Lock
 
   def __init__(self) -> None:
@@ -42,7 +42,7 @@ class WorkcellIoDevice(device_base.DeviceBase):
     self._workcell_io = None
     self._workcell_lock = threading.Lock()
 
-  def get(self) -> Optional[workcell_io.IOConfig]:  # type: ignore
+  def get(self) -> Optional[workcell_io.IOConfig]:
     """Return the latest workcell IO configuration."""
     with self._workcell_lock:
       return self._workcell_io
@@ -92,7 +92,7 @@ class WorkcellIoDevice(device_base.DeviceBase):
     except binascii.Error:
       logging.warning("failed to decode workcell IO JSON: invalid base64")
       return
-    config = workcell_io.IOConfig()  # type: ignore
+    config = workcell_io.IOConfig()
     try:
       config.ParseFromString(config_bin)
     except message.DecodeError:

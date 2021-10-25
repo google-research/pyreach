@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Internal functions used only by the Reach team for experimentation purpose.
 
 WARNING: Please do not use the internal functions in the PyReach application
@@ -27,8 +26,10 @@ from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, TextIO, 
 
 import numpy as np  # type: ignore
 
+from google.protobuf import duration_pb2
+from google.protobuf import timestamp_pb2
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
-from pyreach.common.python import types_gen
 
 # There are three timer classes used for collecting performance information.
 #
@@ -438,7 +439,7 @@ class Timers(object):
 class InternalPlayback:
   """Playback is a playback object that manages playback of data."""
 
-  def next_device_data(self) -> Optional[types_gen.DeviceData]:
+  def next_device_data(self) -> Optional[logs_pb2.DeviceData]:
     """Playback the next device-data object.
 
     Returns:
@@ -456,7 +457,7 @@ class InternalPlayback:
 
   def seek_device_data(
       self, timestamp: Optional[float],
-      sequence: Optional[int]) -> Optional[types_gen.DeviceData]:
+      sequence: Optional[int]) -> Optional[logs_pb2.DeviceData]:
     """Seek the given device data and output it, if available.
 
     Args:
@@ -491,7 +492,7 @@ class Internal(object):
     """Get the playback object, if available."""
     raise NotImplementedError
 
-  def load_color_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+  def load_color_image_from_data(self, msg: logs_pb2.DeviceData) -> np.ndarray:
     """Load the color image from a device-data.
 
     Args:
@@ -505,7 +506,7 @@ class Internal(object):
     """
     raise NotImplementedError
 
-  def load_depth_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+  def load_depth_image_from_data(self, msg: logs_pb2.DeviceData) -> np.ndarray:
     """Load the depth image from a device-data.
 
     Args:
@@ -519,10 +520,53 @@ class Internal(object):
     """
     raise NotImplementedError
 
+  def get_time_at_timestamp(self, timestamp: timestamp_pb2.Timestamp) -> float:
+    """Get the time stored within a protobuf timestamp.
+
+    Args:
+      timestamp: the protobuf timestamp.
+
+    Returns:
+      The python float time value.
+    """
+    raise NotImplementedError
+
+  def set_timestamp_to_time(self, timestamp: timestamp_pb2.Timestamp,
+                            ts: float) -> None:
+    """Set the time stored within a protobuf timestamp.
+
+    Args:
+      timestamp: the protobuf timestamp.
+      ts: the python float time value to set.
+    """
+    raise NotImplementedError
+
+  def get_seconds_from_duration(self,
+                                duration: duration_pb2.Duration) -> float:
+    """Get the duration stored within a protobuf duration.
+
+    Args:
+      duration: the protobuf duration.
+
+    Returns:
+      The python float time value.
+    """
+    raise NotImplementedError
+
+  def set_duration_to_seconds(self, duration: duration_pb2.Duration,
+                              seconds: float) -> None:
+    """Set the duration stored within a protobuf duration.
+
+    Args:
+      duration: the protobuf duration.
+      seconds: the python float time value to set.
+    """
+    raise NotImplementedError
+
   def async_send_command_data(
       self,
-      command_data: types_gen.CommandData,
-      callback: Optional[Callable[[types_gen.DeviceData], bool]] = None,
+      command_data: logs_pb2.CommandData,
+      callback: Optional[Callable[[logs_pb2.DeviceData], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
     """Send a command data asynchronously.
 
@@ -556,7 +600,7 @@ class Internal(object):
 
   def add_device_data_callback(
       self,
-      callback: Callable[[types_gen.DeviceData], bool],
+      callback: Callable[[logs_pb2.DeviceData], bool],
       finished_callback: Optional[Callable[[],
                                            None]] = None) -> Callable[[], None]:
     """Add a listener to the DeviceData stream.

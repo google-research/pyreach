@@ -6,7 +6,7 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import client_annotation
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import annotation_element
@@ -154,9 +154,9 @@ class ReachDeviceAnnotation(reach_device.ReachDevice):
           raise pyreach.PyReachError(
               f"Annotation data size(={size}) > maximum_size(={maximum_size})")
         if data:
-          annotation: logs_pb2.ClientAnnotation  # type: ignore
+          annotation: logs_pb2.ClientAnnotation
           annotation = logs_pb2.ClientAnnotation()
-          annotation.ParseFromString(data)  # type: ignore
+          annotation.ParseFromString(data)
           snapshot: lib_snapshot.SnapshotGymAction
           snapshot = lib_snapshot.SnapshotGymClientAnnotationAction(
               device_type="annotation",

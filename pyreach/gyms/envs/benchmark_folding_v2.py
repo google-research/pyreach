@@ -27,6 +27,10 @@ from pyreach.gyms import core
 from pyreach.gyms import reach_env
 
 
+# Task code that this environment uses to generate instructions, and logs under.
+TASK_CODE = "142"
+
+
 def _log(msg: str) -> None:
   """Helper method to log with time."""
   sys.stderr.write(f"{time.time():.4f}:ENV: {msg}\n")
@@ -71,7 +75,7 @@ class BenchmarkFoldingEnv(reach_env.ReachEnv):
     self.deadline: float = 0.0
     self.last_joint_move_observation: Optional[core.Observation] = None
 
-    task_params: Dict[str, str] = {"task-code": "142"}
+    task_params: Dict[str, str] = {"task-code": TASK_CODE}
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "arm":
             reach_env.ReachArm(

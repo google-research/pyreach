@@ -16,7 +16,7 @@
 from typing import List, cast
 import unittest
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
 from pyreach import snapshot
 from pyreach.common.python import types_gen
@@ -188,11 +188,9 @@ class TestPyReachLogger(unittest.TestCase):
                       "test-client",
                       "client",
                       True,
-                      logs_pb2.ClientAnnotation(  # type: ignore
-                          text_annotation=logs_pb2  # type: ignore
-                          .TextAnnotation(  # type: ignore
-                              category="test-category",  # type: ignore
-                              text="test-text")),  # type: ignore
+                      logs_pb2.ClientAnnotation(
+                          text_annotation=logs_pb2.TextAnnotation(
+                              category="test-category", text="test-text")),
                   ))))
       test_device.expect_command_data([
           types_gen.CommandData(

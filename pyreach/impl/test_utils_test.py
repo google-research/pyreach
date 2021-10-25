@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for google3.robotics.learning.reach.third_party.pyreach.impl.test_utils."""
 
 import json
@@ -70,15 +69,15 @@ class TestUtilsTest(unittest.TestCase):
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([3, 4])),
+                color_image=bytes([1, 2]),
+                depth_image=bytes([3, 4])),
             utils.ImagedDeviceData(
                 ts=1,
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([3, 4]))))
+                color_image=bytes([1, 2]),
+                depth_image=bytes([3, 4]))))
     self.assertFalse(
         test_utils.device_data_equal(
             utils.ImagedDeviceData(
@@ -86,14 +85,14 @@ class TestUtilsTest(unittest.TestCase):
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([3, 4])),
+                color_image=bytes([1, 2]),
+                depth_image=bytes([3, 4])),
             utils.ImagedDeviceData(
                 ts=1,
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                depth_image=numpy.array([3, 4]))))
+                depth_image=bytes([3, 4]))))
     self.assertFalse(
         test_utils.device_data_equal(
             utils.ImagedDeviceData(
@@ -101,15 +100,15 @@ class TestUtilsTest(unittest.TestCase):
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([3, 4])),
+                color_image=bytes([1, 2]),
+                depth_image=bytes([3, 4])),
             utils.ImagedDeviceData(
                 ts=1,
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([5, 4]))))
+                color_image=bytes([1, 2]),
+                depth_image=bytes([5, 4]))))
     self.assertFalse(
         test_utils.device_data_equal(
             utils.ImagedDeviceData(
@@ -117,15 +116,15 @@ class TestUtilsTest(unittest.TestCase):
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 2]),
-                depth_image=numpy.array([3, 4])),
+                color_image=bytes([1, 2]),
+                depth_image=bytes([3, 4])),
             utils.ImagedDeviceData(
                 ts=1,
                 seq=1,
                 device_type="depth-camera",
                 data_type="color-depth",
-                color_image=numpy.array([1, 5]),
-                depth_image=numpy.array([3, 4]))))
+                color_image=bytes([1, 5]),
+                depth_image=bytes([3, 4]))))
     self.assertFalse(
         test_utils.device_data_equal(
             types_gen.DeviceData(

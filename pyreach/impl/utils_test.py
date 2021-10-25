@@ -11,12 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for utils.py."""
 
 import unittest
-
-import numpy  # type: ignore
 
 from pyreach import core
 from pyreach.common.python import types_gen
@@ -47,11 +44,193 @@ class UtilsTest(unittest.TestCase):
             seq=1,
             device_type="depth-camera",
             data_type="color-depth",
-            color_image=numpy.array([1, 2]),
-            depth_image=numpy.array([3, 4])))
+            color_image=bytes([1, 2]),
+            depth_image=bytes([3, 4])))
     copy_test(
         types_gen.DeviceData(
             ts=1, seq=1, device_type="robot", data_type="robot-state"))
+
+  def test_proto_loop(self) -> None:
+
+    def proto_loop_test(data: types_gen.DeviceData) -> None:
+      loop = utils.ImagedDeviceData.from_proto(data.to_proto())
+      assert loop is not None
+      self.assertTrue(test_utils.device_data_equal(data, loop))
+
+    proto_loop_test(
+        utils.ImagedDeviceData(
+            ts=1,
+            seq=1,
+            device_type="depth-camera",
+            data_type="color-depth",
+            color="test_color.jpg",
+            depth="test_depth.pgm",
+            color_image=bytes([1, 2]),
+            depth_image=bytes([3, 4])))
+    proto_loop_test(
+        utils.ImagedDeviceData(
+            ts=1,
+            seq=1,
+            device_type="color-camera",
+            data_type="color",
+            color="test_color.jpg",
+            color_image=bytes([1, 2])))
+    proto_loop_test(
+        utils.ImagedDeviceData(
+            ts=1,
+            seq=1,
+            device_type="oracle",
+            device_name="pick-points",
+            data_type="prediction",
+            color="test_color.jpg",
+            color_image=bytes([1, 2])))
+    proto_loop_test(
+        utils.ImagedDeviceData(
+            ts=1, seq=1, device_type="robot", data_type="robot-state"))
+
+  def test_color_image_loader(self) -> None:
+
+    def read_file(fn: str) -> bytes:
+      with open(fn, "rb") as f:
+        return f.read()
+
+    for data_type, filename in [
+        ("prediction", "test_images/oracle-pick-points/color.jpg"),
+        ("color", "test_images/uvc/color.jpg"),
+        ("color", "test_images/vnc/color.jpg"),
+        ("color", "test_images/realsense_invoice/color.jpg"),
+        ("color-depth", "test_images/photoneo/color.jpg"),
+        ("color-depth", "test_images/realsense/color.jpg"),
+    ]:
+      for source in [
+          types_gen.DeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              color_image=read_file(test_utils.get_test_image_file(filename))),
+      ]:
+        self.assertRaises(FileNotFoundError, utils.load_color_image_from_data,
+                          source)
+        self.assertRaises(FileNotFoundError, utils.load_color_image_from_data,
+                          source.to_proto())
+        loop = utils.ImagedDeviceData.from_proto(source.to_proto())
+        assert loop
+        self.assertRaises(FileNotFoundError, utils.load_color_image_from_data,
+                          loop)
+        self.assertRaises(FileNotFoundError, utils.load_color_image_from_data,
+                          loop.to_proto())
+      for source in [
+          types_gen.DeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              color=test_utils.get_test_image_file(filename)),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              color=test_utils.get_test_image_file(filename)),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              color=test_utils.get_test_image_file(filename),
+              color_image=read_file(test_utils.get_test_image_file(filename))),
+      ]:
+        test_utils.assert_image_equal(
+            utils.load_color_image_from_data(source), filename)
+        test_utils.assert_image_equal(
+            utils.load_color_image_from_data(source.to_proto()), filename)
+        loop = utils.ImagedDeviceData.from_proto(source.to_proto())
+        assert loop
+        test_utils.assert_image_equal(
+            utils.load_color_image_from_data(loop), filename)
+        test_utils.assert_image_equal(
+            utils.load_color_image_from_data(loop.to_proto()), filename)
+
+  def test_depth_image_loader(self) -> None:
+
+    def read_file(fn: str) -> bytes:
+      with open(fn, "rb") as f:
+        return f.read()
+
+    for data_type, filename in [
+        ("color-depth", "test_images/photoneo/depth.pgm"),
+        ("color-depth", "test_images/realsense/depth.pgm"),
+    ]:
+      for source in [
+          types_gen.DeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              depth_image=read_file(test_utils.get_test_image_file(filename))),
+      ]:
+        self.assertRaises(FileNotFoundError, utils.load_depth_image_from_data,
+                          source)
+        self.assertRaises(FileNotFoundError, utils.load_depth_image_from_data,
+                          source.to_proto())
+        loop = utils.ImagedDeviceData.from_proto(source.to_proto())
+        assert loop
+        self.assertRaises(FileNotFoundError, utils.load_depth_image_from_data,
+                          loop)
+        self.assertRaises(FileNotFoundError, utils.load_depth_image_from_data,
+                          loop.to_proto())
+      for source in [
+          types_gen.DeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              depth=test_utils.get_test_image_file(filename)),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              depth=test_utils.get_test_image_file(filename)),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
+              depth=test_utils.get_test_image_file(filename),
+              depth_image=read_file(test_utils.get_test_image_file(filename))),
+      ]:
+        test_utils.assert_image_depth_equal(
+            utils.load_depth_image_from_data(source), filename)
+        test_utils.assert_image_depth_equal(
+            utils.load_depth_image_from_data(source.to_proto()), filename)
+        loop = utils.ImagedDeviceData.from_proto(source.to_proto())
+        assert loop
+        test_utils.assert_image_depth_equal(
+            utils.load_depth_image_from_data(loop), filename)
+        test_utils.assert_image_depth_equal(
+            utils.load_depth_image_from_data(loop.to_proto()), filename)
 
   def test_command_copy(self) -> None:
 

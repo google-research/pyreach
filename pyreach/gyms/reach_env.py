@@ -29,6 +29,7 @@ from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import annotation_element
 from pyreach.gyms import arm_element
 from pyreach.gyms import color_camera_element
+from pyreach.gyms import constraints_element
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import depth_camera_element
 from pyreach.gyms import force_torque_sensor_element
@@ -41,11 +42,12 @@ from pyreach.gyms import vacuum_element
 from pyreach.gyms.annotation_element import ReachAnnotation  # pylint: disable=unused-import
 from pyreach.gyms.arm_element import ReachArm  # pylint: disable=unused-import
 from pyreach.gyms.color_camera_element import ReachColorCamera  # pylint: disable=unused-import
+from pyreach.gyms.constraints_element import ReachConstraints  # pylint: disable=unused-import
 from pyreach.gyms.depth_camera_element import ReachDepthCamera  # pylint: disable=unused-import
-
 from pyreach.gyms.devices.annotation_device import ReachDeviceAnnotation
 from pyreach.gyms.devices.arm_device import ReachDeviceArm
 from pyreach.gyms.devices.color_camera_device import ReachDeviceColorCamera
+from pyreach.gyms.devices.constraints_device import ReachDeviceConstraints
 from pyreach.gyms.devices.depth_camera_device import ReachDeviceDepthCamera
 from pyreach.gyms.devices.force_torque_sensor_device import ReachDeviceForceTorqueSensor
 from pyreach.gyms.devices.oracle_device import ReachDeviceOracle
@@ -147,6 +149,7 @@ class ReachEnv(gym.Env):  # type: ignore
         "gym.action",
         "gym.arm",
         "gym.color",
+        "gym.constraints",
         "gym.depth",
         "gym.force_torque_sensor",
         "gym.init",
@@ -211,6 +214,8 @@ class ReachEnv(gym.Env):  # type: ignore
           arm_elements.append(element)
         elif isinstance(config_element, color_camera_element.ReachColorCamera):
           element = ReachDeviceColorCamera(config_element)
+        elif isinstance(config_element, constraints_element.ReachConstraints):
+          element = ReachDeviceConstraints(config_element)
         elif isinstance(config_element, depth_camera_element.ReachDepthCamera):
           element = ReachDeviceDepthCamera(config_element)
         elif isinstance(config_element,

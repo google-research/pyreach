@@ -18,7 +18,7 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 
 # This file is generated with a Reach proto2json converter. DO NOT EDIT.
 
@@ -934,13 +934,17 @@ class ClientAnnotation:
 
   # A measurement at a single point in time.
   point_measurement: Optional['PointMeasurement']
+  long_horizon_instruction: Optional['TextAnnotation']
+  short_horizon_instruction: Optional['TextAnnotation']
 
-  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', point_measurement: Optional['PointMeasurement'] = None, snapshot_annotation: Optional['SnapshotAnnotation'] = None, text_annotation: Optional['TextAnnotation'] = None) -> None:
+  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', long_horizon_instruction: Optional['TextAnnotation'] = None, point_measurement: Optional['PointMeasurement'] = None, short_horizon_instruction: Optional['TextAnnotation'] = None, snapshot_annotation: Optional['SnapshotAnnotation'] = None, text_annotation: Optional['TextAnnotation'] = None) -> None:
     self.associated_server_ts = associated_server_ts
     self.interval_end = interval_end
     self.interval_start = interval_start
     self.log_channel_id = log_channel_id
+    self.long_horizon_instruction = long_horizon_instruction
     self.point_measurement = point_measurement
+    self.short_horizon_instruction = short_horizon_instruction
     self.snapshot_annotation = snapshot_annotation
     self.text_annotation = text_annotation
 
@@ -964,9 +968,17 @@ class ClientAnnotation:
       assert isinstance(self.log_channel_id, str), 'Wrong type for attribute: log_channel_id. Expected: str. Got: ' + str(type(self.log_channel_id)) + '.'
       json_data['logChannelID'] = self.log_channel_id
 
+    if self.long_horizon_instruction:
+      assert self.long_horizon_instruction.__class__.__name__ == 'TextAnnotation', 'Wrong type for attribute: long_horizon_instruction. Expected: TextAnnotation. Got: ' + str(type(self.long_horizon_instruction)) + '.'
+      json_data['longHorizonInstruction'] = self.long_horizon_instruction.to_json()
+
     if self.point_measurement:
       assert self.point_measurement.__class__.__name__ == 'PointMeasurement', 'Wrong type for attribute: point_measurement. Expected: PointMeasurement. Got: ' + str(type(self.point_measurement)) + '.'
       json_data['pointMeasurement'] = self.point_measurement.to_json()
+
+    if self.short_horizon_instruction:
+      assert self.short_horizon_instruction.__class__.__name__ == 'TextAnnotation', 'Wrong type for attribute: short_horizon_instruction. Expected: TextAnnotation. Got: ' + str(type(self.short_horizon_instruction)) + '.'
+      json_data['shortHorizonInstruction'] = self.short_horizon_instruction.to_json()
 
     if self.snapshot_annotation:
       assert self.snapshot_annotation.__class__.__name__ == 'SnapshotAnnotation', 'Wrong type for attribute: snapshot_annotation. Expected: SnapshotAnnotation. Got: ' + str(type(self.snapshot_annotation)) + '.'
@@ -996,6 +1008,10 @@ class ClientAnnotation:
       proto.snapshot_annotation.CopyFrom(self.snapshot_annotation.to_proto())
     if self.point_measurement:
       proto.point_measurement.CopyFrom(self.point_measurement.to_proto())
+    if self.long_horizon_instruction:
+      proto.long_horizon_instruction.CopyFrom(self.long_horizon_instruction.to_proto())
+    if self.short_horizon_instruction:
+      proto.short_horizon_instruction.CopyFrom(self.short_horizon_instruction.to_proto())
     return proto
 
   @staticmethod
@@ -1003,7 +1019,7 @@ class ClientAnnotation:
     """Convert JSON to type object."""
     obj = ClientAnnotation()
 
-    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'pointMeasurement', 'snapshotAnnotation', 'textAnnotation']
+    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'longHorizonInstruction', 'pointMeasurement', 'shortHorizonInstruction', 'snapshotAnnotation', 'textAnnotation']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ClientAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -1024,9 +1040,17 @@ class ClientAnnotation:
       assert isinstance(json_data['logChannelID'], str), 'Wrong type for attribute: logChannelID. Expected: str. Got: ' + str(type(json_data['logChannelID'])) + '.'
       obj.log_channel_id = json_data['logChannelID']
 
+    if 'longHorizonInstruction' in json_data:
+      assert isinstance(json_data['longHorizonInstruction'], dict), 'Wrong type for attribute: longHorizonInstruction. Expected: dict. Got: ' + str(type(json_data['longHorizonInstruction'])) + '.'
+      obj.long_horizon_instruction = TextAnnotation.from_json(json_data['longHorizonInstruction'])
+
     if 'pointMeasurement' in json_data:
       assert isinstance(json_data['pointMeasurement'], dict), 'Wrong type for attribute: pointMeasurement. Expected: dict. Got: ' + str(type(json_data['pointMeasurement'])) + '.'
       obj.point_measurement = PointMeasurement.from_json(json_data['pointMeasurement'])
+
+    if 'shortHorizonInstruction' in json_data:
+      assert isinstance(json_data['shortHorizonInstruction'], dict), 'Wrong type for attribute: shortHorizonInstruction. Expected: dict. Got: ' + str(type(json_data['shortHorizonInstruction'])) + '.'
+      obj.short_horizon_instruction = TextAnnotation.from_json(json_data['shortHorizonInstruction'])
 
     if 'snapshotAnnotation' in json_data:
       assert isinstance(json_data['snapshotAnnotation'], dict), 'Wrong type for attribute: snapshotAnnotation. Expected: dict. Got: ' + str(type(json_data['snapshotAnnotation'])) + '.'
@@ -1058,6 +1082,10 @@ class ClientAnnotation:
       obj.snapshot_annotation = SnapshotAnnotation.from_proto(proto.snapshot_annotation)
     if proto.HasField('point_measurement'):
       obj.point_measurement = PointMeasurement.from_proto(proto.point_measurement)
+    if proto.HasField('long_horizon_instruction'):
+      obj.long_horizon_instruction = TextAnnotation.from_proto(proto.long_horizon_instruction)
+    if proto.HasField('short_horizon_instruction'):
+      obj.short_horizon_instruction = TextAnnotation.from_proto(proto.short_horizon_instruction)
     return obj
 
 
@@ -1285,6 +1313,10 @@ class CommandData:
   # ==============================
 
   # === Fields for dataType controller-descriptions-request:
+  # (no fields)
+  # ==============================
+
+  # === Fields for dataType user-label:
   # (no fields)
   # ==============================
 
@@ -1757,6 +1789,9 @@ class CommandData:
     if self.data_type == 'controller-descriptions-request':
       proto_controller_descriptions_request = logs_pb2.EmptyMessage()
       proto.controller_descriptions_request.CopyFrom(proto_controller_descriptions_request)
+    if self.data_type == 'user-label':
+      proto_user_label = logs_pb2.EmptyMessage()
+      proto.user_label.CopyFrom(proto_user_label)
     if self.script:
       proto.script = self.script
     if self.data_type == 'reach-script' or self.data_type == 'run-script' or self.data_type == 'ur-command':
@@ -2132,6 +2167,8 @@ class CommandData:
     if proto.HasField('stream_request'):
       obj.stream_request = StreamRequest.from_proto(proto.stream_request)
     if proto.HasField('controller_descriptions_request'):
+      pass  # skip empty message
+    if proto.HasField('user_label'):
       pass  # skip empty message
     if proto.HasField('script'):
       obj.script = proto.script

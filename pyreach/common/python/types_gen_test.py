@@ -14,7 +14,7 @@
 
 import json
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach.common.python import types_gen
 import unittest
 

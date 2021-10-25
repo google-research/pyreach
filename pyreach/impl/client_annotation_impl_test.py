@@ -11,13 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for client_annotation_impl."""
 
 from typing import List
 import unittest
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
 from pyreach.common.python import types_gen
 from pyreach.impl import client_annotation_impl
@@ -78,31 +77,25 @@ class TestPyReachClientAnnotation(unittest.TestCase):
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestClientAnnotation())
       self.assertRaises(
-          core.PyReachError,
-          dev.annotate,
-          logs_pb2.ClientAnnotation(  # type: ignore
-              interval_start=logs_pb2.IntervalStart(
-                  name="test")))  # type: ignore
+          core.PyReachError, dev.annotate,
+          logs_pb2.ClientAnnotation(
+              interval_start=logs_pb2.IntervalStart(name="test")))
       self.assertRaises(
-          core.PyReachError,
-          dev.async_annotate,
-          logs_pb2.ClientAnnotation(  # type: ignore
-              interval_start=logs_pb2.IntervalStart(
-                  name="test")))  # type: ignore
+          core.PyReachError, dev.async_annotate,
+          logs_pb2.ClientAnnotation(
+              interval_start=logs_pb2.IntervalStart(name="test")))
       self.assertRaises(
-          core.PyReachError,
-          dev.annotate,
-          logs_pb2.ClientAnnotation(  # type: ignore
-              interval_end=logs_pb2.IntervalEnd(name="test")))  # type: ignore
+          core.PyReachError, dev.annotate,
+          logs_pb2.ClientAnnotation(
+              interval_end=logs_pb2.IntervalEnd(name="test")))
       self.assertRaises(
-          core.PyReachError,
-          dev.async_annotate,
-          logs_pb2.ClientAnnotation(  # type: ignore
-              interval_end=logs_pb2.IntervalEnd(name="test")))  # type: ignore
+          core.PyReachError, dev.async_annotate,
+          logs_pb2.ClientAnnotation(
+              interval_end=logs_pb2.IntervalEnd(name="test")))
       status = dev.annotate(
-          logs_pb2.ClientAnnotation(  # type: ignore
-              text_annotation=logs_pb2.TextAnnotation(  # type: ignore
-                  category="test-category", text="test-text")))  # type: ignore
+          logs_pb2.ClientAnnotation(
+              text_annotation=logs_pb2.TextAnnotation(
+                  category="test-category", text="test-text")))
       test_device.expect_command_data([
           types_gen.CommandData(
               data_type="client-annotation",
@@ -118,9 +111,9 @@ class TestPyReachClientAnnotation(unittest.TestCase):
       self.assertFalse(status.is_error())
       callbacks = thread_util.CallbackCapturer[core.PyReachStatus]()
       dev.async_annotate(
-          logs_pb2.ClientAnnotation(  # type: ignore
-              text_annotation=logs_pb2.TextAnnotation(  # type: ignore
-                  category="test-category", text="test-text")),  # type: ignore
+          logs_pb2.ClientAnnotation(
+              text_annotation=logs_pb2.TextAnnotation(
+                  category="test-category", text="test-text")),
           callback=callbacks.callback_and_then_finish)
       statuses = callbacks.wait()
       self.assertEqual(len(statuses), 1)

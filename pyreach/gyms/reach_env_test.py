@@ -25,6 +25,7 @@ import numpy as np  # type: ignore
 import pyreach
 from pyreach import host
 from pyreach.gyms import arm_element
+from pyreach.gyms import constraints_element
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import reach_env
 from pyreach.gyms import task_element
@@ -519,6 +520,107 @@ class TestGymColorCameraEnv(unittest.TestCase):
         assert image.shape == (3, 5, 3)
         assert image.dtype == np.uint8
         assert action_observation_eq(observation, observation_match)
+
+
+class GymConstraintsEnv(reach_env.ReachEnv):
+  """Configure a Gym environment for constraints."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init GymConstraintsEnv."""
+    pyreach_config: Dict[str, reach_env.ReachElement] = {
+        "constraints":
+            constraints_element.ReachConstraints(
+                reach_name="Constraints",
+                is_synchronous=is_synchronous,
+                constraints=(
+                    constraints_element.ReachConstraint("left_bin", "box"),
+                    constraints_element.ReachConstraint("right_bin", "box"),
+                )),
+    }
+
+    mock_host: host.Host = host_mock.HostMock()
+    assert isinstance(mock_host, host.Host)
+    assert isinstance(mock_host, host_mock.HostMock)
+    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+
+
+class GymConstraintsSyncEnv(GymConstraintsEnv):
+  """Configure a Gym environment with a synchronous constraints."""
+
+  def __init__(self, **kwargs: Any) -> None:
+    """Init a synchronous constraints."""
+    super().__init__(is_synchronous=True, **kwargs)
+
+
+class GymConstraintsAsyncEnv(GymConstraintsEnv):
+  """Configure a Gym environment with a synchronous constraints."""
+
+  def __init__(self, **kwargs: Any) -> None:
+    """Init a synchronous constraints."""
+    super().__init__(is_synchronous=False, **kwargs)
+
+
+class TestGymConstraintsEnv(unittest.TestCase):
+  """Test the Gym ConstraintsElement environments."""
+
+  def test_asynchronous_constraints_register(self) -> None:
+    """Test asynchronous Constraints registration."""
+    self.constraints_register_test(is_synchronous=False)
+
+  def test_synchronous_constraints_register(self) -> None:
+    """Test synchronous Constraints registration."""
+    self.constraints_register_test(is_synchronous=True)
+
+  def constraints_register_test(self, is_synchronous: bool) -> None:
+    """Test Gym ConstraintsElement."""
+    env_id_name: str = ("synchronous_constraints_element_env-v0"
+                        if is_synchronous else
+                        "asynchronous_constraints_element_env-v0")
+    class_name: str = ("GymConstraintsSyncEnv"
+                       if is_synchronous else "GymConstraintsAsyncEnv")
+    entry_point: str = GYMS_PATH + "reach_env_test:" + class_name
+    register(
+        id=env_id_name,
+        entry_point=entry_point,
+        max_episode_steps=200,
+        reward_threshold=25.0)
+
+    env: Any
+    with gym.make(env_id_name) as env:
+      assert isinstance(env, gym.Env), env
+
+      # Verify that both action and observation space are correct.
+      action_space: Any = env.action_space
+      assert isinstance(action_space, gym.spaces.Space)
+      action_match: Dict[str, Any] = {"constraints": {}}
+      assert space_match(action_space, action_match, ("action",))
+
+      observation_space: Any = env.observation_space
+      assert isinstance(observation_space, gym.spaces.Space)
+      observation_match: Dict[str, Any] = {
+          "constraints": {
+              "left_bin": {
+                  "pose": np.array([-100.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+                  "box": np.array([20.0, 25.0, 10.0]),
+              },
+              "right_bin": {
+                  "pose": np.array([100.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+                  "box": np.array([20.0, 25.0, 10.0]),
+              },
+          }
+      }
+      assert space_match(observation_space, observation_match, ("observation",))
+
+      if not is_synchronous:
+        # Perform a reset().
+        observation: gyms_core.Observation = env.reset()
+        assert action_observation_eq(observation, observation_match, "Reset")
+
+        # Step 1: Do first step with no change:
+        done: bool
+        observation, _, done, _ = env.step({})
+        assert not done
+        assert action_observation_eq(observation, observation_match, "Step 1")
 
 
 class GymDepthCameraEnv(reach_env.ReachEnv):

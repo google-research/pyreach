@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for utils.py."""
 
 from typing import Optional
@@ -32,7 +31,8 @@ class TestActionsImpl(unittest.TestCase):
       rdev.on_set_key_value(key, test_data.get_actionsets_json())
       actionsets: Optional[actions_impl.ActionsImpl] = dev.get()
       self.assertIsNotNone(actionsets)
-      names = actionsets.action_names()  # type: ignore
+      assert actionsets
+      names = actionsets.action_names()
       self.assertIsNotNone(names)
       self.assertEqual(names, ("FixedCalibration", "SingulateLeftBin",
                                "SingulateRightBin", "StowSuction1"))

@@ -16,9 +16,12 @@
 
 from typing import Any, Optional
 
+from pyreach import actionsets
 from pyreach import arm
+from pyreach import calibration
 from pyreach import client_annotation
 from pyreach import color_camera
+from pyreach import constraints
 from pyreach import core
 from pyreach import depth_camera
 from pyreach import force_torque_sensor
@@ -32,11 +35,42 @@ from pyreach import vacuum
 from pyreach.mock import arm_mock
 from pyreach.mock import client_annotation_mock
 from pyreach.mock import color_camera_mock
+from pyreach.mock import constraints_mock
 from pyreach.mock import depth_camera_mock
 from pyreach.mock import force_torque_sensor_mock
 from pyreach.mock import logger_mock
 from pyreach.mock import text_instructions_mock
 from pyreach.mock import vacuum_mock
+
+
+class ConfigMock(host.Config):
+  """Configuration group."""
+
+  def __init__(
+      self,
+      actionset: Optional[actionsets.Actions] = None,
+      cal: Optional[calibration.Calibration] = None,
+      constraint: Optional[constraints.Constraints] = None,
+  ) -> None:
+    super().__init__()
+    self._actionset: Optional[actionsets.Actions] = actionset
+    self._calibration: Optional[calibration.Calibration] = cal
+    self._constraint: Optional[constraints.Constraints] = constraint
+
+  @property
+  def actionset(self) -> Optional[actionsets.Actions]:
+    """Return the Actionset."""
+    return self._actionset
+
+  @property
+  def calibration(self) -> Optional[calibration.Calibration]:
+    """Return the Calibration."""
+    return self._calibration
+
+  @property
+  def constraint(self) -> Optional[constraints.Constraints]:
+    """Return the Constraints."""
+    return self._constraint
 
 
 class HostMock(host.Host):
@@ -79,7 +113,9 @@ class HostMock(host.Host):
   @property
   def config(self) -> host.Config:
     """Return the config dictionary."""
-    raise NotImplementedError
+    constraint: constraints.Constraints = constraints_mock.ConstraintsMock()
+    config: host.Config = ConfigMock(None, None, constraint)
+    return config
 
   @property
   def arms(self) -> core.ImmutableDictionary[arm.Arm]:

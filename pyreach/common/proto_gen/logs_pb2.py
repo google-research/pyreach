@@ -36,7 +36,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\nlogs.proto\x12\x17robotics.learning.reach\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x12logs_options.proto\"\xda\x1b\n\x0b\x43ommandData\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0b\n\x03tag\x18\x06 \x01(\t\x12\x32\n\x02ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12%\n\x0coperator_uid\x18\x08 \x01(\tB\x02\x18\x01R\x0boperatorUID\x12!\n\nsession_id\x18\t \x01(\tB\x02\x18\x01R\tsessionID\x12\x16\n\nrobot_name\x18\n \x01(\tB\x02\x18\x01\x12\x1f\n\tclient_os\x18\x0b \x01(\tB\x02\x18\x01R\x08\x63lientOS\x12\x16\n\nui_version\x18\x0c \x01(\tB\x02\x18\x01\x12\x0e\n\x06origin\x18\r \x01(\t\x12\x13\n\x0borigin_type\x18\x0e \x01(\t\x12\x1d\n\x15origin_transport_type\x18/ \x01(\t\x12\x15\n\rorigin_client\x18\x30 \x01(\t\x12\x16\n\x0eorigin_control\x18\x31 \x01(\t\x12\x0b\n\x03seq\x18? \x01(\x04\x12\x33\n\x08snapshot\x18@ \x01(\x0b\x32!.robotics.learning.reach.Snapshot\x12I\n\x08metadata\x18( \x01(\x0b\x32!.robotics.learning.reach.MetadataB\x12\xe2\xca\xe7\xc4\x08\x0c \x01*\x08metadataH\x00\x12K\n\tkey_value\x18) \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x13\xe2\xca\xe7\xc4\x08\r*\tkey-valueP\x01H\x00\x12[\n\x11key_value_request\x18* \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x1b\xe2\xca\xe7\xc4\x08\x15*\x11key-value-requestP\x01H\x00\x12R\n\x0csession_info\x18+ \x01(\x0b\x32$.robotics.learning.reach.SessionInfoB\x14\xe2\xca\xe7\xc4\x08\x0e*\x0csession-infoH\x00\x12I\n\x07trigger\x18- \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x0f\xe2\xca\xe7\xc4\x08\t*\x07triggerH\x00\x12S\n\ni_see_data\x18\x32 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x16\xe2\xca\xe7\xc4\x08\x10\x18\x01*\ni-see-dataX\x01H\x00\x12G\n\x04ping\x18\x33 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x10\xe2\xca\xe7\xc4\x08\n\x18\x01*\x04pingX\x01H\x00\x12\x63\n\x12\x63lient_session_end\x18\x35 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x1e\xe2\xca\xe7\xc4\x08\x18\x18\x01*\x12\x63lient-session-endX\x01H\x00\x12q\n\x19\x63onnected_clients_request\x18\x36 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB%\xe2\xca\xe7\xc4\x08\x1f\x18\x01*\x19\x63onnected-clients-requestX\x01H\x00\x12W\n\x0estart_shutdown\x18\x37 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x16\xe2\xca\xe7\xc4\x08\x10*\x0estart-shutdownH\x00\x12Y\n\x0f\x66inish_shutdown\x18\x38 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x17\xe2\xca\xe7\xc4\x08\x11*\x0f\x66inish-shutdownH\x00\x12G\n\x06hangup\x18\x39 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x0e\xe2\xca\xe7\xc4\x08\x08*\x06hangupH\x00\x12i\n\x14\x63lient_session_start\x18: \x01(\x0b\x32+.robotics.learning.reach.ClientSessionStartB\x1c\xe2\xca\xe7\xc4\x08\x16*\x14\x63lient-session-startH\x00\x12\x61\n\x11\x63lient_annotation\x18; \x01(\x0b\x32).robotics.learning.reach.ClientAnnotationB\x19\xe2\xca\xe7\xc4\x08\x13*\x11\x63lient-annotationH\x00\x12s\n\x1cpipeline_description_request\x18< \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB$\xe2\xca\xe7\xc4\x08\x1e*\x1cpipeline-description-requestH\x00\x12o\n\x1amachine_interfaces_request\x18= \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\"\xe2\xca\xe7\xc4\x08\x1c*\x1amachine-interfaces-requestH\x00\x12k\n\x18text_instruction_request\x18> \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB \xe2\xca\xe7\xc4\x08\x1a*\x18text-instruction-requestH\x00\x12X\n\x0estream_request\x18\x41 \x01(\x0b\x32&.robotics.learning.reach.StreamRequestB\x16\xe2\xca\xe7\xc4\x08\x10*\x0estream-requestH\x00\x12y\n\x1f\x63ontroller_descriptions_request\x18\x42 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\'\xe2\xca\xe7\xc4\x08!*\x1f\x63ontroller-descriptions-requestH\x00\x12\x0e\n\x06script\x18\x0f \x01(\t\x12h\n\x0creach_script\x18\x10 \x01(\x0b\x32$.robotics.learning.reach.ReachScriptB,\xe2\xca\xe7\xc4\x08&*\x0creach-script*\nrun-script*\nur-command\x12\x0b\n\x03\x63md\x18\x11 \x01(\t\x12\x0c\n\x04\x61rgs\x18\x12 \x03(\t\x12\x10\n\x08progress\x18\x13 \x01(\x01\x12\x0f\n\x07message\x18\x14 \x01(\t\x12\r\n\x05\x65rror\x18\x15 \x01(\t\x12\x16\n\x0e\x64\x65tailed_error\x18\x16 \x01(\t\x12\x0e\n\x06intent\x18\x17 \x01(\t\x12\x14\n\x0csuccess_type\x18\x18 \x01(\t\x12\t\n\x01x\x18\x19 \x01(\x01\x12\t\n\x01y\x18\x1a \x01(\x01\x12=\n\x03\x65xp\x18\x1b \x01(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandData\x12W\n\texp_array\x18\" \x03(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandDataB\x12\xe2\xca\xe7\xc4\x08\x0c*\nuser-label\x12\x31\n\x0e\x65vent_duration\x18\x1c \x01(\x0b\x32\x19.google.protobuf.Duration\x12=\n\nevent_name\x18\x1d \x01(\tB)\xe2\xca\xe7\xc4\x08#*\x05\x65vent*\x0b\x65vent-start*\rpointer-event\x12)\n\x0c\x65vent_labels\x18\x1e \x03(\tB\x13\xe2\xca\xe7\xc4\x08\r\x12\x0b\x65ventlabels\x12\x41\n\x0c\x65vent_params\x18\x1f \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12\x17\n\x07pick_id\x18  \x01(\tR\x06pickID\x12[\n\x10\x65xperiment_token\x18! \x01(\tBA\xe2\xca\xe7\xc4\x08;*\x13\x64isable-experiments*\x12\x65nable-experiments*\x10\x65xperiment-flags\x12J\n\x07history\x18% \x01(\x0b\x32 .robotics.learning.reach.HistoryB\x17\xe2\xca\xe7\xc4\x08\x11*\x0fhistory-request\x12\x10\n\x08text_cue\x18& \x01(\t\x12\xb7\x01\n\x14webrtc_audio_request\x18\' \x01(\x0b\x32+.robotics.learning.reach.WebrtcAudioRequestBl\xe2\xca\xe7\xc4\x08\x66*\x12\x61udio-request-mute*\x14\x61udio-request-unmute*\rframe-request*\x14webrtc-audio-request*\x15\x61udio-request-invalid\x12S\n\nsim_action\x18# \x01(\x0b\x32\".robotics.learning.reach.SimActionB\x1b\xe2\xca\xe7\xc4\x08\x15 \x01*\x11sim-cheat-command\x12_\n\x11inference_request\x18, \x01(\x0b\x32).robotics.learning.reach.InferenceRequestB\x19\xe2\xca\xe7\xc4\x08\x13*\x11inference-requestB\x11\n\x0f\x64\x61ta_type_oneofJ\x04\x08\x04\x10\x05J\x04\x08\x05\x10\x06J\x04\x08.\x10/J\x04\x08\x34\x10\x35\".\n\x05\x41lert\x12\x17\n\x0f\x63ommand_aborted\x18\x01 \x01(\x08:\x0c\xf8\xbe\xe3\xd8\t\x01\xe0\xbe\xe3\xd8\t\x01\"3\n\x12\x43lientSessionStart\x12\x1d\n\x15\x61\x63\x63\x65pt_depth_encoding\x18\x01 \x03(\t\"\xa2\x04\n\x10\x43lientAnnotation\x12h\n\x14\x61ssociated_server_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12\x41ssociatedServerTSR\x12\x61ssociatedServerTS\x12:\n\x0elog_channel_id\x18\x02 \x01(\tB\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cLogChannelIDR\x0clogChannelID\x12@\n\x0einterval_start\x18\x03 \x01(\x0b\x32&.robotics.learning.reach.IntervalStartH\x00\x12<\n\x0cinterval_end\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.IntervalEndH\x00\x12\x42\n\x0ftext_annotation\x18\x05 \x01(\x0b\x32\'.robotics.learning.reach.TextAnnotationH\x00\x12J\n\x13snapshot_annotation\x18\x06 \x01(\x0b\x32+.robotics.learning.reach.SnapshotAnnotationH\x00\x12\x46\n\x11point_measurement\x18\x07 \x01(\x0b\x32).robotics.learning.reach.PointMeasurementH\x00\x42\x10\n\x0elog_type_oneof\"\x1d\n\rIntervalStart\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x85\x01\n\x0bIntervalEnd\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x35\n\x08start_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07startTS\x12\x31\n\x06\x65nd_ts\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05\x65ndTS\"0\n\x0eTextAnnotation\x12\x10\n\x08\x63\x61tegory\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\"\x14\n\x12SnapshotAnnotation\"\x93\x01\n\x10PointMeasurement\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\r\n\x05space\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x33\n\x05value\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.Measurement\":\n\x0bMeasurement\x12\x11\n\x07seconds\x18\x01 \x01(\x01H\x00\x42\x18\n\x16measurement_type_oneof\"G\n\x12WebrtcAudioRequest\x12\x16\n\x0espeaker_unmute\x18\x01 \x01(\x08\x12\x19\n\x11microphone_unmute\x18\x02 \x01(\x08\"&\n\x13WebrtcAudioResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"^\n\rStreamRequest\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x10\n\x08max_rate\x18\x04 \x01(\x02\"\x93\x03\n\x17\x45xperimentalCommandData\x12\r\n\x05label\x18\x01 \x01(\t\x12\x35\n\x08\x64\x65pth_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12\x38\n\x07pose_2d\x18\x03 \x01(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x04 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x05 \x01(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x33\n\x07user_ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06userTS\x12\x13\n\x0b\x64\x65vice_type\x18\x08 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\t \x01(\t\"\xf8\x07\n\x12ReachScriptCommand\x12\x45\n\x10set_radial_speed\x18\x01 \x01(\x0b\x32+.robotics.learning.reach.SetRadialSpeedArgs\x12\x45\n\x10set_blend_radius\x18\x02 \x01(\x0b\x32+.robotics.learning.reach.SetBlendRadiusArgs\x12Y\n\x0bmove_j_path\x18\x03 \x01(\x0b\x32&.robotics.learning.reach.MoveJPathArgsB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tMoveJPathR\tmovejPath\x12Y\n\x0bmove_l_path\x18\x04 \x01(\x0b\x32&.robotics.learning.reach.MoveLPathArgsB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tMoveLPathR\tmovelPath\x12\x32\n\x06stop_j\x18\x05 \x01(\x0b\x32\".robotics.learning.reach.StopJArgs\x12\x43\n\x0fset_digital_out\x18\x06 \x01(\x0b\x32*.robotics.learning.reach.SetDigitalOutArgs\x12\x41\n\x0eset_analog_out\x18\x07 \x01(\x0b\x32).robotics.learning.reach.SetAnalogOutArgs\x12H\n\x14set_tool_digital_out\x18\x08 \x01(\x0b\x32*.robotics.learning.reach.SetDigitalOutArgs\x12\x31\n\x05sleep\x18\t \x01(\x0b\x32\".robotics.learning.reach.SleepArgs\x12-\n\x03raw\x18\n \x01(\x0b\x32 .robotics.learning.reach.RawArgs\x12@\n\racquire_image\x18\x0b \x01(\x0b\x32).robotics.learning.reach.AcquireImageArgs\x12\x36\n\nset_output\x18\x0c \x01(\x0b\x32\".robotics.learning.reach.SetOutput\x12/\n\x04sync\x18\r \x01(\x0b\x32!.robotics.learning.reach.SyncArgs\x12\x41\n\x0emove_pose_path\x18\x0e \x01(\x0b\x32).robotics.learning.reach.MovePosePathArgs\x12/\n\x04wait\x18\x0f \x01(\x0b\x32!.robotics.learning.reach.WaitArgs\x12\x17\n\x0f\x63ontroller_name\x18\x10 \x01(\t\"?\n!ReachScriptCalibrationRequirement\x12\x1a\n\x12\x61llow_uncalibrated\x18\x01 \x01(\x08\"\xf3\x01\n\x0bReachScript\x12\x12\n\npreemptive\x18\x01 \x01(\x08\x12G\n\x08\x63ommands\x18\x02 \x03(\x0b\x32+.robotics.learning.reach.ReachScriptCommandB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12\x0f\n\x07version\x18\x03 \x01(\x03\x12\x19\n\x11preemptive_reason\x18\x04 \x01(\t\x12[\n\x17\x63\x61libration_requirement\x18\x05 \x01(\x0b\x32:.robotics.learning.reach.ReachScriptCalibrationRequirement\"z\n\x12SetRadialSpeedArgs\x12,\n\x08velocity\x18\x01 \x01(\x01\x42\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12VelocityRadsPerSec\x12\x36\n\x0c\x61\x63\x63\x65leration\x18\x02 \x01(\x01\x42 \xe2\xca\xe7\xc4\x08\x1a\x32\x18\x41\x63\x63\x65lerationRadsPerSqSec\":\n\x12SetBlendRadiusArgs\x12$\n\x06radius\x18\x01 \x01(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRadiusMeters\"\xe1\x02\n\x11MoveJWaypointArgs\x12&\n\x08rotation\x18\x01 \x03(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x31\n\x0c\x62lend_radius\x18\x02 \x01(\x01\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12,\n\x08velocity\x18\x03 \x01(\x02\x42\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12VelocityRadsPerSec\x12\x36\n\x0c\x61\x63\x63\x65leration\x18\x04 \x01(\x02\x42 \xe2\xca\xe7\xc4\x08\x1a\x32\x18\x41\x63\x63\x65lerationRadsPerSqSec\x12/\n\x06limits\x18\x05 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\x12\r\n\x05servo\x18\x06 \x01(\x08\x12\x14\n\x0cservo_t_secs\x18\x07 \x01(\x02\x12!\n\x19servo_lookahead_time_secs\x18\x08 \x01(\x02\x12\x12\n\nservo_gain\x18\t \x01(\x02\"\xab\x01\n\x06Limits\x12\x33\n\x05\x66orce\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.ForceLimits\x12\x35\n\x06torque\x18\x02 \x01(\x0b\x32%.robotics.learning.reach.TorqueLimits\x12\x35\n\x06sensor\x18\x03 \x03(\x0b\x32%.robotics.learning.reach.SensorLimits\"/\n\x0b\x46orceLimits\x12\x0f\n\x07maximum\x18\x01 \x03(\x02\x12\x0f\n\x07minimum\x18\x02 \x03(\x02\"0\n\x0cTorqueLimits\x12\x0f\n\x07maximum\x18\x01 \x03(\x02\x12\x0f\n\x07minimum\x18\x02 \x03(\x02\"\xe7\x01\n\x0cSensorLimits\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x37\n\x05value\x18\x03 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\x12\x39\n\x07maximum\x18\x04 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\x12\x39\n\x07minimum\x18\x05 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\"h\n\rMoveJPathArgs\x12W\n\twaypoints\x18\x01 \x03(\x0b\x32*.robotics.learning.reach.MoveJWaypointArgsB\x18\xe2\xca\xe7\xc4\x08\x12\x32\x0eMoveJWaypoints8\x00\"\x9c\x02\n\x11MoveLWaypointArgs\x12&\n\x08rotation\x18\x01 \x03(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x31\n\x0c\x62lend_radius\x18\x02 \x01(\x02\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12\x30\n\x08velocity\x18\x03 \x01(\x02\x42\x1e\xe2\xca\xe7\xc4\x08\x18\x32\x14VelocityMetersPerSec8\x01\x12:\n\x0c\x61\x63\x63\x65leration\x18\x04 \x01(\x02\x42$\xe2\xca\xe7\xc4\x08\x1e\x32\x1a\x41\x63\x63\x65lerationMetersPerSqSec8\x01\x12/\n\x06limits\x18\x05 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\x12\r\n\x05servo\x18\x06 \x01(\x08\"h\n\rMoveLPathArgs\x12W\n\twaypoints\x18\x01 \x03(\x0b\x32*.robotics.learning.reach.MoveLWaypointArgsB\x18\xe2\xca\xe7\xc4\x08\x12\x32\x0eMoveLWaypoints8\x00\"E\n\tStopJArgs\x12\x38\n\x0c\x64\x65\x63\x65leration\x18\x01 \x01(\x02\x42\"\xe2\xca\xe7\xc4\x08\x1c\x32\x18\x44\x65\x63\x65lerationRadsPerSqSec8\x01\"?\n\x11SetDigitalOutArgs\x12\x1b\n\x06output\x18\x01 \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12\r\n\x05value\x18\x02 \x01(\x08\"1\n\x10SetAnalogOutArgs\x12\x0e\n\x06output\x18\x01 \x01(\x03\x12\r\n\x05value\x18\x02 \x01(\x01\".\n\tSleepArgs\x12!\n\x07seconds\x18\x01 \x01(\x01\x42\x10\xe2\xca\xe7\xc4\x08\n2\x08TimeSecs\"\x17\n\x07RawArgs\x12\x0c\n\x04text\x18\x01 \x01(\t\"W\n\x10\x41\x63quireImageArgs\x12\x0b\n\x03tag\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x0c\n\x04mode\x18\x04 \x01(\x04\"\x1b\n\x08SyncArgs\x12\x0f\n\x07seconds\x18\x01 \x01(\x01\"\xb5%\n\nDeviceData\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0c\n\x04hint\x18\x04 \x01(\t\x12\r\n\x05label\x18\x05 \x01(\t\x12\x0b\n\x03tag\x18\x06 \x01(\t\x12>\n\x0fsend_to_clients\x18\x41 \x03(\x0b\x32%.robotics.learning.reach.SendToClient\x12\x1a\n\x12inhibit_frame_send\x18# \x01(\x08\x12\x1a\n\x12inhibit_frame_save\x18$ \x01(\x08\x12\x32\n\x02ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x35\n\x08local_ts\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07localTS\x12\x37\n\tremote_ts\x18\t \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08remoteTS\x12\x18\n\x10\x65xperiment_token\x18& \x01(\t\x12\x41\n\x0c\x65vent_params\x18\' \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12N\n\x17message_last_timestamps\x18\x39 \x03(\x0b\x32-.robotics.learning.reach.MessageLastTimestamp\x12\x0b\n\x03seq\x18M \x01(\x04\x12/\n\x05\x63olor\x18\x0b \x01(\x0b\x32\x1e.robotics.learning.reach.ColorH\x00\x12:\n\x0b\x63olor_depth\x18\x0c \x01(\x0b\x32#.robotics.learning.reach.ColorDepthH\x00\x12@\n\tkey_value\x18\r \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x39\n\nprediction\x18\x0e \x01(\x0b\x32#.robotics.learning.reach.PredictionH\x00\x12\x34\n\x08ur_state\x18\x0f \x01(\x0b\x32 .robotics.learning.reach.UrStateH\x00\x12@\n\x0e\x63onveyor_state\x18\x10 \x01(\x0b\x32&.robotics.learning.reach.ConveyorStateH\x00\x12G\n\x15\x63onveyor_state_update\x18\x11 \x01(\x0b\x32&.robotics.learning.reach.ConveyorStateH\x00\x12\x38\n\ntool_state\x18\x12 \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12?\n\x11tool_state_update\x18\x13 \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12;\n\x06status\x18\x14 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x46\n\nuser_label\x18\x15 \x01(\x0b\x32\".robotics.learning.reach.UserLabelB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01H\x00\x12\x46\n\x0csession_info\x18\x16 \x01(\x0b\x32$.robotics.learning.reach.SessionInfoB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x42\n\npick_label\x18\x17 \x01(\x0b\x32\".robotics.learning.reach.PickLabelB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12\x44\n\x0bplace_label\x18% \x01(\x0b\x32#.robotics.learning.reach.PlaceLabelB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12/\n\x05level\x18\x19 \x01(\x0b\x32\x1e.robotics.learning.reach.LevelH\x00\x12Y\n\x15protective_stop_state\x18\x1a \x01(\x0b\x32,.robotics.learning.reach.ProtectiveStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12`\n\x1cprotective_stop_state_update\x18\x1b \x01(\x0b\x32,.robotics.learning.reach.ProtectiveStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12W\n\x14safeguard_stop_state\x18\x1c \x01(\x0b\x32+.robotics.learning.reach.SafeguardStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12^\n\x1bsafeguard_stop_state_update\x18\x1d \x01(\x0b\x32+.robotics.learning.reach.SafeguardStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12W\n\x14\x65mergency_stop_state\x18\x43 \x01(\x0b\x32+.robotics.learning.reach.EmergencyStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12^\n\x1b\x65mergency_stop_state_update\x18\x44 \x01(\x0b\x32+.robotics.learning.reach.EmergencyStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12\x45\n\x11robot_power_state\x18J \x01(\x0b\x32(.robotics.learning.reach.RobotPowerStateH\x00\x12L\n\x18robot_power_state_update\x18K \x01(\x0b\x32(.robotics.learning.reach.RobotPowerStateH\x00\x12\x31\n\x06metric\x18\x1e \x01(\x0b\x32\x1f.robotics.learning.reach.MetricH\x00\x12H\n\x13reach_script_status\x18\x1f \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12?\n\ncmd_status\x18  \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x43\n\x15vacuum_pressure_state\x18! \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12\x44\n\x16vacuum_pressure_update\x18\" \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12\x44\n\x0f\x64ownlink_status\x18( \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x38\n\x0csensor_state\x18) \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12?\n\x13sensor_state_update\x18* \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12\x38\n\x0coutput_state\x18+ \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12?\n\x13output_state_update\x18, \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12=\n\x0chealth_check\x18- \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x33\n\x07history\x18. \x01(\x0b\x32 .robotics.learning.reach.HistoryH\x00\x12\x43\n\x12\x61udio_request_mute\x18/ \x01(\x0b\x32%.robotics.learning.reach.AudioRequestH\x00\x12\x45\n\x14\x61udio_request_unmute\x18\x30 \x01(\x0b\x32%.robotics.learning.reach.AudioRequestH\x00\x12:\n\x05\x65rror\x18\x31 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12M\n\x15webrtc_audio_response\x18\x32 \x01(\x0b\x32,.robotics.learning.reach.WebrtcAudioResponseH\x00\x12?\n\x08metadata\x18\x33 \x01(\x0b\x32!.robotics.learning.reach.MetadataB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12@\n\tsim_state\x18\x34 \x01(\x0b\x32!.robotics.learning.reach.SimStateB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12\x42\n\rdevice_status\x18\x35 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12K\n\x14webrtc_audio_request\x18\x36 \x01(\x0b\x32+.robotics.learning.reach.WebrtcAudioRequestH\x00\x12U\n\x19sim_instance_segmentation\x18\x37 \x01(\x0b\x32\x30.robotics.learning.reach.SimInstanceSegmentationH\x00\x12\x42\n\x11\x65xposure_complete\x18\x38 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12?\n\x0estart_shutdown\x18; \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12@\n\x0f\x66inish_shutdown\x18< \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x37\n\x06hangup\x18= \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x46\n\x11\x63onnected_clients\x18> \x01(\x0b\x32).robotics.learning.reach.ConnectedClientsH\x00\x12\x37\n\tdetection\x18? \x01(\x0b\x32\".robotics.learning.reach.DetectionH\x00\x12\x46\n\x0brobot_state\x18@ \x01(\x0b\x32#.robotics.learning.reach.RobotStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12=\n\x05\x61lert\x18\x42 \x01(\x0b\x32\x1e.robotics.learning.reach.AlertB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01H\x00\x12\x46\n\x11\x63lient_annotation\x18\x45 \x01(\x0b\x32).robotics.learning.reach.ClientAnnotationH\x00\x12L\n\x14pipeline_description\x18\x46 \x01(\x0b\x32,.robotics.learning.reach.PipelineDescriptionH\x00\x12H\n\x12machine_interfaces\x18G \x01(\x0b\x32*.robotics.learning.reach.MachineInterfacesH\x00\x12J\n\x13machine_description\x18H \x01(\x0b\x32+.robotics.learning.reach.MachineDescriptionH\x00\x12\x44\n\x10text_instruction\x18I \x01(\x0b\x32(.robotics.learning.reach.TextInstructionH\x00\x12<\n\x0creport_error\x18L \x01(\x0b\x32$.robotics.learning.reach.ReportErrorH\x00\x12\x31\n\x06health\x18N \x01(\x0b\x32\x1f.robotics.learning.reach.HealthH\x00\x12s\n\x17\x63ontroller_descriptions\x18O \x01(\x0b\x32/.robotics.learning.reach.ControllerDescriptionsB\x1f\xe2\xca\xe7\xc4\x08\x19*\x17\x63ontroller-descriptionsH\x00\x42\x11\n\x0f\x64\x61ta_type_oneofJ\x04\x08\n\x10\x0bJ\x04\x08\x18\x10\x19\"C\n\x0bTextLogData\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x13\n\x0bline_number\x18\x02 \x01(\x03\x12\x0c\n\x04text\x18\x03 \x01(\t\"t\n\x06Health\x12\x1a\n\x12interval_length_ms\x18\x01 \x01(\x04\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x38\n\x0bheart_beats\x18\x03 \x01(\x0b\x32#.robotics.learning.reach.HeartBeats\"\xb6\x05\n\nHeartBeats\x12\x38\n\nany_camera\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0c\x64\x65pth_camera\x18\x02 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0c\x63olor_camera\x18\x03 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0cnot_estopped\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0cnot_pstopped\x18\x05 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x42\n\x14not_safeguardstopped\x18\x06 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x34\n\x06joints\x18\x07 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x36\n\x08movement\x18\x08 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12>\n\x10\x63lient_connected\x18\t \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x45\n\x17no_reach_script_failure\x18\n \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x45\n\x17teleop_generates_metric\x18\x0b \x01(\x0b\x32$.robotics.learning.reach.HealthState\"\'\n\x0bHealthState\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0c\n\x04info\x18\x02 \x01(\t\"*\n\x0bReportError\x12\r\n\x05\x65rror\x18\x01 \x01(\t\x12\x0c\n\x04tags\x18\x02 \x03(\t\"^\n\x16\x43ontrollerDescriptions\x12\x44\n\x0c\x64\x65scriptions\x18\x01 \x03(\x0b\x32..robotics.learning.reach.ControllerDescription\"%\n\x15\x43ontrollerDescription\x12\x0c\n\x04name\x18\x01 \x01(\t\":\n\x0cSendToClient\x12\x1d\n\x03uid\x18\x01 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x0b\n\x03tag\x18\x02 \x01(\t\"R\n\x07History\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0e\n\x06values\x18\x02 \x03(\t\x12\x15\n\rhistory_start\x18\x03 \x01(\x04\x12\x13\n\x0bhistory_end\x18\x04 \x01(\x04\" \n\x0c\x41udioRequest\x12\x10\n\x08text_cue\x18\x01 \x01(\t\"\x95\x01\n\x17SimInstanceSegmentation\x12\x31\n\x06sim_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05simTS\x12\x12\n\nimage_path\x18\x02 \x01(\t\x12\x33\n\x08relation\x18\x03 \x03(\x0b\x32!.robotics.learning.reach.KeyValue\"y\n\x08SimState\x12\x31\n\x06sim_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05simTS\x12:\n\x0cobject_state\x18\x02 \x03(\x0b\x32$.robotics.learning.reach.ObjectState\"|\n\x0bObjectState\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x13\n\x0bobject_name\x18\x02 \x01(\t\x12!\n\x0cpose_xyzxyzw\x18\x03 \x03(\x01R\x0bposeXYZXYZW\x12\x12\n\nlinear_vel\x18\x04 \x03(\x01\"\xa2\x03\n\tSimAction\x12H\n\x14get_all_object_poses\x18\x01 \x01(\x0b\x32*.robotics.learning.reach.GetAllObjectPoses\x12?\n\x0fset_object_pose\x18\x02 \x01(\x0b\x32&.robotics.learning.reach.SetObjectPose\x12<\n\rdelete_object\x18\x03 \x01(\x0b\x32%.robotics.learning.reach.DeleteObject\x12K\n\x15set_camera_intrinsics\x18\x04 \x01(\x0b\x32,.robotics.learning.reach.SetCameraIntrinsics\x12\x36\n\nadd_object\x18\x05 \x01(\x0b\x32\".robotics.learning.reach.AddObject\x12G\n\x13get_segmented_image\x18\x06 \x01(\x0b\x32*.robotics.learning.reach.GetSegmentedImage\"\x13\n\x11GetAllObjectPoses\"U\n\rSetObjectPose\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12!\n\x0cpose_xyzxyzw\x18\x02 \x03(\x01R\x0bposeXYZXYZW\"1\n\x0c\x44\x65leteObject\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\"q\n\x13SetCameraIntrinsics\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x12\n\nintrinsics\x18\x02 \x03(\x01\x12\x11\n\tnear_clip\x18\x03 \x01(\x01\x12\x10\n\x08\x66\x61r_clip\x18\x04 \x01(\x01\"p\n\tAddObject\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12!\n\x0cpose_xyzxyzw\x18\x03 \x03(\x01R\x0bposeXYZXYZW\"\'\n\x11GetSegmentedImage\x12\x12\n\ndevice_key\x18\x01 \x01(\t\"a\n\x08Metadata\x12\x0f\n\x07\x63omment\x18\x01 \x01(\t\x12\x12\n\nbegin_file\x18\x02 \x01(\x08\x12\x10\n\x08\x65nd_file\x18\x03 \x01(\x08\x12\x16\n\x0ereal_time_logs\x18\x04 \x01(\x08:\x06\xf0\xbe\xe3\xd8\t\x01\"J\n\x07IOState\x12\x37\n\x05state\x18\x01 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState:\x06\xe8\xbe\xe3\xd8\t\x01\"F\n\x0f\x43\x61pabilityState\x12\x0b\n\x03pin\x18\x01 \x01(\t\x12\x11\n\tint_value\x18\x02 \x01(\x03\x12\x13\n\x0b\x66loat_value\x18\x03 \x01(\x01\"^\n\x05\x43olor\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12$\n\x0e\x63olor_ssot_key\x18\x02 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x63olor_intrinsics\x18\x03 \x03(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"\xa8\x02\n\nColorDepth\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12$\n\x0e\x63olor_ssot_key\x18\x02 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x63olor_intrinsics\x18\x03 \x03(\x01\x12\r\n\x05\x64\x65pth\x18\x04 \x01(\t\x12$\n\x0e\x64\x65pth_ssot_key\x18\x05 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x64\x65pth_intrinsics\x18\x06 \x03(\x01\x12\x14\n\x0cupload_depth\x18\x07 \x01(\t\x12\x1a\n\x12uncompressed_depth\x18\x08 \x01(\t\x12\x42\n\x10\x63ompressed_depth\x18\t \x03(\x0b\x32(.robotics.learning.reach.CompressedDepth:\x06\xe0\xbe\xe3\xd8\t\x01\"3\n\x0f\x43ompressedDepth\x12\r\n\x05\x64\x65pth\x18\x01 \x01(\t\x12\x11\n\tencodings\x18\x02 \x03(\t\"b\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x11\n\tint_value\x18\x03 \x01(\x03\x12\x13\n\x0b\x66loat_value\x18\x04 \x01(\x01:\x12\x82\xbf\xe3\xd8\t\x0cKeyValueData\"\x95\x01\n\x14MessageLastTimestamp\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0b\n\x03key\x18\x04 \x01(\t\x12\x33\n\x07last_ts\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06LastTS\"\xac\x01\n\x10InferenceRequest\x12\x17\n\x0fprediction_type\x18\x01 \x01(\t\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12\x11\n\ttask_code\x18\x03 \x01(\t\x12\x0e\n\x06intent\x18\x04 \x01(\t\x12\r\n\x05label\x18\x05 \x01(\t\x12\x19\n\x08robot_id\x18\x06 \x01(\tR\x07robotID\x12\x14\n\x0csuccess_type\x18\x07 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"\xa1\x05\n\nPrediction\x12\x19\n\x05\x63olor\x18\x02 \x01(\tB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01\x12$\n\x0e\x63olor_ssot_key\x18\x03 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x37\n\x0bpick_points\x18\x01 \x03(\x0b\x32\".robotics.learning.reach.PickPoint\x12?\n\x0bposition_3d\x18\x04 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x05 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12J\n\x11place_position_3d\x18\x06 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\x0fplacePosition3D\x12U\n\x13place_quaternion_3d\x18\x07 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x11placeQuaternion3D\x12\x12\n\nconfidence\x18\x08 \x03(\x01\x12\x44\n\x11inference_request\x18\t \x01(\x0b\x32).robotics.learning.reach.InferenceRequest\x12\x35\n\x08\x63olor_ts\x18\n \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x63olorTS\x12\x35\n\x08\x64\x65pth_ts\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12\x19\n\x05\x65rror\x18\x0c \x01(\tB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"!\n\tPickPoint\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\"\x1e\n\x05Level\x12\r\n\x05level\x18\x01 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"\x91\x08\n\x07UrState\x12\x0c\n\x04pose\x18\x01 \x03(\x01\x12\x0e\n\x06joints\x18\x02 \x03(\x01\x12\r\n\x05\x66orce\x18\x03 \x03(\x01\x12\x0e\n\x06torque\x18\" \x03(\x01\x12\x17\n\x0frobot_dexterity\x18\x04 \x01(\x01\x12\x19\n\x11is_robot_power_on\x18\x05 \x01(\x08\x12 \n\x14is_emergency_stopped\x18\x06 \x01(\x08\x42\x02\x18\x01\x12!\n\x15is_protective_stopped\x18\x07 \x01(\x08\x42\x02\x18\x01\x12\x41\n\x10robot_stop_state\x18# \x01(\x0b\x32\'.robotics.learning.reach.RobotStopState\x12\x1a\n\x12is_program_running\x18\x08 \x01(\x08\x12\x12\n\ndigital_in\x18\t \x03(\x08\x12\x11\n\tsensor_in\x18\n \x03(\x08\x12\x13\n\x0b\x64igital_out\x18\x0b \x03(\x08\x12\x11\n\tanalog_in\x18\x0c \x03(\x01\x12\x12\n\nanalog_out\x18\r \x03(\x01\x12\x17\n\x0ftool_digital_in\x18\x0e \x03(\x08\x12\x18\n\x10tool_digital_out\x18\x0f \x03(\x08\x12\x16\n\x0etool_analog_in\x18\x10 \x03(\x01\x12\x17\n\x0ftool_analog_out\x18\x11 \x03(\x01\x12\x14\n\x0c\x62oard_temp_c\x18\x12 \x01(\x01\x12\x17\n\x0frobot_voltage_v\x18\x13 \x01(\x01\x12\x17\n\x0frobot_current_a\x18\x14 \x01(\x01\x12+\n\x12\x62oard_io_current_a\x18\x15 \x01(\x01R\x0f\x62oardIOCurrentA\x12\x13\n\x0btool_temp_c\x18\x16 \x01(\x01\x12\x16\n\x0etool_voltage_v\x18\x17 \x01(\x01\x12\x16\n\x0etool_current_a\x18\x18 \x01(\x01\x12\x18\n\x10joint_voltages_v\x18\x19 \x03(\x01\x12\x18\n\x10joint_currents_a\x18\x1a \x03(\x01\x12\x15\n\rjoint_temps_c\x18\x1b \x03(\x01\x12\x12\n\nrobot_mode\x18\x1c \x01(\t\x12$\n\x0fprogram_counter\x18\x1d \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12:\n\x0c\x64igital_bank\x18\x1e \x03(\x0b\x32$.robotics.learning.reach.DigitalBank\x12\x38\n\x0b\x61nalog_bank\x18\x1f \x03(\x0b\x32#.robotics.learning.reach.AnalogBank\x12:\n\x0cinteger_bank\x18  \x03(\x0b\x32$.robotics.learning.reach.IntegerBank\x12\x1f\n\x17last_terminated_program\x18! \x01(\t:\x18\xe8\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x0cURRobotState\"\xa4\x01\n\x0eRobotStopState\x12\x1c\n\x14is_emergency_stopped\x18\x01 \x01(\x08\x12\x1d\n\x15is_protective_stopped\x18\x02 \x01(\x08\x12\x1c\n\x14is_safeguard_stopped\x18\x03 \x01(\x08\x12\x17\n\x0fis_reduced_mode\x18\x04 \x01(\x08\x12\x16\n\x0esafety_message\x18\x05 \x01(\t:\x06\xe8\xbe\xe3\xd8\t\x01\"\x82\x08\n\nRobotState\x12\x0c\n\x04pose\x18\x01 \x03(\x01\x12\x0e\n\x06joints\x18\x02 \x03(\x01\x12\r\n\x05\x66orce\x18\x03 \x03(\x01\x12\x0e\n\x06torque\x18\" \x03(\x01\x12\x17\n\x0frobot_dexterity\x18\x04 \x01(\x01\x12\x19\n\x11is_robot_power_on\x18\x05 \x01(\x08\x12 \n\x14is_emergency_stopped\x18\x06 \x01(\x08\x42\x02\x18\x01\x12!\n\x15is_protective_stopped\x18\x07 \x01(\x08\x42\x02\x18\x01\x12\x41\n\x10robot_stop_state\x18# \x01(\x0b\x32\'.robotics.learning.reach.RobotStopState\x12\x1a\n\x12is_program_running\x18\x08 \x01(\x08\x12\x12\n\ndigital_in\x18\t \x03(\x08\x12\x11\n\tsensor_in\x18\n \x03(\x08\x12\x13\n\x0b\x64igital_out\x18\x0b \x03(\x08\x12\x11\n\tanalog_in\x18\x0c \x03(\x01\x12\x12\n\nanalog_out\x18\r \x03(\x01\x12\x17\n\x0ftool_digital_in\x18\x0e \x03(\x08\x12\x18\n\x10tool_digital_out\x18\x0f \x03(\x08\x12\x16\n\x0etool_analog_in\x18\x10 \x03(\x01\x12\x17\n\x0ftool_analog_out\x18\x11 \x03(\x01\x12\x14\n\x0c\x62oard_temp_c\x18\x12 \x01(\x01\x12\x17\n\x0frobot_voltage_v\x18\x13 \x01(\x01\x12\x17\n\x0frobot_current_a\x18\x14 \x01(\x01\x12+\n\x12\x62oard_io_current_a\x18\x15 \x01(\x01R\x0f\x62oardIOCurrentA\x12\x13\n\x0btool_temp_c\x18\x16 \x01(\x01\x12\x16\n\x0etool_voltage_v\x18\x17 \x01(\x01\x12\x16\n\x0etool_current_a\x18\x18 \x01(\x01\x12\x18\n\x10joint_voltages_v\x18\x19 \x03(\x01\x12\x18\n\x10joint_currents_a\x18\x1a \x03(\x01\x12\x15\n\rjoint_temps_c\x18\x1b \x03(\x01\x12\x12\n\nrobot_mode\x18\x1c \x01(\t\x12$\n\x0fprogram_counter\x18\x1d \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12:\n\x0c\x64igital_bank\x18\x1e \x03(\x0b\x32$.robotics.learning.reach.DigitalBank\x12\x38\n\x0b\x61nalog_bank\x18\x1f \x03(\x0b\x32#.robotics.learning.reach.AnalogBank\x12:\n\x0cinteger_bank\x18  \x03(\x0b\x32$.robotics.learning.reach.IntegerBank\x12\x1f\n\x17last_terminated_program\x18! \x01(\t:\x06\xe8\xbe\xe3\xd8\t\x01\"J\n\x0b\x44igitalBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x08\"I\n\nAnalogBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x01\"J\n\x0bIntegerBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x03\"3\n\rConveyorState\x12\x1a\n\x12is_object_detected\x18\x01 \x01(\x08:\x06\xe8\xbe\xe3\xd8\t\x01\"8\n\tToolState\x12\x17\n\x0fvacuum_level_pa\x18\x01 \x01(\x01\x12\n\n\x02on\x18\x02 \x01(\x08:\x06\xe8\xbe\xe3\xd8\t\x01\"t\n\x06Status\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0e\n\x06script\x18\x08 \x01(\t\x12\r\n\x05\x65rror\x18\x04 \x01(\t\x12\x10\n\x08progress\x18\x05 \x01(\x01\x12\x0f\n\x07message\x18\x06 \x01(\t\x12\x0c\n\x04\x63ode\x18\x07 \x01(\x03J\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04\"3\n\x08Position\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\">\n\x08Rotation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x12\t\n\x01w\x18\x04 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"(\n\x05Scale\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"\xca\x02\n\tUserLabel\x12\x37\n\toracle_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08oracleTS\x12=\n\x03\x65xp\x18\x02 \x01(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandData\x12\x0e\n\x06origin\x18\x03 \x01(\t\x12\x13\n\x0borigin_type\x18\x04 \x01(\t\x12\x33\n\x08position\x18\x05 \x01(\x0b\x32!.robotics.learning.reach.Position\x12\x33\n\x08rotation\x18\x06 \x01(\x0b\x32!.robotics.learning.reach.Rotation\x12\x12\n\nuser_label\x18\x07 \x01(\t\x12\t\n\x01x\x18\x08 \x01(\x03\x12\t\n\x01y\x18\t \x01(\x03:\x0c\xf8\xbe\xe3\xd8\t\x01\xe0\xbe\xe3\xd8\t\x01\"2\n\x06Pose2d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01:\x12\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x06Pose2D\";\n\x05Vec3d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01:\x11\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x05Vec3D\"R\n\x0cQuaternion3d\x12\t\n\x01w\x18\x01 \x01(\x01\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01:\x16\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\nQuaternion\"z\n\rDeviceDataRef\x12\x32\n\x02ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_type\x18\x03 \x01(\t\x12\x0b\n\x03seq\x18\x04 \x01(\x04\"\xea\x01\n\nPlaceLabel\x12\r\n\x05label\x18\x01 \x01(\t\x12\x38\n\x07pose_2d\x18\x02 \x03(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x03 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x04 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D:\x06\xf0\xbe\xe3\xd8\t\x01\"\x80\x04\n\tPickLabel\x12\r\n\x05label\x18\x01 \x01(\t\x12\x35\n\x08\x64\x65pth_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12?\n\x0f\x64\x65vice_data_ref\x18\x04 \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12=\n\ruser_data_ref\x18\x0b \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12\x38\n\x07pose_2d\x18\x03 \x03(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x05 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x06 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12\x11\n\ttask_code\x18\x07 \x01(\t\x12\x17\n\x07pick_id\x18\x08 \x01(\tR\x06pickID\x12\x0c\n\x04tags\x18\t \x03(\t\x12\x0e\n\x06intent\x18\n \x01(\t\x12\x14\n\x0csuccess_type\x18\x0c \x01(\t:\x06\xf0\xbe\xe3\xd8\t\x01\"\x9b\x04\n\x0bSessionInfo\x12!\n\x0coperator_uid\x18\x01 \x01(\tR\x0boperatorUID\x12\x15\n\roperator_type\x18\x10 \x01(\t\x12\x1d\n\nsession_id\x18\x02 \x01(\tR\tsessionID\x12.\n\nstart_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nrobot_name\x18\x04 \x01(\t\x12\x1b\n\tclient_os\x18\x05 \x01(\tR\x08\x63lientOS\x12%\n\nui_version\x18\x06 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tUIVersion\x12\x1b\n\x13\x63\x61libration_version\x18\x07 \x01(\t\x12\x1d\n\x15\x61\x63\x63\x65pt_depth_encoding\x18\x08 \x03(\t\x12\r\n\x05relay\x18\t \x01(\t\x12\x1a\n\x12\x61\x63tionsets_version\x18\n \x01(\t\x12\x16\n\x0esafety_version\x18\x0b \x01(\t\x12.\n\x13workcell_io_version\x18\x0c \x01(\tR\x11workcellIOVersion\x12\x11\n\ttransport\x18\r \x01(\t\x12,\n\x12\x63lient_session_uid\x18\x0e \x01(\tR\x10\x63lientSessionUID\x12\x1e\n\x16workcell_setup_version\x18\x0f \x01(\t\x12\x1b\n\x13\x63onstraints_version\x18\x11 \x01(\t\"T\n\x13ProtectiveStopState\x12\x1d\n\x15is_protective_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"R\n\x12SafeguardStopState\x12\x1c\n\x14is_safeguard_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"R\n\x12\x45mergencyStopState\x12\x1c\n\x14is_emergency_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\",\n\x0fRobotPowerState\x12\x19\n\x11is_robot_power_on\x18\x01 \x01(\x08\"\xc4\x01\n\x06Metric\x12S\n\x05value\x18\x04 \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x14\xe2\xca\xe7\xc4\x08\x0e\x62\x0cmetric_valueR\x0bmetricValue\x12Q\n\x06labels\x18\x03 \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x10\xe2\xca\xe7\xc4\x08\n2\x06Labels8\x00R\x0cmetricLabels:\x06\xe8\xbe\xe3\xd8\t\x01J\x04\x08\x01\x10\x02J\x04\x08\x02\x10\x03\"\x16\n\x0c\x45mptyMessage:\x06\xe0\xbe\xe3\xd8\t\x01\"p\n\tSetOutput\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x36\n\x04\x61rgs\x18\x03 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState\"M\n\x10\x43onnectedClients\x12\x39\n\x07\x63lients\x18\x01 \x03(\x0b\x32(.robotics.learning.reach.ConnectedClient\"d\n\x0f\x43onnectedClient\x12\x1d\n\x03uid\x18\x01 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x12\n\nis_current\x18\x02 \x01(\x08\x12\x1e\n\x16\x63ontrol_session_active\x18\x03 \x01(\x08\"\xc3\x01\n\tDetection\x12\x34\n\x06source\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.SourceImage\x12;\n\ndetections\x18\x02 \x03(\x0b\x32\'.robotics.learning.reach.DetectionEntry\x12\x43\n\x0c\x63\x61mera_shift\x18\x03 \x01(\x0b\x32-.robotics.learning.reach.CameraShiftDetection\"~\n\x0bSourceImage\x12\x32\n\x02ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x11\n\tdata_type\x18\x04 \x01(\t\"M\n\x1b\x44\x65tectionAprilGroupAprilTag\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x0f\n\x07\x63orners\x18\x02 \x03(\x01\"c\n\x17\x44\x65tectionAprilGroupInfo\x12H\n\napril_tags\x18\x01 \x03(\x0b\x32\x34.robotics.learning.reach.DetectionAprilGroupAprilTag\"\xe6\x01\n\x0e\x44\x65tectionEntry\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0f\n\x07\x63orners\x18\x03 \x03(\x01\x12\x12\n\nextrinsics\x18\x04 \x03(\x01\x12\x12\n\nintrinsics\x18\x05 \x03(\x01\x12G\n\x0b\x61pril_group\x18\x06 \x01(\x0b\x32\x30.robotics.learning.reach.DetectionAprilGroupInfoH\x00\x42\x14\n\x12type_specific_info\"L\n\x0c\x44\x65tectionKey\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\"\x97\x01\n\x11ShiftPerDetection\x12<\n\rdetection_key\x18\x01 \x01(\x0b\x32%.robotics.learning.reach.DetectionKey\x12\x12\n\nshift_type\x18\x02 \x01(\t\x12\x14\n\x0cshift_amount\x18\x03 \x01(\x01\x12\x1a\n\x12is_object_detected\x18\x04 \x01(\x08\"\xb4\x01\n\x14\x43\x61meraShiftDetection\x12\x11\n\tmax_shift\x18\x01 \x01(\x01\x12?\n\x10max_shift_object\x18\x02 \x01(\x0b\x32%.robotics.learning.reach.DetectionKey\x12H\n\x14shifts_per_detection\x18\x03 \x03(\x0b\x32*.robotics.learning.reach.ShiftPerDetection\"T\n\x10MovePosePathArgs\x12@\n\twaypoints\x18\x01 \x03(\x0b\x32-.robotics.learning.reach.MovePoseWaypointArgs\"\xaf\x02\n\x14MovePoseWaypointArgs\x12\x33\n\x0btranslation\x18\x01 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3d\x12\x46\n\x08rotation\x18\x02 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3dB\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x0e\n\x06linear\x18\x03 \x01(\x08\x12\x31\n\x0c\x62lend_radius\x18\x04 \x01(\x02\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12\x10\n\x08velocity\x18\x05 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x06 \x01(\x02\x12/\n\x06limits\x18\x07 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\"\xac\x01\n\x08WaitArgs\x12\x17\n\x0ftimeout_seconds\x18\x01 \x01(\x01\x12\x42\n\x0etimeout_action\x18\x02 \x01(\x0b\x32*.robotics.learning.reach.WaitTimeoutAction\x12\x43\n\x04\x65xpr\x18\x03 \x01(\x0b\x32\x35.robotics.learning.reach.ReachScriptBooleanExpression\"I\n\x11WaitTimeoutAction\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x15\n\rabort_message\x18\x02 \x01(\t\"\xa6\x01\n\x1cReachScriptBooleanExpression\x12\n\n\x02op\x18\x01 \x01(\t\x12<\n\x04\x61rg1\x18\x02 \x01(\x0b\x32..robotics.learning.reach.ReachScriptExpression\x12<\n\x04\x61rg2\x18\x03 \x01(\x0b\x32..robotics.learning.reach.ReachScriptExpression\"\xee\x01\n\x15ReachScriptExpression\x12J\n\tbool_expr\x18\x01 \x01(\x0b\x32\x35.robotics.learning.reach.ReachScriptBooleanExpressionH\x00\x12;\n\x08var_expr\x18\x02 \x01(\x0b\x32\'.robotics.learning.reach.ReachScriptVarH\x00\x12?\n\nconst_expr\x18\x03 \x01(\x0b\x32).robotics.learning.reach.ReachScriptConstH\x00\x42\x0b\n\targ_oneof\"c\n\x0eReachScriptVar\x12\x44\n\ncapability\x18\x01 \x01(\x0b\x32..robotics.learning.reach.ReachScriptCapabilityH\x00\x42\x0b\n\tvar_oneof\"{\n\x10ReachScriptConst\x12\x44\n\ncapability\x18\x01 \x01(\x0b\x32..robotics.learning.reach.ReachScriptCapabilityH\x00\x12\x14\n\nbool_value\x18\x02 \x01(\x08H\x00\x42\x0b\n\tvar_oneof\"}\n\x15ReachScriptCapability\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x37\n\x05state\x18\x03 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState\"\xa8\x01\n\x10MachineInterface\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x11\n\tdata_type\x18\x04 \x01(\t\x12\x0c\n\x04keys\x18\x06 \x03(\t\x12\x10\n\x08replaces\x18\x07 \x01(\x08\x12\x18\n\x10stop_propagation\x18\x08 \x01(\x08\"S\n\x12MachineDescription\x12=\n\ninterfaces\x18\x01 \x03(\x0b\x32).robotics.learning.reach.MachineInterface\"X\n\x13PipelineDescription\x12\x41\n\x0c\x64\x65scriptions\x18\x01 \x03(\x0b\x32+.robotics.learning.reach.MachineDescription\"R\n\x11MachineInterfaces\x12=\n\ninterfaces\x18\x01 \x03(\x0b\x32).robotics.learning.reach.MachineInterface\"\xbe\x01\n\x0fTextInstruction\x12\x0e\n\x06intent\x18\x01 \x01(\t\x12\x14\n\x0csuccess_type\x18\x02 \x01(\t\x12\x19\n\x11success_detection\x18\x03 \x01(\t\x12\x13\n\x0binstruction\x18\x04 \x01(\t\x12\x1d\n\x03uid\x18\x05 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x36\n\x0csupertask_id\x18\x06 \x01(\tB\x13\xe2\xca\xe7\xc4\x08\r2\x0bSupertaskIDR\x0bsupertaskID\"\xac\x03\n\x08Snapshot\x12\x0e\n\x06source\x18\x01 \x01(\t\x12@\n\x10\x64\x65vice_data_refs\x18\x02 \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12<\n\tresponses\x18\n \x03(\x0b\x32).robotics.learning.reach.SnapshotResponse\x12>\n\rgym_server_ts\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0bgymServerTS\x12$\n\ngym_env_id\x18\x03 \x01(\tB\x10\xe2\xca\xe7\xc4\x08\n2\x08GymEnvID\x12$\n\ngym_run_id\x18\x04 \x01(\tB\x10\xe2\xca\xe7\xc4\x08\n2\x08GymRunID\x12\x13\n\x0bgym_episode\x18\x05 \x01(\x04\x12\x10\n\x08gym_step\x18\x06 \x01(\x04\x12\x12\n\ngym_reward\x18\x07 \x01(\x02\x12\x10\n\x08gym_done\x18\x08 \x01(\x08\x12\x37\n\x0bgym_actions\x18\t \x03(\x0b\x32\".robotics.learning.reach.GymAction\"\xc4\x01\n\x10SnapshotResponse\x12?\n\x0f\x64\x65vice_data_ref\x18\x01 \x01(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12\x0b\n\x03\x63id\x18\x02 \x01(\x03\x12/\n\x06status\x18\x03 \x01(\x0b\x32\x1f.robotics.learning.reach.Status\x12\x18\n\x10gym_element_type\x18\x04 \x01(\t\x12\x17\n\x0fgym_config_name\x18\x05 \x01(\t\"\x9d\x03\n\tGymAction\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x13\n\x0bsynchronous\x18\x06 \x01(\x08\x12\x45\n\x11\x61rm_action_params\x18\x03 \x01(\x0b\x32(.robotics.learning.reach.ArmActionParamsH\x00\x12K\n\x14vacuum_action_params\x18\x05 \x01(\x0b\x32+.robotics.learning.reach.VacuumActionParamsH\x00\x12K\n\x14logger_action_params\x18\x07 \x01(\x0b\x32+.robotics.learning.reach.LoggerActionParamsH\x00\x12`\n\x1f\x63lient_annotation_action_params\x18\x08 \x01(\x0b\x32\x35.robotics.learning.reach.ClientAnnotationActionParamsH\x00\x42\x08\n\x06paramsJ\x04\x08\x04\x10\x05\"\xd9\x03\n\x0f\x41rmActionParams\x12\x0f\n\x07\x63ommand\x18\x01 \x01(\x03\x12\x0b\n\x03\x63id\x18\x02 \x01(\x03\x12\x14\n\x0cjoint_angles\x18\x03 \x03(\x01\x12\x0c\n\x04pose\x18\x04 \x03(\x01\x12\x14\n\x0creach_action\x18\x05 \x01(\x03\x12\x12\n\nuse_linear\x18\x06 \x01(\x08\x12\x10\n\x08velocity\x18\x07 \x01(\x01\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x08 \x01(\x01\x12\x13\n\x0btimeout_sec\x18\t \x01(\x01\x12\x13\n\x0b\x61\x63tion_name\x18\n \x01(\t\x12\x14\n\x0cuse_unity_ik\x18\x0b \x01(\x08\x12\x0e\n\x06intent\x18\x0c \x01(\t\x12\x14\n\x0csuccess_type\x18\r \x01(\t\x12\x17\n\x07pick_id\x18\x0e \x01(\tR\x06pickID\x12\"\n\x1a\x61pply_tip_adjust_transform\x18\x0f \x01(\x08\x12\r\n\x05servo\x18\x10 \x01(\x08\x12\x14\n\x0cservo_t_secs\x18\x11 \x01(\x02\x12!\n\x19servo_lookahead_time_secs\x18\x12 \x01(\x02\x12\x12\n\nservo_gain\x18\x13 \x01(\x02\x12\x1a\n\x12\x61llow_uncalibrated\x18\x14 \x01(\x08\x12\x17\n\x0f\x63ontroller_name\x18\x15 \x01(\t\"#\n\x12VacuumActionParams\x12\r\n\x05state\x18\x0c \x01(\x03\"i\n\x12LoggerActionParams\x12\x10\n\x08is_start\x18\x01 \x01(\x08\x12\x41\n\x0c\x65vent_params\x18\x02 \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\"]\n\x1c\x43lientAnnotationActionParams\x12=\n\nannotation\x18\x01 \x01(\x0b\x32).robotics.learning.reach.ClientAnnotation'
+  serialized_pb=b'\n\nlogs.proto\x12\x17robotics.learning.reach\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x12logs_options.proto\"\x97\x1c\n\x0b\x43ommandData\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0b\n\x03tag\x18\x06 \x01(\t\x12\x32\n\x02ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12%\n\x0coperator_uid\x18\x08 \x01(\tB\x02\x18\x01R\x0boperatorUID\x12!\n\nsession_id\x18\t \x01(\tB\x02\x18\x01R\tsessionID\x12\x16\n\nrobot_name\x18\n \x01(\tB\x02\x18\x01\x12\x1f\n\tclient_os\x18\x0b \x01(\tB\x02\x18\x01R\x08\x63lientOS\x12\x16\n\nui_version\x18\x0c \x01(\tB\x02\x18\x01\x12\x0e\n\x06origin\x18\r \x01(\t\x12\x13\n\x0borigin_type\x18\x0e \x01(\t\x12\x1d\n\x15origin_transport_type\x18/ \x01(\t\x12\x15\n\rorigin_client\x18\x30 \x01(\t\x12\x16\n\x0eorigin_control\x18\x31 \x01(\t\x12\x0b\n\x03seq\x18? \x01(\x04\x12\x33\n\x08snapshot\x18@ \x01(\x0b\x32!.robotics.learning.reach.Snapshot\x12I\n\x08metadata\x18( \x01(\x0b\x32!.robotics.learning.reach.MetadataB\x12\xe2\xca\xe7\xc4\x08\x0c \x01*\x08metadataH\x00\x12K\n\tkey_value\x18) \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x13\xe2\xca\xe7\xc4\x08\r*\tkey-valueP\x01H\x00\x12[\n\x11key_value_request\x18* \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x1b\xe2\xca\xe7\xc4\x08\x15*\x11key-value-requestP\x01H\x00\x12R\n\x0csession_info\x18+ \x01(\x0b\x32$.robotics.learning.reach.SessionInfoB\x14\xe2\xca\xe7\xc4\x08\x0e*\x0csession-infoH\x00\x12I\n\x07trigger\x18- \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x0f\xe2\xca\xe7\xc4\x08\t*\x07triggerH\x00\x12S\n\ni_see_data\x18\x32 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x16\xe2\xca\xe7\xc4\x08\x10\x18\x01*\ni-see-dataX\x01H\x00\x12G\n\x04ping\x18\x33 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x10\xe2\xca\xe7\xc4\x08\n\x18\x01*\x04pingX\x01H\x00\x12\x63\n\x12\x63lient_session_end\x18\x35 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x1e\xe2\xca\xe7\xc4\x08\x18\x18\x01*\x12\x63lient-session-endX\x01H\x00\x12q\n\x19\x63onnected_clients_request\x18\x36 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB%\xe2\xca\xe7\xc4\x08\x1f\x18\x01*\x19\x63onnected-clients-requestX\x01H\x00\x12W\n\x0estart_shutdown\x18\x37 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x16\xe2\xca\xe7\xc4\x08\x10*\x0estart-shutdownH\x00\x12Y\n\x0f\x66inish_shutdown\x18\x38 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x17\xe2\xca\xe7\xc4\x08\x11*\x0f\x66inish-shutdownH\x00\x12G\n\x06hangup\x18\x39 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x0e\xe2\xca\xe7\xc4\x08\x08*\x06hangupH\x00\x12i\n\x14\x63lient_session_start\x18: \x01(\x0b\x32+.robotics.learning.reach.ClientSessionStartB\x1c\xe2\xca\xe7\xc4\x08\x16*\x14\x63lient-session-startH\x00\x12\x61\n\x11\x63lient_annotation\x18; \x01(\x0b\x32).robotics.learning.reach.ClientAnnotationB\x19\xe2\xca\xe7\xc4\x08\x13*\x11\x63lient-annotationH\x00\x12s\n\x1cpipeline_description_request\x18< \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB$\xe2\xca\xe7\xc4\x08\x1e*\x1cpipeline-description-requestH\x00\x12o\n\x1amachine_interfaces_request\x18= \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\"\xe2\xca\xe7\xc4\x08\x1c*\x1amachine-interfaces-requestH\x00\x12k\n\x18text_instruction_request\x18> \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB \xe2\xca\xe7\xc4\x08\x1a*\x18text-instruction-requestH\x00\x12X\n\x0estream_request\x18\x41 \x01(\x0b\x32&.robotics.learning.reach.StreamRequestB\x16\xe2\xca\xe7\xc4\x08\x10*\x0estream-requestH\x00\x12y\n\x1f\x63ontroller_descriptions_request\x18\x42 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\'\xe2\xca\xe7\xc4\x08!*\x1f\x63ontroller-descriptions-requestH\x00\x12O\n\nuser_label\x18\x43 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageB\x12\xe2\xca\xe7\xc4\x08\x0c*\nuser-labelH\x00\x12\x0e\n\x06script\x18\x0f \x01(\t\x12h\n\x0creach_script\x18\x10 \x01(\x0b\x32$.robotics.learning.reach.ReachScriptB,\xe2\xca\xe7\xc4\x08&*\x0creach-script*\nrun-script*\nur-command\x12\x0b\n\x03\x63md\x18\x11 \x01(\t\x12\x0c\n\x04\x61rgs\x18\x12 \x03(\t\x12\x10\n\x08progress\x18\x13 \x01(\x01\x12\x0f\n\x07message\x18\x14 \x01(\t\x12\r\n\x05\x65rror\x18\x15 \x01(\t\x12\x16\n\x0e\x64\x65tailed_error\x18\x16 \x01(\t\x12\x0e\n\x06intent\x18\x17 \x01(\t\x12\x14\n\x0csuccess_type\x18\x18 \x01(\t\x12\t\n\x01x\x18\x19 \x01(\x01\x12\t\n\x01y\x18\x1a \x01(\x01\x12=\n\x03\x65xp\x18\x1b \x01(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandData\x12\x43\n\texp_array\x18\" \x03(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandData\x12\x31\n\x0e\x65vent_duration\x18\x1c \x01(\x0b\x32\x19.google.protobuf.Duration\x12=\n\nevent_name\x18\x1d \x01(\tB)\xe2\xca\xe7\xc4\x08#*\x05\x65vent*\x0b\x65vent-start*\rpointer-event\x12)\n\x0c\x65vent_labels\x18\x1e \x03(\tB\x13\xe2\xca\xe7\xc4\x08\r\x12\x0b\x65ventlabels\x12\x41\n\x0c\x65vent_params\x18\x1f \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12\x17\n\x07pick_id\x18  \x01(\tR\x06pickID\x12[\n\x10\x65xperiment_token\x18! \x01(\tBA\xe2\xca\xe7\xc4\x08;*\x13\x64isable-experiments*\x12\x65nable-experiments*\x10\x65xperiment-flags\x12J\n\x07history\x18% \x01(\x0b\x32 .robotics.learning.reach.HistoryB\x17\xe2\xca\xe7\xc4\x08\x11*\x0fhistory-request\x12\x10\n\x08text_cue\x18& \x01(\t\x12\xb7\x01\n\x14webrtc_audio_request\x18\' \x01(\x0b\x32+.robotics.learning.reach.WebrtcAudioRequestBl\xe2\xca\xe7\xc4\x08\x66*\x12\x61udio-request-mute*\x14\x61udio-request-unmute*\rframe-request*\x14webrtc-audio-request*\x15\x61udio-request-invalid\x12S\n\nsim_action\x18# \x01(\x0b\x32\".robotics.learning.reach.SimActionB\x1b\xe2\xca\xe7\xc4\x08\x15 \x01*\x11sim-cheat-command\x12_\n\x11inference_request\x18, \x01(\x0b\x32).robotics.learning.reach.InferenceRequestB\x19\xe2\xca\xe7\xc4\x08\x13*\x11inference-requestB\x11\n\x0f\x64\x61ta_type_oneofJ\x04\x08\x04\x10\x05J\x04\x08\x05\x10\x06J\x04\x08.\x10/J\x04\x08\x34\x10\x35\".\n\x05\x41lert\x12\x17\n\x0f\x63ommand_aborted\x18\x01 \x01(\x08:\x0c\xf8\xbe\xe3\xd8\t\x01\xe0\xbe\xe3\xd8\t\x01\"3\n\x12\x43lientSessionStart\x12\x1d\n\x15\x61\x63\x63\x65pt_depth_encoding\x18\x01 \x03(\t\"\xbd\x05\n\x10\x43lientAnnotation\x12h\n\x14\x61ssociated_server_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12\x41ssociatedServerTSR\x12\x61ssociatedServerTS\x12:\n\x0elog_channel_id\x18\x02 \x01(\tB\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cLogChannelIDR\x0clogChannelID\x12@\n\x0einterval_start\x18\x03 \x01(\x0b\x32&.robotics.learning.reach.IntervalStartH\x00\x12<\n\x0cinterval_end\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.IntervalEndH\x00\x12\x42\n\x0ftext_annotation\x18\x05 \x01(\x0b\x32\'.robotics.learning.reach.TextAnnotationH\x00\x12J\n\x13snapshot_annotation\x18\x06 \x01(\x0b\x32+.robotics.learning.reach.SnapshotAnnotationH\x00\x12\x46\n\x11point_measurement\x18\x07 \x01(\x0b\x32).robotics.learning.reach.PointMeasurementH\x00\x12K\n\x18long_horizon_instruction\x18\x08 \x01(\x0b\x32\'.robotics.learning.reach.TextAnnotationH\x00\x12L\n\x19short_horizon_instruction\x18\t \x01(\x0b\x32\'.robotics.learning.reach.TextAnnotationH\x00\x42\x10\n\x0elog_type_oneof\"\x1d\n\rIntervalStart\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x85\x01\n\x0bIntervalEnd\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x35\n\x08start_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07startTS\x12\x31\n\x06\x65nd_ts\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05\x65ndTS\"0\n\x0eTextAnnotation\x12\x10\n\x08\x63\x61tegory\x18\x01 \x01(\t\x12\x0c\n\x04text\x18\x02 \x01(\t\"\x14\n\x12SnapshotAnnotation\"\x93\x01\n\x10PointMeasurement\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\r\n\x05space\x18\x02 \x01(\t\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x33\n\x05value\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.Measurement\":\n\x0bMeasurement\x12\x11\n\x07seconds\x18\x01 \x01(\x01H\x00\x42\x18\n\x16measurement_type_oneof\"G\n\x12WebrtcAudioRequest\x12\x16\n\x0espeaker_unmute\x18\x01 \x01(\x08\x12\x19\n\x11microphone_unmute\x18\x02 \x01(\x08\"&\n\x13WebrtcAudioResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"^\n\rStreamRequest\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x10\n\x08max_rate\x18\x04 \x01(\x02\"\x93\x03\n\x17\x45xperimentalCommandData\x12\r\n\x05label\x18\x01 \x01(\t\x12\x35\n\x08\x64\x65pth_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12\x38\n\x07pose_2d\x18\x03 \x01(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x04 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x05 \x01(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x33\n\x07user_ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06userTS\x12\x13\n\x0b\x64\x65vice_type\x18\x08 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\t \x01(\t\"\xf8\x07\n\x12ReachScriptCommand\x12\x45\n\x10set_radial_speed\x18\x01 \x01(\x0b\x32+.robotics.learning.reach.SetRadialSpeedArgs\x12\x45\n\x10set_blend_radius\x18\x02 \x01(\x0b\x32+.robotics.learning.reach.SetBlendRadiusArgs\x12Y\n\x0bmove_j_path\x18\x03 \x01(\x0b\x32&.robotics.learning.reach.MoveJPathArgsB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tMoveJPathR\tmovejPath\x12Y\n\x0bmove_l_path\x18\x04 \x01(\x0b\x32&.robotics.learning.reach.MoveLPathArgsB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tMoveLPathR\tmovelPath\x12\x32\n\x06stop_j\x18\x05 \x01(\x0b\x32\".robotics.learning.reach.StopJArgs\x12\x43\n\x0fset_digital_out\x18\x06 \x01(\x0b\x32*.robotics.learning.reach.SetDigitalOutArgs\x12\x41\n\x0eset_analog_out\x18\x07 \x01(\x0b\x32).robotics.learning.reach.SetAnalogOutArgs\x12H\n\x14set_tool_digital_out\x18\x08 \x01(\x0b\x32*.robotics.learning.reach.SetDigitalOutArgs\x12\x31\n\x05sleep\x18\t \x01(\x0b\x32\".robotics.learning.reach.SleepArgs\x12-\n\x03raw\x18\n \x01(\x0b\x32 .robotics.learning.reach.RawArgs\x12@\n\racquire_image\x18\x0b \x01(\x0b\x32).robotics.learning.reach.AcquireImageArgs\x12\x36\n\nset_output\x18\x0c \x01(\x0b\x32\".robotics.learning.reach.SetOutput\x12/\n\x04sync\x18\r \x01(\x0b\x32!.robotics.learning.reach.SyncArgs\x12\x41\n\x0emove_pose_path\x18\x0e \x01(\x0b\x32).robotics.learning.reach.MovePosePathArgs\x12/\n\x04wait\x18\x0f \x01(\x0b\x32!.robotics.learning.reach.WaitArgs\x12\x17\n\x0f\x63ontroller_name\x18\x10 \x01(\t\"?\n!ReachScriptCalibrationRequirement\x12\x1a\n\x12\x61llow_uncalibrated\x18\x01 \x01(\x08\"\xf3\x01\n\x0bReachScript\x12\x12\n\npreemptive\x18\x01 \x01(\x08\x12G\n\x08\x63ommands\x18\x02 \x03(\x0b\x32+.robotics.learning.reach.ReachScriptCommandB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12\x0f\n\x07version\x18\x03 \x01(\x03\x12\x19\n\x11preemptive_reason\x18\x04 \x01(\t\x12[\n\x17\x63\x61libration_requirement\x18\x05 \x01(\x0b\x32:.robotics.learning.reach.ReachScriptCalibrationRequirement\"z\n\x12SetRadialSpeedArgs\x12,\n\x08velocity\x18\x01 \x01(\x01\x42\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12VelocityRadsPerSec\x12\x36\n\x0c\x61\x63\x63\x65leration\x18\x02 \x01(\x01\x42 \xe2\xca\xe7\xc4\x08\x1a\x32\x18\x41\x63\x63\x65lerationRadsPerSqSec\":\n\x12SetBlendRadiusArgs\x12$\n\x06radius\x18\x01 \x01(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRadiusMeters\"\xe1\x02\n\x11MoveJWaypointArgs\x12&\n\x08rotation\x18\x01 \x03(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x31\n\x0c\x62lend_radius\x18\x02 \x01(\x01\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12,\n\x08velocity\x18\x03 \x01(\x02\x42\x1a\xe2\xca\xe7\xc4\x08\x14\x32\x12VelocityRadsPerSec\x12\x36\n\x0c\x61\x63\x63\x65leration\x18\x04 \x01(\x02\x42 \xe2\xca\xe7\xc4\x08\x1a\x32\x18\x41\x63\x63\x65lerationRadsPerSqSec\x12/\n\x06limits\x18\x05 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\x12\r\n\x05servo\x18\x06 \x01(\x08\x12\x14\n\x0cservo_t_secs\x18\x07 \x01(\x02\x12!\n\x19servo_lookahead_time_secs\x18\x08 \x01(\x02\x12\x12\n\nservo_gain\x18\t \x01(\x02\"\xab\x01\n\x06Limits\x12\x33\n\x05\x66orce\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.ForceLimits\x12\x35\n\x06torque\x18\x02 \x01(\x0b\x32%.robotics.learning.reach.TorqueLimits\x12\x35\n\x06sensor\x18\x03 \x03(\x0b\x32%.robotics.learning.reach.SensorLimits\"/\n\x0b\x46orceLimits\x12\x0f\n\x07maximum\x18\x01 \x03(\x02\x12\x0f\n\x07minimum\x18\x02 \x03(\x02\"0\n\x0cTorqueLimits\x12\x0f\n\x07maximum\x18\x01 \x03(\x02\x12\x0f\n\x07minimum\x18\x02 \x03(\x02\"\xe7\x01\n\x0cSensorLimits\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x37\n\x05value\x18\x03 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\x12\x39\n\x07maximum\x18\x04 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\x12\x39\n\x07minimum\x18\x05 \x01(\x0b\x32(.robotics.learning.reach.CapabilityState\"h\n\rMoveJPathArgs\x12W\n\twaypoints\x18\x01 \x03(\x0b\x32*.robotics.learning.reach.MoveJWaypointArgsB\x18\xe2\xca\xe7\xc4\x08\x12\x32\x0eMoveJWaypoints8\x00\"\x9c\x02\n\x11MoveLWaypointArgs\x12&\n\x08rotation\x18\x01 \x03(\x01\x42\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x31\n\x0c\x62lend_radius\x18\x02 \x01(\x02\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12\x30\n\x08velocity\x18\x03 \x01(\x02\x42\x1e\xe2\xca\xe7\xc4\x08\x18\x32\x14VelocityMetersPerSec8\x01\x12:\n\x0c\x61\x63\x63\x65leration\x18\x04 \x01(\x02\x42$\xe2\xca\xe7\xc4\x08\x1e\x32\x1a\x41\x63\x63\x65lerationMetersPerSqSec8\x01\x12/\n\x06limits\x18\x05 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\x12\r\n\x05servo\x18\x06 \x01(\x08\"h\n\rMoveLPathArgs\x12W\n\twaypoints\x18\x01 \x03(\x0b\x32*.robotics.learning.reach.MoveLWaypointArgsB\x18\xe2\xca\xe7\xc4\x08\x12\x32\x0eMoveLWaypoints8\x00\"E\n\tStopJArgs\x12\x38\n\x0c\x64\x65\x63\x65leration\x18\x01 \x01(\x02\x42\"\xe2\xca\xe7\xc4\x08\x1c\x32\x18\x44\x65\x63\x65lerationRadsPerSqSec8\x01\"?\n\x11SetDigitalOutArgs\x12\x1b\n\x06output\x18\x01 \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12\r\n\x05value\x18\x02 \x01(\x08\"1\n\x10SetAnalogOutArgs\x12\x0e\n\x06output\x18\x01 \x01(\x03\x12\r\n\x05value\x18\x02 \x01(\x01\".\n\tSleepArgs\x12!\n\x07seconds\x18\x01 \x01(\x01\x42\x10\xe2\xca\xe7\xc4\x08\n2\x08TimeSecs\"\x17\n\x07RawArgs\x12\x0c\n\x04text\x18\x01 \x01(\t\"W\n\x10\x41\x63quireImageArgs\x12\x0b\n\x03tag\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x0c\n\x04mode\x18\x04 \x01(\x04\"\x1b\n\x08SyncArgs\x12\x0f\n\x07seconds\x18\x01 \x01(\x01\"\xb5%\n\nDeviceData\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0c\n\x04hint\x18\x04 \x01(\t\x12\r\n\x05label\x18\x05 \x01(\t\x12\x0b\n\x03tag\x18\x06 \x01(\t\x12>\n\x0fsend_to_clients\x18\x41 \x03(\x0b\x32%.robotics.learning.reach.SendToClient\x12\x1a\n\x12inhibit_frame_send\x18# \x01(\x08\x12\x1a\n\x12inhibit_frame_save\x18$ \x01(\x08\x12\x32\n\x02ts\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x35\n\x08local_ts\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07localTS\x12\x37\n\tremote_ts\x18\t \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08remoteTS\x12\x18\n\x10\x65xperiment_token\x18& \x01(\t\x12\x41\n\x0c\x65vent_params\x18\' \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\x12N\n\x17message_last_timestamps\x18\x39 \x03(\x0b\x32-.robotics.learning.reach.MessageLastTimestamp\x12\x0b\n\x03seq\x18M \x01(\x04\x12/\n\x05\x63olor\x18\x0b \x01(\x0b\x32\x1e.robotics.learning.reach.ColorH\x00\x12:\n\x0b\x63olor_depth\x18\x0c \x01(\x0b\x32#.robotics.learning.reach.ColorDepthH\x00\x12@\n\tkey_value\x18\r \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x39\n\nprediction\x18\x0e \x01(\x0b\x32#.robotics.learning.reach.PredictionH\x00\x12\x34\n\x08ur_state\x18\x0f \x01(\x0b\x32 .robotics.learning.reach.UrStateH\x00\x12@\n\x0e\x63onveyor_state\x18\x10 \x01(\x0b\x32&.robotics.learning.reach.ConveyorStateH\x00\x12G\n\x15\x63onveyor_state_update\x18\x11 \x01(\x0b\x32&.robotics.learning.reach.ConveyorStateH\x00\x12\x38\n\ntool_state\x18\x12 \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12?\n\x11tool_state_update\x18\x13 \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12;\n\x06status\x18\x14 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x46\n\nuser_label\x18\x15 \x01(\x0b\x32\".robotics.learning.reach.UserLabelB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01H\x00\x12\x46\n\x0csession_info\x18\x16 \x01(\x0b\x32$.robotics.learning.reach.SessionInfoB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x42\n\npick_label\x18\x17 \x01(\x0b\x32\".robotics.learning.reach.PickLabelB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12\x44\n\x0bplace_label\x18% \x01(\x0b\x32#.robotics.learning.reach.PlaceLabelB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12/\n\x05level\x18\x19 \x01(\x0b\x32\x1e.robotics.learning.reach.LevelH\x00\x12Y\n\x15protective_stop_state\x18\x1a \x01(\x0b\x32,.robotics.learning.reach.ProtectiveStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12`\n\x1cprotective_stop_state_update\x18\x1b \x01(\x0b\x32,.robotics.learning.reach.ProtectiveStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12W\n\x14safeguard_stop_state\x18\x1c \x01(\x0b\x32+.robotics.learning.reach.SafeguardStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12^\n\x1bsafeguard_stop_state_update\x18\x1d \x01(\x0b\x32+.robotics.learning.reach.SafeguardStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12W\n\x14\x65mergency_stop_state\x18\x43 \x01(\x0b\x32+.robotics.learning.reach.EmergencyStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12^\n\x1b\x65mergency_stop_state_update\x18\x44 \x01(\x0b\x32+.robotics.learning.reach.EmergencyStopStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12\x45\n\x11robot_power_state\x18J \x01(\x0b\x32(.robotics.learning.reach.RobotPowerStateH\x00\x12L\n\x18robot_power_state_update\x18K \x01(\x0b\x32(.robotics.learning.reach.RobotPowerStateH\x00\x12\x31\n\x06metric\x18\x1e \x01(\x0b\x32\x1f.robotics.learning.reach.MetricH\x00\x12H\n\x13reach_script_status\x18\x1f \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12?\n\ncmd_status\x18  \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x43\n\x15vacuum_pressure_state\x18! \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12\x44\n\x16vacuum_pressure_update\x18\" \x01(\x0b\x32\".robotics.learning.reach.ToolStateH\x00\x12\x44\n\x0f\x64ownlink_status\x18( \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12\x38\n\x0csensor_state\x18) \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12?\n\x13sensor_state_update\x18* \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12\x38\n\x0coutput_state\x18+ \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12?\n\x13output_state_update\x18, \x01(\x0b\x32 .robotics.learning.reach.IOStateH\x00\x12=\n\x0chealth_check\x18- \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x33\n\x07history\x18. \x01(\x0b\x32 .robotics.learning.reach.HistoryH\x00\x12\x43\n\x12\x61udio_request_mute\x18/ \x01(\x0b\x32%.robotics.learning.reach.AudioRequestH\x00\x12\x45\n\x14\x61udio_request_unmute\x18\x30 \x01(\x0b\x32%.robotics.learning.reach.AudioRequestH\x00\x12:\n\x05\x65rror\x18\x31 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12M\n\x15webrtc_audio_response\x18\x32 \x01(\x0b\x32,.robotics.learning.reach.WebrtcAudioResponseH\x00\x12?\n\x08metadata\x18\x33 \x01(\x0b\x32!.robotics.learning.reach.MetadataB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12@\n\tsim_state\x18\x34 \x01(\x0b\x32!.robotics.learning.reach.SimStateB\x08\xe2\xca\xe7\xc4\x08\x02 \x01H\x00\x12\x42\n\rdevice_status\x18\x35 \x01(\x0b\x32\x1f.robotics.learning.reach.StatusB\x08\xe2\xca\xe7\xc4\x08\x02P\x01H\x00\x12K\n\x14webrtc_audio_request\x18\x36 \x01(\x0b\x32+.robotics.learning.reach.WebrtcAudioRequestH\x00\x12U\n\x19sim_instance_segmentation\x18\x37 \x01(\x0b\x32\x30.robotics.learning.reach.SimInstanceSegmentationH\x00\x12\x42\n\x11\x65xposure_complete\x18\x38 \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12?\n\x0estart_shutdown\x18; \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12@\n\x0f\x66inish_shutdown\x18< \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x37\n\x06hangup\x18= \x01(\x0b\x32%.robotics.learning.reach.EmptyMessageH\x00\x12\x46\n\x11\x63onnected_clients\x18> \x01(\x0b\x32).robotics.learning.reach.ConnectedClientsH\x00\x12\x37\n\tdetection\x18? \x01(\x0b\x32\".robotics.learning.reach.DetectionH\x00\x12\x46\n\x0brobot_state\x18@ \x01(\x0b\x32#.robotics.learning.reach.RobotStateB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01H\x00\x12=\n\x05\x61lert\x18\x42 \x01(\x0b\x32\x1e.robotics.learning.reach.AlertB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01H\x00\x12\x46\n\x11\x63lient_annotation\x18\x45 \x01(\x0b\x32).robotics.learning.reach.ClientAnnotationH\x00\x12L\n\x14pipeline_description\x18\x46 \x01(\x0b\x32,.robotics.learning.reach.PipelineDescriptionH\x00\x12H\n\x12machine_interfaces\x18G \x01(\x0b\x32*.robotics.learning.reach.MachineInterfacesH\x00\x12J\n\x13machine_description\x18H \x01(\x0b\x32+.robotics.learning.reach.MachineDescriptionH\x00\x12\x44\n\x10text_instruction\x18I \x01(\x0b\x32(.robotics.learning.reach.TextInstructionH\x00\x12<\n\x0creport_error\x18L \x01(\x0b\x32$.robotics.learning.reach.ReportErrorH\x00\x12\x31\n\x06health\x18N \x01(\x0b\x32\x1f.robotics.learning.reach.HealthH\x00\x12s\n\x17\x63ontroller_descriptions\x18O \x01(\x0b\x32/.robotics.learning.reach.ControllerDescriptionsB\x1f\xe2\xca\xe7\xc4\x08\x19*\x17\x63ontroller-descriptionsH\x00\x42\x11\n\x0f\x64\x61ta_type_oneofJ\x04\x08\n\x10\x0bJ\x04\x08\x18\x10\x19\"C\n\x0bTextLogData\x12\x11\n\tfile_name\x18\x01 \x01(\t\x12\x13\n\x0bline_number\x18\x02 \x01(\x03\x12\x0c\n\x04text\x18\x03 \x01(\t\"t\n\x06Health\x12\x1a\n\x12interval_length_ms\x18\x01 \x01(\x04\x12\x14\n\x0c\x64isplay_name\x18\x02 \x01(\t\x12\x38\n\x0bheart_beats\x18\x03 \x01(\x0b\x32#.robotics.learning.reach.HeartBeats\"\xb6\x05\n\nHeartBeats\x12\x38\n\nany_camera\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0c\x64\x65pth_camera\x18\x02 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0c\x63olor_camera\x18\x03 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0cnot_estopped\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12:\n\x0cnot_pstopped\x18\x05 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x42\n\x14not_safeguardstopped\x18\x06 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x34\n\x06joints\x18\x07 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x36\n\x08movement\x18\x08 \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12>\n\x10\x63lient_connected\x18\t \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x45\n\x17no_reach_script_failure\x18\n \x01(\x0b\x32$.robotics.learning.reach.HealthState\x12\x45\n\x17teleop_generates_metric\x18\x0b \x01(\x0b\x32$.robotics.learning.reach.HealthState\"\'\n\x0bHealthState\x12\n\n\x02ok\x18\x01 \x01(\x08\x12\x0c\n\x04info\x18\x02 \x01(\t\"*\n\x0bReportError\x12\r\n\x05\x65rror\x18\x01 \x01(\t\x12\x0c\n\x04tags\x18\x02 \x03(\t\"^\n\x16\x43ontrollerDescriptions\x12\x44\n\x0c\x64\x65scriptions\x18\x01 \x03(\x0b\x32..robotics.learning.reach.ControllerDescription\"%\n\x15\x43ontrollerDescription\x12\x0c\n\x04name\x18\x01 \x01(\t\":\n\x0cSendToClient\x12\x1d\n\x03uid\x18\x01 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x0b\n\x03tag\x18\x02 \x01(\t\"R\n\x07History\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x0e\n\x06values\x18\x02 \x03(\t\x12\x15\n\rhistory_start\x18\x03 \x01(\x04\x12\x13\n\x0bhistory_end\x18\x04 \x01(\x04\" \n\x0c\x41udioRequest\x12\x10\n\x08text_cue\x18\x01 \x01(\t\"\x95\x01\n\x17SimInstanceSegmentation\x12\x31\n\x06sim_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05simTS\x12\x12\n\nimage_path\x18\x02 \x01(\t\x12\x33\n\x08relation\x18\x03 \x03(\x0b\x32!.robotics.learning.reach.KeyValue\"y\n\x08SimState\x12\x31\n\x06sim_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x05simTS\x12:\n\x0cobject_state\x18\x02 \x03(\x0b\x32$.robotics.learning.reach.ObjectState\"|\n\x0bObjectState\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x13\n\x0bobject_name\x18\x02 \x01(\t\x12!\n\x0cpose_xyzxyzw\x18\x03 \x03(\x01R\x0bposeXYZXYZW\x12\x12\n\nlinear_vel\x18\x04 \x03(\x01\"\xa2\x03\n\tSimAction\x12H\n\x14get_all_object_poses\x18\x01 \x01(\x0b\x32*.robotics.learning.reach.GetAllObjectPoses\x12?\n\x0fset_object_pose\x18\x02 \x01(\x0b\x32&.robotics.learning.reach.SetObjectPose\x12<\n\rdelete_object\x18\x03 \x01(\x0b\x32%.robotics.learning.reach.DeleteObject\x12K\n\x15set_camera_intrinsics\x18\x04 \x01(\x0b\x32,.robotics.learning.reach.SetCameraIntrinsics\x12\x36\n\nadd_object\x18\x05 \x01(\x0b\x32\".robotics.learning.reach.AddObject\x12G\n\x13get_segmented_image\x18\x06 \x01(\x0b\x32*.robotics.learning.reach.GetSegmentedImage\"\x13\n\x11GetAllObjectPoses\"U\n\rSetObjectPose\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12!\n\x0cpose_xyzxyzw\x18\x02 \x03(\x01R\x0bposeXYZXYZW\"1\n\x0c\x44\x65leteObject\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\"q\n\x13SetCameraIntrinsics\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x12\n\nintrinsics\x18\x02 \x03(\x01\x12\x11\n\tnear_clip\x18\x03 \x01(\x01\x12\x10\n\x08\x66\x61r_clip\x18\x04 \x01(\x01\"p\n\tAddObject\x12!\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_idR\x02id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12!\n\x0cpose_xyzxyzw\x18\x03 \x03(\x01R\x0bposeXYZXYZW\"\'\n\x11GetSegmentedImage\x12\x12\n\ndevice_key\x18\x01 \x01(\t\"a\n\x08Metadata\x12\x0f\n\x07\x63omment\x18\x01 \x01(\t\x12\x12\n\nbegin_file\x18\x02 \x01(\x08\x12\x10\n\x08\x65nd_file\x18\x03 \x01(\x08\x12\x16\n\x0ereal_time_logs\x18\x04 \x01(\x08:\x06\xf0\xbe\xe3\xd8\t\x01\"J\n\x07IOState\x12\x37\n\x05state\x18\x01 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState:\x06\xe8\xbe\xe3\xd8\t\x01\"F\n\x0f\x43\x61pabilityState\x12\x0b\n\x03pin\x18\x01 \x01(\t\x12\x11\n\tint_value\x18\x02 \x01(\x03\x12\x13\n\x0b\x66loat_value\x18\x03 \x01(\x01\"\x80\x01\n\x05\x43olor\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12$\n\x0e\x63olor_ssot_key\x18\x02 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x63olor_intrinsics\x18\x03 \x03(\x01\x12 \n\ncolor_data\x18\x04 \x01(\x0c\x42\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"\xec\x02\n\nColorDepth\x12\r\n\x05\x63olor\x18\x01 \x01(\t\x12$\n\x0e\x63olor_ssot_key\x18\x02 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x63olor_intrinsics\x18\x03 \x03(\x01\x12\r\n\x05\x64\x65pth\x18\x04 \x01(\t\x12$\n\x0e\x64\x65pth_ssot_key\x18\x05 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x18\n\x10\x64\x65pth_intrinsics\x18\x06 \x03(\x01\x12\x14\n\x0cupload_depth\x18\x07 \x01(\t\x12\x1a\n\x12uncompressed_depth\x18\x08 \x01(\t\x12\x42\n\x10\x63ompressed_depth\x18\t \x03(\x0b\x32(.robotics.learning.reach.CompressedDepth\x12 \n\ncolor_data\x18\n \x01(\x0c\x42\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12 \n\ndepth_data\x18\x0b \x01(\x0c\x42\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"3\n\x0f\x43ompressedDepth\x12\r\n\x05\x64\x65pth\x18\x01 \x01(\t\x12\x11\n\tencodings\x18\x02 \x03(\t\"b\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x11\n\tint_value\x18\x03 \x01(\x03\x12\x13\n\x0b\x66loat_value\x18\x04 \x01(\x01:\x12\x82\xbf\xe3\xd8\t\x0cKeyValueData\"\x95\x01\n\x14MessageLastTimestamp\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x11\n\tdata_type\x18\x03 \x01(\t\x12\x0b\n\x03key\x18\x04 \x01(\t\x12\x33\n\x07last_ts\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x06LastTS\"\xac\x01\n\x10InferenceRequest\x12\x17\n\x0fprediction_type\x18\x01 \x01(\t\x12\x14\n\x0crequest_type\x18\x02 \x01(\t\x12\x11\n\ttask_code\x18\x03 \x01(\t\x12\x0e\n\x06intent\x18\x04 \x01(\t\x12\r\n\x05label\x18\x05 \x01(\t\x12\x19\n\x08robot_id\x18\x06 \x01(\tR\x07robotID\x12\x14\n\x0csuccess_type\x18\x07 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"\xc3\x05\n\nPrediction\x12\x19\n\x05\x63olor\x18\x02 \x01(\tB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01\x12$\n\x0e\x63olor_ssot_key\x18\x03 \x01(\tB\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01\x12\x37\n\x0bpick_points\x18\x01 \x03(\x0b\x32\".robotics.learning.reach.PickPoint\x12?\n\x0bposition_3d\x18\x04 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x05 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12J\n\x11place_position_3d\x18\x06 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\x0fplacePosition3D\x12U\n\x13place_quaternion_3d\x18\x07 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x11placeQuaternion3D\x12\x12\n\nconfidence\x18\x08 \x03(\x01\x12\x44\n\x11inference_request\x18\t \x01(\x0b\x32).robotics.learning.reach.InferenceRequest\x12\x35\n\x08\x63olor_ts\x18\n \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x63olorTS\x12\x35\n\x08\x64\x65pth_ts\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12\x19\n\x05\x65rror\x18\x0c \x01(\tB\n\xe2\xca\xe7\xc4\x08\x04\x18\x01X\x01\x12 \n\ncolor_data\x18\r \x01(\x0c\x42\x0c\xe2\xca\xe7\xc4\x08\x06\x18\x01 \x01X\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"!\n\tPickPoint\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\"\x1e\n\x05Level\x12\r\n\x05level\x18\x01 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"\x91\x08\n\x07UrState\x12\x0c\n\x04pose\x18\x01 \x03(\x01\x12\x0e\n\x06joints\x18\x02 \x03(\x01\x12\r\n\x05\x66orce\x18\x03 \x03(\x01\x12\x0e\n\x06torque\x18\" \x03(\x01\x12\x17\n\x0frobot_dexterity\x18\x04 \x01(\x01\x12\x19\n\x11is_robot_power_on\x18\x05 \x01(\x08\x12 \n\x14is_emergency_stopped\x18\x06 \x01(\x08\x42\x02\x18\x01\x12!\n\x15is_protective_stopped\x18\x07 \x01(\x08\x42\x02\x18\x01\x12\x41\n\x10robot_stop_state\x18# \x01(\x0b\x32\'.robotics.learning.reach.RobotStopState\x12\x1a\n\x12is_program_running\x18\x08 \x01(\x08\x12\x12\n\ndigital_in\x18\t \x03(\x08\x12\x11\n\tsensor_in\x18\n \x03(\x08\x12\x13\n\x0b\x64igital_out\x18\x0b \x03(\x08\x12\x11\n\tanalog_in\x18\x0c \x03(\x01\x12\x12\n\nanalog_out\x18\r \x03(\x01\x12\x17\n\x0ftool_digital_in\x18\x0e \x03(\x08\x12\x18\n\x10tool_digital_out\x18\x0f \x03(\x08\x12\x16\n\x0etool_analog_in\x18\x10 \x03(\x01\x12\x17\n\x0ftool_analog_out\x18\x11 \x03(\x01\x12\x14\n\x0c\x62oard_temp_c\x18\x12 \x01(\x01\x12\x17\n\x0frobot_voltage_v\x18\x13 \x01(\x01\x12\x17\n\x0frobot_current_a\x18\x14 \x01(\x01\x12+\n\x12\x62oard_io_current_a\x18\x15 \x01(\x01R\x0f\x62oardIOCurrentA\x12\x13\n\x0btool_temp_c\x18\x16 \x01(\x01\x12\x16\n\x0etool_voltage_v\x18\x17 \x01(\x01\x12\x16\n\x0etool_current_a\x18\x18 \x01(\x01\x12\x18\n\x10joint_voltages_v\x18\x19 \x03(\x01\x12\x18\n\x10joint_currents_a\x18\x1a \x03(\x01\x12\x15\n\rjoint_temps_c\x18\x1b \x03(\x01\x12\x12\n\nrobot_mode\x18\x1c \x01(\t\x12$\n\x0fprogram_counter\x18\x1d \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12:\n\x0c\x64igital_bank\x18\x1e \x03(\x0b\x32$.robotics.learning.reach.DigitalBank\x12\x38\n\x0b\x61nalog_bank\x18\x1f \x03(\x0b\x32#.robotics.learning.reach.AnalogBank\x12:\n\x0cinteger_bank\x18  \x03(\x0b\x32$.robotics.learning.reach.IntegerBank\x12\x1f\n\x17last_terminated_program\x18! \x01(\t:\x18\xe8\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x0cURRobotState\"\xa4\x01\n\x0eRobotStopState\x12\x1c\n\x14is_emergency_stopped\x18\x01 \x01(\x08\x12\x1d\n\x15is_protective_stopped\x18\x02 \x01(\x08\x12\x1c\n\x14is_safeguard_stopped\x18\x03 \x01(\x08\x12\x17\n\x0fis_reduced_mode\x18\x04 \x01(\x08\x12\x16\n\x0esafety_message\x18\x05 \x01(\t:\x06\xe8\xbe\xe3\xd8\t\x01\"\x82\x08\n\nRobotState\x12\x0c\n\x04pose\x18\x01 \x03(\x01\x12\x0e\n\x06joints\x18\x02 \x03(\x01\x12\r\n\x05\x66orce\x18\x03 \x03(\x01\x12\x0e\n\x06torque\x18\" \x03(\x01\x12\x17\n\x0frobot_dexterity\x18\x04 \x01(\x01\x12\x19\n\x11is_robot_power_on\x18\x05 \x01(\x08\x12 \n\x14is_emergency_stopped\x18\x06 \x01(\x08\x42\x02\x18\x01\x12!\n\x15is_protective_stopped\x18\x07 \x01(\x08\x42\x02\x18\x01\x12\x41\n\x10robot_stop_state\x18# \x01(\x0b\x32\'.robotics.learning.reach.RobotStopState\x12\x1a\n\x12is_program_running\x18\x08 \x01(\x08\x12\x12\n\ndigital_in\x18\t \x03(\x08\x12\x11\n\tsensor_in\x18\n \x03(\x08\x12\x13\n\x0b\x64igital_out\x18\x0b \x03(\x08\x12\x11\n\tanalog_in\x18\x0c \x03(\x01\x12\x12\n\nanalog_out\x18\r \x03(\x01\x12\x17\n\x0ftool_digital_in\x18\x0e \x03(\x08\x12\x18\n\x10tool_digital_out\x18\x0f \x03(\x08\x12\x16\n\x0etool_analog_in\x18\x10 \x03(\x01\x12\x17\n\x0ftool_analog_out\x18\x11 \x03(\x01\x12\x14\n\x0c\x62oard_temp_c\x18\x12 \x01(\x01\x12\x17\n\x0frobot_voltage_v\x18\x13 \x01(\x01\x12\x17\n\x0frobot_current_a\x18\x14 \x01(\x01\x12+\n\x12\x62oard_io_current_a\x18\x15 \x01(\x01R\x0f\x62oardIOCurrentA\x12\x13\n\x0btool_temp_c\x18\x16 \x01(\x01\x12\x16\n\x0etool_voltage_v\x18\x17 \x01(\x01\x12\x16\n\x0etool_current_a\x18\x18 \x01(\x01\x12\x18\n\x10joint_voltages_v\x18\x19 \x03(\x01\x12\x18\n\x10joint_currents_a\x18\x1a \x03(\x01\x12\x15\n\rjoint_temps_c\x18\x1b \x03(\x01\x12\x12\n\nrobot_mode\x18\x1c \x01(\t\x12$\n\x0fprogram_counter\x18\x1d \x01(\x03\x42\x0b\xe2\xca\xe7\xc4\x08\x05\x42\x03int\x12:\n\x0c\x64igital_bank\x18\x1e \x03(\x0b\x32$.robotics.learning.reach.DigitalBank\x12\x38\n\x0b\x61nalog_bank\x18\x1f \x03(\x0b\x32#.robotics.learning.reach.AnalogBank\x12:\n\x0cinteger_bank\x18  \x03(\x0b\x32$.robotics.learning.reach.IntegerBank\x12\x1f\n\x17last_terminated_program\x18! \x01(\t:\x06\xe8\xbe\xe3\xd8\t\x01\"J\n\x0b\x44igitalBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x08\"I\n\nAnalogBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x01\"J\n\x0bIntegerBank\x12\r\n\x05space\x18\x01 \x01(\t\x12\x0e\n\x06output\x18\x02 \x01(\x08\x12\r\n\x05start\x18\x03 \x01(\x03\x12\r\n\x05state\x18\x04 \x03(\x03\"3\n\rConveyorState\x12\x1a\n\x12is_object_detected\x18\x01 \x01(\x08:\x06\xe8\xbe\xe3\xd8\t\x01\"8\n\tToolState\x12\x17\n\x0fvacuum_level_pa\x18\x01 \x01(\x01\x12\n\n\x02on\x18\x02 \x01(\x08:\x06\xe8\xbe\xe3\xd8\t\x01\"t\n\x06Status\x12\x0e\n\x06status\x18\x01 \x01(\t\x12\x0e\n\x06script\x18\x08 \x01(\t\x12\r\n\x05\x65rror\x18\x04 \x01(\t\x12\x10\n\x08progress\x18\x05 \x01(\x01\x12\x0f\n\x07message\x18\x06 \x01(\t\x12\x0c\n\x04\x63ode\x18\x07 \x01(\x03J\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04\"3\n\x08Position\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\">\n\x08Rotation\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\x12\t\n\x01w\x18\x04 \x01(\x01:\x06\xe0\xbe\xe3\xd8\t\x01\"(\n\x05Scale\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01\"\xca\x02\n\tUserLabel\x12\x37\n\toracle_ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x08oracleTS\x12=\n\x03\x65xp\x18\x02 \x01(\x0b\x32\x30.robotics.learning.reach.ExperimentalCommandData\x12\x0e\n\x06origin\x18\x03 \x01(\t\x12\x13\n\x0borigin_type\x18\x04 \x01(\t\x12\x33\n\x08position\x18\x05 \x01(\x0b\x32!.robotics.learning.reach.Position\x12\x33\n\x08rotation\x18\x06 \x01(\x0b\x32!.robotics.learning.reach.Rotation\x12\x12\n\nuser_label\x18\x07 \x01(\t\x12\t\n\x01x\x18\x08 \x01(\x03\x12\t\n\x01y\x18\t \x01(\x03:\x0c\xf8\xbe\xe3\xd8\t\x01\xe0\xbe\xe3\xd8\t\x01\"2\n\x06Pose2d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01:\x12\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x06Pose2D\";\n\x05Vec3d\x12\t\n\x01x\x18\x01 \x01(\x01\x12\t\n\x01y\x18\x02 \x01(\x01\x12\t\n\x01z\x18\x03 \x01(\x01:\x11\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\x05Vec3D\"R\n\x0cQuaternion3d\x12\t\n\x01w\x18\x01 \x01(\x01\x12\t\n\x01x\x18\x02 \x01(\x01\x12\t\n\x01y\x18\x03 \x01(\x01\x12\t\n\x01z\x18\x04 \x01(\x01:\x16\xf0\xbe\xe3\xd8\t\x01\x82\xbf\xe3\xd8\t\nQuaternion\"z\n\rDeviceDataRef\x12\x32\n\x02ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_type\x18\x03 \x01(\t\x12\x0b\n\x03seq\x18\x04 \x01(\x04\"\xea\x01\n\nPlaceLabel\x12\r\n\x05label\x18\x01 \x01(\t\x12\x38\n\x07pose_2d\x18\x02 \x03(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x03 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x04 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D:\x06\xf0\xbe\xe3\xd8\t\x01\"\x80\x04\n\tPickLabel\x12\r\n\x05label\x18\x01 \x01(\t\x12\x35\n\x08\x64\x65pth_ts\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x07\x64\x65pthTS\x12?\n\x0f\x64\x65vice_data_ref\x18\x04 \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12=\n\ruser_data_ref\x18\x0b \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12\x38\n\x07pose_2d\x18\x03 \x03(\x0b\x32\x1f.robotics.learning.reach.Pose2dR\x06pose2D\x12?\n\x0bposition_3d\x18\x05 \x03(\x0b\x32\x1e.robotics.learning.reach.Vec3dR\nposition3D\x12J\n\rquaternion_3d\x18\x06 \x03(\x0b\x32%.robotics.learning.reach.Quaternion3dR\x0cquaternion3D\x12\x11\n\ttask_code\x18\x07 \x01(\t\x12\x17\n\x07pick_id\x18\x08 \x01(\tR\x06pickID\x12\x0c\n\x04tags\x18\t \x03(\t\x12\x0e\n\x06intent\x18\n \x01(\t\x12\x14\n\x0csuccess_type\x18\x0c \x01(\t:\x06\xf0\xbe\xe3\xd8\t\x01\"\x9b\x04\n\x0bSessionInfo\x12!\n\x0coperator_uid\x18\x01 \x01(\tR\x0boperatorUID\x12\x15\n\roperator_type\x18\x10 \x01(\t\x12\x1d\n\nsession_id\x18\x02 \x01(\tR\tsessionID\x12.\n\nstart_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nrobot_name\x18\x04 \x01(\t\x12\x1b\n\tclient_os\x18\x05 \x01(\tR\x08\x63lientOS\x12%\n\nui_version\x18\x06 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\tUIVersion\x12\x1b\n\x13\x63\x61libration_version\x18\x07 \x01(\t\x12\x1d\n\x15\x61\x63\x63\x65pt_depth_encoding\x18\x08 \x03(\t\x12\r\n\x05relay\x18\t \x01(\t\x12\x1a\n\x12\x61\x63tionsets_version\x18\n \x01(\t\x12\x16\n\x0esafety_version\x18\x0b \x01(\t\x12.\n\x13workcell_io_version\x18\x0c \x01(\tR\x11workcellIOVersion\x12\x11\n\ttransport\x18\r \x01(\t\x12,\n\x12\x63lient_session_uid\x18\x0e \x01(\tR\x10\x63lientSessionUID\x12\x1e\n\x16workcell_setup_version\x18\x0f \x01(\t\x12\x1b\n\x13\x63onstraints_version\x18\x11 \x01(\t\"T\n\x13ProtectiveStopState\x12\x1d\n\x15is_protective_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"R\n\x12SafeguardStopState\x12\x1c\n\x14is_safeguard_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\"R\n\x12\x45mergencyStopState\x12\x1c\n\x14is_emergency_stopped\x18\x01 \x01(\x08\x12\x16\n\x0esafety_message\x18\x02 \x01(\t:\x06\xe0\xbe\xe3\xd8\t\x01\",\n\x0fRobotPowerState\x12\x19\n\x11is_robot_power_on\x18\x01 \x01(\x08\"\xc4\x01\n\x06Metric\x12S\n\x05value\x18\x04 \x01(\x0b\x32!.robotics.learning.reach.KeyValueB\x14\xe2\xca\xe7\xc4\x08\x0e\x62\x0cmetric_valueR\x0bmetricValue\x12Q\n\x06labels\x18\x03 \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x10\xe2\xca\xe7\xc4\x08\n2\x06Labels8\x00R\x0cmetricLabels:\x06\xe8\xbe\xe3\xd8\t\x01J\x04\x08\x01\x10\x02J\x04\x08\x02\x10\x03\"\x16\n\x0c\x45mptyMessage:\x06\xe0\xbe\xe3\xd8\t\x01\"p\n\tSetOutput\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x36\n\x04\x61rgs\x18\x03 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState\"M\n\x10\x43onnectedClients\x12\x39\n\x07\x63lients\x18\x01 \x03(\x0b\x32(.robotics.learning.reach.ConnectedClient\"d\n\x0f\x43onnectedClient\x12\x1d\n\x03uid\x18\x01 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x12\n\nis_current\x18\x02 \x01(\x08\x12\x1e\n\x16\x63ontrol_session_active\x18\x03 \x01(\x08\"\xc3\x01\n\tDetection\x12\x34\n\x06source\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.SourceImage\x12;\n\ndetections\x18\x02 \x03(\x0b\x32\'.robotics.learning.reach.DetectionEntry\x12\x43\n\x0c\x63\x61mera_shift\x18\x03 \x01(\x0b\x32-.robotics.learning.reach.CameraShiftDetection\"~\n\x0bSourceImage\x12\x32\n\x02ts\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.TimestampB\n\xe2\xca\xe7\xc4\x08\x04\x32\x02TS\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x11\n\tdata_type\x18\x04 \x01(\t\"M\n\x1b\x44\x65tectionAprilGroupAprilTag\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x0f\n\x07\x63orners\x18\x02 \x03(\x01\"c\n\x17\x44\x65tectionAprilGroupInfo\x12H\n\napril_tags\x18\x01 \x03(\x0b\x32\x34.robotics.learning.reach.DetectionAprilGroupAprilTag\"\xe6\x01\n\x0e\x44\x65tectionEntry\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0f\n\x07\x63orners\x18\x03 \x03(\x01\x12\x12\n\nextrinsics\x18\x04 \x03(\x01\x12\x12\n\nintrinsics\x18\x05 \x03(\x01\x12G\n\x0b\x61pril_group\x18\x06 \x01(\x0b\x32\x30.robotics.learning.reach.DetectionAprilGroupInfoH\x00\x42\x14\n\x12type_specific_info\"L\n\x0c\x44\x65tectionKey\x12\x1d\n\x02id\x18\x01 \x01(\tB\x11\xe2\xca\xe7\xc4\x08\x0b\x32\x02IDb\x05py_id\x12\x1d\n\x04type\x18\x02 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\"\x97\x01\n\x11ShiftPerDetection\x12<\n\rdetection_key\x18\x01 \x01(\x0b\x32%.robotics.learning.reach.DetectionKey\x12\x12\n\nshift_type\x18\x02 \x01(\t\x12\x14\n\x0cshift_amount\x18\x03 \x01(\x01\x12\x1a\n\x12is_object_detected\x18\x04 \x01(\x08\"\xb4\x01\n\x14\x43\x61meraShiftDetection\x12\x11\n\tmax_shift\x18\x01 \x01(\x01\x12?\n\x10max_shift_object\x18\x02 \x01(\x0b\x32%.robotics.learning.reach.DetectionKey\x12H\n\x14shifts_per_detection\x18\x03 \x03(\x0b\x32*.robotics.learning.reach.ShiftPerDetection\"T\n\x10MovePosePathArgs\x12@\n\twaypoints\x18\x01 \x03(\x0b\x32-.robotics.learning.reach.MovePoseWaypointArgs\"\xaf\x02\n\x14MovePoseWaypointArgs\x12\x33\n\x0btranslation\x18\x01 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3d\x12\x46\n\x08rotation\x18\x02 \x01(\x0b\x32\x1e.robotics.learning.reach.Vec3dB\x14\xe2\xca\xe7\xc4\x08\x0e\x32\x0cRotationRads\x12\x0e\n\x06linear\x18\x03 \x01(\x08\x12\x31\n\x0c\x62lend_radius\x18\x04 \x01(\x02\x42\x1b\xe2\xca\xe7\xc4\x08\x15\x32\x11\x42lendRadiusMeters8\x01\x12\x10\n\x08velocity\x18\x05 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x06 \x01(\x02\x12/\n\x06limits\x18\x07 \x01(\x0b\x32\x1f.robotics.learning.reach.Limits\"\xac\x01\n\x08WaitArgs\x12\x17\n\x0ftimeout_seconds\x18\x01 \x01(\x01\x12\x42\n\x0etimeout_action\x18\x02 \x01(\x0b\x32*.robotics.learning.reach.WaitTimeoutAction\x12\x43\n\x04\x65xpr\x18\x03 \x01(\x0b\x32\x35.robotics.learning.reach.ReachScriptBooleanExpression\"I\n\x11WaitTimeoutAction\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x15\n\rabort_message\x18\x02 \x01(\t\"\xa6\x01\n\x1cReachScriptBooleanExpression\x12\n\n\x02op\x18\x01 \x01(\t\x12<\n\x04\x61rg1\x18\x02 \x01(\x0b\x32..robotics.learning.reach.ReachScriptExpression\x12<\n\x04\x61rg2\x18\x03 \x01(\x0b\x32..robotics.learning.reach.ReachScriptExpression\"\xee\x01\n\x15ReachScriptExpression\x12J\n\tbool_expr\x18\x01 \x01(\x0b\x32\x35.robotics.learning.reach.ReachScriptBooleanExpressionH\x00\x12;\n\x08var_expr\x18\x02 \x01(\x0b\x32\'.robotics.learning.reach.ReachScriptVarH\x00\x12?\n\nconst_expr\x18\x03 \x01(\x0b\x32).robotics.learning.reach.ReachScriptConstH\x00\x42\x0b\n\targ_oneof\"c\n\x0eReachScriptVar\x12\x44\n\ncapability\x18\x01 \x01(\x0b\x32..robotics.learning.reach.ReachScriptCapabilityH\x00\x42\x0b\n\tvar_oneof\"{\n\x10ReachScriptConst\x12\x44\n\ncapability\x18\x01 \x01(\x0b\x32..robotics.learning.reach.ReachScriptCapabilityH\x00\x12\x14\n\nbool_value\x18\x02 \x01(\x08H\x00\x42\x0b\n\tvar_oneof\"}\n\x15ReachScriptCapability\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x37\n\x05state\x18\x03 \x03(\x0b\x32(.robotics.learning.reach.CapabilityState\"\xa8\x01\n\x10MachineInterface\x12\x1d\n\x04type\x18\x01 \x01(\tB\x0f\xe2\xca\xe7\xc4\x08\tb\x07py_type\x12\x13\n\x0b\x64\x65vice_type\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x03 \x01(\t\x12\x11\n\tdata_type\x18\x04 \x01(\t\x12\x0c\n\x04keys\x18\x06 \x03(\t\x12\x10\n\x08replaces\x18\x07 \x01(\x08\x12\x18\n\x10stop_propagation\x18\x08 \x01(\x08\"S\n\x12MachineDescription\x12=\n\ninterfaces\x18\x01 \x03(\x0b\x32).robotics.learning.reach.MachineInterface\"X\n\x13PipelineDescription\x12\x41\n\x0c\x64\x65scriptions\x18\x01 \x03(\x0b\x32+.robotics.learning.reach.MachineDescription\"R\n\x11MachineInterfaces\x12=\n\ninterfaces\x18\x01 \x03(\x0b\x32).robotics.learning.reach.MachineInterface\"\xbe\x01\n\x0fTextInstruction\x12\x0e\n\x06intent\x18\x01 \x01(\t\x12\x14\n\x0csuccess_type\x18\x02 \x01(\t\x12\x19\n\x11success_detection\x18\x03 \x01(\t\x12\x13\n\x0binstruction\x18\x04 \x01(\t\x12\x1d\n\x03uid\x18\x05 \x01(\tB\x0b\xe2\xca\xe7\xc4\x08\x05\x32\x03UIDR\x03uid\x12\x36\n\x0csupertask_id\x18\x06 \x01(\tB\x13\xe2\xca\xe7\xc4\x08\r2\x0bSupertaskIDR\x0bsupertaskID\"\xac\x03\n\x08Snapshot\x12\x0e\n\x06source\x18\x01 \x01(\t\x12@\n\x10\x64\x65vice_data_refs\x18\x02 \x03(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12<\n\tresponses\x18\n \x03(\x0b\x32).robotics.learning.reach.SnapshotResponse\x12>\n\rgym_server_ts\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.TimestampR\x0bgymServerTS\x12$\n\ngym_env_id\x18\x03 \x01(\tB\x10\xe2\xca\xe7\xc4\x08\n2\x08GymEnvID\x12$\n\ngym_run_id\x18\x04 \x01(\tB\x10\xe2\xca\xe7\xc4\x08\n2\x08GymRunID\x12\x13\n\x0bgym_episode\x18\x05 \x01(\x04\x12\x10\n\x08gym_step\x18\x06 \x01(\x04\x12\x12\n\ngym_reward\x18\x07 \x01(\x02\x12\x10\n\x08gym_done\x18\x08 \x01(\x08\x12\x37\n\x0bgym_actions\x18\t \x03(\x0b\x32\".robotics.learning.reach.GymAction\"\xc4\x01\n\x10SnapshotResponse\x12?\n\x0f\x64\x65vice_data_ref\x18\x01 \x01(\x0b\x32&.robotics.learning.reach.DeviceDataRef\x12\x0b\n\x03\x63id\x18\x02 \x01(\x03\x12/\n\x06status\x18\x03 \x01(\x0b\x32\x1f.robotics.learning.reach.Status\x12\x18\n\x10gym_element_type\x18\x04 \x01(\t\x12\x17\n\x0fgym_config_name\x18\x05 \x01(\t\"\x9d\x03\n\tGymAction\x12\x13\n\x0b\x64\x65vice_type\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65vice_name\x18\x02 \x01(\t\x12\x13\n\x0bsynchronous\x18\x06 \x01(\x08\x12\x45\n\x11\x61rm_action_params\x18\x03 \x01(\x0b\x32(.robotics.learning.reach.ArmActionParamsH\x00\x12K\n\x14vacuum_action_params\x18\x05 \x01(\x0b\x32+.robotics.learning.reach.VacuumActionParamsH\x00\x12K\n\x14logger_action_params\x18\x07 \x01(\x0b\x32+.robotics.learning.reach.LoggerActionParamsH\x00\x12`\n\x1f\x63lient_annotation_action_params\x18\x08 \x01(\x0b\x32\x35.robotics.learning.reach.ClientAnnotationActionParamsH\x00\x42\x08\n\x06paramsJ\x04\x08\x04\x10\x05\"\xd9\x03\n\x0f\x41rmActionParams\x12\x0f\n\x07\x63ommand\x18\x01 \x01(\x03\x12\x0b\n\x03\x63id\x18\x02 \x01(\x03\x12\x14\n\x0cjoint_angles\x18\x03 \x03(\x01\x12\x0c\n\x04pose\x18\x04 \x03(\x01\x12\x14\n\x0creach_action\x18\x05 \x01(\x03\x12\x12\n\nuse_linear\x18\x06 \x01(\x08\x12\x10\n\x08velocity\x18\x07 \x01(\x01\x12\x14\n\x0c\x61\x63\x63\x65leration\x18\x08 \x01(\x01\x12\x13\n\x0btimeout_sec\x18\t \x01(\x01\x12\x13\n\x0b\x61\x63tion_name\x18\n \x01(\t\x12\x14\n\x0cuse_unity_ik\x18\x0b \x01(\x08\x12\x0e\n\x06intent\x18\x0c \x01(\t\x12\x14\n\x0csuccess_type\x18\r \x01(\t\x12\x17\n\x07pick_id\x18\x0e \x01(\tR\x06pickID\x12\"\n\x1a\x61pply_tip_adjust_transform\x18\x0f \x01(\x08\x12\r\n\x05servo\x18\x10 \x01(\x08\x12\x14\n\x0cservo_t_secs\x18\x11 \x01(\x02\x12!\n\x19servo_lookahead_time_secs\x18\x12 \x01(\x02\x12\x12\n\nservo_gain\x18\x13 \x01(\x02\x12\x1a\n\x12\x61llow_uncalibrated\x18\x14 \x01(\x08\x12\x17\n\x0f\x63ontroller_name\x18\x15 \x01(\t\"#\n\x12VacuumActionParams\x12\r\n\x05state\x18\x0c \x01(\x03\"i\n\x12LoggerActionParams\x12\x10\n\x08is_start\x18\x01 \x01(\x08\x12\x41\n\x0c\x65vent_params\x18\x02 \x03(\x0b\x32!.robotics.learning.reach.KeyValueB\x08\xe2\xca\xe7\xc4\x08\x02\x38\x00\"]\n\x1c\x43lientAnnotationActionParams\x12=\n\nannotation\x18\x01 \x01(\x0b\x32).robotics.learning.reach.ClientAnnotation'
   ,
   dependencies=[google_dot_protobuf_dot_duration__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,logs__options__pb2.DESCRIPTOR,])
 
@@ -304,175 +304,182 @@ _COMMANDDATA = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010!*\037controller-descriptions-request', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='script', full_name='robotics.learning.reach.CommandData.script', index=36,
+      name='user_label', full_name='robotics.learning.reach.CommandData.user_label', index=36,
+      number=67, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\342\312\347\304\010\014*\nuser-label', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='script', full_name='robotics.learning.reach.CommandData.script', index=37,
       number=15, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reach_script', full_name='robotics.learning.reach.CommandData.reach_script', index=37,
+      name='reach_script', full_name='robotics.learning.reach.CommandData.reach_script', index=38,
       number=16, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010&*\014reach-script*\nrun-script*\nur-command', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='cmd', full_name='robotics.learning.reach.CommandData.cmd', index=38,
+      name='cmd', full_name='robotics.learning.reach.CommandData.cmd', index=39,
       number=17, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='args', full_name='robotics.learning.reach.CommandData.args', index=39,
+      name='args', full_name='robotics.learning.reach.CommandData.args', index=40,
       number=18, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='progress', full_name='robotics.learning.reach.CommandData.progress', index=40,
+      name='progress', full_name='robotics.learning.reach.CommandData.progress', index=41,
       number=19, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='message', full_name='robotics.learning.reach.CommandData.message', index=41,
+      name='message', full_name='robotics.learning.reach.CommandData.message', index=42,
       number=20, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='error', full_name='robotics.learning.reach.CommandData.error', index=42,
+      name='error', full_name='robotics.learning.reach.CommandData.error', index=43,
       number=21, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='detailed_error', full_name='robotics.learning.reach.CommandData.detailed_error', index=43,
+      name='detailed_error', full_name='robotics.learning.reach.CommandData.detailed_error', index=44,
       number=22, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='intent', full_name='robotics.learning.reach.CommandData.intent', index=44,
+      name='intent', full_name='robotics.learning.reach.CommandData.intent', index=45,
       number=23, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='success_type', full_name='robotics.learning.reach.CommandData.success_type', index=45,
+      name='success_type', full_name='robotics.learning.reach.CommandData.success_type', index=46,
       number=24, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='x', full_name='robotics.learning.reach.CommandData.x', index=46,
+      name='x', full_name='robotics.learning.reach.CommandData.x', index=47,
       number=25, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='y', full_name='robotics.learning.reach.CommandData.y', index=47,
+      name='y', full_name='robotics.learning.reach.CommandData.y', index=48,
       number=26, type=1, cpp_type=5, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='exp', full_name='robotics.learning.reach.CommandData.exp', index=48,
+      name='exp', full_name='robotics.learning.reach.CommandData.exp', index=49,
       number=27, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='exp_array', full_name='robotics.learning.reach.CommandData.exp_array', index=49,
+      name='exp_array', full_name='robotics.learning.reach.CommandData.exp_array', index=50,
       number=34, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=b'\342\312\347\304\010\014*\nuser-label', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='event_duration', full_name='robotics.learning.reach.CommandData.event_duration', index=50,
+      name='event_duration', full_name='robotics.learning.reach.CommandData.event_duration', index=51,
       number=28, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='event_name', full_name='robotics.learning.reach.CommandData.event_name', index=51,
+      name='event_name', full_name='robotics.learning.reach.CommandData.event_name', index=52,
       number=29, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010#*\005event*\013event-start*\rpointer-event', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='event_labels', full_name='robotics.learning.reach.CommandData.event_labels', index=52,
+      name='event_labels', full_name='robotics.learning.reach.CommandData.event_labels', index=53,
       number=30, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010\r\022\013eventlabels', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='event_params', full_name='robotics.learning.reach.CommandData.event_params', index=53,
+      name='event_params', full_name='robotics.learning.reach.CommandData.event_params', index=54,
       number=31, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010\0028\000', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='pick_id', full_name='robotics.learning.reach.CommandData.pick_id', index=54,
+      name='pick_id', full_name='robotics.learning.reach.CommandData.pick_id', index=55,
       number=32, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, json_name='pickID', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='experiment_token', full_name='robotics.learning.reach.CommandData.experiment_token', index=55,
+      name='experiment_token', full_name='robotics.learning.reach.CommandData.experiment_token', index=56,
       number=33, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010;*\023disable-experiments*\022enable-experiments*\020experiment-flags', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='history', full_name='robotics.learning.reach.CommandData.history', index=56,
+      name='history', full_name='robotics.learning.reach.CommandData.history', index=57,
       number=37, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010\021*\017history-request', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='text_cue', full_name='robotics.learning.reach.CommandData.text_cue', index=57,
+      name='text_cue', full_name='robotics.learning.reach.CommandData.text_cue', index=58,
       number=38, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='webrtc_audio_request', full_name='robotics.learning.reach.CommandData.webrtc_audio_request', index=58,
+      name='webrtc_audio_request', full_name='robotics.learning.reach.CommandData.webrtc_audio_request', index=59,
       number=39, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010f*\022audio-request-mute*\024audio-request-unmute*\rframe-request*\024webrtc-audio-request*\025audio-request-invalid', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='sim_action', full_name='robotics.learning.reach.CommandData.sim_action', index=59,
+      name='sim_action', full_name='robotics.learning.reach.CommandData.sim_action', index=60,
       number=35, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010\025 \001*\021sim-cheat-command', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='inference_request', full_name='robotics.learning.reach.CommandData.inference_request', index=60,
+      name='inference_request', full_name='robotics.learning.reach.CommandData.inference_request', index=61,
       number=44, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -496,7 +503,7 @@ _COMMANDDATA = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=125,
-  serialized_end=3671,
+  serialized_end=3732,
 )
 
 
@@ -527,8 +534,8 @@ _ALERT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3673,
-  serialized_end=3719,
+  serialized_start=3734,
+  serialized_end=3780,
 )
 
 
@@ -559,8 +566,8 @@ _CLIENTSESSIONSTART = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3721,
-  serialized_end=3772,
+  serialized_start=3782,
+  serialized_end=3833,
 )
 
 
@@ -621,6 +628,20 @@ _CLIENTANNOTATION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='long_horizon_instruction', full_name='robotics.learning.reach.ClientAnnotation.long_horizon_instruction', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='short_horizon_instruction', full_name='robotics.learning.reach.ClientAnnotation.short_horizon_instruction', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -638,8 +659,8 @@ _CLIENTANNOTATION = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=3775,
-  serialized_end=4321,
+  serialized_start=3836,
+  serialized_end=4537,
 )
 
 
@@ -670,8 +691,8 @@ _INTERVALSTART = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4323,
-  serialized_end=4352,
+  serialized_start=4539,
+  serialized_end=4568,
 )
 
 
@@ -716,8 +737,8 @@ _INTERVALEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4355,
-  serialized_end=4488,
+  serialized_start=4571,
+  serialized_end=4704,
 )
 
 
@@ -755,8 +776,8 @@ _TEXTANNOTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4490,
-  serialized_end=4538,
+  serialized_start=4706,
+  serialized_end=4754,
 )
 
 
@@ -780,8 +801,8 @@ _SNAPSHOTANNOTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4540,
-  serialized_end=4560,
+  serialized_start=4756,
+  serialized_end=4776,
 )
 
 
@@ -833,8 +854,8 @@ _POINTMEASUREMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4563,
-  serialized_end=4710,
+  serialized_start=4779,
+  serialized_end=4926,
 )
 
 
@@ -870,8 +891,8 @@ _MEASUREMENT = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=4712,
-  serialized_end=4770,
+  serialized_start=4928,
+  serialized_end=4986,
 )
 
 
@@ -909,8 +930,8 @@ _WEBRTCAUDIOREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4772,
-  serialized_end=4843,
+  serialized_start=4988,
+  serialized_end=5059,
 )
 
 
@@ -941,8 +962,8 @@ _WEBRTCAUDIORESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4845,
-  serialized_end=4883,
+  serialized_start=5061,
+  serialized_end=5099,
 )
 
 
@@ -994,8 +1015,8 @@ _STREAMREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4885,
-  serialized_end=4979,
+  serialized_start=5101,
+  serialized_end=5195,
 )
 
 
@@ -1082,8 +1103,8 @@ _EXPERIMENTALCOMMANDDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4982,
-  serialized_end=5385,
+  serialized_start=5198,
+  serialized_end=5601,
 )
 
 
@@ -1219,8 +1240,8 @@ _REACHSCRIPTCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5388,
-  serialized_end=6404,
+  serialized_start=5604,
+  serialized_end=6620,
 )
 
 
@@ -1251,8 +1272,8 @@ _REACHSCRIPTCALIBRATIONREQUIREMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6406,
-  serialized_end=6469,
+  serialized_start=6622,
+  serialized_end=6685,
 )
 
 
@@ -1311,8 +1332,8 @@ _REACHSCRIPT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6472,
-  serialized_end=6715,
+  serialized_start=6688,
+  serialized_end=6931,
 )
 
 
@@ -1350,8 +1371,8 @@ _SETRADIALSPEEDARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6717,
-  serialized_end=6839,
+  serialized_start=6933,
+  serialized_end=7055,
 )
 
 
@@ -1382,8 +1403,8 @@ _SETBLENDRADIUSARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6841,
-  serialized_end=6899,
+  serialized_start=7057,
+  serialized_end=7115,
 )
 
 
@@ -1470,8 +1491,8 @@ _MOVEJWAYPOINTARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6902,
-  serialized_end=7255,
+  serialized_start=7118,
+  serialized_end=7471,
 )
 
 
@@ -1516,8 +1537,8 @@ _LIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7258,
-  serialized_end=7429,
+  serialized_start=7474,
+  serialized_end=7645,
 )
 
 
@@ -1555,8 +1576,8 @@ _FORCELIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7431,
-  serialized_end=7478,
+  serialized_start=7647,
+  serialized_end=7694,
 )
 
 
@@ -1594,8 +1615,8 @@ _TORQUELIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7480,
-  serialized_end=7528,
+  serialized_start=7696,
+  serialized_end=7744,
 )
 
 
@@ -1654,8 +1675,8 @@ _SENSORLIMITS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7531,
-  serialized_end=7762,
+  serialized_start=7747,
+  serialized_end=7978,
 )
 
 
@@ -1686,8 +1707,8 @@ _MOVEJPATHARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7764,
-  serialized_end=7868,
+  serialized_start=7980,
+  serialized_end=8084,
 )
 
 
@@ -1753,8 +1774,8 @@ _MOVELWAYPOINTARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7871,
-  serialized_end=8155,
+  serialized_start=8087,
+  serialized_end=8371,
 )
 
 
@@ -1785,8 +1806,8 @@ _MOVELPATHARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8157,
-  serialized_end=8261,
+  serialized_start=8373,
+  serialized_end=8477,
 )
 
 
@@ -1817,8 +1838,8 @@ _STOPJARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8263,
-  serialized_end=8332,
+  serialized_start=8479,
+  serialized_end=8548,
 )
 
 
@@ -1856,8 +1877,8 @@ _SETDIGITALOUTARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8334,
-  serialized_end=8397,
+  serialized_start=8550,
+  serialized_end=8613,
 )
 
 
@@ -1895,8 +1916,8 @@ _SETANALOGOUTARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8399,
-  serialized_end=8448,
+  serialized_start=8615,
+  serialized_end=8664,
 )
 
 
@@ -1927,8 +1948,8 @@ _SLEEPARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8450,
-  serialized_end=8496,
+  serialized_start=8666,
+  serialized_end=8712,
 )
 
 
@@ -1959,8 +1980,8 @@ _RAWARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8498,
-  serialized_end=8521,
+  serialized_start=8714,
+  serialized_end=8737,
 )
 
 
@@ -2012,8 +2033,8 @@ _ACQUIREIMAGEARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8523,
-  serialized_end=8610,
+  serialized_start=8739,
+  serialized_end=8826,
 )
 
 
@@ -2044,8 +2065,8 @@ _SYNCARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8612,
-  serialized_end=8639,
+  serialized_start=8828,
+  serialized_end=8855,
 )
 
 
@@ -2606,8 +2627,8 @@ _DEVICEDATA = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=8642,
-  serialized_end=13431,
+  serialized_start=8858,
+  serialized_end=13647,
 )
 
 
@@ -2652,8 +2673,8 @@ _TEXTLOGDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=13433,
-  serialized_end=13500,
+  serialized_start=13649,
+  serialized_end=13716,
 )
 
 
@@ -2698,8 +2719,8 @@ _HEALTH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=13502,
-  serialized_end=13618,
+  serialized_start=13718,
+  serialized_end=13834,
 )
 
 
@@ -2800,8 +2821,8 @@ _HEARTBEATS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=13621,
-  serialized_end=14315,
+  serialized_start=13837,
+  serialized_end=14531,
 )
 
 
@@ -2839,8 +2860,8 @@ _HEALTHSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14317,
-  serialized_end=14356,
+  serialized_start=14533,
+  serialized_end=14572,
 )
 
 
@@ -2878,8 +2899,8 @@ _REPORTERROR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14358,
-  serialized_end=14400,
+  serialized_start=14574,
+  serialized_end=14616,
 )
 
 
@@ -2910,8 +2931,8 @@ _CONTROLLERDESCRIPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14402,
-  serialized_end=14496,
+  serialized_start=14618,
+  serialized_end=14712,
 )
 
 
@@ -2942,8 +2963,8 @@ _CONTROLLERDESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14498,
-  serialized_end=14535,
+  serialized_start=14714,
+  serialized_end=14751,
 )
 
 
@@ -2981,8 +3002,8 @@ _SENDTOCLIENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14537,
-  serialized_end=14595,
+  serialized_start=14753,
+  serialized_end=14811,
 )
 
 
@@ -3034,8 +3055,8 @@ _HISTORY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14597,
-  serialized_end=14679,
+  serialized_start=14813,
+  serialized_end=14895,
 )
 
 
@@ -3066,8 +3087,8 @@ _AUDIOREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14681,
-  serialized_end=14713,
+  serialized_start=14897,
+  serialized_end=14929,
 )
 
 
@@ -3112,8 +3133,8 @@ _SIMINSTANCESEGMENTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14716,
-  serialized_end=14865,
+  serialized_start=14932,
+  serialized_end=15081,
 )
 
 
@@ -3151,8 +3172,8 @@ _SIMSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14867,
-  serialized_end=14988,
+  serialized_start=15083,
+  serialized_end=15204,
 )
 
 
@@ -3204,8 +3225,8 @@ _OBJECTSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14990,
-  serialized_end=15114,
+  serialized_start=15206,
+  serialized_end=15330,
 )
 
 
@@ -3271,8 +3292,8 @@ _SIMACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15117,
-  serialized_end=15535,
+  serialized_start=15333,
+  serialized_end=15751,
 )
 
 
@@ -3296,8 +3317,8 @@ _GETALLOBJECTPOSES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15537,
-  serialized_end=15556,
+  serialized_start=15753,
+  serialized_end=15772,
 )
 
 
@@ -3335,8 +3356,8 @@ _SETOBJECTPOSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15558,
-  serialized_end=15643,
+  serialized_start=15774,
+  serialized_end=15859,
 )
 
 
@@ -3367,8 +3388,8 @@ _DELETEOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15645,
-  serialized_end=15694,
+  serialized_start=15861,
+  serialized_end=15910,
 )
 
 
@@ -3420,8 +3441,8 @@ _SETCAMERAINTRINSICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15696,
-  serialized_end=15809,
+  serialized_start=15912,
+  serialized_end=16025,
 )
 
 
@@ -3466,8 +3487,8 @@ _ADDOBJECT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15811,
-  serialized_end=15923,
+  serialized_start=16027,
+  serialized_end=16139,
 )
 
 
@@ -3498,8 +3519,8 @@ _GETSEGMENTEDIMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15925,
-  serialized_end=15964,
+  serialized_start=16141,
+  serialized_end=16180,
 )
 
 
@@ -3551,8 +3572,8 @@ _METADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15966,
-  serialized_end=16063,
+  serialized_start=16182,
+  serialized_end=16279,
 )
 
 
@@ -3583,8 +3604,8 @@ _IOSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16065,
-  serialized_end=16139,
+  serialized_start=16281,
+  serialized_end=16355,
 )
 
 
@@ -3629,8 +3650,8 @@ _CAPABILITYSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16141,
-  serialized_end=16211,
+  serialized_start=16357,
+  serialized_end=16427,
 )
 
 
@@ -3663,6 +3684,13 @@ _COLOR = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='color_data', full_name='robotics.learning.reach.Color.color_data', index=3,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\342\312\347\304\010\006\030\001 \001X\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3675,8 +3703,8 @@ _COLOR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16213,
-  serialized_end=16307,
+  serialized_start=16430,
+  serialized_end=16558,
 )
 
 
@@ -3751,6 +3779,20 @@ _COLORDEPTH = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='color_data', full_name='robotics.learning.reach.ColorDepth.color_data', index=9,
+      number=10, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\342\312\347\304\010\006\030\001 \001X\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='depth_data', full_name='robotics.learning.reach.ColorDepth.depth_data', index=10,
+      number=11, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\342\312\347\304\010\006\030\001 \001X\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3763,8 +3805,8 @@ _COLORDEPTH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16310,
-  serialized_end=16606,
+  serialized_start=16561,
+  serialized_end=16925,
 )
 
 
@@ -3802,8 +3844,8 @@ _COMPRESSEDDEPTH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16608,
-  serialized_end=16659,
+  serialized_start=16927,
+  serialized_end=16978,
 )
 
 
@@ -3855,8 +3897,8 @@ _KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16661,
-  serialized_end=16759,
+  serialized_start=16980,
+  serialized_end=17078,
 )
 
 
@@ -3915,8 +3957,8 @@ _MESSAGELASTTIMESTAMP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16762,
-  serialized_end=16911,
+  serialized_start=17081,
+  serialized_end=17230,
 )
 
 
@@ -3989,8 +4031,8 @@ _INFERENCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16914,
-  serialized_end=17086,
+  serialized_start=17233,
+  serialized_end=17405,
 )
 
 
@@ -4086,6 +4128,13 @@ _PREDICTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=b'\342\312\347\304\010\004\030\001X\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='color_data', full_name='robotics.learning.reach.Prediction.color_data', index=12,
+      number=13, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\342\312\347\304\010\006\030\001 \001X\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4098,8 +4147,8 @@ _PREDICTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17089,
-  serialized_end=17762,
+  serialized_start=17408,
+  serialized_end=18115,
 )
 
 
@@ -4137,8 +4186,8 @@ _PICKPOINT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17764,
-  serialized_end=17797,
+  serialized_start=18117,
+  serialized_end=18150,
 )
 
 
@@ -4169,8 +4218,8 @@ _LEVEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17799,
-  serialized_end=17829,
+  serialized_start=18152,
+  serialized_end=18182,
 )
 
 
@@ -4439,8 +4488,8 @@ _URSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17832,
-  serialized_end=18873,
+  serialized_start=18185,
+  serialized_end=19226,
 )
 
 
@@ -4499,8 +4548,8 @@ _ROBOTSTOPSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=18876,
-  serialized_end=19040,
+  serialized_start=19229,
+  serialized_end=19393,
 )
 
 
@@ -4769,8 +4818,8 @@ _ROBOTSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=19043,
-  serialized_end=20069,
+  serialized_start=19396,
+  serialized_end=20422,
 )
 
 
@@ -4822,8 +4871,8 @@ _DIGITALBANK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20071,
-  serialized_end=20145,
+  serialized_start=20424,
+  serialized_end=20498,
 )
 
 
@@ -4875,8 +4924,8 @@ _ANALOGBANK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20147,
-  serialized_end=20220,
+  serialized_start=20500,
+  serialized_end=20573,
 )
 
 
@@ -4928,8 +4977,8 @@ _INTEGERBANK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20222,
-  serialized_end=20296,
+  serialized_start=20575,
+  serialized_end=20649,
 )
 
 
@@ -4960,8 +5009,8 @@ _CONVEYORSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20298,
-  serialized_end=20349,
+  serialized_start=20651,
+  serialized_end=20702,
 )
 
 
@@ -4999,8 +5048,8 @@ _TOOLSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20351,
-  serialized_end=20407,
+  serialized_start=20704,
+  serialized_end=20760,
 )
 
 
@@ -5066,8 +5115,8 @@ _STATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20409,
-  serialized_end=20525,
+  serialized_start=20762,
+  serialized_end=20878,
 )
 
 
@@ -5112,8 +5161,8 @@ _POSITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20527,
-  serialized_end=20578,
+  serialized_start=20880,
+  serialized_end=20931,
 )
 
 
@@ -5165,8 +5214,8 @@ _ROTATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20580,
-  serialized_end=20642,
+  serialized_start=20933,
+  serialized_end=20995,
 )
 
 
@@ -5211,8 +5260,8 @@ _SCALE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20644,
-  serialized_end=20684,
+  serialized_start=20997,
+  serialized_end=21037,
 )
 
 
@@ -5299,8 +5348,8 @@ _USERLABEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20687,
-  serialized_end=21017,
+  serialized_start=21040,
+  serialized_end=21370,
 )
 
 
@@ -5338,8 +5387,8 @@ _POSE2D = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21019,
-  serialized_end=21069,
+  serialized_start=21372,
+  serialized_end=21422,
 )
 
 
@@ -5384,8 +5433,8 @@ _VEC3D = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21071,
-  serialized_end=21130,
+  serialized_start=21424,
+  serialized_end=21483,
 )
 
 
@@ -5437,8 +5486,8 @@ _QUATERNION3D = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21132,
-  serialized_end=21214,
+  serialized_start=21485,
+  serialized_end=21567,
 )
 
 
@@ -5490,8 +5539,8 @@ _DEVICEDATAREF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21216,
-  serialized_end=21338,
+  serialized_start=21569,
+  serialized_end=21691,
 )
 
 
@@ -5543,8 +5592,8 @@ _PLACELABEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21341,
-  serialized_end=21575,
+  serialized_start=21694,
+  serialized_end=21928,
 )
 
 
@@ -5652,8 +5701,8 @@ _PICKLABEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21578,
-  serialized_end=22090,
+  serialized_start=21931,
+  serialized_end=22443,
 )
 
 
@@ -5796,8 +5845,8 @@ _SESSIONINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22093,
-  serialized_end=22632,
+  serialized_start=22446,
+  serialized_end=22985,
 )
 
 
@@ -5835,8 +5884,8 @@ _PROTECTIVESTOPSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22634,
-  serialized_end=22718,
+  serialized_start=22987,
+  serialized_end=23071,
 )
 
 
@@ -5874,8 +5923,8 @@ _SAFEGUARDSTOPSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22720,
-  serialized_end=22802,
+  serialized_start=23073,
+  serialized_end=23155,
 )
 
 
@@ -5913,8 +5962,8 @@ _EMERGENCYSTOPSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22804,
-  serialized_end=22886,
+  serialized_start=23157,
+  serialized_end=23239,
 )
 
 
@@ -5945,8 +5994,8 @@ _ROBOTPOWERSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22888,
-  serialized_end=22932,
+  serialized_start=23241,
+  serialized_end=23285,
 )
 
 
@@ -5984,8 +6033,8 @@ _METRIC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22935,
-  serialized_end=23131,
+  serialized_start=23288,
+  serialized_end=23484,
 )
 
 
@@ -6009,8 +6058,8 @@ _EMPTYMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23133,
-  serialized_end=23155,
+  serialized_start=23486,
+  serialized_end=23508,
 )
 
 
@@ -6055,8 +6104,8 @@ _SETOUTPUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23157,
-  serialized_end=23269,
+  serialized_start=23510,
+  serialized_end=23622,
 )
 
 
@@ -6087,8 +6136,8 @@ _CONNECTEDCLIENTS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23271,
-  serialized_end=23348,
+  serialized_start=23624,
+  serialized_end=23701,
 )
 
 
@@ -6133,8 +6182,8 @@ _CONNECTEDCLIENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23350,
-  serialized_end=23450,
+  serialized_start=23703,
+  serialized_end=23803,
 )
 
 
@@ -6179,8 +6228,8 @@ _DETECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23453,
-  serialized_end=23648,
+  serialized_start=23806,
+  serialized_end=24001,
 )
 
 
@@ -6232,8 +6281,8 @@ _SOURCEIMAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23650,
-  serialized_end=23776,
+  serialized_start=24003,
+  serialized_end=24129,
 )
 
 
@@ -6271,8 +6320,8 @@ _DETECTIONAPRILGROUPAPRILTAG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23778,
-  serialized_end=23855,
+  serialized_start=24131,
+  serialized_end=24208,
 )
 
 
@@ -6303,8 +6352,8 @@ _DETECTIONAPRILGROUPINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23857,
-  serialized_end=23956,
+  serialized_start=24210,
+  serialized_end=24309,
 )
 
 
@@ -6375,8 +6424,8 @@ _DETECTIONENTRY = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=23959,
-  serialized_end=24189,
+  serialized_start=24312,
+  serialized_end=24542,
 )
 
 
@@ -6414,8 +6463,8 @@ _DETECTIONKEY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24191,
-  serialized_end=24267,
+  serialized_start=24544,
+  serialized_end=24620,
 )
 
 
@@ -6467,8 +6516,8 @@ _SHIFTPERDETECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24270,
-  serialized_end=24421,
+  serialized_start=24623,
+  serialized_end=24774,
 )
 
 
@@ -6513,8 +6562,8 @@ _CAMERASHIFTDETECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24424,
-  serialized_end=24604,
+  serialized_start=24777,
+  serialized_end=24957,
 )
 
 
@@ -6545,8 +6594,8 @@ _MOVEPOSEPATHARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24606,
-  serialized_end=24690,
+  serialized_start=24959,
+  serialized_end=25043,
 )
 
 
@@ -6619,8 +6668,8 @@ _MOVEPOSEWAYPOINTARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24693,
-  serialized_end=24996,
+  serialized_start=25046,
+  serialized_end=25349,
 )
 
 
@@ -6665,8 +6714,8 @@ _WAITARGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24999,
-  serialized_end=25171,
+  serialized_start=25352,
+  serialized_end=25524,
 )
 
 
@@ -6704,8 +6753,8 @@ _WAITTIMEOUTACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=25173,
-  serialized_end=25246,
+  serialized_start=25526,
+  serialized_end=25599,
 )
 
 
@@ -6750,8 +6799,8 @@ _REACHSCRIPTBOOLEANEXPRESSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=25249,
-  serialized_end=25415,
+  serialized_start=25602,
+  serialized_end=25768,
 )
 
 
@@ -6801,8 +6850,8 @@ _REACHSCRIPTEXPRESSION = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=25418,
-  serialized_end=25656,
+  serialized_start=25771,
+  serialized_end=26009,
 )
 
 
@@ -6838,8 +6887,8 @@ _REACHSCRIPTVAR = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=25658,
-  serialized_end=25757,
+  serialized_start=26011,
+  serialized_end=26110,
 )
 
 
@@ -6882,8 +6931,8 @@ _REACHSCRIPTCONST = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=25759,
-  serialized_end=25882,
+  serialized_start=26112,
+  serialized_end=26235,
 )
 
 
@@ -6928,8 +6977,8 @@ _REACHSCRIPTCAPABILITY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=25884,
-  serialized_end=26009,
+  serialized_start=26237,
+  serialized_end=26362,
 )
 
 
@@ -7002,8 +7051,8 @@ _MACHINEINTERFACE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26012,
-  serialized_end=26180,
+  serialized_start=26365,
+  serialized_end=26533,
 )
 
 
@@ -7034,8 +7083,8 @@ _MACHINEDESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26182,
-  serialized_end=26265,
+  serialized_start=26535,
+  serialized_end=26618,
 )
 
 
@@ -7066,8 +7115,8 @@ _PIPELINEDESCRIPTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26267,
-  serialized_end=26355,
+  serialized_start=26620,
+  serialized_end=26708,
 )
 
 
@@ -7098,8 +7147,8 @@ _MACHINEINTERFACES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26357,
-  serialized_end=26439,
+  serialized_start=26710,
+  serialized_end=26792,
 )
 
 
@@ -7165,8 +7214,8 @@ _TEXTINSTRUCTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26442,
-  serialized_end=26632,
+  serialized_start=26795,
+  serialized_end=26985,
 )
 
 
@@ -7267,8 +7316,8 @@ _SNAPSHOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26635,
-  serialized_end=27063,
+  serialized_start=26988,
+  serialized_end=27416,
 )
 
 
@@ -7327,8 +7376,8 @@ _SNAPSHOTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=27066,
-  serialized_end=27262,
+  serialized_start=27419,
+  serialized_end=27615,
 )
 
 
@@ -7406,8 +7455,8 @@ _GYMACTION = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=27265,
-  serialized_end=27678,
+  serialized_start=27618,
+  serialized_end=28031,
 )
 
 
@@ -7578,8 +7627,8 @@ _ARMACTIONPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=27681,
-  serialized_end=28154,
+  serialized_start=28034,
+  serialized_end=28507,
 )
 
 
@@ -7610,8 +7659,8 @@ _VACUUMACTIONPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=28156,
-  serialized_end=28191,
+  serialized_start=28509,
+  serialized_end=28544,
 )
 
 
@@ -7649,8 +7698,8 @@ _LOGGERACTIONPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=28193,
-  serialized_end=28298,
+  serialized_start=28546,
+  serialized_end=28651,
 )
 
 
@@ -7681,8 +7730,8 @@ _CLIENTANNOTATIONACTIONPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=28300,
-  serialized_end=28393,
+  serialized_start=28653,
+  serialized_end=28746,
 )
 
 _COMMANDDATA.fields_by_name['ts'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -7706,6 +7755,7 @@ _COMMANDDATA.fields_by_name['machine_interfaces_request'].message_type = _EMPTYM
 _COMMANDDATA.fields_by_name['text_instruction_request'].message_type = _EMPTYMESSAGE
 _COMMANDDATA.fields_by_name['stream_request'].message_type = _STREAMREQUEST
 _COMMANDDATA.fields_by_name['controller_descriptions_request'].message_type = _EMPTYMESSAGE
+_COMMANDDATA.fields_by_name['user_label'].message_type = _EMPTYMESSAGE
 _COMMANDDATA.fields_by_name['reach_script'].message_type = _REACHSCRIPT
 _COMMANDDATA.fields_by_name['exp'].message_type = _EXPERIMENTALCOMMANDDATA
 _COMMANDDATA.fields_by_name['exp_array'].message_type = _EXPERIMENTALCOMMANDDATA
@@ -7772,12 +7822,17 @@ _COMMANDDATA.fields_by_name['stream_request'].containing_oneof = _COMMANDDATA.on
 _COMMANDDATA.oneofs_by_name['data_type_oneof'].fields.append(
   _COMMANDDATA.fields_by_name['controller_descriptions_request'])
 _COMMANDDATA.fields_by_name['controller_descriptions_request'].containing_oneof = _COMMANDDATA.oneofs_by_name['data_type_oneof']
+_COMMANDDATA.oneofs_by_name['data_type_oneof'].fields.append(
+  _COMMANDDATA.fields_by_name['user_label'])
+_COMMANDDATA.fields_by_name['user_label'].containing_oneof = _COMMANDDATA.oneofs_by_name['data_type_oneof']
 _CLIENTANNOTATION.fields_by_name['associated_server_ts'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _CLIENTANNOTATION.fields_by_name['interval_start'].message_type = _INTERVALSTART
 _CLIENTANNOTATION.fields_by_name['interval_end'].message_type = _INTERVALEND
 _CLIENTANNOTATION.fields_by_name['text_annotation'].message_type = _TEXTANNOTATION
 _CLIENTANNOTATION.fields_by_name['snapshot_annotation'].message_type = _SNAPSHOTANNOTATION
 _CLIENTANNOTATION.fields_by_name['point_measurement'].message_type = _POINTMEASUREMENT
+_CLIENTANNOTATION.fields_by_name['long_horizon_instruction'].message_type = _TEXTANNOTATION
+_CLIENTANNOTATION.fields_by_name['short_horizon_instruction'].message_type = _TEXTANNOTATION
 _CLIENTANNOTATION.oneofs_by_name['log_type_oneof'].fields.append(
   _CLIENTANNOTATION.fields_by_name['interval_start'])
 _CLIENTANNOTATION.fields_by_name['interval_start'].containing_oneof = _CLIENTANNOTATION.oneofs_by_name['log_type_oneof']
@@ -7793,6 +7848,12 @@ _CLIENTANNOTATION.fields_by_name['snapshot_annotation'].containing_oneof = _CLIE
 _CLIENTANNOTATION.oneofs_by_name['log_type_oneof'].fields.append(
   _CLIENTANNOTATION.fields_by_name['point_measurement'])
 _CLIENTANNOTATION.fields_by_name['point_measurement'].containing_oneof = _CLIENTANNOTATION.oneofs_by_name['log_type_oneof']
+_CLIENTANNOTATION.oneofs_by_name['log_type_oneof'].fields.append(
+  _CLIENTANNOTATION.fields_by_name['long_horizon_instruction'])
+_CLIENTANNOTATION.fields_by_name['long_horizon_instruction'].containing_oneof = _CLIENTANNOTATION.oneofs_by_name['log_type_oneof']
+_CLIENTANNOTATION.oneofs_by_name['log_type_oneof'].fields.append(
+  _CLIENTANNOTATION.fields_by_name['short_horizon_instruction'])
+_CLIENTANNOTATION.fields_by_name['short_horizon_instruction'].containing_oneof = _CLIENTANNOTATION.oneofs_by_name['log_type_oneof']
 _INTERVALEND.fields_by_name['start_ts'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _INTERVALEND.fields_by_name['end_ts'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _POINTMEASUREMENT.fields_by_name['timestamp'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
@@ -9238,8 +9299,8 @@ _COMMANDDATA.fields_by_name['machine_interfaces_request']._options = None
 _COMMANDDATA.fields_by_name['text_instruction_request']._options = None
 _COMMANDDATA.fields_by_name['stream_request']._options = None
 _COMMANDDATA.fields_by_name['controller_descriptions_request']._options = None
+_COMMANDDATA.fields_by_name['user_label']._options = None
 _COMMANDDATA.fields_by_name['reach_script']._options = None
-_COMMANDDATA.fields_by_name['exp_array']._options = None
 _COMMANDDATA.fields_by_name['event_name']._options = None
 _COMMANDDATA.fields_by_name['event_labels']._options = None
 _COMMANDDATA.fields_by_name['event_params']._options = None
@@ -9304,15 +9365,19 @@ _ADDOBJECT.fields_by_name['type']._options = None
 _METADATA._options = None
 _IOSTATE._options = None
 _COLOR.fields_by_name['color_ssot_key']._options = None
+_COLOR.fields_by_name['color_data']._options = None
 _COLOR._options = None
 _COLORDEPTH.fields_by_name['color_ssot_key']._options = None
 _COLORDEPTH.fields_by_name['depth_ssot_key']._options = None
+_COLORDEPTH.fields_by_name['color_data']._options = None
+_COLORDEPTH.fields_by_name['depth_data']._options = None
 _COLORDEPTH._options = None
 _KEYVALUE._options = None
 _INFERENCEREQUEST._options = None
 _PREDICTION.fields_by_name['color']._options = None
 _PREDICTION.fields_by_name['color_ssot_key']._options = None
 _PREDICTION.fields_by_name['error']._options = None
+_PREDICTION.fields_by_name['color_data']._options = None
 _PREDICTION._options = None
 _LEVEL._options = None
 _URSTATE.fields_by_name['is_emergency_stopped']._options = None

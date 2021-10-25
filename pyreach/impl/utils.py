@@ -11,19 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Shared utility functions for PyReach implementation."""
 
+import io
+import logging
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Union
 import uuid
 
 import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
 
-import cv2  # type: ignore
+from google.protobuf import duration_pb2
+from google.protobuf import timestamp_pb2
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
 from pyreach.common.python import types_gen
+import cv2  # type: ignore
 
 
 def copy_device_data(data: types_gen.DeviceData) -> types_gen.DeviceData:
@@ -56,13 +60,13 @@ def copy_command_data(cmd: types_gen.CommandData) -> types_gen.CommandData:
 
 class ImagedDeviceData(types_gen.DeviceData):
   """DeviceData with images included in the object."""
-  _color_image: Optional[np.ndarray]
-  _depth_image: Optional[np.ndarray]
+  _color_image: Optional[bytes]
+  _depth_image: Optional[bytes]
 
   def __init__(self,
                *args: Any,
-               color_image: Optional[np.ndarray] = None,
-               depth_image: Optional[np.ndarray] = None,
+               color_image: Optional[bytes] = None,
+               depth_image: Optional[bytes] = None,
                **kwargs: Any) -> None:
     """Create the ImagedDeviceData from a DeviceData.
 
@@ -73,28 +77,22 @@ class ImagedDeviceData(types_gen.DeviceData):
       **kwargs: keyword arguments for types_gen.DeviceData.__init__
     """
     super().__init__(*args, **kwargs)
-    if color_image is not None and color_image.flags.writeable:
-      color_image = np.copy(color_image)
-      color_image.flags.writeable = False
     self._color_image = color_image
-    if depth_image is not None and depth_image.flags.writeable:
-      depth_image = np.copy(depth_image)
-      depth_image.flags.writeable = False
     self._depth_image = depth_image
 
   @property
-  def color_image(self) -> Optional[np.ndarray]:
+  def color_image(self) -> Optional[bytes]:
     """Get the color image data."""
     return self._color_image
 
   @property
-  def depth_image(self) -> Optional[np.ndarray]:
+  def depth_image(self) -> Optional[bytes]:
     """Get the depth image data."""
     return self._depth_image
 
   @staticmethod
-  def with_images(data: types_gen.DeviceData, color_image: Optional[np.ndarray],
-                  depth_image: Optional[np.ndarray]) -> "ImagedDeviceData":
+  def with_images(data: types_gen.DeviceData, color_image: Optional[bytes],
+                  depth_image: Optional[bytes]) -> "ImagedDeviceData":
     kvdata = (data.__dict__).copy()
     kvdata["color_image"] = color_image
     kvdata["depth_image"] = depth_image
@@ -104,8 +102,54 @@ class ImagedDeviceData(types_gen.DeviceData):
       del kvdata["_depth_image"]
     return ImagedDeviceData(**kvdata)
 
+  def to_proto(self) -> logs_pb2.DeviceData:
+    """Convert AcquireImageArgs to proto."""
+    proto = super().to_proto()
+    if self._color_image is not None:
+      if proto.HasField("color"):
+        proto.color.color_data = self._color_image
+      elif proto.HasField("color_depth"):
+        proto.color_depth.color_data = self._color_image
+      elif proto.HasField("prediction"):
+        proto.prediction.color_data = self._color_image
+      else:
+        logging.warning("Could not write color data to proto for %s",
+                        str(self.to_json()))
+    if self._depth_image is not None:
+      if proto.HasField("color_depth"):
+        proto.color_depth.depth_data = self._depth_image
+      else:
+        logging.warning("Could not write depth data to proto for %s",
+                        str(self.to_json()))
+    return proto
 
-def load_color_image_from_data(msg: types_gen.DeviceData) -> np.ndarray:
+  @staticmethod
+  def from_proto(proto: logs_pb2.DeviceData) -> Optional[types_gen.DeviceData]:
+    """Convert DeviceData proto to type object."""
+    msg = types_gen.DeviceData.from_proto(proto)
+    if not msg:
+      return None
+    color_data = None
+    if proto.HasField("color") and proto.color.HasField(
+        "color_data") and proto.color.color_data:
+      color_data = proto.color.color_data
+    if proto.HasField("color_depth") and proto.color_depth.HasField(
+        "color_data") and proto.color_depth.color_data:
+      color_data = proto.color_depth.color_data
+    if proto.HasField("prediction") and proto.prediction.HasField(
+        "color_data") and proto.prediction.color_data:
+      color_data = proto.prediction.color_data
+    depth_data = None
+    if proto.HasField("color_depth") and proto.color_depth.HasField(
+        "depth_data") and proto.color_depth.depth_data:
+      depth_data = proto.color_depth.depth_data
+    if color_data or depth_data:
+      return ImagedDeviceData.with_images(msg, color_data, depth_data)
+    return msg
+
+
+def load_color_image_from_data(
+    msg: Union[types_gen.DeviceData, logs_pb2.DeviceData]) -> np.ndarray:
   """Load the color image from a device-data.
 
   Args:
@@ -117,13 +161,19 @@ def load_color_image_from_data(msg: types_gen.DeviceData) -> np.ndarray:
   Returns:
     The image loaded into an-unwritable np.ndarray.
   """
+  if isinstance(msg, logs_pb2.DeviceData):
+    msg_from_proto = ImagedDeviceData.from_proto(msg)
+    assert msg_from_proto
+    msg = msg_from_proto
+  assert isinstance(msg, types_gen.DeviceData)
+  if not msg.color:
+    raise FileNotFoundError
+  fp: Union[str, io.BytesIO] = msg.color
   if isinstance(msg, ImagedDeviceData):
     imaged_msg: ImagedDeviceData = msg
     if imaged_msg.color_image is not None:
-      return imaged_msg.color_image
-  if not msg.color:
-    raise FileNotFoundError
-  with Image.open(msg.color) as image_file:
+      fp = io.BytesIO(imaged_msg.color_image)
+  with Image.open(fp) as image_file:
     color = np.array(image_file)
     if len(color.shape) == 2:
       color = np.tile(color[..., None], (1, 1, 3))  # grey to rgb.
@@ -133,7 +183,8 @@ def load_color_image_from_data(msg: types_gen.DeviceData) -> np.ndarray:
     return color
 
 
-def load_depth_image_from_data(msg: types_gen.DeviceData) -> np.ndarray:
+def load_depth_image_from_data(
+    msg: Union[types_gen.DeviceData, logs_pb2.DeviceData]) -> np.ndarray:
   """Load the depth image from a device-data.
 
   Args:
@@ -145,12 +196,20 @@ def load_depth_image_from_data(msg: types_gen.DeviceData) -> np.ndarray:
   Returns:
     The image loaded into an-unwritable np.ndarray.
   """
+  if isinstance(msg, logs_pb2.DeviceData):
+    msg_from_proto = ImagedDeviceData.from_proto(msg)
+    assert msg_from_proto
+    msg = msg_from_proto
+  assert isinstance(msg, types_gen.DeviceData)
+  if not msg.depth:
+    raise FileNotFoundError
   if isinstance(msg, ImagedDeviceData):
     imaged_msg: ImagedDeviceData = msg
     if imaged_msg.depth_image is not None:
-      return imaged_msg.depth_image
-  if not msg.depth:
-    raise FileNotFoundError
+      nparray = np.asarray(bytearray(imaged_msg.depth_image), dtype="uint8")
+      depth = cv2.imdecode(nparray, cv2.IMREAD_ANYDEPTH)
+      depth.flags.writeable = False
+      return depth
   depth = cv2.imread(msg.depth, cv2.IMREAD_ANYDEPTH)
   if depth is None:
     raise FileNotFoundError
@@ -256,3 +315,51 @@ def reverse_pyreach_status(status: types_gen.Status,
       progress=status.progress,
       script=status.script,
       status=status.status)
+
+
+def get_time_at_timestamp(timestamp: timestamp_pb2.Timestamp) -> float:
+  """Get the time stored within a protobuf timestamp.
+
+  Args:
+    timestamp: the protobuf timestamp.
+
+  Returns:
+    The python float time value.
+  """
+  return float(timestamp.seconds) + (float(timestamp.nanos) / 1e9)
+
+
+def set_timestamp_to_time(timestamp: timestamp_pb2.Timestamp,
+                          ts: float) -> None:
+  """Set the time stored within a protobuf timestamp.
+
+  Args:
+    timestamp: the protobuf timestamp.
+    ts: the python float time value to set.
+  """
+  timestamp.seconds = int(ts)
+  timestamp.nanos = int(ts * 1000000000) % 1000000000
+
+
+def get_seconds_from_duration(duration: duration_pb2.Duration) -> float:
+  """Get the duration stored within a protobuf duration.
+
+  Args:
+    duration: the protobuf duration.
+
+  Returns:
+    The python float time value.
+  """
+  return float(duration.seconds) + (float(duration.nanos) / 1e9)
+
+
+def set_duration_to_seconds(duration: duration_pb2.Duration,
+                            seconds: float) -> None:
+  """Set the duration stored within a protobuf duration.
+
+  Args:
+    duration: the protobuf duration.
+    seconds: the python float time value to set.
+  """
+  duration.seconds = int(seconds)
+  duration.nanos = int(seconds * 1000000000) % 1000000000

@@ -25,7 +25,7 @@ import urllib.request
 import numpy as np  # type: ignore
 from PIL import Image  # type: ignore
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach.common.python import types_gen
 from pyreach.impl import client
 from pyreach.impl import device_base
@@ -46,10 +46,10 @@ def device_data_equal(data_1: types_gen.DeviceData,
   """
   if json.dumps(data_1.to_json()) != json.dumps(data_2.to_json()):
     return False
-  color_image_1: Optional[np.ndarray] = None
-  color_image_2: Optional[np.ndarray] = None
-  depth_image_1: Optional[np.ndarray] = None
-  depth_image_2: Optional[np.ndarray] = None
+  color_image_1: Optional[bytes] = None
+  color_image_2: Optional[bytes] = None
+  depth_image_1: Optional[bytes] = None
+  depth_image_2: Optional[bytes] = None
   if isinstance(data_1, utils.ImagedDeviceData):
     data_1_translated: utils.ImagedDeviceData = data_1
     color_image_1 = data_1_translated.color_image
@@ -60,15 +60,11 @@ def device_data_equal(data_1: types_gen.DeviceData,
     depth_image_2 = data_2_translated.depth_image
   if color_image_1 is None and color_image_2 is not None:
     return False
-  if color_image_1 is not None and (
-      color_image_2 is None or color_image_1.shape != color_image_2.shape or
-      not np.array_equal(color_image_1, color_image_2)):
+  if color_image_1 is not None and color_image_1 != color_image_2:
     return False
-  if depth_image_1 is None and color_image_2 is not None:
+  if depth_image_1 is None and depth_image_2 is not None:
     return False
-  if depth_image_1 is not None and (
-      depth_image_2 is None or depth_image_1.shape != depth_image_2.shape or
-      not np.array_equal(depth_image_1, depth_image_2)):
+  if depth_image_1 is not None and depth_image_1 != depth_image_2:
     return False
   return True
 
@@ -1675,15 +1671,13 @@ class TestClient(client.Client):
           key=data.key)] = data.value
     self._queue.put(data)
     protoloop = types_gen.DeviceData.from_proto(
-        logs_pb2.DeviceData.FromString(  # type: ignore
-            data.to_proto().SerializeToString()))  # type: ignore
+        logs_pb2.DeviceData.FromString(data.to_proto().SerializeToString()))
     assert protoloop is not None
     assert data.to_json() == protoloop.to_json()
 
   def send_cmd(self, cmd: types_gen.CommandData) -> None:
     protoloop = types_gen.CommandData.from_proto(
-        logs_pb2.CommandData.FromString(  # type: ignore
-            cmd.to_proto().SerializeToString()))  # type: ignore
+        logs_pb2.CommandData.FromString(cmd.to_proto().SerializeToString()))
     assert protoloop is not None
     assert cmd.to_json() == protoloop.to_json()
     with self._lock:
@@ -1771,8 +1765,7 @@ class TestDevice:
       responder.set_test_image_dir(self._data_downloader.test_image_dir)
     for msg in responder.start():
       protoloop = types_gen.DeviceData.from_proto(
-          logs_pb2.DeviceData.FromString(  # type: ignore
-              msg.to_proto().SerializeToString()))  # type: ignore
+          logs_pb2.DeviceData.FromString(msg.to_proto().SerializeToString()))
       assert protoloop is not None
       assert msg.to_json() == protoloop.to_json()
       self._device.sync_device_data(msg)
@@ -1785,8 +1778,7 @@ class TestDevice:
       cmd: the command data to send.
     """
     protoloop_cmd = types_gen.CommandData.from_proto(
-        logs_pb2.CommandData.FromString(  # type: ignore
-            cmd.to_proto().SerializeToString()))  # type: ignore
+        logs_pb2.CommandData.FromString(cmd.to_proto().SerializeToString()))
     assert protoloop_cmd is not None
     assert cmd.to_json() == protoloop_cmd.to_json()
     self._cmds.append(cmd)
@@ -1795,8 +1787,7 @@ class TestDevice:
     if self._callback[0] is not None:
       for msg in self._callback[0](cmd):
         protoloop = types_gen.DeviceData.from_proto(
-            logs_pb2.DeviceData.FromString(  # type: ignore
-                msg.to_proto().SerializeToString()))  # type: ignore
+            logs_pb2.DeviceData.FromString(msg.to_proto().SerializeToString()))
         assert protoloop is not None
         assert msg.to_json() == protoloop.to_json()
         self._device.sync_device_data(msg)
@@ -1814,13 +1805,12 @@ class TestDevice:
         f"Expected {len(expect_cmds)}  commands, got {len(cmds)}")
     for cmd, expect_cmd in zip(cmds, expect_cmds):
       protoloop = types_gen.CommandData.from_proto(
-          logs_pb2.CommandData.FromString(  # type: ignore
-              cmd.to_proto().SerializeToString()))  # type: ignore
+          logs_pb2.CommandData.FromString(cmd.to_proto().SerializeToString()))
       assert protoloop is not None
       assert cmd.to_json() == protoloop.to_json()
       protoloop = types_gen.CommandData.from_proto(
-          logs_pb2.CommandData.FromString(  # type: ignore
-              expect_cmd.to_proto().SerializeToString()))  # type: ignore
+          logs_pb2.CommandData.FromString(
+              expect_cmd.to_proto().SerializeToString()))
       assert protoloop is not None
       assert expect_cmd.to_json() == protoloop.to_json()
       cmd_json = cmd.to_json()

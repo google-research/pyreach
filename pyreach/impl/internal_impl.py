@@ -11,12 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of the PyReach Internal interface."""
 from typing import Callable, Optional, Tuple
 
 import numpy as np  # type: ignore
 
+from google.protobuf import duration_pb2
+from google.protobuf import timestamp_pb2
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import internal
 from pyreach.common.python import types_gen
 from pyreach.impl import client as cli
@@ -41,7 +43,7 @@ class PlaybackDevice:
     assert isinstance(client, cli.PlaybackClient)
     self._client = client
 
-  def next_device_data(self) -> Optional[types_gen.DeviceData]:
+  def next_device_data(self) -> Optional[logs_pb2.DeviceData]:
     """Playback the next device-data object.
 
     Returns:
@@ -49,14 +51,14 @@ class PlaybackDevice:
     """
     data = self._client.next_device_data()
     self._host_flush[0]()
-    return data
+    return data.to_proto() if data else None
 
   def device_data_available(self) -> bool:
     return self._client.device_data_available()
 
   def seek_device_data(
       self, time: Optional[float],
-      sequence: Optional[int]) -> Optional[types_gen.DeviceData]:
+      sequence: Optional[int]) -> Optional[logs_pb2.DeviceData]:
     """Seek the given device data and output it, if available.
 
     Args:
@@ -70,7 +72,7 @@ class PlaybackDevice:
     """
     data = self._client.seek_device_data(time, sequence)
     self._host_flush[0]()
-    return data
+    return data.to_proto() if data else None
 
 
 class PlaybackImpl(internal.InternalPlayback):
@@ -88,7 +90,7 @@ class PlaybackImpl(internal.InternalPlayback):
     super().__init__()
     self._device = PlaybackDevice(host_flush, client)
 
-  def next_device_data(self) -> Optional[types_gen.DeviceData]:
+  def next_device_data(self) -> Optional[logs_pb2.DeviceData]:
     """Playback the next device-data object.
 
     Returns:
@@ -101,7 +103,7 @@ class PlaybackImpl(internal.InternalPlayback):
 
   def seek_device_data(
       self, time: Optional[float],
-      sequence: Optional[int]) -> Optional[types_gen.DeviceData]:
+      sequence: Optional[int]) -> Optional[logs_pb2.DeviceData]:
     """Seek the given device data and output it, if available.
 
     Args:
@@ -150,8 +152,8 @@ class InternalDevice(requester.Requester[types_gen.DeviceData]):
 
   def async_send_command_data(
       self,
-      command_data: types_gen.CommandData,
-      callback: Optional[Callable[[types_gen.DeviceData], bool]] = None,
+      command_data: logs_pb2.CommandData,
+      callback: Optional[Callable[[logs_pb2.DeviceData], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
     """Send a command data asynchronously.
 
@@ -167,19 +169,22 @@ class InternalDevice(requester.Requester[types_gen.DeviceData]):
     if not command_data.tag and finished_callback:
       raise ValueError("finished_callback must not be set if tag is empty")
 
-    if callback:
+    c = types_gen.CommandData.from_proto(command_data)
+    assert isinstance(c, types_gen.CommandData)
+
+    if callback and command_data.tag:
       tag = command_data.tag
 
       def callback_wrapper(data: types_gen.DeviceData) -> bool:
         if data.tag == tag:
           if not callback:
             return True
-          return callback(data)
+          return callback(data.to_proto())
         return False
 
       self.add_update_callback(callback_wrapper, finished_callback)
 
-    self.send_cmd(command_data)
+    self.send_cmd(c)
 
 
 class InternalImpl(internal.Internal):
@@ -201,7 +206,7 @@ class InternalImpl(internal.Internal):
     """Get the playback object, if available."""
     return self._device.playback
 
-  def load_color_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+  def load_color_image_from_data(self, msg: logs_pb2.DeviceData) -> np.ndarray:
     """Load the color image from a device-data.
 
     Args:
@@ -215,7 +220,7 @@ class InternalImpl(internal.Internal):
     """
     return utils.load_color_image_from_data(msg)
 
-  def load_depth_image_from_data(self, msg: types_gen.DeviceData) -> np.ndarray:
+  def load_depth_image_from_data(self, msg: logs_pb2.DeviceData) -> np.ndarray:
     """Load the depth image from a device-data.
 
     Args:
@@ -229,10 +234,52 @@ class InternalImpl(internal.Internal):
     """
     return utils.load_depth_image_from_data(msg)
 
+  def get_time_at_timestamp(self, timestamp: timestamp_pb2.Timestamp) -> float:
+    """Get the time stored within a protobuf timestamp.
+
+    Args:
+      timestamp: the protobuf timestamp.
+
+    Returns:
+      The python float time value.
+    """
+    return utils.get_time_at_timestamp(timestamp)
+
+  def set_timestamp_to_time(self, timestamp: timestamp_pb2.Timestamp,
+                            ts: float) -> None:
+    """Set the time stored within a protobuf timestamp.
+
+    Args:
+      timestamp: the protobuf timestamp.
+      ts: the python float time value to set.
+    """
+    utils.set_timestamp_to_time(timestamp, ts)
+
+  def get_seconds_from_duration(self, duration: duration_pb2.Duration) -> float:
+    """Get the duration stored within a protobuf duration.
+
+    Args:
+      duration: the protobuf duration.
+
+    Returns:
+      The python float time value.
+    """
+    return utils.get_seconds_from_duration(duration)
+
+  def set_duration_to_seconds(self, duration: duration_pb2.Duration,
+                              seconds: float) -> None:
+    """Set the duration stored within a protobuf duration.
+
+    Args:
+      duration: the protobuf duration.
+      seconds: the python float time value to set.
+    """
+    utils.set_duration_to_seconds(duration, seconds)
+
   def async_send_command_data(
       self,
-      command_data: types_gen.CommandData,
-      callback: Optional[Callable[[types_gen.DeviceData], bool]] = None,
+      command_data: logs_pb2.CommandData,
+      callback: Optional[Callable[[logs_pb2.DeviceData], bool]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
     """Send a command data asynchronously.
 
@@ -278,7 +325,7 @@ class InternalImpl(internal.Internal):
 
   def add_device_data_callback(
       self,
-      callback: Callable[[types_gen.DeviceData], bool],
+      callback: Callable[[logs_pb2.DeviceData], bool],
       finished_callback: Optional[Callable[[],
                                            None]] = None) -> Callable[[], None]:
     """Add a listener to the DeviceData stream.
@@ -291,4 +338,8 @@ class InternalImpl(internal.Internal):
       A function that when called stops the callback.
 
     """
-    return self._device.add_update_callback(callback, finished_callback)
+
+    def callback_wrapper(data: types_gen.DeviceData) -> bool:
+      return callback(data.to_proto())
+
+    return self._device.add_update_callback(callback_wrapper, finished_callback)

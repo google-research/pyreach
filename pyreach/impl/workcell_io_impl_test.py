@@ -41,10 +41,11 @@ class TestPyReachWorkcellIO(unittest.TestCase):
     key = device_base.KeyValueKey(
         device_type='settings-engine', device_name='', key='workcell_io.json')
     device.on_set_key_value(key, WORKCELL_IO_JSON)
-    io_config: Optional[workcell_io.IOConfig] = device.get()  # type: ignore
+    io_config: Optional[workcell_io.IOConfig] = device.get()
     self.assertIsNotNone(io_config)
+    assert io_config
     self.assertEqual(
-        io_config.io_space,  # type: ignore
+        io_config.io_space,
         ['standard', 'configurable', 'tool'])
     device.close()
 

@@ -74,8 +74,9 @@ class PlaybackDevice:
     for response in snapshot.responses:
       if not isinstance(response.reference, PyReachStatus):
         kv = dataclasses.asdict(response)
-        data = self._internal.seek_device_data(response.reference.time,
-                                               response.reference.sequence)
+        proto = self._internal.seek_device_data(response.reference.time,
+                                                response.reference.sequence)
+        data = utils.ImagedDeviceData.from_proto(proto) if proto else None
         if data is None:
           logging.warning("DeviceData missing for snapshot response: %s",
                           str(response))

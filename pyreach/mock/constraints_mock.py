@@ -18,6 +18,7 @@ from typing import Optional, Tuple
 
 import numpy as np  # type: ignore
 from pyreach import constraints
+from pyreach import core
 
 
 class ConstraintsMock(constraints.Constraints):
@@ -48,3 +49,25 @@ class ConstraintsMock(constraints.Constraints):
 
     """
     raise NotImplementedError
+
+  def get_interactables(self) -> Tuple[constraints.Interactable, ...]:
+    """Get the list of interactable geometries.
+
+    Returns:
+      Limits of all the interactable geometries if available.
+
+    """
+    scale: core.Scale = core.Scale(20.0, 25.0, 10.0)
+    axis_angle: core.AxisAngle = core.AxisAngle()
+    no_rotation: core.Rotation = core.Rotation(axis_angle)
+    left_position: core.Translation = core.Translation(-100.0, 0.0, 0.0)
+    left_pose: core.Pose = core.Pose(left_position, no_rotation)
+    right_position: core.Translation = core.Translation(100.0, 0.0, 0.0)
+    right_pose: core.Pose = core.Pose(right_position, no_rotation)
+    left_box: constraints.Geometry = constraints.Box(left_pose, scale)
+    right_box: constraints.Geometry = constraints.Box(right_pose, scale)
+    interactables: Tuple[constraints.Interactable, ...] = (
+        constraints.Interactable("left_bin", left_box),
+        constraints.Interactable("right_bin", right_box),
+    )
+    return interactables

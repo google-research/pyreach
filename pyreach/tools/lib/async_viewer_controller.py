@@ -18,9 +18,9 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np  # type: ignore
 
+from pyreach.common.proto_gen import logs_pb2
 from pyreach.calibration import CalibrationCamera
 from pyreach.color_camera import ColorFrame
-from pyreach.common.python import types_gen
 from pyreach.depth_camera import DepthFrame
 from pyreach.factory import LocalTCPHostFactory
 from pyreach.host import Host
@@ -315,13 +315,13 @@ class Controller:
       return dtype
     return dtype + _TYPE_NAME_SEP + dname
 
-  def _internal_callback(self, msg: types_gen.DeviceData) -> bool:
+  def _internal_callback(self, msg: logs_pb2.DeviceData) -> bool:
     if msg.detection:
       self._object_detector_listener(msg)
     self._unrequested_oracle_listener(msg)
     return False
 
-  def _unrequested_oracle_listener(self, msg: types_gen.DeviceData) -> None:
+  def _unrequested_oracle_listener(self, msg: logs_pb2.DeviceData) -> None:
     """Called when a new device data is received to update unrequested oracles.
 
     Args:
@@ -343,7 +343,7 @@ class Controller:
     self._image_callback(self._oracle_windows, "oracle", msg.device_name, image,
                          None)
 
-  def _object_detector_listener(self, msg: types_gen.DeviceData) -> None:
+  def _object_detector_listener(self, msg: logs_pb2.DeviceData) -> None:
     """Called when a new device data is received to update object detector.
 
     Args:
@@ -364,9 +364,9 @@ class Controller:
       if not det.corners:
         # AprilGroup detections may not have corners.
         continue
-      corners: List[float] = det.corners
+      corners: List[float] = list(det.corners)
       coords = [(corners[i], corners[i + 1]) for i in range(0, len(corners), 2)]
-      polygons.append((det.py_type + "-" + det.py_id, coords))
+      polygons.append((det.type + "-" + det.id, coords))
     self._image_display.update_detections(window_name, polygons)
 
   def _device_to_window(self, dtype: str, dname: str) -> Tuple[str, bool]:

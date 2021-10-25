@@ -16,7 +16,7 @@
 import json
 import unittest
 
-from pyreach.common.proto_gen import logs_pb2  # type: ignore
+from pyreach.common.proto_gen import logs_pb2
 from pyreach import snapshot
 from pyreach.common.python import types_gen
 from pyreach.core import PyReachStatus
@@ -150,27 +150,26 @@ class SnapshotImpl(unittest.TestCase):
         gym_step=2,
         gym_reward=3.0,
         gym_done=True,
-        gym_actions=(
-            snapshot.SnapshotGymAction("test-type", "test-name", True),
-            snapshot.SnapshotGymVacuumAction("test-vacuum", "vacuum", True, 1),
-            snapshot.SnapshotGymLoggerAction("test-logger", "logger", False,
-                                             True, {
-                                                 "1": "2",
-                                                 "3": "4"
-                                             }),
-            snapshot.SnapshotGymArmAction(
-                "test-arm", "arm", True, 1, 2, (1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
-                (1.0, 2.0, 3.0, 4.0, 5.0, 6.0), True, 4.0, 5.0, 6.0,
-                "test-action", True, "test-intent", "success", "test-id", True,
-                True, 7.0, 8.0, 9.0, True, "test-controller"),
-            snapshot.SnapshotGymClientAnnotationAction(
-                "test-client",
-                "client",
-                True,
-                logs_pb2.ClientAnnotation(  # type: ignore
-                    text_annotation=logs_pb2.TextAnnotation(  # type: ignore
-                        category="test-category",  # type: ignore
-                        text="test-text")))))  # type: ignore
+        gym_actions=(snapshot.SnapshotGymAction("test-type", "test-name", True),
+                     snapshot.SnapshotGymVacuumAction("test-vacuum", "vacuum",
+                                                      True, 1),
+                     snapshot.SnapshotGymLoggerAction("test-logger", "logger",
+                                                      False, True, {
+                                                          "1": "2",
+                                                          "3": "4"
+                                                      }),
+                     snapshot.SnapshotGymArmAction(
+                         "test-arm", "arm", True, 1, 2,
+                         (1.1, 2.2, 3.3, 4.4, 5.5, 6.6),
+                         (1.0, 2.0, 3.0, 4.0, 5.0, 6.0), True, 4.0, 5.0, 6.0,
+                         "test-action", True, "test-intent", "success",
+                         "test-id", True, True, 7.0, 8.0, 9.0, True,
+                         "test-controller"),
+                     snapshot.SnapshotGymClientAnnotationAction(
+                         "test-client", "client", True,
+                         logs_pb2.ClientAnnotation(
+                             text_annotation=logs_pb2.TextAnnotation(
+                                 category="test-category", text="test-text")))))
     self.assertEqual(expect_snapshot, snapshot_cmd)
 
   def test_convert_snapshot(self) -> None:
@@ -228,10 +227,9 @@ class SnapshotImpl(unittest.TestCase):
                     "test-client",
                     "client",
                     True,
-                    logs_pb2.ClientAnnotation(  # type: ignore
-                        text_annotation=logs_pb2.TextAnnotation(  # type: ignore
-                            category="test-category",  # type: ignore
-                            text="test-text")),  # type: ignore
+                    logs_pb2.ClientAnnotation(
+                        text_annotation=logs_pb2.TextAnnotation(
+                            category="test-category", text="test-text")),
                 ))))
     self.assertIsNotNone(snapshot_cmd)
     expect_snapshot = types_gen.Snapshot(

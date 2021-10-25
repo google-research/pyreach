@@ -55,7 +55,7 @@ from pyreach.impl import vacuum_impl
 from pyreach.impl import vnc_impl
 from pyreach.impl import workcell_io_impl
 from pyreach.playback import Playback
-from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io  # type: ignore
+from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 
 
 class ConfigImpl(host.Config):
@@ -114,7 +114,7 @@ class ConfigImpl(host.Config):
     return self._machine_interfaces.get()
 
   @property
-  def workcell_io(self) -> Optional[workcell_io.IOConfig]:  # type: ignore
+  def workcell_io(self) -> Optional[workcell_io.IOConfig]:
     """Return the Workcell IO."""
     return self._workcell_io.get()
 

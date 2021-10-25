@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """A basic example of using the PyReach API to playback a local log.
 
 The local logs playback API can playback both host-side and client-side logs.
@@ -47,7 +46,7 @@ from typing import Any, List
 from absl import app  # type: ignore
 from absl import flags  # type: ignore
 
-from pyreach.common.python import types_gen
+from pyreach.common.proto_gen import logs_pb2
 from pyreach.factory import LocalPlaybackHostFactory
 
 
@@ -72,12 +71,12 @@ def main(argv: List[str]) -> None:
     sequence_numbers = []
     timestamps = []
 
-    def print_data(data: types_gen.DeviceData) -> bool:
-      print(data.to_json())
+    def print_data(data: logs_pb2.DeviceData) -> bool:
+      print(data)
       if data.seq > 0:
         sequence_numbers.append(data.seq)
-      if data.ts > 0:
-        timestamps.append(float(data.ts) / 1000.0)
+      if data.ts.seconds > 0 and host.internal:
+        timestamps.append(host.internal.get_time_at_timestamp(data.ts))
       return False
 
     def print_object(obj: Any) -> bool:

@@ -981,7 +981,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       arm_type: arm.ArmType,
       calibration_device: calibration_impl.CalDevice,
       actions: Optional[actions_impl.ActionDevice] = None,
-      workcell_io_config: Optional[workcell_io.IOConfig] = None,  # type: ignore
+      workcell_io_config: Optional[workcell_io.IOConfig] = None,
       device_name: str = "",
       ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]] = None,
       support_controllers: bool = False,
@@ -1019,7 +1019,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         continue
       if capability.device_name != device_name:
         continue
-      if capability.io_type != workcell_io.DIGITAL_OUTPUT:  # type: ignore
+      if capability.io_type != workcell_io.DIGITAL_OUTPUT:
         continue
       if capability.type == "vacuum":
         self._support_vacuum = True
