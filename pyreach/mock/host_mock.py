@@ -14,7 +14,7 @@
 
 """HostMock unit tests."""
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from pyreach import actionsets
 from pyreach import arm
@@ -32,6 +32,7 @@ from pyreach import metrics
 from pyreach import oracle
 from pyreach import text_instruction
 from pyreach import vacuum
+from pyreach.gyms import reach_element
 from pyreach.mock import arm_mock
 from pyreach.mock import client_annotation_mock
 from pyreach.mock import color_camera_mock
@@ -76,9 +77,10 @@ class ConfigMock(host.Config):
 class HostMock(host.Host):
   """Mock implementation of PyReachHost."""
 
-  def __init__(self) -> None:
+  def __init__(self, config: Dict[str, reach_element.ReachElement]) -> None:
     """Initialize the MockHost."""
     super().__init__()
+    self._config: Dict[str, reach_element.ReachElement] = config
     self._logger: logger.Logger = logger_mock.LoggerMock()
     self._timers: pyreach_internal.Timers = pyreach_internal.Timers(set())
 
@@ -123,7 +125,10 @@ class HostMock(host.Host):
 
     The key of the dictionary is the device name, such as "left" or "right".
     """
-    mock_arm: arm.Arm = arm_mock.ArmMock()
+    config: Dict[str, reach_element.ReachElement] = self._config
+    assert "arm" in config, f"config={config}"
+    arm_config: reach_element.ReachElement = config["arm"]
+    mock_arm: arm.Arm = arm_mock.ArmMock(arm_config)
     return core.ImmutableDictionary[arm.Arm]({"robot": mock_arm})
 
   @property
@@ -132,7 +137,10 @@ class HostMock(host.Host):
 
     None if there is no robot arm or multiple robot arms.
     """
-    mock_arm: arm_mock.ArmMock = arm_mock.ArmMock()
+    config: Dict[str, reach_element.ReachElement] = self._config
+    assert "Arm" in config, f"config={config}"
+    arm_config: reach_element.ReachElement = config["Arm"]
+    mock_arm: arm_mock.ArmMock = arm_mock.ArmMock(arm_config)
     return mock_arm
 
   @property

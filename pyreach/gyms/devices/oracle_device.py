@@ -183,6 +183,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
         raise pyreach.PyReachError(
             "Internal Error: Oracle tagged request not set")
 
+      logging.debug(">>>>>>>>>>>>>>>>Requesting 'prediction'")
       with self._timers.select({"!agent*", "!gym*", "host.oracle"}):
         prediction = oracle.fetch_prediction(*tagged_request, timeout=30.0)
       if prediction:
@@ -367,12 +368,10 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       self._request = request
       self._enable_tagged_request(label)
 
-      prediction: Optional[pyreach.Prediction] = self._prediction
-      if not prediction:
-        try:
-          prediction = self._get_latest_prediction(host)
-        except pyreach.PyReachError as reach_error:
-          raise pyreach.PyReachError from reach_error
+      try:
+        prediction = self._get_latest_prediction(host)
+      except pyreach.PyReachError as reach_error:
+        raise pyreach.PyReachError from reach_error
       assert prediction
 
       self._selected_point = None

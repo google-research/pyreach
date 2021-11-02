@@ -11,19 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Agent runner class."""
 
 import pathlib
 import queue
 import signal
 import subprocess
-import sys
 import threading
 import time
 from typing import Any, BinaryIO, List, Optional, Tuple, Union, cast
 
 from pyreach import core
+from pyreach.impl import reach_tools_impl
 
 Event = Tuple[str, Optional[str]]
 
@@ -57,41 +56,12 @@ class AgentRunner:
     test_directories.extend(cwd.parents)
     test_directories.extend(pathlib.Path(__file__).parents)
 
-    reach_dir: Optional[pathlib.Path] = None
-    for test_dir in test_directories:
-      test_file: pathlib.Path = test_dir / ".reach"
-      if test_file.is_file():
-        reach_dir = test_dir
-        break
-    if not reach_dir:
-      raise core.PyReachError("Reach directory (with .reach) not found, "
-                              f"candidates: {test_directories}")
-
-    ext = ""
-    if sys.platform.startswith("win"):
-      ext = ".exe"
-    reach_exe_paths = [
-        (reach_dir / "go" / "bin" / ("reach" + ext), reach_dir / "go"),
-        (reach_dir / ("reach" + ext), reach_dir),
-    ]
-    reach_exe_path: Optional[Tuple[pathlib.Path, pathlib.Path]] = None
-    for exe, path in reach_exe_paths:
-      if exe.exists():
-        reach_exe_path = (exe, path)
-        break
-    if not reach_exe_path:
-      raise core.PyReachError(f"Reach binary not found in {reach_exe_paths}")
-
-    if self._with_viewer:
-      viewer_dir: pathlib.Path = reach_dir / "pyreach" / "tools"
-      if not viewer_dir.exists():
-        raise core.PyReachError(f"Reach viewer directory '{viewer_dir}' "
-                                "does not exit")
-
-      viewer_main: pathlib.Path = viewer_dir / "async_viewer.py"
-      if not viewer_main.exists():
-        raise core.PyReachError(f"Viewer program '{viewer_main}' "
-                                "does not exist.")
+    try:
+      reach_exe_path = reach_tools_impl.download_reach_tool(None)
+      self._webrtc_headless_exe_path = (
+          reach_tools_impl.download_webrtc_headless(None))
+    except reach_tools_impl.DownloadError as error:
+      raise core.PyReachError(str(error))
 
     self._agent_path: pathlib.Path = pathlib.Path(agent_name)
     self._agent_process: Optional[subprocess.Popen[Any]] = None
@@ -107,8 +77,6 @@ class AgentRunner:
     self._robot_name: str = robot_name
 
     if self._with_viewer:
-      self._viewer_dir: pathlib.Path = viewer_dir
-      self._viewer_main: pathlib.Path = viewer_main
       self._viewer_process: Optional[subprocess.Popen[Any]] = None
       self._viewer_thread_stderr: Optional[threading.Thread] = None
       self._viewer_thread_stdout: Optional[threading.Thread] = None
@@ -186,7 +154,8 @@ class AgentRunner:
     with self._lock:
       commands: List[str] = [
           str(self._reach_exe_path), "connect", "--device_data_port",
-          str(self._port_num), self._robot_name
+          str(self._port_num), "--webrtc_headless",
+          str(self._webrtc_headless_exe_path), self._robot_name
       ]
       self._connect_process = subprocess.Popen(
           commands,
@@ -256,8 +225,8 @@ class AgentRunner:
     if not viewer_process:
 
       viewer_process = subprocess.Popen(
-          ["python3", str(self._viewer_main), "--reqfps=0"],
-          cwd=self._viewer_dir,
+          ["python3", "-m", "pyreach.tools.async_viewer", "--reqfps=0"],
+          cwd=self._reach_start_path,
           stdin=subprocess.PIPE,
           stderr=subprocess.PIPE,
           stdout=subprocess.PIPE)

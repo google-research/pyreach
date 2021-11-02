@@ -23,6 +23,7 @@ import unittest
 import gym  # type: ignore
 import numpy as np  # type: ignore
 import pyreach
+from pyreach import arm
 from pyreach import host
 from pyreach.gyms import arm_element
 from pyreach.gyms import constraints_element
@@ -48,7 +49,7 @@ class GymAnnotationEnv(reach_env.ReachEnv):
                 is_synchronous=is_synchronous)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -240,10 +241,16 @@ class GymArmEnv(reach_env.ReachEnv):
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
                 p_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
-                e_stop_mode=arm_element.ReachStopMode.STOP_DONE),
+                e_stop_mode=arm_element.ReachStopMode.STOP_DONE,
+                test_states=[
+                    arm.ArmState(),
+                    arm.ArmState(),
+                    arm.ArmState(is_protective_stopped=True),
+                    arm.ArmState(is_emergency_stopped=True),
+                ])
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -429,7 +436,7 @@ class GymColorCameraEnv(reach_env.ReachEnv):
                 link_name="color_camera_link_name")
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     calibration: Dict[str, Any] = {
@@ -538,7 +545,7 @@ class GymConstraintsEnv(reach_env.ReachEnv):
                 )),
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -643,7 +650,7 @@ class GymDepthCameraEnv(reach_env.ReachEnv):
                 link_name="depth_camera_link_name")
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     calibration: Dict[str, Any] = {
@@ -785,7 +792,7 @@ class GymForceTorqueSensorEnv(reach_env.ReachEnv):
                 reach_name="ForceTorqueSensor", is_synchronous=is_synchronous)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -883,7 +890,7 @@ class GymOracleEnv(reach_env.ReachEnv):
                 is_synchronous=is_synchronous)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -970,7 +977,7 @@ class GymServerEnv(reach_env.ReachEnv):
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "server": reach_env.ReachServer("server"),
     }
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -987,7 +994,7 @@ class GymTaskEnv(reach_env.ReachEnv):
                 reach_name="robot", is_synchronous=is_synchronous)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -1154,7 +1161,7 @@ class GymTextInstructionsEnv(reach_env.ReachEnv):
                 reach_name="robot", is_synchronous=is_synchronous)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
@@ -1245,7 +1252,7 @@ class GymVacuumEnv(reach_env.ReachEnv):
                 vacuum_gauge_enable=True)
     }
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)

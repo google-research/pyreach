@@ -11,27 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Provide a reach connect client."""
 
 import json
 import logging
-import os
 import pathlib
 import queue
-import stat
 import subprocess
 import threading
-import time
-from typing import Optional, Dict, List, Any
-import urllib.error
-import urllib.request
+from typing import Any, Dict, List, Optional
 
 from pyreach import host
 from pyreach.common.python import types_gen
 from pyreach.impl import client as cli
 from pyreach.impl import host_impl
 from pyreach.impl import local_tcp_client
+from pyreach.impl import reach_tools_impl
 
 _is_running_on_google3 = False
 
@@ -49,15 +44,19 @@ class ReachConnectClient(cli.Client):
 
   def __init__(self,
                robot_id: str,
-               working_directory: Optional[str] = None,
+               working_directory: Optional[pathlib.Path] = None,
+               download_reach_tool: bool = True,
                download_webrtc_headless: bool = True,
+               use_webrtc_headless: bool = True,
                reach_connect_arguments: Optional[List[str]] = None) -> None:
     """Init a ReachConnectClient.
 
     Args:
       robot_id: the robot id to connect to.
       working_directory: optional directory to run within.
+      download_reach_tool: if true, will download the reach tool.
       download_webrtc_headless: if true, will download webtrc_headless.
+      use_webrtc_headless: if true, will add webrtc_headless path.
       reach_connect_arguments: optional list of arguments to reach connect.
     """
     super().__init__()
@@ -70,54 +69,35 @@ class ReachConnectClient(cli.Client):
     if not reach_connect_arguments:
       reach_connect_arguments = []
     if not working_directory:
-      if not os.path.isdir(pathlib.Path.home()):
-        logging.error(
-            "Operating system home directory %s is not a home directory",
-            pathlib.Path.home())
-        self.close()
-        self._queue = queue.Queue()
-        self._queue.put(None)
-        return
-      working_directory = os.path.join(pathlib.Path.home(), "reach_workspace")
-      if not os.path.isdir(working_directory):
-        os.mkdir(working_directory)
-    if not os.path.isdir(working_directory):
+      try:
+        working_directory = reach_tools_impl.create_reach_workspace()
+      finally:
+        if working_directory is None:
+          self.close()
+          self._queue = queue.Queue()
+          self._queue.put(None)
+    assert working_directory is not None
+    if not working_directory.is_dir():
       logging.error("Working directory %s does not exist.", working_directory)
       self.close()
       self._queue = queue.Queue()
       self._queue.put(None)
       return
-    if download_webrtc_headless:
-      webrtc_headless_file = os.path.join(working_directory, "webrtc_headless")
-      last_update_time = None
-      try:
-        last_update_time = os.path.getmtime(webrtc_headless_file)
-      except FileNotFoundError:
-        last_update_time = None
-      if (last_update_time is None or ((time.time() - last_update_time) >
-                                       (600 * 60))):
-        try:
-          urllib.request.urlretrieve(
-              "https://storage.googleapis.com/brain-reach/releases/webrtc/linux-x86_64/webrtc_headless",
-              webrtc_headless_file)
-        except urllib.error.URLError as e:
-          logging.exception("Failed to download webrtc_headless: %s", e)
-          self.close()
-          self._queue = queue.Queue()
-          self._queue.put(None)
-          return
-      os.chmod(webrtc_headless_file,
-               os.stat(webrtc_headless_file).st_mode | stat.S_IEXEC)
-    reach_path = "reach"
-    if _is_running_on_google3:
-      reach_path = os.path.join(
-          os.getcwd(),
-          "third_party/robotics/project_reach/go/src/project_reach/tools/reach/reach"
-      )
+    reach_path, _ = reach_tools_impl.download_reach_tool(
+        working_directory if download_reach_tool else None)
+    webrtc_arguments = []
+    if use_webrtc_headless:
+      webrtc_arguments = [
+          "-webrtc_headless",
+          str(
+              reach_tools_impl.download_webrtc_headless(
+                  working_directory if download_webrtc_headless else None))
+      ]
     try:
       try:
         self._process = subprocess.Popen(
-            [reach_path, "connect"] + reach_connect_arguments + [
+            [str(reach_path), "connect"] + webrtc_arguments +
+            reach_connect_arguments + [
                 "-start_control_session=false",
                 robot_id,
             ],
@@ -269,7 +249,8 @@ class ReachConnectClient(cli.Client):
 
 
 def reach_connect_webrtc(robot_id: str,
-                         working_directory: Optional[str] = None,
+                         working_directory: Optional[pathlib.Path] = None,
+                         download_reach_tool: bool = True,
                          download_webrtc_headless: bool = True,
                          reach_connect_arguments: Optional[List[str]] = None,
                          kwargs: Optional[Dict[str, Any]] = None) -> host.Host:
@@ -278,6 +259,7 @@ def reach_connect_webrtc(robot_id: str,
   Args:
     robot_id: the robot id to connect to.
     working_directory: optional directory to run within.
+    download_reach_tool: if true, will download the reach tool.
     download_webrtc_headless: if true, will automatically download
       webtrc_headless.
     reach_connect_arguments: optional list of arguments to the reach connect
@@ -290,7 +272,8 @@ def reach_connect_webrtc(robot_id: str,
   if not kwargs:
     kwargs = {}
   return host_impl.HostImpl(
-      ReachConnectClient(robot_id, working_directory, download_webrtc_headless,
+      ReachConnectClient(robot_id, working_directory, download_reach_tool,
+                         download_webrtc_headless, True,
                          reach_connect_arguments), **kwargs)
 
 
@@ -298,7 +281,8 @@ def reach_connect_remote_tcp(
     robot_id: str,
     connect_host: Optional[str] = None,
     connect_port: Optional[int] = 50009,
-    working_directory: Optional[str] = None,
+    working_directory: Optional[pathlib.Path] = None,
+    download_reach_tool: bool = True,
     reach_connect_arguments: Optional[List[str]] = None,
     kwargs: Optional[Dict[str, Any]] = None) -> host.Host:
   """Connect to a remote robot.
@@ -308,6 +292,7 @@ def reach_connect_remote_tcp(
     connect_host: the host to connect to. Defaults to <robot_id>.local
     connect_port: the port to connect to. Defaults to 50009.
     working_directory: optional directory to run within.
+    download_reach_tool: if true, will download the reach tool.
     reach_connect_arguments: optional list of arguments to the reach connect
       tool.
     kwargs: the optional kwargs to the connect host.
@@ -326,5 +311,5 @@ def reach_connect_remote_tcp(
       str(connect_port)
   ]
   return host_impl.HostImpl(
-      ReachConnectClient(robot_id, working_directory, False,
-                         reach_connect_arguments), **kwargs)
+      ReachConnectClient(robot_id, working_directory, download_reach_tool,
+                         False, False, reach_connect_arguments), **kwargs)

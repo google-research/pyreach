@@ -57,7 +57,7 @@ class FakeReachEnv(reach_env.ReachEnv):
   def __init__(self, **kwargs: Any) -> None:
     pyreach_config: Dict[str, reach_env.ReachElement] = {}
 
-    mock_host: host.Host = host_mock.HostMock()
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
     assert isinstance(mock_host, host.Host)
     assert isinstance(mock_host, host_mock.HostMock)
     super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)

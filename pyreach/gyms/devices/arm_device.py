@@ -26,6 +26,7 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
+from pyreach import arm as pyreach_arm
 from pyreach import core
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import arm_element
@@ -71,6 +72,10 @@ class ReachDeviceArm(reach_device.ReachDevice):
     ik_lib: Optional[str] = arm_config.ik_lib
     e_stop_mode: int = arm_config.e_stop_mode
     p_stop_mode: int = arm_config.p_stop_mode
+    # For unit testing only.
+    test_states: Optional[List[pyreach_arm.ArmState]] = arm_config.test_states
+    if not test_states:
+      test_states = []
 
     if not controllers:
       raise pyreach.PyReachError("At least one controller must be specified")

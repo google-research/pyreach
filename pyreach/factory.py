@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Factory interface and concrete factory for connecting to Reach host."""
 
 import importlib
+import pathlib
 from typing import Dict, Any, Optional, List
 
 import pyreach
@@ -71,12 +71,12 @@ class WebRTCHostFactory(HostFactory):
   """Factory for connecting to Reach using webrtc."""
 
   _robot_id: str
-  _working_directory: Optional[str]
+  _working_directory: Optional[pathlib.Path]
   _kwargs: Any
 
   def __init__(self,
                robot_id: str,
-               working_directory: Optional[str] = None,
+               working_directory: Optional[pathlib.Path] = None,
                reach_connect_arguments: Optional[List[str]] = None,
                **kwargs: Any) -> None:
     """Construct a WebRTCHostFactory object.
@@ -109,7 +109,7 @@ class WebRTCHostFactory(HostFactory):
       raise pyreach.PyReachError()
 
     fn = getattr(mod, 'reach_connect_webrtc')
-    return fn(self._robot_id, self._working_directory, True,
+    return fn(self._robot_id, self._working_directory, True, True,
               self._reach_connect_arguments, self._kwargs)
 
 
@@ -117,7 +117,7 @@ class RemoteTCPHostFactory(HostFactory):
   """Factory for connecting to Reach using remote tcp."""
 
   _robot_id: str
-  _working_directory: Optional[str]
+  _working_directory: Optional[pathlib.Path]
   _connect_host: Optional[str]
   _connect_port: Optional[int]
   _kwargs: Any
@@ -126,7 +126,7 @@ class RemoteTCPHostFactory(HostFactory):
                robot_id: str,
                connect_host: Optional[str] = None,
                connect_port: Optional[int] = 50009,
-               working_directory: Optional[str] = None,
+               working_directory: Optional[pathlib.Path] = None,
                reach_connect_arguments: Optional[List[str]] = None,
                **kwargs: Any) -> None:
     """Construct a RemoteTCPHostFactory object.
@@ -164,7 +164,7 @@ class RemoteTCPHostFactory(HostFactory):
 
     fn = getattr(mod, 'reach_connect_remote_tcp')
     return fn(self._robot_id, self._connect_host, self._connect_port,
-              self._working_directory, self._reach_connect_arguments,
+              self._working_directory, True, self._reach_connect_arguments,
               self._kwargs)
 
 

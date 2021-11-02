@@ -114,21 +114,23 @@ class ArmState:
     robot_mode: Mode of operation of the robot.
   """
 
-  time: float
-  sequence: int
-  device_type: str
-  device_name: str
-  joint_angles: Tuple[float, ...]
-  pose: core.Pose
-  force: Tuple[float, ...]
-  is_protective_stopped: bool
-  is_emergency_stopped: bool
-  is_safeguard_stopped: bool
-  is_reduced_mode: bool
-  safety_message: str
-  is_program_running: bool
-  is_robot_power_on: bool
-  robot_mode: RobotMode
+  time: float = 0.0
+  sequence: int = 0
+  device_type: str = "robot"
+  device_name: str = ""
+  joint_angles: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  pose: core.Pose = core.Pose(
+      core.Translation(0.0, 0.0, 0.0), core.AxisAngle.from_tuple(
+          (0.0, 0.0, 0.0)))
+  force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  is_protective_stopped: bool = False
+  is_emergency_stopped: bool = False
+  is_safeguard_stopped: bool = False
+  is_reduced_mode: bool = False
+  safety_message: str = ""
+  is_program_running: bool = False
+  is_robot_power_on: bool = False
+  robot_mode: RobotMode = RobotMode.DEFAULT
 
 
 class Arm(object):

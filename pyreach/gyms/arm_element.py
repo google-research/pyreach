@@ -15,8 +15,9 @@
 """Reach arm element used for configuration."""
 
 import dataclasses
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
+from pyreach import arm
 from pyreach.gyms import reach_element
 
 
@@ -108,3 +109,5 @@ class ReachArm(reach_element.ReachElement):
   controllers: Tuple[str] = ("",)
   e_stop_mode: int = ReachStopMode.STOP_ERROR
   p_stop_mode: int = ReachStopMode.STOP_ERROR
+  # Used for unit testing only:
+  test_states: Optional[List[arm.ArmState]] = None

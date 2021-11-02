@@ -15,7 +15,7 @@
 """Implementation of PyReach Gym Vacuum Device."""
 
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -25,6 +25,22 @@ from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import text_instructions_element
 from pyreach.gyms.devices import reach_device
+
+
+def string_to_bytes(string_val: str, bytes_len: int = 1024) -> np.ndarray:
+  """String to bytes array (numpy) used when encoding instruction strings.
+
+  Args:
+    string_val: input string. Typically ["text_instruction"]["instructions"].
+    bytes_len: Returned array length. Will truncate strings that are too long
+      and pad strings that are too short.
+  Returns:
+    Numpy array of length bytes_len encoding the string as bytes.
+  """
+  bytes_val = list(bytes(string_val, "utf-8"))[:bytes_len]
+  pad_size: int = bytes_len - len(bytes_val)
+  bytes_val.extend(pad_size * [0])
+  return np.array(bytes_val)
 
 
 class ReachDeviceTextInstructions(reach_device.ReachDevice):
@@ -108,7 +124,8 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
             device.fetch_text_instruction()
             if self._is_synchronous else device.text_instruction)
 
-      instruction_bytes: List[int] = 1024 * [0]
+      bytes_len = 1024
+      instruction_bytes: np.ndarray = np.zeros([bytes_len], dtype=np.int64)
       ts: float = 0.0
       seq: int = 0
       counter: int = self._counter
@@ -126,14 +143,12 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
         self._counter = counter
 
         instruction: str = current_text_instruction.instruction
-        instruction_bytes = list(bytes(instruction, "utf-8"))[:1024]
-        pad_size: int = 1024 - len(instruction_bytes)
-        instruction_bytes.extend(pad_size * [0])
+        instruction_bytes = string_to_bytes(instruction, bytes_len)
 
       observation: gyms_core.Observation = {
           "counter": counter,
           "ts": ts,
-          "instruction": np.array(instruction_bytes),
+          "instruction": instruction_bytes,
       }
       return observation, (), (lib_snapshot.SnapshotResponse(
           counter, "text-instruction", self.config_name,

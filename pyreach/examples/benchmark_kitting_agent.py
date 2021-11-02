@@ -11,34 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Template for a Kitting agent using the PyReach Gym.
-
-This template demonstrates basic usage of the Kitting Gym environment. It
-implements essentially a random policy, performing small moves with a
-50% chance. The essence of the policy is in the agent's calculate_action()
-function.
-
-== Creating the environment ==
-
-As with all OpenAI Gyms, the Kitting environment is created like this:
-
-with gym.make("benchmark-kitting-v0") as env:
-  your_code_here(env)
-
-== About the environment ==
-
-The environment provides two functions:
-
-obs = env.reset()
-obs, reward, done, info = env.step(action)
-
-The reset() function should be called at the beginning of an episode and will
-reset the scene in SIM only.
-
-=== The agent loop ===
-
-See the run() function.
-"""
+"""Kitting benchmark agent."""
 
 import collections
 import time
@@ -91,10 +64,7 @@ class KittingAgent:
   # pylint: disable=unused-argument
   def calculate_action(self, observation: core.Observation,
                        current_instruction: str) -> core.Action:
-    """Do something based on the observation and the current instruction.
-
-    This is random for now.
-    Fill me in!
+    """Construct an action that sends an oracle inference request.
 
     Args:
       observation: the current observation.

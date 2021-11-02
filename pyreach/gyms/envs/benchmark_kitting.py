@@ -20,10 +20,13 @@ import gym  # type: ignore
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
+from pyreach.gyms.devices.text_instructions_device import ReachDeviceTextInstructions
 
 KITTING = 3
 DEKITTING = 4
 UNSET = 0
+
+INSTRUCTION_TIMEOUT_SEC = 20
 
 
 class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
@@ -134,10 +137,8 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
 
     _, _, _, _ = super().step(action)
 
-    # Start new task
-    action = collections.OrderedDict(
-        {"text_instructions": collections.OrderedDict({"task_enable": 1})})
-    return super().step(action)
+    # Start a new task
+    return self._start_new_task()
 
   def reset(self) -> core.Observation:
     """Resets the benchmark.
@@ -153,14 +154,32 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
     action = collections.OrderedDict(
         {"text_instructions": collections.OrderedDict({"task_enable": 0})})
     _, _, _, _ = super().step(action)
-    obs = super().reset()
+    super().reset()
 
     # Start a new task
+    obs, _, _, _ = self._start_new_task()
+    return obs
+
+  def _start_new_task(self) -> Tuple[core.Observation, float, bool, Any]:
+    text_instr_device = self._elements["text_instructions"]
+    assert isinstance(text_instr_device, ReachDeviceTextInstructions)
+    instr_obs, _, _ = text_instr_device.get_observation(self._host)
+    assert isinstance(instr_obs, dict) and "counter" in instr_obs
+    start_instr_counter = instr_obs["counter"]
     action = collections.OrderedDict(
         {"text_instructions": collections.OrderedDict({"task_enable": 1})})
-    obs, _, _, _ = super().step(action)
+    start_time = time.time()
+    while True:
+      (obs, reward, done, info) = super().step(action)
+      assert isinstance(obs, dict)
+      text_instructions = obs["text_instructions"]
+      assert isinstance(text_instructions, dict)
+      if text_instructions["counter"] != start_instr_counter:
+        break
+      if time.time() - start_time > INSTRUCTION_TIMEOUT_SEC:
+        raise ValueError("Timeout waiting for valid instruction.")
 
-    return obs
+    return obs, reward, done, info
 
 
 class BenchmarkKittingWrapper(gym.Wrapper):

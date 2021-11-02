@@ -287,7 +287,7 @@ class ReachEnv(gym.Env):  # type: ignore
       self._reward_range: Tuple[float, float] = (-float("inf"), float("inf"))
       self._arm_elements: Tuple[ReachDeviceArm, ...] = tuple(arm_elements)
       self._elements: Dict[str, ReachDevice] = elements
-      self._pyreach_config: Dict[str, ReachElement] = (pyreach_config)
+      self._pyreach_config: Dict[str, ReachElement] = pyreach_config
       self._text_instruction: Optional[ReachDeviceTextInstructions] = None
       for element in self._elements.values():
         if isinstance(element, ReachDeviceTextInstructions):

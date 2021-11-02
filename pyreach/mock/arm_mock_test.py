@@ -17,6 +17,7 @@
 import unittest
 
 from pyreach import arm
+from pyreach.gyms import arm_element
 from pyreach.mock import arm_mock
 
 
@@ -25,7 +26,8 @@ class TestArmMock(unittest.TestCase):
 
   def test_arm(self) -> None:
     """Test the MockLogger."""
-    mock_arm: arm_mock.ArmMock = arm_mock.ArmMock()
+    arm_config: arm_element.ReachArm = arm_element.ReachArm("arm")
+    mock_arm: arm_mock.ArmMock = arm_mock.ArmMock(arm_config)
     assert isinstance(mock_arm, arm.Arm)
     assert isinstance(mock_arm, arm_mock.ArmMock)
 

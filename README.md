@@ -3,6 +3,7 @@
 ### Disclaimer: this is not an officially supported Google product.
 
 PyReach is the Python client SDK to remotely control robots.
+Operator credentials will be approved by invitation only at this time
 
 ## Supported Platform
 
