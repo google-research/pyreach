@@ -119,6 +119,22 @@ register(
 )
 
 register(
+    id='integration-fanuc-sync-v0',
+    entry_point=(
+        'pyreach.gyms.envs.integration_ur:IntegrationTestFanucSyncEnv'),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
+    id='integration-fanuc-async-v0',
+    entry_point=(
+        'pyreach.gyms.envs.integration_ur:IntegrationTestFanucAsyncEnv'),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
     id='benchmark-integration-v0',
     entry_point=(
         'pyreach.gyms.envs.benchmark_integration_test:BenchmarkIntegrationEnv'),

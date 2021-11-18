@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of Open AI Gym interface for PyReach."""
 
 import logging
@@ -87,7 +86,7 @@ class ReachEnv(gym.Env):  # type: ignore
       the environment.  This attribute is read only.
     observation_space: A Gym Dict space that specifies the entire observation
       space for the environment.
-    metadata: An initially empty Dict of Any's.  This is available for user
+    info: An initially empty Dict of Any's.  This is available for user
       debugging.
     reward_range: Specifies maximum and minimum value for rewards as a two
       floats in a tuple.
@@ -109,9 +108,9 @@ class ReachEnv(gym.Env):  # type: ignore
     return self._reward_range
 
   @property
-  def metadata(self) -> Dict[str, Any]:
+  def info(self) -> Dict[str, Any]:
     """Return the meta data dictionary."""
-    return self._metadata
+    return self._info
 
   @property
   def task_params(self) -> Dict[str, str]:
@@ -123,6 +122,7 @@ class ReachEnv(gym.Env):  # type: ignore
                timeout: Optional[float] = None,
                host: Optional[pyreach.Host] = None,
                gym_env_id: Optional[str] = None,
+               connection_string: Optional[str] = None,
                **kwargs: Any) -> None:
     """Initialize a Reach Gym Environment.
 
@@ -132,6 +132,7 @@ class ReachEnv(gym.Env):  # type: ignore
       timeout: A timeout in seconds to set for synchronous gym. (Default: None.)
       host: A host to use. (Default: None.)
       gym_env_id: ID used to create this gym. Must be specified.
+      connection_string: the connection string (see connection_string.md).
       **kwargs: Additional keyword arguments.
 
     Raises:
@@ -190,9 +191,22 @@ class ReachEnv(gym.Env):  # type: ignore
         pyreach_config = {}
       if not task_params:
         task_params = {}
+      # Verify that task_params is Dict[str, str]:
+      key: str
+      value: str
+      for key, value in task_params.items():
+        if not isinstance(key, str):
+          raise pyreach.PyReachError(
+              "task_params dict has key that is not a str")
+        if not isinstance(value, str):
+          raise pyreach.PyReachError(
+              f"task_params['{key}'] does not specify a str")
       host_kwargs: Dict[str, Any] = {}
       if not host:
-        host = factory.LocalTCPHostFactory(**host_kwargs).connect()
+        if not connection_string:
+          connection_string = ""
+        host = factory.ConnectionFactory(
+            connection_string=connection_string, **host_kwargs).connect()
 
       reach_synchronous: ReachDeviceSynchronous = (
           ReachDeviceSynchronous(host, self._timers, timeout=timeout))
@@ -282,7 +296,7 @@ class ReachEnv(gym.Env):  # type: ignore
       # A top level gym.Env requires these 4 fields.
       self._action_space: gyms_core.Space = action_space
       self._observation_space: gyms_core.Space = observation_space
-      self._metadata: Dict[str, Any] = {}  # Explicitly for agent debugging
+      self._info: Dict[str, Any] = {}  # Explicitly for agent debugging
       self._reach_synchronous = reach_synchronous
       self._reward_range: Tuple[float, float] = (-float("inf"), float("inf"))
       self._arm_elements: Tuple[ReachDeviceArm, ...] = tuple(arm_elements)

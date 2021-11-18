@@ -22,7 +22,7 @@ from pyreach.common.proto_gen import logs_pb2
 from pyreach.calibration import CalibrationCamera
 from pyreach.color_camera import ColorFrame
 from pyreach.depth_camera import DepthFrame
-from pyreach.factory import LocalTCPHostFactory
+from pyreach.factory import ConnectionFactory
 from pyreach.host import Host
 from pyreach.oracle import Prediction
 from pyreach.tools.lib import cv2_eventloop
@@ -83,7 +83,8 @@ class Controller:
                show_detections: bool,
                quiet: bool,
                show_crosshair: bool = True,
-               request_oracles: bool = False) -> None:
+               request_oracles: bool = False,
+               connection_string: str = "") -> None:
     """Instantiate a controller for multiple cameras.
 
     Args:
@@ -98,14 +99,17 @@ class Controller:
       show_crosshair: If true, the crosshair at the centre of each window will
         be displayed.
       request_oracles: If true, will send requests to the oracles.
+      connection_string: The PyReach connection string.
     """
     # If true, will render the undistortion field as red / green arrows.
     self._show_undistortion = show_undistortion
     self._show_detections = show_detections
     self._quiet = quiet
 
-    self._host = LocalTCPHostFactory(
-        take_control_at_start=False, enable_streaming=False).connect()
+    self._host = ConnectionFactory(
+        connection_string=connection_string,
+        take_control_at_start=False,
+        enable_streaming=False).connect()
 
     self._overlay_target = {}
 

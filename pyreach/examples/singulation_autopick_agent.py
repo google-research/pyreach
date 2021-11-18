@@ -11,13 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Example of PyReach singulation autopicking agent."""
 
 import collections
 import logging
-from typing import Tuple, Dict
+from typing import Dict, List, Tuple
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 import numpy as np  # type: ignore
 
@@ -51,11 +52,12 @@ def singulation_reward_function(
   return -1.0, False
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
   logging.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Starting")
   with gym.make(
       "singulation-autopick-v0",
-      reward_done_function=singulation_reward_function) as env:
+      reward_done_function=singulation_reward_function,
+      connection_string=flags.FLAGS.connection_string) as env:
 
     env.set_agent_id("singulation-autopick-example-v0")
 
@@ -107,12 +109,16 @@ def main() -> None:
             failure_count = 0
             done = True
             # End a task.
-            action = collections.OrderedDict(
-                {"text_instructions":
-                     collections.OrderedDict({"task_enable": 0})})
+            action = collections.OrderedDict({
+                "text_instructions": collections.OrderedDict({"task_enable": 0})
+            })
             _, _, _, _ = env.step(action)
 
 
 if __name__ == "__main__":
   logging.basicConfig(level=logging.INFO)
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

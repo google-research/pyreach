@@ -20,6 +20,7 @@ from typing import Any, Optional, Union
 import uuid
 
 import numpy as np  # type: ignore
+import PIL  # type: ignore
 from PIL import Image  # type: ignore
 
 from google.protobuf import duration_pb2
@@ -173,14 +174,18 @@ def load_color_image_from_data(
     imaged_msg: ImagedDeviceData = msg
     if imaged_msg.color_image is not None:
       fp = io.BytesIO(imaged_msg.color_image)
-  with Image.open(fp) as image_file:
-    color = np.array(image_file)
-    if len(color.shape) == 2:
-      color = np.tile(color[..., None], (1, 1, 3))  # grey to rgb.
-    if color is None:
-      raise FileNotFoundError
-    color.flags.writeable = False
-    return color
+  try:
+    with Image.open(fp) as image_file:
+      color = np.array(image_file)
+      if len(color.shape) == 2:
+        color = np.tile(color[..., None], (1, 1, 3))  # grey to rgb.
+      if color is None:
+        raise FileNotFoundError
+      color.flags.writeable = False
+      return color
+  except PIL.UnidentifiedImageError as error:
+    logging.warning("Unidentified (incorrect format?) image: %s", str(error))
+    raise FileNotFoundError
 
 
 def load_depth_image_from_data(

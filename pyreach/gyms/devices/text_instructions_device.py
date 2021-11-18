@@ -175,7 +175,11 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
           task_enable: bool = bool(int(action_dict["task_enable"]))
           if self._task_enable != task_enable:
             # State needs to change.
-            task_params: Dict[str, str] = self.get_task_params()
+            task_params: Dict[str, str]
+            try:
+              task_params = self.get_task_params()
+            except pyreach.PyReachError as reach_error:
+              raise reach_error
             if task_enable:
               # Send a start task message.
               host.logger.start_task(task_params)

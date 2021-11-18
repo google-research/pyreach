@@ -25,6 +25,7 @@ from pyreach.arm import ArmControllerDescription
 from pyreach.common.base import transform_util
 from pyreach.core import AxisAngle
 from pyreach.core import Pose
+from pyreach.core import PyReachError
 from pyreach.core import PyReachStatus
 from pyreach.core import Translation
 from pyreach.factory import LocalTCPHostFactory
@@ -271,6 +272,9 @@ class Pendant(object):
       bg_img: The background pendant image.
       host: The PyReach host for the pendant.
       have_continuous_control: If true, can enable continuous control.
+
+    Raises:
+      core.PyReachError when an initialization error occurs.
     """
     self._host = host
     self._device_name = device_name
@@ -284,6 +288,11 @@ class Pendant(object):
     cv2.namedWindow(self._window_name)
     cv2.setMouseCallback(self._window_name, self._on_mouse)
 
+    if device_name not in host.arms:
+      raise PyReachError(
+          f"Can't find robot '{device_name}' in the config, the following "
+          f"options are available: {list(host.arms.keys())}, that can usually "
+          "be changed by providing --robot_id=<robot-name>")
     self._arm = host.arms[device_name]
     self._vacuum = host.vacuums.get(device_name)
     controllers = self._arm.supported_controllers

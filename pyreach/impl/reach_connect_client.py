@@ -96,11 +96,10 @@ class ReachConnectClient(cli.Client):
     try:
       try:
         self._process = subprocess.Popen(
-            [str(reach_path), "connect"] + webrtc_arguments +
-            reach_connect_arguments + [
+            [str(reach_path), "connect"] + webrtc_arguments + [
                 "-start_control_session=false",
-                robot_id,
-            ],
+                "-device_data_port=0",
+            ] + reach_connect_arguments + [robot_id],
             cwd=working_directory,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)

@@ -33,6 +33,7 @@ class ReachVacuum(reach_element.ReachElement):
 
   Attributes:
     reach_name: The Reach name of the vacuum.  May be empty.
+    blowoff_ignore: If True, silently ignore blow-off commands.
     is_synchronous: If True, the next Gym observation will synchronize all
       observations element that have this flag set otherwise the next
       observation is asynchronous.  This argument is optional and defaults to
@@ -45,6 +46,7 @@ class ReachVacuum(reach_element.ReachElement):
       Pascals where 0.0 means 1 atmosphere and 101325.0 means a hard vacuum.
       -1.0 is returned if no valid vacuum gauge pressure is present.
   """
+  blowoff_ignore: bool = False
   is_synchronous: bool = False
   state_enable: bool = True  # Backwards compatibility => True
   vacuum_detect_enable: bool = True  # Backwards compatibility => True

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Internal structure for Action template."""
 import enum
 import json
@@ -626,8 +625,7 @@ class ActionStep:
       logging.warning("Action Step _acquireImageTag invalid: %s", json_data)
       return None
     if not isinstance(json_data.get("_acquireImageMode", 0), int):
-      logging.warning("Action Step _acquireImageMode invalid: %s",
-                      json_data)
+      logging.warning("Action Step _acquireImageMode invalid: %s", json_data)
       return None
     return ActionStep(
         json_data["_tipInputIdx"],
@@ -677,7 +675,7 @@ class Action:
                _softstart_velocity: float, _max_accel: float,
                _max_velocity: float, _cyclic: bool, _task_intent: str,
                _intent: str, _success_type: str, _capture_depth_behavior: str,
-               _loop: bool) -> None:
+               _loop: bool, _use_steps_as_ikhints: bool) -> None:
     """Construct a Action template."""
     self._steps = _steps
     self._preconditions = _preconditions
@@ -694,6 +692,7 @@ class Action:
     self._success_type = _success_type
     self._capture_depth_behavior = _capture_depth_behavior
     self._loop = _loop
+    self._use_steps_as_ikhints = _use_steps_as_ikhints
 
   def get_steps(self) -> List[ActionStep]:
     """Return the list of steps for an action template."""
@@ -755,6 +754,10 @@ class Action:
     """Return true if the action should loop."""
     return self._loop
 
+  def get_use_steps_as_ikhints(self) -> bool:
+    """Return the steps as ikhints value."""
+    return self._use_steps_as_ikhints
+
   @classmethod
   def from_json(cls, json_data: Dict[str, Any]) -> Optional["Action"]:
     """Extract an action object from JSON data.
@@ -800,12 +803,19 @@ class Action:
         "_captureDepthBehavior": str,
         "_loop": bool
     }
+    optional: Dict[str, Union[Type[Any], Tuple[Type[Any], ...]]] = {
+        "_useStepsAsIKHints": bool,
+    }
     for name, t in expect.items():
       if not isinstance(json_data.get(name, None), t):
         logging.warning("Invalid type for %s in %s.", name, json_data)
         return None
+    for name, t in optional.items():
+      if name in json_data and not isinstance(json_data[name], t):
+        logging.warning("Invalid type for %s in %s.", name, json_data)
+        return None
     for name in json_data:
-      if name not in expect:
+      if name not in expect and name not in optional:
         logging.warning("extra field %s in %s", name, json_data)
     steps = []
     for step in json_data["_steps"]:
@@ -831,8 +841,9 @@ class Action:
                   float(json_data["_maxAccel"]),
                   float(json_data["_maxVelocity"]), json_data["_cyclic"],
                   json_data.get("_taskIntent", ""), json_data["_intent"],
-                  json_data["_successType"], json_data["_captureDepthBehavior"],
-                  json_data["_loop"])
+                  json_data["_successType"],
+                  json_data["_captureDepthBehavior"], json_data["_loop"],
+                  json_data.get("_useStepsAsIKHints", False))
 
 
 def _from_json_vector3(json_data: Any) -> Optional[types_gen.Vec3d]:

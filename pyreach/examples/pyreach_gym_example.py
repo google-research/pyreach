@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Example PyReach Gym Agent.
 
 This example demonstrates the basic usage of the PyReach Gym API based on
@@ -21,8 +20,10 @@ DO NOT try to collect data or train a model with it.
 
 Before running this example, please make sure `reach connect` is running.
 """
-from typing import Tuple
+from typing import List, Tuple
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 
 from pyreach.gyms import core
@@ -41,9 +42,10 @@ def my_awesome_reward_done_function(
   return 0.0, False
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
   with gym.make(
       "pyreach_gym_example-v0",
+      connection_string=flags.FLAGS.connection_string,
       reward_done_function=my_awesome_reward_done_function) as env:
     env.set_agent_id("my-unique-agent-id-v0")
     print(f"An example observation:\n{env.reset()}")
@@ -131,4 +133,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

@@ -40,6 +40,7 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
     """
     reach_name: str = vacuum_config.reach_name
     is_synchronous: bool = vacuum_config.is_synchronous
+    blowoff_ignore: bool = vacuum_config.blowoff_ignore
     state_enable: bool = vacuum_config.state_enable
     detect_enable: bool = vacuum_config.vacuum_detect_enable
     gauge_enable: bool = vacuum_config.vacuum_gauge_enable
@@ -63,6 +64,7 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
     super().__init__(reach_name, action_space, observation_space,
                      is_synchronous)
     self._vacuum: Optional[pyreach.Vacuum] = None
+    self._blowoff_ignore: bool = blowoff_ignore
     self._state_enable: bool = state_enable
     self._detect_enable: bool = detect_enable
     self._gauge_enable: bool = gauge_enable
@@ -238,11 +240,16 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
               vacuum.async_on(finished_callback=completed_callback)
         elif desired_state == vacuum_element.ReachVacuumState.BLOWOFF:
           with self._timers_select({"!agent*", "!gym*", "host.vacuum"}):
-            if self._is_synchronous:
-              vacuum.blowoff()
-              completed_callback()
+            if not self._vacuum.support_blowoff:
+              if not self._blowoff_ignore:
+                raise pyreach.PyReachError(
+                    "Blow off is not supported by this vacuum device.")
             else:
-              vacuum.async_blowoff(finished_callback=completed_callback)
+              if self._is_synchronous:
+                vacuum.blowoff()
+                completed_callback()
+              else:
+                vacuum.async_blowoff(finished_callback=completed_callback)
         else:
           raise pyreach.PyReachError(
               "Invalid Vacuum state request {0}".format(desired_state))

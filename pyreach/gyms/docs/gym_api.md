@@ -98,6 +98,41 @@ if __name__ == "__main__":
   main()
 ```
 
+The PyReach Gym environment has the standard Gym properties:
+
+*   `observation`: This is the observation for the current Gym step.
+*   `reward`: This is reward amount achieved by the previous action.
+*   `done`: This boolean flag indicates when it is time to initiate another
+    reset().
+*   `info`: This dict is a scratch pad dictionary for diagnostic and debugging
+    purposes.
+
+In addition, the PyReach Gym has an additional Gym property:
+
+*   `task_params`: This is a dictionary of information about the current task.
+    This is intended to be dictionary of key/value strings. A `PyReachError`
+    exception is raised whenever non string keys and/or values are detected in
+    this dictionary. The end user is allowed to add/modify/delete any key/value
+    string pairs in this dictionary at any time.
+
+    The initial contents of `task_params` is typically specified when the
+    PyReach `ReachEnv` base class in initialized, using the `taskparams=`
+    keyword. If this keyword is not specified an empty dictionary is used.
+
+    The `task_params` dictionary is recorded to the execution logs whenever the
+    environment is reset. In addition, both the PyReach Gym
+    [Text Instructions Device](#text-instructions-device) and the
+    [Task Device](#task-device) can be used to get `task_params` recorded into
+    the execution logs. Please see these two devices for more information.
+
+    The following two keys can be modified PyReach Gym:
+
+    *   `reset_id`: Each time the environment is reset, a new uid string is
+        generated.
+    *   `agent_id`: This is a commonly used string task string identifier. This
+        can be set using the `set_user_agent()` method. This method only sets
+        the associated `agent_id` value and does nothing else.
+
 ## PyReach Gym Devices {#pyreach_gym_devices .numbered}
 
 The PyReach Gym currently has the following devices:
@@ -120,7 +155,7 @@ The PyReach Gym currently has the following devices:
 *   [Server Device](#server-device): A device to provide information about the
     Reach Server state.
 
-*   [Task Device](#text-instructions-device): A device for starting new tasks.
+*   [Task Device](#task-device): A device for starting new tasks.
 
 *   [Text Instructions Device](#text-instructions-device): A device for
     receiving text instructions.
@@ -458,7 +493,13 @@ The task device is a simple device to indicate when a new task has started.
 This task device has an action space with the following entries:
 
 *   `"action"`: Setting to this 1 starts new task, 2 stops a task, and 0 leaves
-    the task in the current state.
+    the task in the current state. The `task_params` key/value pairs are
+    recorded to the experiment logs whenever task transitions to/from being
+    active. In other words, (START and not active) generates a start task entry
+    and (STOP and active) generates an end task entry.
+
+Each time the a task is started or stopped, the entire environment `task_params`
+dictionary is recorded into the execution logs.
 
 The task device observation space is completely empty:
 
@@ -471,6 +512,8 @@ This text instructions device has an action space with the following entries:
 
 *   `"task_enable"`: When 1, the next text instruction is fetched for the next
     observation; otherwise, when 0, the previous text instruction is returned.
+    Whenever, this entry changes its previous value in the in the previous
+    action, the `task_params` dictionary is recorded in the experiment log.
 
 The text instructions observation space has the following entries:
 
@@ -1150,6 +1193,10 @@ A device for a vacuum end-effector.
 
 *   `reach_name`: (Required) The Reach server name of the vacuum device. This
     name must match the name used by the Reach server.
+
+*   `blowoff_ignore`: (Optional) Any blow off request that can not actually be
+    performed will be silently ignored. Otherwise, a `PyReachError` exception is
+    raised.
 
 *   `is_synchronous`: (Optional, default = `False`) If `True`, all vacuum
     requests for this device are made synchronously.

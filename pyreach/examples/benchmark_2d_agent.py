@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Template for a 2D benchmark agent using only servo joint moves.
 
 This template demonstrates basic usage of the 2D benchmark Gym environment. It
@@ -52,8 +51,10 @@ agent as it does its thing.
 """
 import collections
 import time
-from typing import Any, Dict, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 import matplotlib.axes as pltaxes  # type: ignore
 import matplotlib.image as pltimage  # type: ignore
@@ -250,12 +251,18 @@ class ServoJoints2DAgent:
           time.sleep(slack_time)
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
   agent: ServoJoints2DAgent = ServoJoints2DAgent()
 
-  with gym.make("benchmark-2d-v0") as env:
+  with gym.make(
+      "benchmark-2d-v0",
+      connection_string=flags.FLAGS.connection_string) as env:
     agent.run(benchmark_2d.Benchmark2DServoJointsWrapper(env))
 
 
 if __name__ == "__main__":
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

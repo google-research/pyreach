@@ -86,14 +86,21 @@ class ReachDeviceTask(reach_device.ReachDevice):
       host: The reach host to use.
 
     Returns:
-        The list of gym action snapshots.
+      The list of gym action snapshots.
+
+    Raises:
+      PyReachError if the task parameters are not pure strings.
     """
     with self._timers_select({"!agent*", "gym.text"}):
       action_dict: gyms_core.ActionDict = self._get_action_dict(action)
       if "action" in action_dict:
-        action_request: bool = bool(int(action_dict["action"]))
+        action_request: int = int(action_dict["action"])
         active: bool = self._active
-        task_params: Dict[str, str] = self.get_task_params()
+        task_params: Dict[str, str]
+        try:
+          task_params = self.get_task_params()
+        except pyreach.PyReachError as reach_error:
+          raise reach_error
         changed: bool = True
         if action_request == task_element.ReachAction.START and not active:
           host.logger.start_task(task_params)

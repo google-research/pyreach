@@ -46,7 +46,7 @@ class PyReachGymExampleEnv(reach_env.ReachEnv):
         "text_instruction":
             reach_env.ReachTextInstructions("text", is_synchronous=True),
         "vacuum":
-            reach_env.ReachVacuum(""),
+            reach_env.ReachVacuum("", blowoff_ignore=True),
     }
 
     task_params: Dict[str, str] = {

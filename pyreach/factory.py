@@ -15,7 +15,7 @@
 
 import importlib
 import pathlib
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional, Tuple
 
 import pyreach
 
@@ -70,25 +70,30 @@ class LocalTCPHostFactory(HostFactory):
 class WebRTCHostFactory(HostFactory):
   """Factory for connecting to Reach using webrtc."""
 
-  _robot_id: str
+  _robot_ids: Tuple[str, ...]
   _working_directory: Optional[pathlib.Path]
   _kwargs: Any
 
   def __init__(self,
-               robot_id: str,
+               robot_ids: Tuple[str, ...],
                working_directory: Optional[pathlib.Path] = None,
                reach_connect_arguments: Optional[List[str]] = None,
                **kwargs: Any) -> None:
     """Construct a WebRTCHostFactory object.
 
     Args:
-      robot_id: the robot id to connect to.
+      robot_ids: the list of robot ids to connect to.
       working_directory: optional directory to run within.
       reach_connect_arguments: optional list of arguments to the reach connect
         tool.
       **kwargs: the optional kwargs to the connect host.
     """
-    self._robot_id = robot_id
+    self._robot_ids = robot_ids
+    if not self._robot_ids:
+      raise ValueError('Robot IDs cannot be empty')
+    for robot_id in self._robot_ids:
+      if not robot_id:
+        raise ValueError('Cannot specify an empty Robot ID')
     self._working_directory = working_directory
     self._reach_connect_arguments = reach_connect_arguments
     if kwargs is None:
@@ -109,7 +114,7 @@ class WebRTCHostFactory(HostFactory):
       raise pyreach.PyReachError()
 
     fn = getattr(mod, 'reach_connect_webrtc')
-    return fn(self._robot_id, self._working_directory, True, True,
+    return fn(self._robot_ids[0], self._working_directory, True, True,
               self._reach_connect_arguments, self._kwargs)
 
 
@@ -225,3 +230,98 @@ class LocalPlaybackHostFactory(HostFactory):
     return fn(self._robot_id, self._working_directory, self._client_id,
               self._select_client, self._snapshot_run_id,
               self._select_snapshot_run_id, self._kwargs)
+
+
+class ConnectionFactory(HostFactory):
+  """ConnectionFactory for connection strings.
+
+  See connection_string.md for documentation on connection strings.
+  """
+
+  _factory: HostFactory
+
+  def __init__(self, connection_string: str, **kwargs: Any) -> None:
+    """Construct a LocalPlaybackHostFactory object.
+
+    Args:
+      connection_string: the connection string (see connection_string.md).
+      **kwargs: the optional kwargs to the connect host.
+    """
+    super().__init__()
+    if not connection_string.strip():
+      self._factory = LocalTCPHostFactory(**kwargs)
+      return
+    fragments = connection_string.split(',')
+    key_values: Dict[str, List[str]] = {}
+    for fragment in fragments:
+      index = fragment.index('=')
+      if index < 0:
+        raise ValueError('invalid connection string: "' + connection_string +
+                         '": ' + fragment + ' does not include "="')
+      if index == 0:
+        raise ValueError('invalid connection string: "' + connection_string +
+                         '": ' + fragment + ' starts with "="')
+      key_values[fragment[0:index]] = key_values.get(
+          fragment[0:index], []) + [fragment[index + 1:]]
+
+    def get_none_kv(key: str) -> Optional[str]:
+      if key in key_values:
+        return key_values[key][0]
+      return None
+
+    def get_none_kv_path(key: str) -> Optional[pathlib.Path]:
+      if key in key_values:
+        return pathlib.Path(key_values[key][0])
+      return None
+
+    if 'connection-type' not in key_values:
+      raise ValueError('connection-type not specified')
+    elif key_values['connection-type'][0] == 'local-tcp':
+      self._factory = LocalTCPHostFactory(
+          hostname=key_values.get('hostname', ['localhost'])[0],
+          port=int(key_values.get('port', ['50008'])[0]),
+          **kwargs)
+    elif key_values['connection-type'][0] == 'remote-tcp':
+      if 'robot-id' not in key_values:
+        raise ValueError('robot-id is not specified')
+      self._factory = RemoteTCPHostFactory(
+          robot_id=key_values['robot-id'][0],
+          connect_host=key_values.get('hostname', ['localhost'])[0],
+          connect_port=int(key_values.get('port', ['50009'])[0]),
+          working_directory=get_none_kv_path('working-directory'),
+          reach_connect_arguments=key_values.get('reach-connect-arguments', []),
+          **kwargs)
+    elif key_values['connection-type'][0] == 'webrtc':
+      if 'robot-id' not in key_values:
+        raise ValueError('robot-id is not specified')
+      self._factory = WebRTCHostFactory(
+          robot_ids=tuple(key_values['robot-id']),
+          working_directory=get_none_kv_path('working-directory'),
+          reach_connect_arguments=key_values.get('reach-connect-arguments', []),
+          **kwargs)
+    elif key_values['connection-type'][0] == 'local-playback':
+      if 'robot-id' not in key_values:
+        raise ValueError('robot-id is not specified')
+      if 'working-directory' not in key_values:
+        raise ValueError('working-directory is not specified')
+      self._factory = LocalPlaybackHostFactory(
+          robot_id=key_values['robot-id'][0],
+          working_directory=key_values['working-directory'][0],
+          client_id=get_none_kv('client-id'),
+          select_client_id=key_values.get('select-client-id',
+                                          ['false'])[0].lower() == 'true',
+          snapshot_run_id=get_none_kv('snapshot-run-id'),
+          select_snapshot_run_id=key_values.get('select-snapshot-run-id',
+                                                ['false'])[0].lower() == 'true',
+          **kwargs)
+    else:
+      raise ValueError('Invalid connection-type: ' +
+                       key_values['connection-type'][0])
+
+  def connect(self) -> pyreach.Host:
+    """Connect to a Reach host.
+
+    Returns:
+      An implementation of the Host interface.
+    """
+    return self._factory.connect()

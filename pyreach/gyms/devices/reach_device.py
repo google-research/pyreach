@@ -154,7 +154,15 @@ class ReachDevice(object):
             self.config_name))
 
   def get_task_params(self) -> Dict[str, str]:
-    """Store the environment task parameters."""
+    """Get the environment task parameters."""
+    key: str
+    value: str
+    for key, value in self._task_params.items():
+      if not isinstance(key, str):
+        raise pyreach.PyReachError("task_params dict has key that is not a str")
+      if not isinstance(value, str):
+        raise pyreach.PyReachError(
+            f"task_params['{key}'] does not specify a str")
     return self._task_params
 
   def set_task_params(self, task_params: Dict[str, str]) -> None:

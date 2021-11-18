@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Template for a "raw" 2D benchmark agent.
 
 This template demonstrates "everything bagel" usage of the 2D benchmark Gym
@@ -81,8 +80,10 @@ agent as it does its thing.
 """
 import collections
 import time
-from typing import Any, Dict, Optional, Union, cast, Tuple
+from typing import Any, Dict, List, Optional, Union, cast, Tuple
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 import matplotlib.axes as pltaxes  # type: ignore
 import matplotlib.image as pltimage  # type: ignore
@@ -361,14 +362,20 @@ class Raw2DAgent:
         time.sleep(ACTION_TIME_INCREMENT_SECONDS)
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
   agent = Raw2DAgent()
 
-  with gym.make("benchmark-2d-v0",
-                reward_done_function=agent.agent_reward_function) as env:
+  with gym.make(
+      "benchmark-2d-v0",
+      connection_string=flags.FLAGS.connection_string,
+      reward_done_function=agent.agent_reward_function) as env:
 
     agent.run(env)
 
 
 if __name__ == "__main__":
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

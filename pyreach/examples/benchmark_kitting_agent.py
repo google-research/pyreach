@@ -15,8 +15,10 @@
 
 import collections
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 
 from pyreach.gyms import core
@@ -132,16 +134,21 @@ class KittingAgent:
           print(f"{time.time()}: Step returned done")
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
 
   agent = KittingAgent()
 
   with gym.make(
       "benchmark-kitting-v0",
+      connection_string=flags.FLAGS.connection_string,
       reward_done_function=agent.kitting_reward_function) as env:
 
     agent.run(BenchmarkKittingWrapper(env))
 
 
 if __name__ == "__main__":
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

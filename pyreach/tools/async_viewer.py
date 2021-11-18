@@ -88,6 +88,11 @@ def main() -> None:
       default=False,
       action="store_true",
       help="Send inference requests to the oracle devices.")
+  parser.add_argument(
+      "--connection_string",
+      default="",
+      help="Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
   args = parser.parse_args()
 
   uwidth: int = args.uwidth
@@ -109,7 +114,8 @@ def main() -> None:
       show_detections=True,
       quiet=False,
       show_crosshair=not args.disable_crosshair,
-      request_oracles=args.request_oracles)
+      request_oracles=args.request_oracles,
+      connection_string=args.connection_string)
   control.run()
 
 

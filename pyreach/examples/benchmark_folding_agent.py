@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Template for a t-shirt folding benchmark agent.
 
 This template demonstrates the basic usage of the t-shirt folding benchmark Gym
@@ -19,7 +18,10 @@ environment.
 """
 import collections
 import time
+from typing import List
 
+from absl import app  # type: ignore
+from absl import flags  # type: ignore
 import gym  # type: ignore
 import numpy as np  # type: ignore
 from pyreach.gyms import core
@@ -150,13 +152,19 @@ class JointsFoldingAgent:
     print(f"{time.time():.4f}:AGENT: An attempt has ended")
 
 
-def main() -> None:
+def main(unused_argv: List[str]) -> None:
   agent = JointsFoldingAgent()
 
-  with gym.make("benchmark-folding-v2") as env:
+  with gym.make(
+      "benchmark-folding-v2",
+      connection_string=flags.FLAGS.connection_string) as env:
     # To compare multiple agents, pass more than one agents below.
     experiment_assigner.randomized_run(env, [agent.single_attempt], [1.0])
 
 
 if __name__ == "__main__":
-  main()
+  flags.DEFINE_string(
+      "connection_string", None,
+      "Connect using a PyReach connection string (see "
+      "connection_string.md for examples and documentation).")
+  app.run(main)

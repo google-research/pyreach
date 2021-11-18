@@ -118,6 +118,13 @@ class UtilsTest(unittest.TestCase):
               device_type="test-type",
               device_name="test-name",
               data_type=data_type,
+              color=test_utils.get_test_image_file(filename) + "invalid",
+              color_image=b"12"),
+          utils.ImagedDeviceData(
+              ts=1,
+              device_type="test-type",
+              device_name="test-name",
+              data_type=data_type,
               color_image=read_file(test_utils.get_test_image_file(filename))),
       ]:
         self.assertRaises(FileNotFoundError, utils.load_color_image_from_data,
