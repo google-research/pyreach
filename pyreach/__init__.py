@@ -40,6 +40,7 @@ from pyreach.oracle import Oracle
 from pyreach.oracle import Prediction
 from pyreach.oracle import PredictionPickPlacePoint
 from pyreach.oracle import PredictionPoint
+from pyreach.sim import Sim
 from pyreach.text_instruction import TextInstruction
 from pyreach.text_instruction import TextInstructions
 from pyreach.vacuum import Vacuum

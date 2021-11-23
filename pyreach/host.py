@@ -34,6 +34,7 @@ from pyreach import logger
 from pyreach import metrics
 from pyreach import oracle
 from pyreach import playback
+from pyreach import sim
 from pyreach import text_instruction
 from pyreach import vacuum
 from pyreach import vnc
@@ -246,6 +247,11 @@ class Host(object):
   @property
   def text_instructions(self) -> text_instruction.TextInstructions:
     """Return the TextInstructions object."""
+    raise NotImplementedError
+
+  @property
+  def sim(self) -> Optional[sim.Sim]:
+    """Access sim object."""
     raise NotImplementedError
 
   def get_ping_time(self) -> Optional[float]:

@@ -1148,27 +1148,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     """Return the device name."""
     return self._device_name
 
-  def reset_sim(self,
-                callback: Optional[Callable[[core.PyReachStatus], None]] = None,
-                finished_callback: Optional[Callable[[], None]] = None,
-                timeout: Optional[float] = None) -> None:
-    """Reset the simulator if it is present.
-
-    Args:
-        callback: An optional callback called when new status is available.
-        finished_callback: A n optional function that is called when finished.
-        timeout: The time in seconds to wait for the simulator reset.
-    """
-    tag = utils.generate_tag()
-    script = types_gen.CommandData(
-        ts=utils.timestamp_now(),
-        device_type="script-engine",
-        data_type="run-script",
-        tag=tag,
-        script="sim reset")
-    _ = self.send_tagged_request(script)
-    return None
-
   def fk(self,
          joints: Union[Tuple[float, ...], List[float], np.ndarray],
          apply_tip_adjust_transform: bool = False) -> Optional[core.Pose]:
@@ -1423,10 +1402,6 @@ class ArmImpl(arm.Arm):
       self) -> Optional[Tuple[arm.ArmControllerDescription, ...]]:
     """The supported controllers, or None if not loaded."""
     return self._device.supported_controllers
-
-  def reset_sim(self) -> None:
-    """Send reset sim command."""
-    self._device.reset_sim()
 
   @property
   def device_name(self) -> str:

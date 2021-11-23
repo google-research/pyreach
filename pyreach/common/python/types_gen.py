@@ -8207,16 +8207,16 @@ class Measurement:
 
    Measurement is a value for a measurement, with units.
   """
-  seconds: float
+  seconds: Optional[float]
 
-  def __init__(self, seconds: float = 0.0) -> None:
+  def __init__(self, seconds: Optional[float] = None) -> None:
     self.seconds = seconds
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
     json_data: Dict[str, Any] = dict()
 
-    if self.seconds:
+    if self.seconds is not None:
       assert isinstance(self.seconds, float) or isinstance(self.seconds, int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(self.seconds)) + '.'
       json_data['seconds'] = self.seconds
 
@@ -8225,7 +8225,7 @@ class Measurement:
   def to_proto(self) -> 'logs_pb2.Measurement':
     """Convert Measurement to proto."""
     proto = logs_pb2.Measurement()
-    if self.seconds:
+    if self.seconds is not None:
       proto.seconds = self.seconds
     return proto
 
@@ -10902,9 +10902,9 @@ class ReachScriptConst:
   """
   # The value of all pins in a capability.
   capability: Optional['ReachScriptCapability']
-  bool_value: bool
+  bool_value: Optional[bool]
 
-  def __init__(self, bool_value: bool = False, capability: Optional['ReachScriptCapability'] = None) -> None:
+  def __init__(self, bool_value: Optional[bool] = None, capability: Optional['ReachScriptCapability'] = None) -> None:
     self.bool_value = bool_value
     self.capability = capability
 
@@ -10912,7 +10912,7 @@ class ReachScriptConst:
     """Convert type object to JSON."""
     json_data: Dict[str, Any] = dict()
 
-    if self.bool_value:
+    if self.bool_value is not None:
       assert isinstance(self.bool_value, bool), 'Wrong type for attribute: bool_value. Expected: bool. Got: ' + str(type(self.bool_value)) + '.'
       json_data['boolValue'] = self.bool_value
 
@@ -10927,7 +10927,7 @@ class ReachScriptConst:
     proto = logs_pb2.ReachScriptConst()
     if self.capability:
       proto.capability.CopyFrom(self.capability.to_proto())
-    if self.bool_value:
+    if self.bool_value is not None:
       proto.bool_value = self.bool_value
     return proto
 

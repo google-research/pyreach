@@ -11,13 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of the PyReach Host interface."""
 import logging
 import queue
 import threading
 import time
-from typing import Any, Callable, Dict, List, Set, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 import pyreach
 from pyreach import actionsets
@@ -49,6 +48,7 @@ from pyreach.impl import metrics_impl
 from pyreach.impl import oracle_impl
 from pyreach.impl import playback_impl
 from pyreach.impl import reach_host
+from pyreach.impl import sim_impl
 from pyreach.impl import text_instruction_impl
 from pyreach.impl import utils
 from pyreach.impl import vacuum_impl
@@ -144,6 +144,7 @@ class HostImpl(pyreach.Host):
   _metrics: pyreach.Metrics
   _text_instructions: pyreach.TextInstructions
   _arm_devices: List[arm_impl.ArmDevice]
+  _sim: Optional[pyreach.Sim]
 
   def __init__(
       self,
@@ -444,6 +445,18 @@ class HostImpl(pyreach.Host):
     # Add internal
     self._internal = add_device(
         internal_impl.InternalDevice(self._flush, client).get_wrapper())
+    # Add sim
+    self._sim = None
+    if interfaces is not None:
+      sim_interfaces = interfaces.get_machine_interfaces_with_type(
+          "script-engine")
+      for i in sim_interfaces:
+        if (i.device_type == "script-engine" and not i.device_name and
+            (i.data_type == "key-value" or i.data_type == "run-script") and
+            i.interface_type == machine_interfaces.InterfaceType.RUN_SCRIPT and
+            ("script-console-reply" in i.keys or "sim reset" in i.keys)):
+          self._sim = add_device(sim_impl.SimDevice().get_wrapper())
+          break
     # Create host
     self._host = reach_host.ReachHost(
         client,
@@ -587,8 +600,8 @@ class HostImpl(pyreach.Host):
 
   def reset(self) -> None:
     """Reset the host."""
-    if self._arm:
-      self._arm.reset_sim()
+    if self._sim:
+      self._sim.reset(timeout=30.0)
 
   def _flush(self) -> None:
     """Flush the data queues."""
@@ -742,6 +755,11 @@ class HostImpl(pyreach.Host):
   def text_instructions(self) -> pyreach.TextInstructions:
     """Access TextInstructions object."""
     return self._text_instructions
+
+  @property
+  def sim(self) -> Optional[pyreach.Sim]:
+    """Access sim object."""
+    return self._sim
 
   def get_ping_time(self) -> Optional[float]:
     """Return the latest ping time.

@@ -4,4 +4,4 @@ if [ -f "setenv.sh" ]; then
   source setenv.sh
 fi
 
-python3 -m pyreach.tools.async_viewer --cameras color-camera.realsense0
+python3 -m pyreach.tools.async_viewer "$@"

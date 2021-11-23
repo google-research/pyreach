@@ -4,4 +4,4 @@ if [ -f "setenv.sh" ]; then
   source setenv.sh
 fi
 
-python3 -m pyreach.tools.pendant_control
+python3 -m pyreach.tools.pendant_control "$@"

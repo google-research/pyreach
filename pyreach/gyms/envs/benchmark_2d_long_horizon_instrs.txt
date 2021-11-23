@@ -1,0 +1,100 @@
+Put all the objects in a line
+Put all the objects in a vertical line
+Put all the objects in a vertical line on the left side of the board.
+Put all the objects in a vertical line on the right side of the board.
+Put everything in a horizontal line
+Put everything in a horizontal line near the bottom of the board.
+Put everything in a horizontal line near the top of the board.
+Arrange objects in a diagonal line.
+Arrange the objects in a diagonal line from the top left corner to the bottom right corner.
+Arrange the objects in a diagonal line from the top right corner to the bottom left corner.
+Separate the objects by color.
+Separate the objects into two clumps: one clump of objects that has flat edges, and one clump of objects that has no flat edges.
+Surround all of the rest of the objects around the yellow hexagon.
+Surround all of the rest of the objects around the yellow heart
+Surround all of the rest of the objects around the blue square
+Surround all of the rest of the objects around the blue semi-circle
+Surround all of the rest of the objects around the green circle
+Surround all of the rest of the objects around the green star
+Surround all of the rest of the objects around the red circle
+Surround all of the rest of the objects around the red star
+Put the objects from left to right in the following order: the yellow blocks, then the blue blocks, then the red blocks, then the green blocks.
+Put the objects from left to right in the following order: the yellow blocks, then the blue blocks, then the green blocks, then the red blocks.
+Put the objects from left to right in the following order: the yellow blocks, then the green blocks, then the red blocks, then the blue blocks.
+Put the objects from left to right in the following order: the yellow blocks, then the green blocks, then the blue blocks, then the red blocks.
+Put the objects from left to right in the following order: the yellow blocks, then the red blocks, then the blue blocks, then the green blocks.
+Put the objects from left to right in the following order: the yellow blocks, then the red blocks, then the green blocks, then the blue blocks.
+Put the objects from left to right in the following order: the blue blocks, then the yellow blocks, then the red blocks, then the green blocks.
+Put the objects from left to right in the following order: the blue blocks, then the yellow blocks, then the green blocks, then the red blocks.
+Put the objects from left to right in the following order: the blue blocks, then the green blocks, then the red blocks, then the yellow blocks.
+Put the objects from left to right in the following order: the blue blocks, then the green blocks, then the yellow blocks, then the red blocks.
+Put the objects from left to right in the following order: the blue blocks, then the red blocks, then the yellow blocks, then the green blocks.
+Put the objects from left to right in the following order: the blue blocks, then the red blocks, then the green blocks, then the yellow blocks.
+Put the objects from left to right in the following order: the red blocks, then the yellow blocks, then the blue blocks, then the green blocks.
+Put the objects from left to right in the following order: the red blocks, then the yellow blocks, then the green blocks, then the blue blocks.
+Put the objects from left to right in the following order: the red blocks, then the green blocks, then the blue blocks, then the yellow blocks.
+Put the objects from left to right in the following order: the red blocks, then the green blocks, then the yellow blocks, then the blue blocks.
+Put the objects from left to right in the following order: the red blocks, then the blue blocks, then the yellow blocks, then the green blocks.
+Put the objects from left to right in the following order: the red blocks, then the blue blocks, then the green blocks, then the yellow blocks.
+Put the objects from left to right in the following order: the green blocks, then the blue blocks, then the yellow blocks, then the red blocks.
+Put the objects from left to right in the following order: the green blocks, then the blue blocks, then the red blocks, then the yellow blocks.
+Put the blue objects in the center, and put the rest of the objects in the top left corner.
+Put the green objects in the center, and put the rest of the objects in the top left corner.
+Put the red objects in the center, and put the rest of the objects in the top left corner.
+Put the yellow objects in the center, and put the rest of the objects in the top left corner.
+Put the blue objects in the center, and put the rest of the objects in the top right corner.
+Put the green objects in the center, and put the rest of the objects in the top right corner.
+Put the red objects in the center, and put the rest of the objects in the top right corner.
+Put the yellow objects in the center, and put the rest of the objects in the top right corner.
+Put the blue objects in the center, and put the rest of the objects in the bottom left corner.
+Put the green objects in the center, and put the rest of the objects in the bottom left corner.
+Put the red objects in the center, and put the rest of the objects in the bottom left corner.
+Put the yellow objects in the center, and put the rest of the objects in the bottom left corner.
+Put the blue objects in the center, and put the rest of the objects in the bottom right corner.
+Put the green objects in the center, and put the rest of the objects in the bottom right corner.
+Put the red objects in the center, and put the rest of the objects in the bottom right corner.
+Put the yellow objects in the center, and put the rest of the objects in the bottom right corner.
+On the left side of the scene, make a vertical line with alternating green and red blocks. On the right side of the scene, make a vertical line with alternating blue and yellow blocks.
+On the left side of the scene, make a vertical line with alternating yellow and red blocks. On the right side of the scene, make a vertical line with alternating green and blue blocks.
+On the left side of the scene, make a vertical line with alternating yellow and green blocks. On the right side of the scene, make a vertical line with alternating red and blue blocks.
+On the left side of the scene, make a vertical line with alternating blue and red blocks. On the right side of the scene, make a vertical line with alternating green and yellow blocks.
+On the left side of the scene, make a vertical line with alternating blue and green blocks. On the right side of the scene, make a vertical line with alternating red and yellow blocks.
+On the left side of the scene, make a vertical line with alternating blue and yellow blocks. On the right side of the scene, make a vertical line with alternating red and green blocks.
+Order the blocks from left to right in increasing order of how many "sides" they have. The circle is 1. For example, the square is 4. The semi-circle and heart have 2.
+Order the blocks from right to left in increasing order of how many "sides" they have. The circle is 1. For example, the square is 4. The semi-circle and heart have 2.
+Order the blocks from top to bottom in increasing order of how many "sides" they have. The circle is 1. For example, the square is 4. The semi-circle and heart have 2.
+Order the blocks from bottom to top in increasing order of how many "sides" they have. The circle is 1. For example, the square is 4. The semi-circle and heart have 2.
+Put all the objects in the bottom right corner
+Put all the objects in the bottom left corner
+Put all the objects in the top right corner
+Put all the objects in the top left corner
+Put the two stars together in the center of the table, and the rest of the objects in the bottom left
+Put the two stars together in the center of the table, and the rest of the objects in the bottom right
+Put the two stars together in the center of the table, and the rest of the objects in the top left
+Put the two stars together in the center of the table, and the rest of the objects in the top right
+Put the two circles together in the center of the table, and the rest of the objects in the bottom left
+Put the two circles together in the center of the table, and the rest of the objects in the bottom right
+Put the two circles together in the center of the table, and the rest of the objects in the top left
+Put the two circles together in the center of the table, and the rest of the objects in the top right
+Put the two blue blocks together, and put the stars on either side of the blue blocks.
+Put the two blue blocks together, and put the circles on either side of the blue blocks.
+Put the two yellow blocks together, and put the stars on either side of the yellow blocks.
+Put the two yellow blocks together, and put the circles on either side of the yellow blocks.
+Order the shapes from left to right in alphabetical order: circle (x2), heart, hexagon, semi-circle, square, star (x2)
+Order the shapes from right to left in alphabetical order: circle (x2), heart, hexagon, semi-circle, square, star (x2)
+Order the shapes from top to bottom in alphabetical order: circle (x2), heart, hexagon, semi-circle, square, star (x2)
+Order the shapes from bottom to top in alphabetical order: circle (x2), heart, hexagon, semi-circle, square, star (x2)
+Put all the blocks in a big circle.
+Put all the blocks in a big rectangle.
+Put all the blocks in a big square.
+Arrange the blocks into a big "X" shape.
+Arrange the blocks into a big "+" (plus sign) shape.
+Arrange the blocks into a big "T" shape.
+Arrange the blocks into a "rainbow" (red then yellow then green then blue) in a semi-circle
+Make a smiley face out of the blocks, with green eyes.
+Make a smiley face out of the blocks, with yellow eyes.
+Make a smiley face out of the blocks, with red eyes.
+Make a smiley face out of the blocks, with blue eyes.
+Make a "G" shape out of the blocks
+Make a "4" shape out of the blocks
+Spell "Google" with the blocks as best you can

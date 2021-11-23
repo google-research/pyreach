@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """HostMock unit tests."""
 
 from typing import Any, Dict, Optional
@@ -30,6 +29,7 @@ from pyreach import internal as pyreach_internal
 from pyreach import logger
 from pyreach import metrics
 from pyreach import oracle
+from pyreach import sim
 from pyreach import text_instruction
 from pyreach import vacuum
 from pyreach.gyms import reach_element
@@ -253,6 +253,11 @@ class HostMock(host.Host):
   def metrics(self) -> metrics.Metrics:
     """Return the Metrics object."""
     raise NotImplementedError
+
+  @property
+  def sim(self) -> Optional[sim.Sim]:
+    """Access sim object."""
+    return None
 
   @property
   def text_instructions(self) -> text_instruction.TextInstructions:
