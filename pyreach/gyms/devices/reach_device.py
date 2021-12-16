@@ -221,6 +221,11 @@ class ReachDevice(object):
       reshaped_image[:dx, :dy, :dz] = old_image[:dx, :dy, :dz]
     return reshaped_image
 
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that device is operable."""
+    raise pyreach.PyReachError(
+        f"validate(): not implemented for {self.__class__.__name__}")
+
 
 class ReachDeviceSynchronous(object):
   """A class to synchronous observations from ReachDevice's."""

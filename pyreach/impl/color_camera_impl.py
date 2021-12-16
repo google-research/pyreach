@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of the PyReach ColorCamera interface."""
 import logging
 from typing import Callable, Optional, Tuple
@@ -31,9 +30,8 @@ from pyreach.impl import utils
 class ColorFrameImpl(color_camera.ColorFrame):
   """Implementation of a ColorFrame."""
 
-  def __init__(self, time: float, sequence: int,
-               device_type: str, device_name: str,
-               color_image: np.ndarray,
+  def __init__(self, time: float, sequence: int, device_type: str,
+               device_name: str, color_image: np.ndarray,
                calibration: Optional[cal.Calibration]) -> None:
     """Init a ColorFrameImpl."""
     self._time: float = time
@@ -99,24 +97,35 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
 
   _device_type: str
   _device_name: str
+  _display_device_type: str
+  _display_device_name: str
   _calibration: Optional[calibration_impl.CalDevice]
 
-  def __init__(
-      self,
-      device_type: str,
-      device_name: str = "",
-      calibration: Optional[calibration_impl.CalDevice] = None) -> None:
+  def __init__(self,
+               device_type: str,
+               device_name: str = "",
+               calibration: Optional[calibration_impl.CalDevice] = None,
+               display_device_type: Optional[str] = None,
+               display_device_name: Optional[str] = None) -> None:
     """Initialize a Camera.
 
     Args:
       device_type: The JSON device type to use.
       device_name: The JSON device name to use.
       calibration: Calibration of the camera.
+      display_device_type: Override the device type to display to the user.
+      display_device_name: Override the device name to display to the user.
     """
     super().__init__()
     self._device_type = device_type
     self._device_name = device_name
     self._calibration = calibration
+    self._display_device_type = device_type
+    if display_device_type is not None:
+      self._display_device_type = display_device_type
+    self._display_device_name = device_name
+    if display_device_name is not None:
+      self._display_device_name = display_device_name
 
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[color_camera.ColorFrame]:
@@ -154,16 +163,15 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
     """Return device type."""
     return self._device_type
 
-  @classmethod
   def _color_frame_from_message(
-      cls, msg: types_gen.DeviceData, calibration: Optional[cal.Calibration]
+      self, msg: types_gen.DeviceData, calibration: Optional[cal.Calibration]
   ) -> Optional[color_camera.ColorFrame]:
     """Convert JSON message into a ColorFrame."""
     try:
       color_image: np.ndarray = utils.load_color_image_from_data(msg)
       return ColorFrameImpl(
-          utils.time_at_timestamp(msg.ts), msg.seq,
-          msg.device_type, msg.device_name, color_image, calibration)
+          utils.time_at_timestamp(msg.ts), msg.seq, self._display_device_type,
+          self._display_device_name, color_image, calibration)
     except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
@@ -212,8 +220,8 @@ class ColorCameraImpl(color_camera.ColorCamera):
         second between frames.
     """
     self._device.set_untagged_request_period(self._device.device_type,
-                                             self._device.device_name,
-                                             "color", request_period)
+                                             self._device.device_name, "color",
+                                             request_period)
 
   def stop_streaming(self) -> None:
     """Stop streaming camera images."""

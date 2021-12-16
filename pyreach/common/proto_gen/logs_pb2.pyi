@@ -2638,6 +2638,7 @@ class MessageLastTimestamp(google.protobuf.message.Message):
 global___MessageLastTimestamp = MessageLastTimestamp
 
 class InferenceRequest(google.protobuf.message.Message):
+    """InferenceRequest stores a request for inference from an oracle."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PREDICTION_TYPE_FIELD_NUMBER: builtins.int
     REQUEST_TYPE_FIELD_NUMBER: builtins.int
@@ -2691,6 +2692,7 @@ class InferenceRequest(google.protobuf.message.Message):
 global___InferenceRequest = InferenceRequest
 
 class Prediction(google.protobuf.message.Message):
+    """Prediction is an output from an oracle in response to an inference-request."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COLOR_FIELD_NUMBER: builtins.int
     COLOR_SSOT_KEY_FIELD_NUMBER: builtins.int
@@ -3359,6 +3361,7 @@ class Status(google.protobuf.message.Message):
 global___Status = Status
 
 class Position(google.protobuf.message.Message):
+    """Position stores a 3-dimensional position."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
@@ -3377,6 +3380,7 @@ class Position(google.protobuf.message.Message):
 global___Position = Position
 
 class Rotation(google.protobuf.message.Message):
+    """Rotation stores a 3-dimensional rotation in a quaternion."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
@@ -3398,6 +3402,7 @@ class Rotation(google.protobuf.message.Message):
 global___Rotation = Rotation
 
 class Scale(google.protobuf.message.Message):
+    """Scale stores a 3-dimensional scaling factor."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
@@ -3727,6 +3732,7 @@ class SessionInfo(google.protobuf.message.Message):
 global___SessionInfo = SessionInfo
 
 class ProtectiveStopState(google.protobuf.message.Message):
+    """ProtectiveStopState represents the robot's protective stop state."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_PROTECTIVE_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
@@ -3742,6 +3748,7 @@ class ProtectiveStopState(google.protobuf.message.Message):
 global___ProtectiveStopState = ProtectiveStopState
 
 class SafeguardStopState(google.protobuf.message.Message):
+    """SafeguardStopState represents the robot's safeguard stop state."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_SAFEGUARD_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
@@ -3757,6 +3764,7 @@ class SafeguardStopState(google.protobuf.message.Message):
 global___SafeguardStopState = SafeguardStopState
 
 class EmergencyStopState(google.protobuf.message.Message):
+    """EmergencyStopState represents the robot's emergency stop state."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_EMERGENCY_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int

@@ -76,7 +76,7 @@ class ArmTypeImpl(arm.ArmType):
   @classmethod
   def from_urdf_file(cls, urdf_file: str) -> arm.ArmType:
     if urdf_file in {
-        "ur5.urdf", "ur5e.urdf", "ur5e.urdf", "ur10e.urdf", "lrmate200ic.urdf",
+        "ur3e.urdf", "ur5.urdf", "ur5e.urdf", "ur10e.urdf", "lrmate200ic.urdf",
         "lrmate200id.urdf", "FanucCR7ia.urdf", "FanucLrmate200id7l.urdf",
         "FanucR2000ia165f.urdf", "XArm6.urdf"
     }:

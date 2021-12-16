@@ -43,6 +43,14 @@ class ReachResponse:
                           RESPONSE_ESTOP, RESPONSE_PSTOP)
 
 
+class ReachArmCommand:
+  """Arm action command enumeration."""
+  NONE: int = 0
+  JOINTS: int = 1
+  POSE: int = 2
+  STOP: int = 3
+
+
 @dataclasses.dataclass(frozen=True)
 class ReachArm(reach_element.ReachElement):
   """Base class for for Reach arm configuration.

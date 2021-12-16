@@ -72,6 +72,29 @@ class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):
     return (
         f"ReachDeviceForceTorqueSensor({self.config_name}, {self._reach_name})")
 
+  def _get_force_torque_sensor(self,
+                               host: pyreach.Host) -> pyreach.ForceTorqueSensor:
+    """Return the force torque sensor."""
+    if self._force_torque_sensor is None:
+      with self._timers_select({"!agent*", "!gym*", "arm.force_torque_sensor"}):
+        if self._reach_name not in host.force_torque_sensors:
+          force_torque_sensor_names: List[str] = list(
+              host.force_torque_sensors.keys())
+          raise pyreach.PyReachError(
+              f"Force Torque Sensor '{self._reach_name}' "
+              f"is not one of {force_torque_sensor_names}")
+        self._force_torque_sensor = host.force_torque_sensors[self._reach_name]
+        self._force_torque_sensor.start_streaming()
+    return self._force_torque_sensor
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that force torque sensor is operable."""
+    try:
+      _ = self._get_force_torque_sensor(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
+
   def get_observation(self,
                       host: pyreach.Host) -> reach_device.ObservationSnapshot:
     """Return the Reach Force Torque Sensor actuator Gym observation.

@@ -42,6 +42,8 @@ class ReachColorCamera(reach_element.ReachElement):
       "fisheye".
     link_name: When calibration is enabled, this should specify the URDF link
       name to use for getting the camera pose.
+    initial_stream_request_period: The initial seconds per frame requested.
+      Defaults to 1 second per frame.
   """
   shape: Tuple[int, int]
   force_fit: bool = False
@@ -49,3 +51,4 @@ class ReachColorCamera(reach_element.ReachElement):
   calibration_enable: bool = False
   lens_model: Optional[str] = None
   link_name: Optional[str] = None
+  initial_stream_request_period: float = 1.0

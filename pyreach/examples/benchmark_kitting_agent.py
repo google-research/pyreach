@@ -24,6 +24,7 @@ import gym  # type: ignore
 from pyreach.gyms import core
 from pyreach.gyms.envs.benchmark_kitting import BenchmarkKittingWrapper
 
+# TODO(jmattarian): Change from max attempts to timer.
 MAX_ATTEMPTS_KITTING = 7
 MAX_ATTEMPTS_DEKITTING = 8
 
@@ -135,6 +136,7 @@ class KittingAgent:
 
 
 def main(unused_argv: List[str]) -> None:
+  # TODO(jmattarian): Clean up warnings from script output.
 
   agent = KittingAgent()
 

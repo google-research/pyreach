@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Threading utilities."""
 import queue
 import threading
@@ -318,11 +317,13 @@ class CallbackManager(Generic[T]):
 
   _lock: threading.Lock
   _callbacks: List[Tuple[Callable[[T], bool], Callable[[], None]]]
+  _closed: bool
 
   def __init__(self) -> None:
     """Init the CallbackManager."""
     self._lock = threading.Lock()
     self._callbacks = []
+    self._closed = False
 
   def add_callback(
       self, callback: Callable[[T], bool],
@@ -341,7 +342,13 @@ class CallbackManager(Generic[T]):
     else:
       tup = (callback, finished_callback)
     with self._lock:
-      self._callbacks.append(tup)
+      closed = self._closed
+      if not closed:
+        self._callbacks.append(tup)
+    if closed:
+      if finished_callback:
+        finished_callback()
+      return lambda: None
     return lambda: self._remove_callback(tup)
 
   def _remove_callback(
@@ -363,6 +370,7 @@ class CallbackManager(Generic[T]):
   def close(self) -> None:
     """Close a CallbackManager."""
     with self._lock:
+      self._closed = True
       cbs = self._callbacks.copy()
       self._callbacks = []
     for cb in cbs:

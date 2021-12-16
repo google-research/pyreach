@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Tests for google3.third_party.robotics.ikfast.ikfast_util."""
 
 from typing import List
@@ -21,6 +20,118 @@ from pyreach.ikfast import ikfast
 
 
 class IkfastUtilTest(unittest.TestCase):
+
+  def test_ikfast_ur3e(self) -> None:
+    resolver = ikfast.IKFast("ur3e.urdf")
+    test_pose = np.array(
+        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    inverse = resolver.ik(test_pose)
+    expect: List[List[float]] = [[
+        0.15575925, -2.9682486, 0.93033262, -2.6334274, 1.5101384, -1.53257425
+    ],
+                                 [
+                                     0.15575925, -2.10598112, -0.93033262,
+                                     -1.63502962, 1.5101384, -1.53257425
+                                 ],
+                                 [
+                                     2.6942723, -1.0361406, 0.94204333,
+                                     -1.54489237, -1.59749533, -2.13531918
+                                 ],
+                                 [
+                                     2.6942723, -0.16315868, -0.94204333,
+                                     -0.53378763, -1.59749533, -2.13531918
+                                 ]]
+    assert inverse is not None
+    self.assertTrue(np.allclose(np.asarray(expect), inverse))
+    for idx in range(inverse.shape[0]):
+      forward = resolver.fk(inverse[idx, :])
+      self.assertTrue(np.allclose(forward, test_pose))
+
+    test_pose = np.array([
+        10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
+        -0.1276226213011794
+    ])
+    ik_hints = {
+        0: [
+            1.68749761581421, -1.98929464817047, -1.89353466033936,
+            -0.851135075092316, 1.6761908531189, 0.265036106109619
+        ],
+        1: [
+            1.39810276031494, -2.39948201179504, -1.09250926971436,
+            -1.27997672557831, 1.65425539016724, -0.0296047367155552
+        ]
+    }
+    joints = resolver.ik_search(test_pose, ik_hints)
+    self.assertIsNone(joints)
+
+    test_pose = np.array(
+        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    ik_hints = {
+        0: [
+            1.68749761581421, -1.98929464817047, -1.89353466033936,
+            -0.851135075092316, 1.6761908531189, 0.265036106109619
+        ],
+        1: [
+            1.39810276031494, -2.39948201179504, -1.09250926971436,
+            -1.27997672557831, 1.65425539016724, -0.0296047367155552
+        ]
+    }
+    joints = resolver.ik_search(test_pose, ik_hints)
+    self.assertIsNotNone(joints)
+    self.assertTrue(
+        np.allclose(
+            joints,
+            np.asarray([
+                0.15575925, -2.10598112, -0.93033262, -1.63502962, 1.5101384,
+                -1.53257425
+            ])))
+
+    test_pose = np.array([
+        10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
+        -0.1276226213011794
+    ])
+    current_joints = [
+        1.793768405914307, -2.222002168694967, -1.752705574035645,
+        -0.7431128782084961, 1.653548717498779, 0.2220320701599121
+    ]
+    ik_hints = {
+        0: [
+            1.68749761581421, -1.98929464817047, -1.89353466033936,
+            -0.851135075092316, 1.6761908531189, 0.265036106109619
+        ],
+        1: [
+            1.39810276031494, -2.39948201179504, -1.09250926971436,
+            -1.27997672557831, 1.65425539016724, -0.0296047367155552
+        ],
+    }
+    joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
+    self.assertIsNone(joints)
+
+    test_pose = np.array(
+        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    current_joints = [
+        1.793768405914307, -2.222002168694967, -1.752705574035645,
+        -0.7431128782084961, 1.653548717498779, 0.2220320701599121
+    ]
+    ik_hints = {
+        0: [
+            1.68749761581421, -1.98929464817047, -1.89353466033936,
+            -0.851135075092316, 1.6761908531189, 0.265036106109619
+        ],
+        1: [
+            1.39810276031494, -2.39948201179504, -1.09250926971436,
+            -1.27997672557831, 1.65425539016724, -0.0296047367155552
+        ]
+    }
+    joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
+    self.assertIsNotNone(joints)
+    self.assertTrue(
+        np.allclose(
+            joints,
+            np.asarray([
+                0.15575925, -2.10598112, -0.93033262, -1.63502962, 1.5101384,
+                -1.53257425
+            ])))
 
   def test_ikfast_ur5(self) -> None:
     resolver = ikfast.IKFast("ur5.urdf")

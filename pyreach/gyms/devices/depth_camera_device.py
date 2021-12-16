@@ -55,6 +55,8 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     calibration_enable: bool = depth_camera_config.calibration_enable
     lens_model: Optional[str] = depth_camera_config.lens_model
     link_name: Optional[str] = depth_camera_config.link_name
+    initial_stream_request_period: float = (
+        depth_camera_config.initial_stream_request_period)
 
     if len(shape) != 2:
       raise pyreach.PyReachError(f"Depth camera has shape {shape}, not (DX,DY)")
@@ -107,6 +109,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
     self._link_name: str = link_name if link_name else ""
+    self._initial_stream_request_period: float = initial_stream_request_period
 
   def __str__(self) -> str:
     """Return a string representation of ReachDeviceDepthCamera."""
@@ -136,8 +139,16 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
               "Depth camera '{0}' needs to specify one of '{1}'".format(
                   reach_name, depth_camera_names))
         self._depth_camera = host.depth_cameras[reach_name]
-        self._depth_camera.start_streaming(1.0)
+        self._depth_camera.start_streaming(self._initial_stream_request_period)
     return self._depth_camera
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that depth camera is operable."""
+    try:
+      _ = self._get_depth_camera(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
 
   def do_action(
       self, action: gyms_core.Action,

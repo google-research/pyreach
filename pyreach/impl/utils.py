@@ -213,6 +213,8 @@ def load_depth_image_from_data(
     if imaged_msg.depth_image is not None:
       nparray = np.asarray(bytearray(imaged_msg.depth_image), dtype="uint8")
       depth = cv2.imdecode(nparray, cv2.IMREAD_ANYDEPTH)
+      if depth is None:
+        raise FileNotFoundError
       depth.flags.writeable = False
       return depth
   depth = cv2.imread(msg.depth, cv2.IMREAD_ANYDEPTH)

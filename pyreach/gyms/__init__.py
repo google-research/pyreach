@@ -26,7 +26,7 @@ register(
 )
 
 register(
-    id='benchmark-2d-v0',
+    id='benchmark-2d-v1',
     entry_point=(
         'pyreach.gyms.envs.benchmark_2d:Benchmark2DEnv'
     ),
@@ -121,7 +121,7 @@ register(
 register(
     id='integration-fanuc-sync-v0',
     entry_point=(
-        'pyreach.gyms.envs.integration_ur:IntegrationTestFanucSyncEnv'),
+        'pyreach.gyms.envs.integration_fanuc:IntegrationTestFanucSyncEnv'),
     max_episode_steps=9999999999999999999999,
     reward_threshold=99999999999999999999.0,
 )
@@ -129,7 +129,7 @@ register(
 register(
     id='integration-fanuc-async-v0',
     entry_point=(
-        'pyreach.gyms.envs.integration_ur:IntegrationTestFanucAsyncEnv'),
+        'pyreach.gyms.envs.integration_fanuc:IntegrationTestFanucAsyncEnv'),
     max_episode_steps=9999999999999999999999,
     reward_threshold=99999999999999999999.0,
 )

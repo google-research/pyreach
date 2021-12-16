@@ -131,3 +131,7 @@ class ReachDeviceTask(reach_device.ReachDevice):
       return (lib_snapshot.SnapshotGymLoggerAction("operator", "", False, False,
                                                    task_params),)
     return ()
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that task device is operable."""
+    return ""  # Task device is always there.

@@ -176,3 +176,11 @@ class ReachDeviceAnnotation(reach_device.ReachDevice):
             "configured for host.")
       self._client_annotation = host.client_annotation
     return self._client_annotation
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that annotation device is operable."""
+    try:
+      _ = self._get_annotation_device(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Utilities for IKFast."""
 
 import ctypes
@@ -67,6 +66,8 @@ def _get_library_path() -> str:
 _IKFAST_PATH = _get_library_path()
 
 _URDF_LIB_FILEMAP: Dict[str, str] = {
+    "ur3e.urdf":
+        os.path.join(_IKFAST_PATH, "libur3e_ikfast61.so"),
     "ur5e.urdf":
         os.path.join(_IKFAST_PATH, "libur5e_ikfast61.so"),
     "ur5.urdf":
@@ -88,6 +89,7 @@ _URDF_LIB_FILEMAP: Dict[str, str] = {
 }
 
 _FUNCTION_PREFIX_FILEMAP: Dict[str, str] = {
+    "ur3e.urdf": "ur3e",
     "ur5e.urdf": "ur5e",
     "ur5.urdf": "ur5",
     "XArm6.urdf": "xarm6",

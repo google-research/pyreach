@@ -106,6 +106,7 @@ class IntegrationTestFanucEnv(reach_env.ReachEnv):
 
     # End any current task with reset
     obs = super().reset()
+    self.timer_running = False
 
     return obs
 

@@ -219,3 +219,11 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
             "configured for host.")
       self._text_instructions = host.text_instructions
     return self._text_instructions
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that text instructions is operable."""
+    try:
+      _ = self._get_text_instructions_device(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""

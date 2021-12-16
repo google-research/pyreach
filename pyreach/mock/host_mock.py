@@ -40,6 +40,7 @@ from pyreach.mock import constraints_mock
 from pyreach.mock import depth_camera_mock
 from pyreach.mock import force_torque_sensor_mock
 from pyreach.mock import logger_mock
+from pyreach.mock import oracle_mock
 from pyreach.mock import text_instructions_mock
 from pyreach.mock import vacuum_mock
 
@@ -225,19 +226,25 @@ class HostMock(host.Host):
 
   @property
   def oracles(self) -> core.ImmutableDictionary[oracle.Oracle]:
-    """Return all the oracle devices connected to the system.
+    """Return all the robot oracles connected to the system.
 
-    The key of the dictionary is the device name.
+    The key of the dictionary is the device name, such as "left" or "right".
     """
-    raise NotImplementedError
+    config: Dict[str, reach_element.ReachElement] = self._config
+    assert "oracle" in config, f"config={config}"
+    mock_oracle: oracle.Oracle = oracle_mock.OracleMock()
+    return core.ImmutableDictionary[oracle.Oracle]({"oracle": mock_oracle})
 
   @property
   def oracle(self) -> Optional[oracle.Oracle]:
-    """Return the oracle device if there is just one.
+    """Return the robot oracle if there is just one.
 
-    None if there is no oracle device or multiple oracle devices.
+    None if there is no robot arm or multiple robot arms.
     """
-    raise NotImplementedError
+    config: Dict[str, reach_element.ReachElement] = self._config
+    assert "oracle" in config, f"config={config}"
+    mock_oracle: oracle.Oracle = oracle_mock.OracleMock()
+    return mock_oracle
 
   @property
   def internal(self) -> Optional[pyreach_internal.Internal]:

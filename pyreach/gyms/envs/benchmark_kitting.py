@@ -80,6 +80,8 @@ class KittingBenchmarkEnv(reach_env.ReachEnv):  # type: ignore
         "depth_camera":
             reach_env.ReachDepthCamera(
                 "", (720, 1280), True, is_synchronous=True),
+        "workcell_camera":
+            reach_env.ReachColorCamera("realsense", (480, 640)),
         "server":
             reach_env.ReachServer("Server"),
         "vacuum":

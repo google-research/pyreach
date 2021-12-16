@@ -323,6 +323,13 @@ class HostImpl(pyreach.Host):
             color_camera_impl.ColorCameraDevice(
                 color_interface.device_type, color_interface.device_name,
                 self._config._calibration).get_wrapper())
+      tilestream_strategy = interfaces.get_request_strategy("uvc", "", "color")
+      if tilestream_strategy is not None and "tilestream" not in color_cameras:
+        color_cameras["tilestream"] = add_device(
+            color_camera_impl.ColorCameraDevice("uvc", "",
+                                                self._config._calibration,
+                                                "color-camera",
+                                                "tilestream").get_wrapper())
     self._color_camera = color_cameras.get("")
     self._color_cameras = core.ImmutableDictionary(color_cameras)
     # Load depth cameras

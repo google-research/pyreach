@@ -15,7 +15,7 @@
 
 import logging
 import sys
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Set, Tuple
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -106,6 +106,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     self._selected_pick_place_point: Optional[
         pyreach.PredictionPickPlacePoint] = None
     self._rejected_pick_points: List[pyreach.PredictionPoint] = []
+    self._rejected_pick_place_points: Set[Tuple[float, ...]] = set()
 
   def __str__(self) -> str:
     """Return a string represenation of Reach Oracle."""
@@ -118,6 +119,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     """Called when the gym is reset."""
     self.disable_tagged_request()
     self._rejected_pick_points = []
+    self._rejected_pick_place_points = set()
     self._execute_action_status = None
     self._selected_point = None
     self._request = ReachDeviceOracle.REQUEST_NONE
@@ -156,6 +158,14 @@ class ReachDeviceOracle(reach_device.ReachDevice):
         raise pyreach.PyReachError("There is no Oracle configured for host.")
       self._oracle = host.oracle
     return self._oracle
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that oracle is operable."""
+    try:
+      _ = self._get_oracle(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
 
   def _get_latest_prediction(self, host: pyreach.Host) -> pyreach.Prediction:
     """Return a the most recent prediction.
@@ -265,6 +275,23 @@ class ReachDeviceOracle(reach_device.ReachDevice):
             logging.error("Gym Oracle: Unhandled metric: '%s'", key)
       elif self._selected_point:
         self._rejected_pick_points.append(self._selected_point)
+      elif self._selected_pick_place_point:
+        pick_place_hash: Tuple[float, ...] = (
+            self._selected_pick_place_point.pick_position_3d.x,
+            self._selected_pick_place_point.pick_position_3d.y,
+            self._selected_pick_place_point.pick_position_3d.z,
+            self._selected_pick_place_point.pick_rotation_quat_3d.x,
+            self._selected_pick_place_point.pick_rotation_quat_3d.y,
+            self._selected_pick_place_point.pick_rotation_quat_3d.z,
+            self._selected_pick_place_point.pick_rotation_quat_3d.w,
+            self._selected_pick_place_point.place_position_3d.x,
+            self._selected_pick_place_point.place_position_3d.y,
+            self._selected_pick_place_point.place_position_3d.z,
+            self._selected_pick_place_point.place_rotation_quat_3d.x,
+            self._selected_pick_place_point.place_rotation_quat_3d.y,
+            self._selected_pick_place_point.place_rotation_quat_3d.z,
+            self._selected_pick_place_point.place_rotation_quat_3d.w)
+        self._rejected_pick_place_points.add(pick_place_hash)
 
       observation: gyms_core.Observation = {
           "ts": gyms_core.Timestamp.new(ts),
@@ -408,19 +435,40 @@ class ReachDeviceOracle(reach_device.ReachDevice):
             self._execute_action_status = None
         # Kitting support
         elif prediction_pick_place_points:
-          pick_place_pt: pyreach.PredictionPickPlacePoint
-          pick_place_pt = prediction_pick_place_points[0]
-          selected_point_3d = [
-              pyreach.ActionInput(
-                  prediction_point=None,
-                  position=pick_place_pt.pick_position_3d,
-                  rotation=pick_place_pt.pick_rotation_quat_3d),
-              pyreach.ActionInput(
-                  prediction_point=None,
-                  position=pick_place_pt.place_position_3d,
-                  rotation=pick_place_pt.place_rotation_quat_3d),
-          ]
-          self._selected_pick_place_point = pick_place_pt
+          pick_place_pt: Optional[pyreach.PredictionPickPlacePoint] = None
+          for pick_place_point in prediction_pick_place_points:
+            point_hash: Tuple[float, ...] = (
+                pick_place_point.pick_position_3d.x,
+                pick_place_point.pick_position_3d.y,
+                pick_place_point.pick_position_3d.z,
+                pick_place_point.pick_rotation_quat_3d.x,
+                pick_place_point.pick_rotation_quat_3d.y,
+                pick_place_point.pick_rotation_quat_3d.z,
+                pick_place_point.pick_rotation_quat_3d.w,
+                pick_place_point.place_position_3d.x,
+                pick_place_point.place_position_3d.y,
+                pick_place_point.place_position_3d.z,
+                pick_place_point.place_rotation_quat_3d.x,
+                pick_place_point.place_rotation_quat_3d.y,
+                pick_place_point.place_rotation_quat_3d.z,
+                pick_place_point.place_rotation_quat_3d.w)
+
+            if point_hash not in self._rejected_pick_place_points:
+              pick_place_pt = pick_place_point
+              break
+
+          if pick_place_pt:
+            selected_point_3d = [
+                pyreach.ActionInput(
+                    prediction_point=None,
+                    position=pick_place_pt.pick_position_3d,
+                    rotation=pick_place_pt.pick_rotation_quat_3d),
+                pyreach.ActionInput(
+                    prediction_point=None,
+                    position=pick_place_pt.place_position_3d,
+                    rotation=pick_place_pt.place_rotation_quat_3d),
+            ]
+            self._selected_pick_place_point = pick_place_pt
 
       if ((self._selected_point or self._selected_pick_place_point) and
           self._intent == "pick"):
@@ -441,4 +489,6 @@ class ReachDeviceOracle(reach_device.ReachDevice):
               pick_id=pick_id,
               use_unity_ik=True)
           self._pick_status = read_status
+      else:
+        raise pyreach.PyReachError("Internal Error: Oracle no valid picks")
     return ()

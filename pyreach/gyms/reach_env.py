@@ -277,6 +277,18 @@ class ReachEnv(gym.Env):  # type: ignore
                      int(is_synchronous), int(is_action_space))
       action_space: gyms_core.Space = gym.spaces.Dict(action_space_dict)
 
+      # Validate that each device is correctly configured.
+      validation_errors: List[str] = []
+      for name, element in elements.items():
+        validation_error: str = element.validate(host)
+        if validation_error:
+          validation_errors.append(f"{name}: {validation_error}")
+      if validation_errors:
+        raise pyreach.PyReachError(f"Validation Error: "
+                                   f"environment:{self.__class__.__name__}: "
+                                   f"connection_string={connection_string} "
+                                   f"validation_errors={validation_errors}")
+
       # Create the composite observation space from the configuration.
       observation_space_dict: Dict[str, gyms_core.Space] = {}
       for name, element in elements.items():
@@ -347,13 +359,6 @@ class ReachEnv(gym.Env):  # type: ignore
     """
     action_list: List[lib_snapshot.SnapshotGymAction] = []
     with self._timers.select({"!agent*", "gym.step"}):
-      if not self._task_started and not self._text_instruction:
-        self._host.logger.start_task(self.task_params)
-        action_list.append(
-            lib_snapshot.SnapshotGymLoggerAction("operator", "", False, True,
-                                                 self.task_params),)
-        self._task_started = True
-
       # Perform the actual action for each sub device.
       with self._timers.select({"gym.action"}):
         assert isinstance(action, Dict)

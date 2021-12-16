@@ -53,6 +53,8 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     calibration_enable: bool = color_camera_config.calibration_enable
     lens_model: Optional[str] = color_camera_config.lens_model
     link_name: Optional[str] = color_camera_config.link_name
+    initial_stream_request_period: float = (
+        color_camera_config.initial_stream_request_period)
 
     if len(shape) != 2:
       raise pyreach.PyReachError("ColorCamera shape is {shape}, not (DX,DY)")
@@ -90,6 +92,7 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
     self._link_name: str = link_name if link_name else ""
+    self._initial_stream_request_period: float = initial_stream_request_period
 
   def __str__(self) -> str:
     """Return string representation of a Reach Color Camera."""
@@ -120,8 +123,16 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               "Color camera '{0}' needs to be one of {1}".format(
                   reach_name, camera_names))
         self._color_camera = host.color_cameras[reach_name]
-        self._color_camera.start_streaming(1.0)
+        self._color_camera.start_streaming(self._initial_stream_request_period)
     return self._color_camera
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that color camera is operable."""
+    try:
+      _ = self._get_color_camera(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
 
   def get_observation(self,
                       host: pyreach.Host) -> reach_device.ObservationSnapshot:

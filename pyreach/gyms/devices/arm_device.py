@@ -204,6 +204,14 @@ class ReachDeviceArm(reach_device.ReachDevice):
         self._arm.start_streaming()
     return self._arm
 
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that arm is operable."""
+    try:
+      _ = self._get_arm(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
+
   def get_early_done(self) -> bool:
     """Return an early Done flag.
 

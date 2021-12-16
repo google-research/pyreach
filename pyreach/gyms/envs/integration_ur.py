@@ -15,7 +15,7 @@
 """Gym environment for the UR Integration Test Workcell."""
 
 import time
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, cast
 
 import numpy as np  # type: ignore
 
@@ -42,7 +42,7 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
   def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
     self.timer_running: bool = False
     self.deadline: float = 0.0
-    self.agent_done_signal = False
+    self.has_fts: bool = True
     response_queue_length: int = 0 if is_synchronous else 2
 
     pyreach_config: Dict[str, reach_env.ReachElement] = {
@@ -60,8 +60,6 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
             reach_env.ReachDepthCamera("", (720, 1280), color_enabled=True),
         "server":
             reach_env.ReachServer("Server"),
-        "fts":
-            reach_env.ReachForceTorqueSensor(""),
         "vacuum":
             reach_env.ReachVacuum("",
                                   is_synchronous=is_synchronous,
@@ -73,6 +71,13 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
                                       is_synchronous=False,
                                       maximum_size=1024),
     }
+
+    self.has_fts = True
+    if "with_fts" in kwargs:
+      self.has_fts = cast(bool, kwargs["with_fts"])
+
+    if self.has_fts:
+      pyreach_config["fts"] = reach_env.ReachForceTorqueSensor("")
 
     super().__init__(pyreach_config=pyreach_config, **kwargs)
 
@@ -113,6 +118,7 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
 
     # End any current task with reset
     obs = super().reset()
+    self.timer_running = False
 
     return obs
 

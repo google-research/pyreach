@@ -79,6 +79,28 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
     return "ReachVacuum('{0}':'{1}', {2})".format(self.config_name,
                                                   self._reach_name, self._state)
 
+  def _get_vacuum(self, host: pyreach.Host) -> Optional[pyreach.Vacuum]:
+    """Return the vacuum device."""
+    if self._vacuum is None:
+      with self._timers.select({"!agent*", "!gym*", "host.vacuum"}):
+        if self._reach_name not in host.vacuums:
+          vacuum_names: List[str] = list(host.vacuums.keys())
+          raise pyreach.PyReachError("Vacuum '{0}' is not one of {1}".format(
+              self._reach_name, vacuum_names))
+        self._vacuum = host.vacuums[self._reach_name]
+        self._vacuum.start_streaming()
+        if self._vacuum.support_blowoff:
+          self._vacuum.start_blowoff_streaming()
+    return self._vacuum
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that vacuum is operable."""
+    try:
+      _ = self._get_vacuum(host)
+    except pyreach.PyReachError as pyreach_error:
+      return str(pyreach_error)
+    return ""
+
   def get_observation(self,
                       host: pyreach.Host) -> reach_device.ObservationSnapshot:
     """Return the Reach Vacuum actuator Gym observation.
@@ -94,18 +116,8 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
     """
     with self._timers_select({"!agent*", "gym.vacuum"}):
       is_synchronous: bool = self._is_synchronous
-      reach_name: str = self._reach_name
-      if self._vacuum is None:
-        with self._timers.select({"!agent*", "!gym*", "host.vacuum"}):
-          if reach_name not in host.vacuums:
-            vacuum_names: List[str] = list(host.vacuums.keys())
-            raise pyreach.PyReachError("Vacuum '{0}' is not one of {1}".format(
-                reach_name, vacuum_names))
-          self._vacuum = host.vacuums[reach_name]
-          self._vacuum.start_streaming()
-          if self._vacuum.support_blowoff:
-            self._vacuum.start_blowoff_streaming()
-      vacuum: Optional[pyreach.Vacuum] = self._vacuum
+
+      vacuum: Optional[pyreach.Vacuum] = self._get_vacuum(host)
       if vacuum is None:
         raise pyreach.PyReachError("Vacuum is not set")
 

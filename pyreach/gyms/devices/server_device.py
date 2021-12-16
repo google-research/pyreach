@@ -94,3 +94,7 @@ class ReachDeviceServer(reach_device.ReachDevice):
         The list of gym action snapshots.
     """
     return ()
+
+  def validate(self, host: pyreach.Host) -> str:
+    """Validate that server device is operable."""
+    return ""  # Pseudo device is always there.
