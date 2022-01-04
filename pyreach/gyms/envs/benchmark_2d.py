@@ -497,6 +497,16 @@ class Benchmark2DEnv(reach_env.ReachEnv):
   """
 
   def __init__(self, **kwargs: Any) -> None:
+    """Initializes the environment.
+
+    Arguments:
+      **kwargs: Keyword arguments.
+
+    Keyword args accepted:
+
+    tc (str): The task code to override the standard task code with.
+    disable_time_limit (bool): Whether to disable the standard time limit.
+    """
     self._low_level_queue: SimpleQueue[str] = SimpleQueue()
     self._timer_running: bool = False
     self._deadline: float = 0.0
@@ -529,12 +539,20 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     # Whether the chat client sent a ctrl-C to indicate test case completed.
     self._chat_client_indicated_end: bool = False
 
+    self._task_code = TASK_CODE_2D
+    if "tc" in kwargs:
+      self._task_code = str(kwargs["tc"])
+
+    self._disable_time_limit = False
+    if "disable_time_limit" in kwargs:
+      self._disable_time_limit = bool(kwargs["disable_time_limit"])
+
     self.seed()
 
     low_joint_angles = tuple([-6.283, -2.059, -3.926, -3.141, -1.692, -6.283])
     high_joint_angles = tuple([6.283, 2.094, 0.191, 3.141, 3.141, 6.283])
 
-    task_params: Dict[str, str] = {"task-code": flags.FLAGS.tc}
+    task_params: Dict[str, str] = {"task-code": self._task_code}
 
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "arm":
@@ -811,7 +829,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
       return (1.0, True)
 
     # Did we run out of time?
-    if time.time() >= self._deadline:
+    if not self._disable_time_limit and time.time() >= self._deadline:
       print(f"{time.time()}: You ran out of time!")
       self._timer_running = False
       return (-1.0, True)
@@ -1102,5 +1120,4 @@ def main(_: Any) -> None:
 
 if __name__ == "__main__":
   flags.DEFINE_bool("instructor", False, "Run as the instructor.")
-  flags.DEFINE_string("tc", TASK_CODE_2D, "Task code for this run.")
   app.run(main)

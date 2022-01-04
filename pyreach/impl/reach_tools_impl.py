@@ -19,7 +19,7 @@ _WEBRTC_SHA256 = {
 _REACH_SHA256 = {
     "linux": {
         "x86_64":
-            "428af9a7560e1db1f60b531bdfd3db58eb10412841c121de11fb56c57540e7d6",
+            "a7ca9c684fa1fc26b96cceb21a5f798ed6954e9eed92e0c664f1a88eff8d0a0b",
     },
 }
 _WEBRTC_BASE = "https://storage.googleapis.com/brain-reach-public/releases/webrtc/%s-%s/webrtc_headless%s."
