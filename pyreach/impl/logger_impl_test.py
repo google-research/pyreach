@@ -18,6 +18,7 @@ import unittest
 
 from pyreach.common.proto_gen import logs_pb2
 from pyreach import core
+from pyreach import logger
 from pyreach import snapshot
 from pyreach.common.python import types_gen
 from pyreach.impl import logger_impl
@@ -39,6 +40,28 @@ class TestLogger(test_utils.TestResponder):
               data_type="cmd-status",
               status="done",
               tag=cmd.tag)
+      ]
+    if (cmd.device_type == "operator" and not cmd.device_name and
+        cmd.data_type == "event-start"):
+      return [
+          types_gen.DeviceData(
+              data_type="metric",
+              device_type="server",
+              event_params=cmd.event_params,
+              metric_value=types_gen.KeyValue(
+                  float_value=1, key="operator/task_start"),
+              ts=cmd.ts)
+      ]
+    if (cmd.device_type == "operator" and not cmd.device_name and
+        cmd.data_type == "event"):
+      return [
+          types_gen.DeviceData(
+              data_type="metric",
+              device_type="server",
+              event_params=cmd.event_params,
+              metric_value=types_gen.KeyValue(
+                  float_value=1, key="operator/task_end_seconds"),
+              ts=cmd.ts)
       ]
     return []
 
@@ -63,14 +86,42 @@ class TestPyReachLogger(unittest.TestCase):
                     status="done"),)),
         test_utils.TestResponderStep(
             types_gen.CommandData(
-                ts=1, device_type="operator", data_type="event-start"), ()),
+                ts=2,
+                device_type="operator",
+                data_type="event-start",
+                event_params=[
+                    types_gen.KeyValue(key="test-key", value="test-value")
+                ]),
+            (types_gen.DeviceData(
+                data_type="metric",
+                device_type="server",
+                event_params=[
+                    types_gen.KeyValue(key="test-key", value="test-value")
+                ],
+                metric_value=types_gen.KeyValue(
+                    float_value=1, key="operator/task_start"),
+                ts=2),),
+        ),
         test_utils.TestResponderStep(
             types_gen.CommandData(
-                ts=1,
+                ts=3,
                 device_type="operator",
                 data_type="event",
                 event_name="pick",
-            ), ()),
+                event_params=[
+                    types_gen.KeyValue(key="test-key", value="test-value")
+                ],
+            ),
+            (types_gen.DeviceData(
+                data_type="metric",
+                device_type="server",
+                event_params=[
+                    types_gen.KeyValue(key="test-key", value="test-value")
+                ],
+                metric_value=types_gen.KeyValue(
+                    float_value=1, key="operator/task_end_seconds"),
+                ts=3),),
+        ),
     ])
 
   def test_start_annotation_interval(self) -> None:
@@ -110,15 +161,22 @@ class TestPyReachLogger(unittest.TestCase):
     rdev, dev = logger_impl.LoggerDevice().get_wrapper()
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestLogger())
+      self.assertEqual(dev.task_state, logger.TaskState.UNKNOWN)
       for _ in range(0, 10):
-        dev.start_task({})
+        dev.start_task({"test-key": "test-value"})
         test_device.expect_command_data([
             types_gen.CommandData(
                 data_type="event-start",
                 device_type="operator",
+                event_params=[
+                    types_gen.KeyValue(key="test-key", value="test-value")
+                ],
             )
         ])
         self.assertRaises(core.PyReachError, dev.start_task, {})
+        self.assertTrue(dev.wait_for_task_state(logger.TaskState.TASK_STARTED))
+        self.assertRaises(core.PyReachError, dev.start_task, {})
+        self.assertFalse(dev.wait_for_task_state(logger.TaskState.UNKNOWN, 0.0))
         dev_impl = cast(logger_impl.LoggerImpl, dev)
         start_ts = dev_impl._device._task_start_ts
         assert start_ts
@@ -133,6 +191,21 @@ class TestPyReachLogger(unittest.TestCase):
                 1e3)
         ])
         self.assertRaises(core.PyReachError, dev.end_task, {})
+        self.assertTrue(dev.wait_for_task_state(logger.TaskState.TASK_ENDED))
+        self.assertRaises(core.PyReachError, dev.end_task, {})
+        self.assertFalse(dev.wait_for_task_state(logger.TaskState.UNKNOWN, 0.0))
+      test_device.set_responder(test_utils.RejectResponder())
+      dev.start_task({"test-key": "test-value"})
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="event-start",
+              device_type="operator",
+              event_params=[
+                  types_gen.KeyValue(key="test-key", value="test-value")
+              ],
+          )
+      ])
+      self.assertTrue(dev.wait_for_task_state(logger.TaskState.UNKNOWN))
 
   def test_send_snapshot(self) -> None:
     rdev, dev = logger_impl.LoggerDevice().get_wrapper()

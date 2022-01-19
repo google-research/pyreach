@@ -31,10 +31,14 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
   """Device for logger."""
 
   _time_lock: threading.Lock
-  _task_time_lock: threading.Lock
   _start_times: Dict[str, int]
+  _task_time_lock: threading.Lock
   _task_start_ts: Optional[int]
   _task_end_ts: int
+  _task_state_closed: bool
+  _task_state: logger.TaskState
+  _task_state_queue: "queue.Queue[Optional[logger.TaskState]]"
+  _task_state_callback_manager: "thread_util.CallbackManager[logger.TaskState]"
 
   def __init__(self) -> None:
     """Construct a logger."""
@@ -44,6 +48,59 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
     self._start_times = {}
     self._task_start_ts = None
     self._task_end_ts = 0
+    self._task_state_closed = False
+    self._task_state = logger.TaskState.UNKNOWN
+    self._task_state_queue = queue.Queue()
+    self._task_state_callback_manager = thread_util.CallbackManager()
+
+  def _task_state_update_thread(self) -> None:
+    while True:
+      state = self._task_state_queue.get(block=True, timeout=None)
+      if state is None:
+        self._task_state_callback_manager.close()
+        return
+      self._task_state_callback_manager.call(state)
+
+  @property
+  def task_state(self) -> logger.TaskState:
+    """Get the current task state."""
+    with self._task_time_lock:
+      return self._task_state
+
+  def add_task_state_update_callback(
+      self,
+      callback: Callable[[logger.TaskState], bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback for the task state.
+
+    Args:
+      callback: Callback called when a new task state arrives. The callback
+        function should return False for continuous state update. When the
+        callback function returns True, it will stop receiving future updates.
+      finished_callback: Optional callback, called when the callback is stopped
+        or if the host is closed.
+
+    Returns:
+      A function that when called stops the callback.
+
+    """
+    with self._task_time_lock:
+      return self._task_state_callback_manager.add_callback(
+          callback, finished_callback)
+
+  def start(self) -> None:
+    """Start the logger device."""
+    super().start()
+    self.run(self._task_state_update_thread)
+
+  def close(self) -> None:
+    """Close the logger device."""
+    with self._task_time_lock:
+      if not self._task_state_closed:
+        self._task_state_closed = True
+        self._task_state_queue.put(None)
+    super().close()
 
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[core.PyReachStatus]:
@@ -51,6 +108,16 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
     if (msg.device_type == "client-annotation" and not msg.device_name and
         msg.data_type == "cmd-status"):
       return utils.pyreach_status_from_message(msg)
+    if (msg.device_type == "server" and not msg.device_name and
+        msg.data_type == "metric" and msg.metric_value):
+      if msg.metric_value.key == "operator/task_start":
+        with self._task_time_lock:
+          self._task_state = logger.TaskState.TASK_STARTED
+          self._task_state_queue.put(self._task_state)
+      if msg.metric_value.key == "operator/task_end_seconds":
+        with self._task_time_lock:
+          self._task_state = logger.TaskState.TASK_ENDED
+          self._task_state_queue.put(self._task_state)
     return None
 
   def get_wrapper(self) -> Tuple["LoggerDevice", "logger.Logger"]:
@@ -129,21 +196,26 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
     Args:
       event_params: custom parameters of the event.
     """
+    start_ts = 0
     with self._task_time_lock:
+      if self._task_state_closed:
+        return
       if self._task_start_ts is not None:
         raise core.PyReachError("start_task when task is already started")
-      self._task_start_ts = utils.timestamp_now()
+      start_ts = self._task_start_ts = utils.timestamp_now()
+      self._task_state = logger.TaskState.UNKNOWN
+      self._task_state_queue.put(self._task_state)
 
-      self.send_cmd(
-          types_gen.CommandData(
-              ts=self._task_start_ts,
-              device_type="operator",
-              data_type="event-start",
-              event_params=sorted([
-                  types_gen.KeyValue(key=key, value=value)
-                  for key, value in event_params.items()
-              ],
-                                  key=lambda obj: obj.key)))
+    self.send_cmd(
+        types_gen.CommandData(
+            ts=start_ts,
+            device_type="operator",
+            data_type="event-start",
+            event_params=sorted([
+                types_gen.KeyValue(key=key, value=value)
+                for key, value in event_params.items()
+            ],
+                                key=lambda obj: obj.key)))
 
   def end_task(self, event_params: Dict[str, str]) -> None:
     """End a task.
@@ -151,24 +223,32 @@ class LoggerDevice(requester.Requester[core.PyReachStatus]):
     Args:
       event_params: custom parameters of the event.
     """
+    end_ts = 0
+    event_duration = 0.0
     with self._task_time_lock:
+      if self._task_state_closed:
+        return
       if self._task_start_ts is None:
         raise core.PyReachError("end_task when task is not yet started")
-      self._task_end_ts = utils.timestamp_now()
+      end_ts = self._task_end_ts = utils.timestamp_now()
+      event_duration = float(self._task_end_ts - self._task_start_ts) / 1e3
+      self._task_state = logger.TaskState.UNKNOWN
+      self._task_state_queue.put(self._task_state)
 
-      self.send_cmd(
-          types_gen.CommandData(
-              ts=self._task_end_ts,
-              device_type="operator",
-              data_type="event",
-              event_name="pick",
-              event_duration=float(self._task_end_ts - self._task_start_ts) /
-              1e3,
-              event_params=sorted([
-                  types_gen.KeyValue(key=key, value=value)
-                  for key, value in event_params.items()
-              ],
-                                  key=lambda obj: obj.key)))
+    self.send_cmd(
+        types_gen.CommandData(
+            ts=end_ts,
+            device_type="operator",
+            data_type="event",
+            event_name="pick",
+            event_duration=event_duration,
+            event_params=sorted([
+                types_gen.KeyValue(key=key, value=value)
+                for key, value in event_params.items()
+            ],
+                                key=lambda obj: obj.key)))
+
+    with self._task_time_lock:
       self._task_start_ts = None
 
   def send_snapshot(self, snapshot: Snapshot) -> None:
@@ -199,6 +279,63 @@ class LoggerImpl(logger.Logger):
       device: The device to log to.
     """
     self._device = device
+
+  @property
+  def task_state(self) -> logger.TaskState:
+    """Get the current task state."""
+    return self._device.task_state
+
+  def add_task_state_update_callback(
+      self,
+      callback: Callable[[logger.TaskState], bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback for the task state.
+
+    Args:
+      callback: Callback called when a new task state arrives. The callback
+        function should return False for continuous state update. When the
+        callback function returns True, it will stop receiving future updates.
+      finished_callback: Optional callback, called when the callback is stopped
+        or if the host is closed.
+
+    Returns:
+      A function that when called stops the callback.
+
+    """
+    return self._device.add_task_state_update_callback(callback,
+                                                       finished_callback)
+
+  def wait_for_task_state(self,
+                          state: logger.TaskState,
+                          timeout: Optional[float] = None) -> bool:
+    """Wait for a given task state.
+
+    Args:
+      state: the state to wait for.
+      timeout: optional timeout (in seconds) to wait for.
+
+    Returns:
+      True if the goal task state has been entered, false otherwise.
+    """
+    q: "queue.Queue[None]" = queue.Queue()
+    found = False
+
+    def state_update(state_update: logger.TaskState) -> bool:
+      nonlocal found
+      found = found or (state_update == state)
+      return found
+
+    def finished() -> None:
+      q.put(None)
+
+    stop = self.add_task_state_update_callback(state_update, finished)
+    try:
+      q.get(block=True, timeout=timeout)
+    except queue.Empty:
+      pass
+    stop()
+    return found
 
   def start_task(self, event_params: Dict[str, str]) -> None:
     """Start a task.

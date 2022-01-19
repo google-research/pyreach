@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """LoggerMock unit tests."""
 
 from typing import Callable, Dict, Optional
@@ -28,6 +27,45 @@ class LoggerMock(logger.Logger):
     """Initialize the MockLogger."""
     # super().__init()
     pass
+
+  @property
+  def task_state(self) -> logger.TaskState:
+    """Get the current task state."""
+    raise NotImplementedError
+
+  def add_task_state_update_callback(
+      self,
+      callback: Callable[[logger.TaskState], bool],
+      finished_callback: Optional[Callable[[],
+                                           None]] = None) -> Callable[[], None]:
+    """Add a callback for the task state.
+
+    Args:
+      callback: Callback called when a new task state arrives. The callback
+        function should return False for continuous state update. When the
+        callback function returns True, it will stop receiving future updates.
+      finished_callback: Optional callback, called when the callback is stopped
+        or if the host is closed.
+
+    Returns:
+      A function that when called stops the callback.
+
+    """
+    raise NotImplementedError
+
+  def wait_for_task_state(self,
+                          state: logger.TaskState,
+                          timeout: Optional[float] = None) -> bool:
+    """Wait for a given task state.
+
+    Args:
+      state: the state to wait for.
+      timeout: optional timeout (in seconds) to wait for.
+
+    Returns:
+      True if the goal task state has been entered, false otherwise.
+    """
+    raise NotImplementedError
 
   def start_task(self, event_params: Dict[str, str]) -> None:
     """Indicate a task has started.

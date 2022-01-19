@@ -18,6 +18,7 @@ from typing import Dict, Tuple
 import gym  # type: ignore
 
 import pyreach
+from pyreach import logger
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import task_element
@@ -104,11 +105,13 @@ class ReachDeviceTask(reach_device.ReachDevice):
         changed: bool = True
         if action_request == task_element.ReachAction.START and not active:
           host.logger.start_task(task_params)
+          host.logger.wait_for_task_state(logger.TaskState.TASK_STARTED)
           self._active = True
           self._action_id += 1
           changed = True
         elif action_request == task_element.ReachAction.STOP and active:
           host.logger.end_task(task_params)
+          host.logger.wait_for_task_state(logger.TaskState.TASK_ENDED)
           self._active = False
           changed = True
         if changed:

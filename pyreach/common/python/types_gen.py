@@ -19,8 +19,195 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from pyreach.common.proto_gen import logs_pb2
+from pyreach.common.proto_gen import experiment_config_pb2
 
 # This file is generated with a Reach proto2json converter. DO NOT EDIT.
+
+
+class Flag:
+  """Representation of proto message Flag.
+
+   Flag defines a specific experiment flag.
+  """
+  name: str
+  int_value: Optional[int]
+  string_value: Optional[str]
+  double_value: Optional[float]
+  bool_value: Optional[bool]
+
+  def __init__(self, bool_value: Optional[bool] = None, double_value: Optional[float] = None, int_value: Optional[int] = None, name: str = '', string_value: Optional[str] = None) -> None:
+    self.bool_value = bool_value
+    self.double_value = double_value
+    self.int_value = int_value
+    self.name = name
+    self.string_value = string_value
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.bool_value is not None:
+      assert isinstance(self.bool_value, bool), 'Wrong type for attribute: bool_value. Expected: bool. Got: ' + str(type(self.bool_value)) + '.'
+      json_data['bool_value'] = self.bool_value
+
+    if self.double_value is not None:
+      assert isinstance(self.double_value, float) or isinstance(self.double_value, int), 'Wrong type for attribute: double_value. Expected: float. Got: ' + str(type(self.double_value)) + '.'
+      json_data['double_value'] = self.double_value
+
+    if self.int_value is not None:
+      assert isinstance(self.int_value, int), 'Wrong type for attribute: int_value. Expected: int. Got: ' + str(type(self.int_value)) + '.'
+      json_data['int_value'] = self.int_value
+
+    if self.name:
+      assert isinstance(self.name, str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(self.name)) + '.'
+      json_data['name'] = self.name
+
+    if self.string_value is not None:
+      assert isinstance(self.string_value, str), 'Wrong type for attribute: string_value. Expected: str. Got: ' + str(type(self.string_value)) + '.'
+      json_data['string_value'] = self.string_value
+
+    return json_data
+
+  def to_proto(self) -> 'experiment_config_pb2.Flag':
+    """Convert Flag to proto."""
+    proto = experiment_config_pb2.Flag()
+    if self.name:
+      proto.name = self.name
+    if self.int_value is not None:
+      proto.int_value = self.int_value
+    if self.string_value is not None:
+      proto.string_value = self.string_value
+    if self.double_value is not None:
+      proto.double_value = self.double_value
+    if self.bool_value is not None:
+      proto.bool_value = self.bool_value
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'Flag':
+    """Convert JSON to type object."""
+    obj = Flag()
+
+    expected_json_keys: List[str] = ['bool_value', 'double_value', 'int_value', 'name', 'string_value']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid Flag. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'bool_value' in json_data:
+      assert isinstance(json_data['bool_value'], bool), 'Wrong type for attribute: bool_value. Expected: bool. Got: ' + str(type(json_data['bool_value'])) + '.'
+      obj.bool_value = json_data['bool_value']
+
+    if 'double_value' in json_data:
+      assert isinstance(json_data['double_value'], float) or isinstance(json_data['double_value'], int), 'Wrong type for attribute: double_value. Expected: float. Got: ' + str(type(json_data['double_value'])) + '.'
+      obj.double_value = json_data['double_value']
+
+    if 'int_value' in json_data:
+      assert isinstance(json_data['int_value'], int), 'Wrong type for attribute: int_value. Expected: int. Got: ' + str(type(json_data['int_value'])) + '.'
+      obj.int_value = json_data['int_value']
+
+    if 'name' in json_data:
+      assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
+      obj.name = json_data['name']
+
+    if 'string_value' in json_data:
+      assert isinstance(json_data['string_value'], str), 'Wrong type for attribute: string_value. Expected: str. Got: ' + str(type(json_data['string_value'])) + '.'
+      obj.string_value = json_data['string_value']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: experiment_config_pb2.Flag) -> Optional['Flag']:
+    """Convert Flag proto to type object."""
+    if not proto:
+      return None
+    obj = Flag()
+    obj.name = proto.name
+    if proto.HasField('int_value'):
+      obj.int_value = proto.int_value
+    if proto.HasField('string_value'):
+      obj.string_value = proto.string_value
+    if proto.HasField('double_value'):
+      obj.double_value = proto.double_value
+    if proto.HasField('bool_value'):
+      obj.bool_value = proto.bool_value
+    return obj
+
+
+class Flags:
+  """Representation of proto message Flags.
+
+   Flags defines a list of experiment flags for a given experiment token.
+  """
+  flags: List['Flag']
+  experiment_token: str
+
+  def __init__(self, experiment_token: str = '', flags: Optional[List['Flag']] = None) -> None:
+    self.experiment_token = experiment_token
+    if flags is None:
+      self.flags = []
+    else:
+      self.flags = flags
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+    item: Any
+
+    if self.experiment_token:
+      assert isinstance(self.experiment_token, str), 'Wrong type for attribute: experiment_token. Expected: str. Got: ' + str(type(self.experiment_token)) + '.'
+      json_data['experiment_token'] = self.experiment_token
+
+    if self.flags:
+      assert isinstance(self.flags, list), 'Wrong type for attribute: flags. Expected: list. Got: ' + str(type(self.flags)) + '.'
+      obj_list = []
+      for item in self.flags:
+        obj_list.append(item.to_json())
+      json_data['flags'] = obj_list
+
+    return json_data
+
+  def to_proto(self) -> 'experiment_config_pb2.Flags':
+    """Convert Flags to proto."""
+    proto = experiment_config_pb2.Flags()
+    proto.flags.extend([v.to_proto() for v in self.flags])
+    if self.experiment_token:
+      proto.experiment_token = self.experiment_token
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'Flags':
+    """Convert JSON to type object."""
+    obj = Flags()
+    json_list: List[Any]
+
+    expected_json_keys: List[str] = ['experiment_token', 'flags']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid Flags. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'experiment_token' in json_data:
+      assert isinstance(json_data['experiment_token'], str), 'Wrong type for attribute: experiment_token. Expected: str. Got: ' + str(type(json_data['experiment_token'])) + '.'
+      obj.experiment_token = json_data['experiment_token']
+
+    if 'flags' in json_data:
+      assert isinstance(json_data['flags'], list), 'Wrong type for attribute: flags. Expected: list. Got: ' + str(type(json_data['flags'])) + '.'
+      json_list = []
+      for j in json_data['flags']:
+        json_list.append(Flag.from_json(j))
+      obj.flags = json_list
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: experiment_config_pb2.Flags) -> Optional['Flags']:
+    """Convert Flags proto to type object."""
+    if not proto:
+      return None
+    obj = Flags()
+    for obj_flags in proto.flags:
+      obj.flags.append(Flag.from_proto(obj_flags))
+    obj.experiment_token = proto.experiment_token
+    return obj
 
 
 class AcquireImageArgs:
@@ -1320,6 +1507,18 @@ class CommandData:
   # (no fields)
   # ==============================
 
+  # === Fields for dataType enable-experiments:
+  # (no fields)
+  # ==============================
+
+  # === Fields for dataType disable-experiments:
+  # (no fields)
+  # ==============================
+
+  # === Fields for dataType experiment-flags:
+  experiment_flags: Optional['Flags']
+  # ==============================
+
   # The text of the script to run, if the command is run-script.
   script: str
 
@@ -1411,7 +1610,7 @@ class CommandData:
   # (also field success_type)
   # ==============================
 
-  def __init__(self, args: Optional[List[str]] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, stream_request: Optional['StreamRequest'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
+  def __init__(self, args: Optional[List[str]] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_flags: Optional['Flags'] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, stream_request: Optional['StreamRequest'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
     if args is None:
       self.args = []
     else:
@@ -1439,6 +1638,7 @@ class CommandData:
       self.exp_array = []
     else:
       self.exp_array = exp_array
+    self.experiment_flags = experiment_flags
     self.experiment_token = experiment_token
     self.float_value = float_value
     self.history = history
@@ -1545,6 +1745,10 @@ class CommandData:
       for item in self.exp_array:
         obj_list.append(item.to_json())
       json_data['expArray'] = obj_list
+
+    if self.experiment_flags:
+      assert self.experiment_flags.__class__.__name__ == 'Flags', 'Wrong type for attribute: experiment_flags. Expected: Flags. Got: ' + str(type(self.experiment_flags)) + '.'
+      json_data['experimentFlags'] = self.experiment_flags.to_json()
 
     if self.experiment_token:
       assert isinstance(self.experiment_token, str), 'Wrong type for attribute: experiment_token. Expected: str. Got: ' + str(type(self.experiment_token)) + '.'
@@ -1792,6 +1996,15 @@ class CommandData:
     if self.data_type == 'user-label':
       proto_user_label = logs_pb2.EmptyMessage()
       proto.user_label.CopyFrom(proto_user_label)
+    if self.data_type == 'enable-experiments':
+      proto_enable_experiments = logs_pb2.EmptyMessage()
+      proto.enable_experiments.CopyFrom(proto_enable_experiments)
+    if self.data_type == 'disable-experiments':
+      proto_disable_experiments = logs_pb2.EmptyMessage()
+      proto.disable_experiments.CopyFrom(proto_disable_experiments)
+    if self.data_type == 'experiment-flags':
+      if self.experiment_flags:
+        proto.experiment_flags.CopyFrom(self.experiment_flags.to_proto())
     if self.script:
       proto.script = self.script
     if self.data_type == 'reach-script' or self.data_type == 'run-script' or self.data_type == 'ur-command':
@@ -1867,7 +2080,7 @@ class CommandData:
     obj = CommandData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['args', 'clientAnnotation', 'clientSessionStart', 'cmd', 'dataType', 'detailedError', 'deviceName', 'deviceType', 'error', 'eventDuration', 'eventLabels', 'eventName', 'eventParams', 'exp', 'expArray', 'experimentToken', 'floatValue', 'history', 'intValue', 'intent', 'key', 'label', 'message', 'metadata', 'origin', 'originClient', 'originControl', 'originTransportType', 'originType', 'pickID', 'predictionType', 'progress', 'reachScript', 'requestType', 'robotID', 'script', 'seq', 'sessionInfo', 'simAction', 'snapshot', 'streamRequest', 'successType', 'tag', 'taskCode', 'textCue', 'ts', 'value', 'webrtcAudioRequest', 'x', 'y']
+    expected_json_keys: List[str] = ['args', 'clientAnnotation', 'clientSessionStart', 'cmd', 'dataType', 'detailedError', 'deviceName', 'deviceType', 'error', 'eventDuration', 'eventLabels', 'eventName', 'eventParams', 'exp', 'expArray', 'experimentFlags', 'experimentToken', 'floatValue', 'history', 'intValue', 'intent', 'key', 'label', 'message', 'metadata', 'origin', 'originClient', 'originControl', 'originTransportType', 'originType', 'pickID', 'predictionType', 'progress', 'reachScript', 'requestType', 'robotID', 'script', 'seq', 'sessionInfo', 'simAction', 'snapshot', 'streamRequest', 'successType', 'tag', 'taskCode', 'textCue', 'ts', 'value', 'webrtcAudioRequest', 'x', 'y']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid CommandData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -1943,6 +2156,10 @@ class CommandData:
       for j in json_data['expArray']:
         json_list.append(ExperimentalCommandData.from_json(j))
       obj.exp_array = json_list
+
+    if 'experimentFlags' in json_data:
+      assert isinstance(json_data['experimentFlags'], dict), 'Wrong type for attribute: experimentFlags. Expected: dict. Got: ' + str(type(json_data['experimentFlags'])) + '.'
+      obj.experiment_flags = Flags.from_json(json_data['experimentFlags'])
 
     if 'experimentToken' in json_data:
       assert isinstance(json_data['experimentToken'], str), 'Wrong type for attribute: experimentToken. Expected: str. Got: ' + str(type(json_data['experimentToken'])) + '.'
@@ -2170,6 +2387,12 @@ class CommandData:
       pass  # skip empty message
     if proto.HasField('user_label'):
       pass  # skip empty message
+    if proto.HasField('enable_experiments'):
+      pass  # skip empty message
+    if proto.HasField('disable_experiments'):
+      pass  # skip empty message
+    if proto.HasField('experiment_flags'):
+      obj.experiment_flags = Flags.from_proto(proto.experiment_flags)
     if proto.HasField('script'):
       obj.script = proto.script
     if proto.HasField('reach_script'):
