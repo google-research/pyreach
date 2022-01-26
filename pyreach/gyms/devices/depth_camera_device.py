@@ -277,7 +277,12 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
             "intrinsics": np.array(calibration_camera.intrinsics),
         }
 
-      return observation, snapshot_reference, ()
+    return observation, snapshot_reference, ()
+
+  def synchronize(self) -> None:
+    """Synchronously fetch an image."""
+    if self._depth_camera:
+      _ = self._depth_camera.fetch_image()
 
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""

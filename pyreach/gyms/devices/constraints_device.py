@@ -125,6 +125,10 @@ class ReachDeviceConstraints(reach_device.ReachDevice):
           self._counter, "constraints", self.config_name,
           lib_snapshot.SnapshotReference(0.0, counter)),)
 
+  def synchronize(self) -> None:
+    """Synchronously fetch constraints."""
+    pass  # Currently constraints don't change.
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:

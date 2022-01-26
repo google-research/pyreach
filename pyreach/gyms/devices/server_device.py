@@ -81,6 +81,10 @@ class ReachDeviceServer(reach_device.ReachDevice):
     }
     return server_observation, (), ()
 
+  def synchronize(self) -> None:
+    """Synchronously the server."""
+    pass
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:

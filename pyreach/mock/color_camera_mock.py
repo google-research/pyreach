@@ -157,7 +157,7 @@ class ColorCameraMock(color_camera.ColorCamera):
       Returns the color image or None for a timeout.
 
     """
-    raise NotImplementedError
+    return self.image()
 
   def async_fetch_image(self,
                         callback: Optional[Callable[[color_camera.ColorFrame],

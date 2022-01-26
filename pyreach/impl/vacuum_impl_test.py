@@ -317,7 +317,7 @@ class TestPyreachVacuum(unittest.TestCase):
   def test_vacuum(self) -> None:
     ## Setup, ensure no cached image, and that tagged requests will be used.
     calibration_device = calibration_impl.CalDevice()
-    armdev, constraints_device, arm_wrapper = arm_impl.ArmDevice(
+    armdev, extra_devs, arm_wrapper = arm_impl.ArmDevice(
         arm_impl.ArmTypeImpl.from_urdf_file("ur5e.urdf"), calibration_device,
         None, None, "test-name").get_wrapper()
     interfaces = machine_interfaces.MachineInterfaces(
@@ -341,7 +341,8 @@ class TestPyreachVacuum(unittest.TestCase):
                   keys=())))
     rdev, dev = vacuum_impl.VacuumDevice(interfaces, arm_wrapper).get_wrapper()
     calibration_device.close()
-    constraints_device.close()
+    for extra_dev in extra_devs:
+      extra_dev.close()
     armdev.close()
     with test_utils.TestDevice(rdev) as test_device:
       assert not dev.support_blowoff

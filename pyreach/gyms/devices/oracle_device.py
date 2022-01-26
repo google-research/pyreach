@@ -301,6 +301,10 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       }
       return observation, (), ()
 
+  def synchronize(self) -> None:
+    """Synchronously update the oracle state."""
+    pass
+
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""
     # The gym gets gets the first observation before getting the first action.

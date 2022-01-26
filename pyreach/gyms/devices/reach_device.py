@@ -120,6 +120,10 @@ class ReachDevice(object):
           "Internal Error: No ReachDeviceSynchronous object")
     reach_synchronous.add_update_callback(add_update_callback, self)
 
+  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+    """Provide a global task synchronize function."""
+    pass  # Most devices will ignore this.
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:
@@ -185,6 +189,10 @@ class ReachDevice(object):
   def set_timers(self, timers: internal.Timers) -> None:
     """Set the reach environment."""
     self._timers = timers
+
+  def synchronize(self) -> None:
+    """Force the device synchronize its observations."""
+    raise NotImplementedError(f"Device {self._reach_name}; no synchronize()")
 
   def _reshape_image(self, old_image: np.ndarray,
                      new_shape: Tuple[int, ...]) -> np.ndarray:

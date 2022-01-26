@@ -189,6 +189,21 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
         observation["vacuum_gauge"] = np.array(gauge_state)
       return observation, tuple(snapshots), ()
 
+  def synchronize(self) -> None:
+    """Synchronously update the vacuum state."""
+    vacuum: Optional[pyreach.Vacuum] = self._vacuum
+    if vacuum is None:
+      raise pyreach.PyReachError("Vacuum is not set")
+
+    if self._state_enable:
+      _ = vacuum.fetch_state()
+      if vacuum.support_blowoff:
+        _ = vacuum.fetch_blowoff_state()
+    if vacuum.support_pressure:
+      _ = vacuum.fetch_pressure_state()
+    if self._gauge_enable:
+      _ = vacuum.fetch_gauge_state()
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:

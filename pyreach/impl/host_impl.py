@@ -282,10 +282,11 @@ class HostImpl(pyreach.Host):
       return dev[1]
 
     def add_arm_device(
-        dev: Tuple[arm_impl.ArmDevice, device_base.DeviceBase,
-                   host.T]) -> host.T:
+        dev: Tuple[arm_impl.ArmDevice, Tuple[device_base.DeviceBase, ...],
+                   host.T]
+    ) -> host.T:
       devices.append(dev[0])
-      devices.append(dev[1])
+      devices.extend(dev[1])
       self._arm_devices.append(dev[0])
       return dev[2]
 

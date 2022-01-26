@@ -13,7 +13,7 @@
 # limitations under the License.
 """Implementation of PyReach Gym Task Device."""
 
-from typing import Dict, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 import gym  # type: ignore
 
@@ -46,12 +46,15 @@ class ReachDeviceTask(reach_device.ReachDevice):
     action_space: gym.spaces.Dict = gym.spaces.Dict({
         "action": gym.spaces.Discrete(3),
     })
-    observation_space: gym.spaces.Dict = gym.spaces.Dict({})
+    observation_space: gym.spaces.Dict = gym.spaces.Dict({
+        "active": gym.spaces.MultiBinary(1),
+    })
 
     super().__init__(reach_name, action_space, observation_space,
                      is_synchronous)
     self._active: bool = False
     self._action_id: int = 0
+    self._task_synchronize: Optional[Callable[[], None]] = None
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -73,7 +76,7 @@ class ReachDeviceTask(reach_device.ReachDevice):
       pyreach.PyReachError when there is not observation available.
 
     """
-    observation: gyms_core.Observation = {}
+    observation: gyms_core.Observation = {"active": (self._active,)}
     return observation, (), ()
 
   def do_action(
@@ -102,14 +105,19 @@ class ReachDeviceTask(reach_device.ReachDevice):
           task_params = self.get_task_params()
         except pyreach.PyReachError as reach_error:
           raise reach_error
+        if self._task_synchronize is None:
+          raise pyreach.PyReachError("Internal Error: no task synchronize")
+
         changed: bool = True
         if action_request == task_element.ReachAction.START and not active:
           host.logger.start_task(task_params)
           host.logger.wait_for_task_state(logger.TaskState.TASK_STARTED)
+          self._task_synchronize()
           self._active = True
           self._action_id += 1
           changed = True
         elif action_request == task_element.ReachAction.STOP and active:
+          self._task_synchronize()
           host.logger.end_task(task_params)
           host.logger.wait_for_task_state(logger.TaskState.TASK_ENDED)
           self._active = False
@@ -122,6 +130,14 @@ class ReachDeviceTask(reach_device.ReachDevice):
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""
     return False
+
+  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+    """Set the global task synchronize function."""
+    self._task_synchronize = task_synchronize
+
+  def synchronize(self) -> None:
+    """Synchronously update the task device."""
+    pass  # The task device does not have state to synchronize.
 
   # pylint: disable=unused-argument
   def reset(self,

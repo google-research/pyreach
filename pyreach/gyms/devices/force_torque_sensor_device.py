@@ -147,6 +147,11 @@ class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):
 
     return observation, snapshot_reference, ()
 
+  def synchronize(self) -> None:
+    """Synchronously update the arm state."""
+    if self._force_torque_sensor:
+      self._force_torque_sensor.fetch_state()
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:

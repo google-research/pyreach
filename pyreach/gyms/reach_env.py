@@ -201,7 +201,7 @@ class ReachEnv(gym.Env):  # type: ignore
         if not isinstance(value, str):
           raise pyreach.PyReachError(
               f"task_params['{key}'] does not specify a str")
-      host_kwargs: Dict[str, Any] = {}
+      host_kwargs: Dict[str, Any] = {"enable_streaming": False}
       if not host:
         if not connection_string:
           connection_string = ""
@@ -289,6 +289,12 @@ class ReachEnv(gym.Env):  # type: ignore
                                    f"connection_string={connection_string} "
                                    f"validation_errors={validation_errors}")
 
+      # Register task_synchronize() for devices that need to trigger
+      # a global synchronize operation.  All other devices will ignore.
+      for element in elements.values():
+        assert isinstance(element, ReachDevice), element
+        element.set_task_synchronize(self.task_synchronize)
+
       # Create the composite observation space from the configuration.
       observation_space_dict: Dict[str, gyms_core.Space] = {}
       for name, element in elements.items():
@@ -333,6 +339,10 @@ class ReachEnv(gym.Env):  # type: ignore
       # Allow overwride of reward/done/info function from kwargs.
       if "reward_done_function" in kwargs:
         self._reward_done_function = kwargs["reward_done_function"]
+
+      # Synchronize all devices
+      for element in self._elements.values():
+        element.synchronize()
 
   @staticmethod
   def _nop_reward_done_function(
@@ -539,6 +549,11 @@ class ReachEnv(gym.Env):  # type: ignore
 
       return observations, tuple(snapshot_references), tuple(
           snapshot_responses), server_time
+
+  def task_synchronize(self) -> None:
+    """Synchronize all of the devices."""
+    for element in self._elements.values():
+      element.synchronize()
 
   def set_reward_done_function(
       self, reward_done_function: gyms_core.RewardDoneFunction) -> None:

@@ -13,6 +13,7 @@
 # limitations under the License.
 """Implementation of the PyReach Arm interface."""
 
+import dataclasses
 import enum
 import json
 import logging  # type: ignore
@@ -25,6 +26,7 @@ from pyreach import arm
 from pyreach import calibration
 from pyreach import constraints
 from pyreach import core
+from pyreach import digital_output
 from pyreach import internal
 from pyreach.common.base import transform_util
 from pyreach.common.python import types_gen
@@ -34,10 +36,19 @@ from pyreach.impl import actions_impl
 from pyreach.impl import calibration_impl
 from pyreach.impl import constraints_impl
 from pyreach.impl import device_base
+from pyreach.impl import digital_output_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
 from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
+
+
+@dataclasses.dataclass(frozen=True)
+class _ArmDataCache:
+  """Cache for arm calibration and tool tip related information."""
+  calbration: calibration.Calibration
+  arm_origin: Optional[np.ndarray]
+  tip_adjust_transform: Optional[np.ndarray]
 
 
 class ActionVacuumState(enum.Enum):
@@ -969,12 +980,17 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _ik_hints: Dict[int, List[float]]
   _ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]]
   _constraints_device: constraints_impl.ConstraintsDevice
+  _internal_devices: List[device_base.DeviceBase]
+  _digital_outputs: core.ImmutableDictionary[core.ImmutableDictionary[
+      digital_output.DigitalOutput]]
   _calibration: calibration_impl.CalDevice
   _actions: Optional[actions_impl.ActionDevice]
   _support_vacuum: bool
   _support_blowoff: bool
   _supported_controllers: Optional[Tuple[arm.ArmControllerDescription, ...]]
   _timers: internal.Timers
+  _data_cache: Optional[_ArmDataCache]
+  _data_cache_lock: threading.Lock
 
   def __init__(
       self,
@@ -1006,25 +1022,52 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if not ik_lib:
       self._ik_lib = ikfast.IKFast(arm_type.urdf_file)
     self._constraints_device = constraints_impl.ConstraintsDevice(device_name)
+    self._internal_devices = [self._constraints_device]
     self._calibration = calibration_device
     self._actions = actions
     self._support_vacuum = False
     self._support_blowoff = False
     self._supported_controllers = None if support_controllers else ()
     self._timers = internal.Timers(set())
+    self._data_cache = None
+    self._data_cache_lock = threading.Lock()
+    self._digital_outputs = core.ImmutableDictionary({})
     if workcell_io_config is None:
       return
+    digital_outputs: Dict[str, Dict[str, digital_output.DigitalOutput]] = {}
     for capability in workcell_io_config.capability:
       if capability.device_type not in {"ur", "robot"}:
         continue
       if capability.device_name != device_name:
         continue
-      if capability.io_type != workcell_io.DIGITAL_OUTPUT:
-        continue
-      if capability.type == "vacuum":
-        self._support_vacuum = True
-      elif capability.type == "blowoff":
-        self._support_blowoff = True
+      if capability.io_type == workcell_io.DIGITAL_OUTPUT:
+        if capability.type == "vacuum":
+          self._support_vacuum = True
+        elif capability.type == "blowoff":
+          self._support_blowoff = True
+        elif not capability.fused_pins:
+          if capability.type not in digital_outputs:
+            digital_outputs[capability.type] = {}
+          dev, wrapper = digital_output_impl.DigitalOutputDevice(
+              capability.type, capability.name, device_name,
+              tuple([pin.name for pin in capability.pin]),
+              capability.fused_pins).get_wrapper()
+          digital_outputs[capability.type][capability.name] = wrapper
+          self._internal_devices.append(dev)
+    digital_outputs_imm: Dict[
+        str, core.ImmutableDictionary[digital_output.DigitalOutput]] = {}
+    for name, digital_outputs_by_type in digital_outputs.items():
+      digital_outputs_imm[name] = core.ImmutableDictionary(
+          digital_outputs_by_type)
+    self._digital_outputs = core.ImmutableDictionary(digital_outputs_imm)
+
+  @property
+  def digital_outputs(
+      self
+  ) -> core.ImmutableDictionary[core.ImmutableDictionary[
+      digital_output.DigitalOutput]]:
+    """Get the digital outputs for this arm device."""
+    return self._digital_outputs
 
   @property
   def supported_controllers(
@@ -1179,69 +1222,25 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if not apply_tip_adjust_transform:
       return core.Pose.from_list(pose.tolist())
 
-    calib = self.calibration().get()
-    if calib:
-      tip_obj = None
-      arm_end_t_tip = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-      for dev in calib.get_all_devices():
-        if (dev.device_type == "object" and dev.sub_type == "tip" and
-            dev.tool_mount in {"robot", "ur"} and
-            isinstance(dev, calibration.CalibrationObject)):
-          tip_obj = cast(calibration.CalibrationObject, dev)
-          if tip_obj.extrinsics:
-            arm_end_t_tip = np.array(tip_obj.extrinsics, dtype=np.float64)
-
-      if tip_obj:
-        for dev in calib.get_all_devices():
-          if (dev.device_type == "object" and dev.sub_type == "tip" and
-              dev.tool_mount == ("object-" + tip_obj.device_name) and
-              isinstance(dev, calibration.CalibrationObject)):
-            tip_adjust_obj = cast(calibration.CalibrationObject, dev)
-            if tip_adjust_obj.extrinsics:
-              arm_end_t_tip = transform_util.multiply_pose(
-                  arm_end_t_tip,
-                  np.array(tip_adjust_obj.extrinsics, dtype=np.float64))
-
-      pose = transform_util.multiply_pose(pose, arm_end_t_tip)
+    data_cache = self._update_data_cache()
+    if data_cache and data_cache.tip_adjust_transform is not None:
+      pose = transform_util.multiply_pose(pose, data_cache.tip_adjust_transform)
 
     return core.Pose.from_list(pose.tolist())
 
-  def run_command(self,
-                  commands: _Commands,
-                  intent: str = "",
-                  pick_id: str = "",
-                  success_type: str = "",
-                  allow_uncalibrated: bool = False,
-                  preemptive: bool = False,
-                  callback: Optional[Callable[[core.PyReachStatus],
-                                              None]] = None,
-                  finished_callback: Optional[Callable[[], None]] = None,
-                  timeout: Optional[float] = None) -> core.PyReachStatus:
-    """Run some commands on the device.
+  def _update_data_cache(self) -> Optional[_ArmDataCache]:
+    with self._data_cache_lock:
+      calib = self._calibration.get()
+      if not calib:
+        self._data_cache = None
+        return None
+      if self._data_cache and self._data_cache.calbration == calib:
+        return self._data_cache
 
-    Args:
-      commands: The sequence of Command's to run.
-      intent: The intent of the command.
-      pick_id: The pick_id of the command.
-      success_type: The success_type of the command.
-      allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
-        set in calibration code).
-      preemptive: True to preempt existing scripts.
-      callback: An optional status callback function.
-      finished_callback: An optional callback called when done.
-      timeout: The maximum amount of time allowed to run the commands.
-
-    Returns:
-      Status of the command.
-    """
-
-    calib = self.calibration().get()
-    tip_adjust_transform = None
-    arm_origin = None
-    if calib:
       tip_dev = None
       tip_transform = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
       tip_adjust_transform = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      arm_origin = None
       for dev in calib.get_all_devices():
         if (dev.device_type == "object" and dev.sub_type == "tip" and
             dev.tool_mount in {"robot", "ur"} and
@@ -1265,6 +1264,49 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       tip_transform = transform_util.inverse_pose(tip_transform)
       tip_adjust_transform = transform_util.inverse_pose(tip_adjust_transform)
 
+      arm_calibration_dev = calib.get_device("robot", self.device_name)
+      if arm_calibration_dev is None:
+        arm_calibration_dev = calib.get_device("ur", self.device_name)
+      if isinstance(arm_calibration_dev, calibration.CalibrationRobot):
+        arm_calibration = cast(calibration.CalibrationRobot,
+                               arm_calibration_dev)
+        arm_origin = np.array(arm_calibration.extrinsics, dtype=np.float64)
+
+      self._data_cache = _ArmDataCache(calib, arm_origin, tip_adjust_transform)
+      return self._data_cache
+
+  def run_command(self,
+                  run_async: bool,
+                  commands: _Commands,
+                  intent: str = "",
+                  pick_id: str = "",
+                  success_type: str = "",
+                  allow_uncalibrated: bool = False,
+                  preemptive: bool = False,
+                  callback: Optional[Callable[[core.PyReachStatus],
+                                              None]] = None,
+                  finished_callback: Optional[Callable[[], None]] = None,
+                  timeout: Optional[float] = None) -> core.PyReachStatus:
+    """Run some commands on the device.
+
+    Args:
+      run_async: Run the command in a thread with callbacks.
+      commands: The sequence of Command's to run.
+      intent: The intent of the command.
+      pick_id: The pick_id of the command.
+      success_type: The success_type of the command.
+      allow_uncalibrated: Allow motion when uncalibrated (unsafe, should only be
+        set in calibration code).
+      preemptive: True to preempt existing scripts.
+      callback: An optional status callback function.
+      finished_callback: An optional callback called when done.
+      timeout: The maximum amount of time allowed to run the commands.
+
+    Returns:
+      Status of the command.
+    """
+    data_cache = self._update_data_cache()
+
     tag = utils.generate_tag()
     try:
       state = self.get_cached()
@@ -1276,7 +1318,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
             self._device_name, tag, intent, pick_id, success_type,
             self._arm_type, self._support_vacuum, self._support_blowoff,
             allow_uncalibrated, preemptive, self._ik_lib, self._ik_hints, state,
-            arm_origin, tip_adjust_transform)
+            data_cache.arm_origin if data_cache else None,
+            data_cache.tip_adjust_transform if data_cache else None)
     except core.PyReachError as e:
       status = core.PyReachStatus(
           utils.timestamp_now(),
@@ -1294,8 +1337,15 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
         self.run(run_error, callback, finished_callback, status)
       return status
+
+    # Optimization for async without callbacks
+    if run_async and callback is None and finished_callback is None:
+      self.send_cmd(script)
+      return core.PyReachStatus(
+          utils.timestamp_now(), status="rejected", error="timeout")
+
     q = self.send_tagged_request(script, timeout=timeout)
-    if callback:
+    if run_async:
 
       def cb(msg: Tuple[types_gen.DeviceData, Optional[arm.ArmState]]) -> None:
         if msg[0].data_type == "cmd-status" and callback is not None:
@@ -1318,9 +1368,10 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         utils.timestamp_now(), status="rejected", error="timeout")
 
   def get_wrapper(
-      self) -> Tuple["ArmDevice", device_base.DeviceBase, "ArmImpl"]:
+      self
+  ) -> Tuple["ArmDevice", Tuple[device_base.DeviceBase, ...], "ArmImpl"]:
     """Return the Device, Constraints Device, and Arm."""
-    return self, self._constraints_device, ArmImpl(self)
+    return (self, tuple(self._internal_devices), ArmImpl(self))
 
   @classmethod
   def _arm_state_from_message(cls, arm_type: arm.ArmType,
@@ -1349,20 +1400,20 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if len(force) != 6:
       # warning("force is not the correct length: {msg.to_json()"})
       force = [0.0] * 6
-    analog_input: Dict[str, List[float]] = {}
-    analog_output: Dict[str, List[float]] = {}
+    analog_inputs: Dict[str, List[float]] = {}
+    analog_outputs: Dict[str, List[float]] = {}
     for analog_bank in msg.analog_bank:
       if analog_bank.output:
-        analog_output[analog_bank.space] = list(analog_bank.state)
+        analog_outputs[analog_bank.space] = list(analog_bank.state)
       else:
-        analog_input[analog_bank.space] = list(analog_bank.state)
-    digital_input: Dict[str, List[bool]] = {}
-    digital_output: Dict[str, List[bool]] = {}
+        analog_inputs[analog_bank.space] = list(analog_bank.state)
+    digital_inputs: Dict[str, List[bool]] = {}
+    digital_outputs: Dict[str, List[bool]] = {}
     for digital_bank in msg.digital_bank:
       if digital_bank.output:
-        digital_output[digital_bank.space] = list(digital_bank.state)
+        digital_outputs[digital_bank.space] = list(digital_bank.state)
       else:
-        digital_input[digital_bank.space] = list(digital_bank.state)
+        digital_inputs[digital_bank.space] = list(digital_bank.state)
     try:
       robot_mode = arm.RobotMode.from_string(msg.robot_mode)
     except ValueError:
@@ -1396,6 +1447,14 @@ class ArmImpl(arm.Arm):
   def arm_type(self) -> arm.ArmType:
     """Return the arm type of the arm."""
     return self._device.arm_type
+
+  @property
+  def digital_outputs(
+      self
+  ) -> core.ImmutableDictionary[core.ImmutableDictionary[
+      digital_output.DigitalOutput]]:
+    """Get the digital outputs for this arm device."""
+    return self._device.digital_outputs
 
   @property
   def supported_controllers(
@@ -1574,6 +1633,7 @@ class ArmImpl(arm.Arm):
           servo_gain=servo_gain)
 
     return self._device.run_command(
+        False,
         _Commands([move_command]),
         intent=intent,
         pick_id=pick_id,
@@ -1627,63 +1687,36 @@ class ArmImpl(arm.Arm):
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
     """
-    path: Optional[types_gen.ReachScriptCommand] = None
-
+    move_command: Union[_MoveLinear, _MoveJoints]
     if use_linear:
-      path = types_gen.ReachScriptCommand(
-          controller_name=controller_name,
-          move_l_path=types_gen.MoveLPathArgs(waypoints=[
-              types_gen.MoveLWaypointArgs(
-                  rotation=list(joints),
-                  velocity=velocity,
-                  acceleration=acceleration,
-                  servo=servo)
-          ]))
+      move_command = _MoveLinear(
+          controller_name,
+          list(joints),
+          servo=servo,
+          acceleration=acceleration,
+          velocity=velocity)
     else:
-      path = types_gen.ReachScriptCommand(
-          controller_name=controller_name,
-          move_j_path=types_gen.MoveJPathArgs(waypoints=[
-              types_gen.MoveJWaypointArgs(
-                  rotation=list(joints),
-                  velocity=velocity,
-                  acceleration=acceleration,
-                  servo=servo,
-                  servo_t_secs=servo_time_seconds,
-                  servo_lookahead_time_secs=servo_lookahead_time_seconds,
-                  servo_gain=servo_gain)
-          ]))
+      move_command = _MoveJoints(
+          controller_name,
+          list(joints),
+          servo=servo,
+          acceleration=acceleration,
+          velocity=velocity,
+          servo_time_seconds=servo_time_seconds,
+          servo_lookahead_time_seconds=servo_lookahead_time_seconds,
+          servo_gain=servo_gain)
 
-    cmd = types_gen.CommandData(
-        ts=utils.timestamp_now(),
-        device_type="robot",
-        device_name=self.device_name,
-        data_type="reach-script",
-        pick_id=pick_id,
+    self._device.run_command(
+        True,
+        _Commands([move_command]),
         intent=intent,
+        pick_id=pick_id,
         success_type=success_type,
-        tag=utils.generate_tag(),
-        reach_script=types_gen.ReachScript(
-            preemptive=preemptive, version=0, commands=[path]))
-
-    if allow_uncalibrated and cmd.reach_script:
-      cmd.reach_script.calibration_requirement = types_gen.ReachScriptCalibrationRequirement(
-          allow_uncalibrated=True)
-
-    if callback is None and finished_callback is None:
-      self._device.send_cmd(cmd)
-      return
-
-    def cb(msg: Tuple[types_gen.DeviceData, Optional[arm.ArmState]]) -> None:
-      if msg[0].data_type == "cmd-status" and callback is not None:
-        callback(utils.pyreach_status_from_message(msg[0]))
-
-    def fcb() -> None:
-      return
-
-    if finished_callback is None:
-      finished_callback = fcb
-    q = self._device.send_tagged_request(cmd)
-    self._device.queue_to_callback(q, cb, finished_callback)
+        allow_uncalibrated=allow_uncalibrated,
+        timeout=timeout,
+        preemptive=preemptive,
+        callback=callback,
+        finished_callback=finished_callback)
 
   def to_pose(self,
               pose: core.Pose,
@@ -1730,6 +1763,7 @@ class ArmImpl(arm.Arm):
 
     """
     return self._device.run_command(
+        False,
         _Commands([
             _MovePose(
                 controller_name,
@@ -1799,13 +1833,8 @@ class ArmImpl(arm.Arm):
     Returns:
       Return the Status on success and None on timeout.
     """
-
-    def cb(msg: core.PyReachStatus) -> None:  # pylint: disable=unused-argument
-      return None
-
-    if callback is None:
-      callback = cb
     self._device.run_command(
+        True,
         _Commands([
             _MovePose(
                 controller_name,
@@ -1852,6 +1881,7 @@ class ArmImpl(arm.Arm):
       The Arm status on success and None otherwise.
     """
     return self._device.run_command(
+        False,
         _Commands([_SetVacuumState(controller_name, vacuum_state)]),
         intent=intent,
         pick_id=pick_id,
@@ -1867,8 +1897,7 @@ class ArmImpl(arm.Arm):
       controller_name: str = "",
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
-      finished_callback: Optional[Callable[[],
-                                           None]] = None) -> core.PyReachStatus:
+      finished_callback: Optional[Callable[[], None]] = None) -> None:
     """Asynchronously set the Vacuum State.
 
     Args:
@@ -1880,17 +1909,9 @@ class ArmImpl(arm.Arm):
       timeout: An optional timeout measured in seconds.
       callback: A callback function to invoke when the vacuum state arrives.
       finished_callback: A callback function to call when done.
-
-    Returns:
-      Status of the command.
     """
-
-    def cb(msg: core.PyReachStatus) -> None:  # pylint: disable=unused-argument
-      return None
-
-    if callback is None:
-      callback = cb
-    return self._device.run_command(
+    self._device.run_command(
+        True,
         _Commands([_SetVacuumState(controller_name, vacuum_state)]),
         intent=intent,
         pick_id=pick_id,
@@ -2101,6 +2122,7 @@ class ArmImpl(arm.Arm):
 
   def _execute_action(
       self,
+      run_async: bool,
       action_name: str,
       inputs: List[arm.ActionInput],
       intent: str = "",
@@ -2116,6 +2138,7 @@ class ArmImpl(arm.Arm):
     """Asynchronously execute an action.
 
     Args:
+      run_async: Run the command in a thread with callbacks.
       action_name: Name of the action to execute.
       inputs: Inputs to the action template.
       intent: The intent string (or empty) for the request.
@@ -2151,6 +2174,7 @@ class ArmImpl(arm.Arm):
           utils.timestamp_now(), status="rejected", error="Invalid")
 
     return self._device.run_command(
+        run_async,
         self._action_to_commands(selected_action, inputs, use_unity_ik),
         intent=intent,
         pick_id=pick_id,
@@ -2190,14 +2214,8 @@ class ArmImpl(arm.Arm):
       callback: A callback function to invoke when the vacuum state arrives.
       finished_callback: A callback function to call when done.
     """
-
-    def cb(msg: core.PyReachStatus) -> None:  # pylint: disable=unused-argument
-      return None
-
-    if callback is None:
-      callback = cb
-
     self._execute_action(
+        True,
         action_name,
         inputs,
         intent=intent,
@@ -2243,6 +2261,7 @@ class ArmImpl(arm.Arm):
           utils.timestamp_now(), status="rejected", error="Timeout")
 
     return self._execute_action(
+        False,
         action_name,
         inputs,
         intent=intent,
@@ -2280,6 +2299,7 @@ class ArmImpl(arm.Arm):
 
     """
     return self._device.run_command(
+        False,
         _Commands(
             [_Stop(controller_name=controller_name,
                    deceleration=deceleration)]),
@@ -2317,14 +2337,8 @@ class ArmImpl(arm.Arm):
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
     """
-
-    def cb(msg: core.PyReachStatus) -> None:  # pylint: disable=unused-argument
-      return None
-
-    if callback is None:
-      callback = cb
-
     self._device.run_command(
+        True,
         _Commands(
             [_Stop(controller_name=controller_name,
                    deceleration=deceleration)]),

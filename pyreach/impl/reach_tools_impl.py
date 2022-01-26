@@ -10,18 +10,22 @@ from typing import Dict, Optional, Tuple
 
 import requests
 
+WEBRTC_LINUX_X86_64_HASH = "afeb5d7fe13823c4316894823e0b9b10aadefa609eb2623dc218118866beb1ca"
 _WEBRTC_SHA256 = {
     "linux": {
         "x86_64":
-            "afeb5d7fe13823c4316894823e0b9b10aadefa609eb2623dc218118866beb1ca",
+            WEBRTC_LINUX_X86_64_HASH,
     },
 }
+
+REACH_LINUX_X86_64_HASH = "a7ca9c684fa1fc26b96cceb21a5f798ed6954e9eed92e0c664f1a88eff8d0a0b"
 _REACH_SHA256 = {
     "linux": {
         "x86_64":
-            "a7ca9c684fa1fc26b96cceb21a5f798ed6954e9eed92e0c664f1a88eff8d0a0b",
+            REACH_LINUX_X86_64_HASH,
     },
 }
+
 _WEBRTC_BASE = "https://storage.googleapis.com/brain-reach-public/releases/webrtc/%s-%s/webrtc_headless%s."
 _REACH_BASE = "https://storage.googleapis.com/brain-reach-public/releases/reach/%s-%s/reach%s."
 

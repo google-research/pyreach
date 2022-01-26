@@ -498,6 +498,11 @@ This task device has an action space with the following entries:
     active. In other words, (START and not active) generates a start task entry
     and (STOP and active) generates an end task entry.
 
+The task device has an observation space with the following entries:
+
+*   `"active"`: This is a multi-binary space of length 1 that is `True` if a
+    task is active and `False` otherwise.
+
 Each time the a task is started or stopped, the entire environment `task_params`
 dictionary is recorded into the execution logs.
 

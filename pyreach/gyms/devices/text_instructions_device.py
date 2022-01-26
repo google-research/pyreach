@@ -15,7 +15,7 @@
 """Implementation of PyReach Gym Vacuum Device."""
 
 import sys
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import gym  # type: ignore
 import numpy as np  # type: ignore
@@ -85,6 +85,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     self._counter: int = 0
     self._task_enable: bool = False
     self._task_disable: bool = text_instructions_config.task_disable
+    self._task_synchronize: Optional[Callable[[], None]] = None
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -114,15 +115,16 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     with self._timers_select({"!agent*", "gym.text"}):
       last_text_instruction: Optional[pyreach.TextInstruction] = (
           self._text_instruction)
-      text_instructions_device: pyreach.TextInstructions = (
-          self._get_text_instructions_device(host))
-      current_text_instruction: Optional[pyreach.TextInstruction]
+      current_text_instruction: Optional[pyreach.TextInstruction] = None
 
-      device: pyreach.TextInstructions = text_instructions_device
       with self._timers.select({"!agent*", "!gym*", "host.text"}):
-        current_text_instruction = (
-            device.fetch_text_instruction()
-            if self._is_synchronous else device.text_instruction)
+        if not self._text_instructions:
+          self._text_instructions = self._get_text_instructions_device(host)
+        if self._text_instructions:
+          current_text_instruction = (
+              self._text_instructions.fetch_text_instruction()
+              if self._is_synchronous else
+              self._text_instructions.text_instruction)
 
       bytes_len = 1024
       instruction_bytes: np.ndarray = np.zeros([bytes_len], dtype=np.int64)
@@ -154,6 +156,11 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
           counter, "text-instruction", self.config_name,
           lib_snapshot.SnapshotReference(ts, seq)),)
 
+  def synchronize(self) -> None:
+    """Synchronously update the text instructions."""
+    if self._text_instructions:
+      _ = self._text_instructions.fetch_text_instruction()
+
   def do_action(
       self, action: gyms_core.Action,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:
@@ -180,11 +187,16 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
               task_params = self.get_task_params()
             except pyreach.PyReachError as reach_error:
               raise reach_error
+
+            if self._task_synchronize is None:
+              raise pyreach.PyReachError("Internal Error: no task synchronize")
             if task_enable:
-              # Send a start task message.
+              # TODO(gramlich): Do the synchronous task start here.
               host.logger.start_task(task_params)
+              self._task_synchronize()
             else:
-              # Send an end task message.
+              self._task_synchronize()
+              # TODO(gramlich): Do the synchronous task end here.
               host.logger.end_task(task_params)
             self._task_enable = task_enable
             return (lib_snapshot.SnapshotGymLoggerAction(
@@ -194,6 +206,10 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""
     return False
+
+  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+    """Set the global task synchronize function."""
+    self._task_synchronize = task_synchronize
 
   # pylint: disable=unused-argument
   def reset(self,

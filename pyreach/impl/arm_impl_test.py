@@ -49,15 +49,18 @@ class TestPyreachArmImpl(unittest.TestCase):
         device_type="settings-engine", device_name="", key="workcell_io.json")
     workcell_io_device.on_set_key_value(key, test_data.get_workcell_io_json())
     workcell_io_device.close()
-    rdev, cdev, dev = arm_impl.ArmDevice(
+    rdev, extra_devs, dev = arm_impl.ArmDevice(
         arm_impl.ArmTypeImpl.from_urdf_file(urdf_file), calibration_device,
         actionsets_device, workcell_io_device.get(), "",
         TestIKFast(urdf_file, expect_ik_search)).get_wrapper()
     dev._enable_randomization = False
-    cdev.close()
+    for extra_dev in extra_devs:
+      extra_dev.close()
     self.assertEqual(dev.device_name, "")
     self.assertEqual(dev.arm_type.urdf_file, urdf_file)
     self.assertEqual(dev.arm_type.joint_count, 6)
+    for digital_output_type in dev.digital_outputs:
+      self.fail("Got digital outputs of type: " + digital_output_type)
     return rdev, dev
 
   def _validate_async_response(self,
@@ -88,9 +91,9 @@ class TestPyreachArmImpl(unittest.TestCase):
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
@@ -130,7 +133,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.394939944111822, -2.296503262239259,
                                       4.649417918706931, 0.006600704600401741
                                   ],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_pose without adjust, linear
       status = dev.to_pose(
           core.Pose(
@@ -168,7 +174,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.394939944111822, -2.296503262239259,
                                       4.649417918706931, 0.006600704600401741
                                   ],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_pose without adjust
       status = dev.to_pose(
           core.Pose(
@@ -206,7 +215,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.5026367936800202, -2.0773793705696866,
                                       4.649738410960897, 0.02894469760442231
                                   ],
-                                  velocity=2.0)]))]))])
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
 
   def test_async_to_pose(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [
@@ -226,9 +238,9 @@ class TestPyreachArmImpl(unittest.TestCase):
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
@@ -271,7 +283,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.394939944111822, -2.296503262239259,
                                       4.649417918706931, 0.006600704600401741
                                   ],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_pose without adjust, linear
       capturer = thread_util.CallbackCapturer()
       dev.async_to_pose(
@@ -311,7 +326,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.394939944111822, -2.296503262239259,
                                       4.649417918706931, 0.006600704600401741
                                   ],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_pose without adjust
       capturer = thread_util.CallbackCapturer()
       dev.async_to_pose(
@@ -351,27 +369,29 @@ class TestPyreachArmImpl(unittest.TestCase):
                                       1.5026367936800202, -2.0773793705696866,
                                       4.649738410960897, 0.02894469760442231
                                   ],
-                                  velocity=2.0)]))]))])
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
 
   def test_to_joints(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [])
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
       # Test to_joints without adjust
-      status = dev.to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          acceleration=4.0,
-          velocity=1.0)
+      status = dev.to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                             intent="test-intent",
+                             pick_id="test-pick-id",
+                             success_type="test-success-type",
+                             acceleration=4.0,
+                             velocity=1.0)
       self.assertEqual(status.status, "done")
       self.assertEqual(status.error, "")
       test_device.expect_command_data([
@@ -394,16 +414,18 @@ class TestPyreachArmImpl(unittest.TestCase):
                               types_gen.MoveJWaypointArgs(
                                   acceleration=4.0,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_joints, linear
-      status = dev.to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          use_linear=True,
-          acceleration=4.0,
-          velocity=1.0)
+      status = dev.to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                             intent="test-intent",
+                             pick_id="test-pick-id",
+                             success_type="test-success-type",
+                             use_linear=True,
+                             acceleration=4.0,
+                             velocity=1.0)
       self.assertEqual(status.status, "done")
       self.assertEqual(status.error, "")
       test_device.expect_command_data([
@@ -426,16 +448,18 @@ class TestPyreachArmImpl(unittest.TestCase):
                               types_gen.MoveLWaypointArgs(
                                   acceleration=4.0,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test to_joints
-      status = dev.to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          acceleration=3.0,
-          servo=True,
-          velocity=2.0)
+      status = dev.to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                             intent="test-intent",
+                             pick_id="test-pick-id",
+                             success_type="test-success-type",
+                             acceleration=3.0,
+                             servo=True,
+                             velocity=2.0)
       self.assertEqual(status.status, "done")
       self.assertEqual(status.error, "")
       test_device.expect_command_data([
@@ -459,31 +483,33 @@ class TestPyreachArmImpl(unittest.TestCase):
                                   acceleration=3.0,
                                   servo=True,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=2.0)]))]))])
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
 
   def test_async_to_joints(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [])
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
       # Test async_to_joints
       capturer: "thread_util.CallbackCapturer[core.PyReachStatus]"
       capturer = thread_util.CallbackCapturer()
-      dev.async_to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          acceleration=4.0,
-          velocity=1.0,
-          callback=capturer.callback,
-          finished_callback=capturer.finished_callback)
+      dev.async_to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                          intent="test-intent",
+                          pick_id="test-pick-id",
+                          success_type="test-success-type",
+                          acceleration=4.0,
+                          velocity=1.0,
+                          callback=capturer.callback,
+                          finished_callback=capturer.finished_callback)
       self._validate_async_response(capturer.wait())
       test_device.expect_command_data([
           types_gen.CommandData(
@@ -497,25 +523,29 @@ class TestPyreachArmImpl(unittest.TestCase):
                   preemptive=False,
                   preemptive_reason="",
                   version=0,
+                  calibration_requirement=(
+                      types_gen.ReachScriptCalibrationRequirement()),
                   commands=[
                       types_gen.ReachScriptCommand(
                           move_j_path=types_gen.MoveJPathArgs(waypoints=[
                               types_gen.MoveJWaypointArgs(
                                   acceleration=4.0,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test async_to_joints linear
       capturer = thread_util.CallbackCapturer()
-      dev.async_to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          use_linear=True,
-          acceleration=4.0,
-          velocity=1.0,
-          callback=capturer.callback,
-          finished_callback=capturer.finished_callback)
+      dev.async_to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                          intent="test-intent",
+                          pick_id="test-pick-id",
+                          success_type="test-success-type",
+                          use_linear=True,
+                          acceleration=4.0,
+                          velocity=1.0,
+                          callback=capturer.callback,
+                          finished_callback=capturer.finished_callback)
       self._validate_async_response(capturer.wait())
       test_device.expect_command_data([
           types_gen.CommandData(
@@ -529,25 +559,29 @@ class TestPyreachArmImpl(unittest.TestCase):
                   preemptive=False,
                   preemptive_reason="",
                   version=0,
+                  calibration_requirement=(
+                      types_gen.ReachScriptCalibrationRequirement()),
                   commands=[
                       types_gen.ReachScriptCommand(
                           move_l_path=types_gen.MoveLPathArgs(waypoints=[
                               types_gen.MoveLWaypointArgs(
                                   acceleration=4.0,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=1.0)]))]))])
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
       # Test async_to_joints without adjust
       capturer = thread_util.CallbackCapturer()
-      dev.async_to_joints(
-          [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-          intent="test-intent",
-          pick_id="test-pick-id",
-          success_type="test-success-type",
-          acceleration=3.0,
-          velocity=2.0,
-          servo=True,
-          callback=capturer.callback,
-          finished_callback=capturer.finished_callback)
+      dev.async_to_joints([0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+                          intent="test-intent",
+                          pick_id="test-pick-id",
+                          success_type="test-success-type",
+                          acceleration=3.0,
+                          velocity=2.0,
+                          servo=True,
+                          callback=capturer.callback,
+                          finished_callback=capturer.finished_callback)
       self._validate_async_response(capturer.wait())
       test_device.expect_command_data([
           types_gen.CommandData(
@@ -561,6 +595,8 @@ class TestPyreachArmImpl(unittest.TestCase):
                   preemptive=False,
                   preemptive_reason="",
                   version=0,
+                  calibration_requirement=(
+                      types_gen.ReachScriptCalibrationRequirement()),
                   commands=[
                       types_gen.ReachScriptCommand(
                           move_j_path=types_gen.MoveJPathArgs(waypoints=[
@@ -568,7 +604,10 @@ class TestPyreachArmImpl(unittest.TestCase):
                                   servo=True,
                                   acceleration=3.0,
                                   rotation=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
-                                  velocity=2.0)]))]))])
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
 
   def test_stop(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [
@@ -588,9 +627,9 @@ class TestPyreachArmImpl(unittest.TestCase):
     with test_utils.TestDevice(rdev) as test_device:
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
@@ -621,9 +660,9 @@ class TestPyreachArmImpl(unittest.TestCase):
                   .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
                   commands=[
                       types_gen.ReachScriptCommand(
-                          stop_j=types_gen.StopJArgs(
-                              deceleration=5.0)),
-                  ]))])
+                          stop_j=types_gen.StopJArgs(deceleration=5.0)),
+                  ]))
+      ])
       # Test stop
       status = dev.stop(
           deceleration=6.0,
@@ -648,9 +687,9 @@ class TestPyreachArmImpl(unittest.TestCase):
                   .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
                   commands=[
                       types_gen.ReachScriptCommand(
-                          stop_j=types_gen.StopJArgs(
-                              deceleration=6.0)),
-                  ]))])
+                          stop_j=types_gen.StopJArgs(deceleration=6.0)),
+                  ]))
+      ])
 
   def test_arm_state(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [])
@@ -661,9 +700,9 @@ class TestPyreachArmImpl(unittest.TestCase):
                                      global_callbacks.finished_callback)
       test_device.set_responder(TestArm(""))
       state = dev.fetch_state()
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       self.assertIsNotNone(state)
       if state is None:
         return
@@ -674,9 +713,9 @@ class TestPyreachArmImpl(unittest.TestCase):
       dev.async_fetch_state(
           callback=capturer.first_callback_finish,
           error_callback=capturer.second_callback_finish)
-      test_device.expect_command_data(
-          [types_gen.CommandData(device_type="robot",
-                                 data_type="frame-request")])
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
       states = capturer.wait()
       self.assertEqual(len(states), 1)
       self.assertIsNone(states[0][1])
@@ -692,19 +731,20 @@ class TestPyreachArmImpl(unittest.TestCase):
       self.assertEqual(states[0][0], global_states[1])
 
   def _verify_state(self, state: arm.ArmState) -> None:
-    self.assertEqual(state.joint_angles, (
-                1.665570735931396, -0.7995384496501465, 1.341465298329489,
-                -2.12082638363027, 4.660228729248047, 0.01271963119506836))
+    self.assertEqual(
+        state.joint_angles,
+        (1.665570735931396, -0.7995384496501465, 1.341465298329489,
+         -2.12082638363027, 4.660228729248047, 0.01271963119506836))
     self.assertEqual(state.pose.position.x, 0.1961122234076476)
     self.assertEqual(state.pose.position.y, -0.7146550885497088)
     self.assertEqual(state.pose.position.z, 0.1642837633972083)
     self.assertEqual(state.pose.orientation.axis_angle.rx, 0.1186541477907012)
     self.assertEqual(state.pose.orientation.axis_angle.ry, -3.075739605978813)
-    self.assertEqual(state.pose.orientation.axis_angle.rz,
-                     -0.01666054968029903)
-    self.assertEqual(state.force, (
-                -6.514813773909755, 5.273554158068752, -3.661764071560078,
-                -0.1562602891054569, -0.2400126816079334, 0.1363557378946311))
+    self.assertEqual(state.pose.orientation.axis_angle.rz, -0.01666054968029903)
+    self.assertEqual(
+        state.force,
+        (-6.514813773909755, 5.273554158068752, -3.661764071560078,
+         -0.1562602891054569, -0.2400126816079334, 0.1363557378946311))
     self.assertFalse(state.is_protective_stopped)
 
 
@@ -889,10 +929,10 @@ class TestIKFast(ikfast.IKFast):
     assert self._ik_search_count < len(self._expect_ik_search)
     assert joints is not None
     assert np.allclose(joints, self._expect_ik_search[self._ik_search_count]), (
-        "Got %s, expected %s for step %d" % (
-            joints.tolist(),
-            self._expect_ik_search[self._ik_search_count].tolist(),
-            self._ik_search_count))
+        "Got %s, expected %s for step %d" %
+        (joints.tolist(),
+         self._expect_ik_search[self._ik_search_count].tolist(),
+         self._ik_search_count))
     joints = self._expect_ik_search[self._ik_search_count]
     self._ik_search_count += 1
     return joints

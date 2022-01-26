@@ -1051,64 +1051,65 @@ class TestGymTaskEnv(unittest.TestCase):
 
       observation_space: Any = env.observation_space
       assert isinstance(observation_space, gym.spaces.Space)
-      empty_match: Dict[str, Any] = {"task": {}}
-      assert space_match(observation_space, empty_match, ("observation",))
+      active_match: Dict[str, Any] = {"task": {"active": (True,)}}
+      inactive_match: Dict[str, Any] = {"task": {"active": (False,)}}
+      assert space_match(observation_space, inactive_match, ("observation",))
 
       action_no_change: Dict[str, Any] = {
-          "action": {
-              "task": task_element.ReachAction.NO_CHANGE,
+          "task": {
+              "action": task_element.ReachAction.NO_CHANGE,
           }
       }
       action_start: Dict[str, Any] = {
-          "action": {
-              "task": task_element.ReachAction.START,
+          "task": {
+              "action": task_element.ReachAction.START,
           }
       }
       action_stop: Dict[str, Any] = {
-          "action": {
-              "task": task_element.ReachAction.STOP,
+          "task": {
+              "action": task_element.ReachAction.STOP,
           }
       }
 
       # Simulate a reset():
       observation: gyms_core.Observation = env.reset()
-      assert action_observation_eq(observation, empty_match, "reset")
+      assert action_observation_eq(observation, inactive_match, "reset")
 
       # Step 1: No change when not started:
       done: bool
       observation, _, done, _ = env.step(action_no_change)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 1")
+      assert action_observation_eq(observation, inactive_match, "Step 1")
 
       # Step 2: Start when not started:
       observation, _, done, _ = env.step(action_start)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 2")
+      assert action_observation_eq(observation, active_match, "Step 2")
 
       # Step 3: Start again when already  started:
       observation, _, done, _ = env.step(action_start)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 3")
+      assert action_observation_eq(observation, active_match, "Step 3")
 
       # Step 4: No change when started:
       observation, _, done, _ = env.step(action_no_change)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 4")
+      assert action_observation_eq(observation, active_match, "Step 4")
 
       # Step 5: Stop when started:
       observation, _, done, _ = env.step(action_stop)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 5")
+      assert action_observation_eq(observation, inactive_match, "Step 5")
 
       # Step 6: Stop when already stopped:
       observation, _, done, _ = env.step(action_stop)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 6")
+      assert action_observation_eq(observation, inactive_match, "Step 6")
 
       # Step 7: No change when already stoped:
       observation, _, done, _ = env.step(action_no_change)
       assert not done, "Should not be done"
-      assert action_observation_eq(observation, empty_match, "Step 7")
+      assert action_observation_eq(observation, inactive_match, "Step 7")
 
 
 class TestGymServerEnv(unittest.TestCase):
@@ -1365,6 +1366,7 @@ def space_match(space: gym.spaces.Space,
   assert isinstance(space, gym.spaces.Space), ("{0}: Not a space {1}".format(
       where, space))
 
+  index: int
   match: bool = False
   if (isinstance(space, gym.spaces.Box) and
       isinstance(action_observation, np.ndarray)):
@@ -1400,7 +1402,7 @@ def space_match(space: gym.spaces.Space,
     if exact:
       assert space_keys == action_observation_keys, (
           f"{where}: keys mismatch "
-          f"{space_keys} != {action_observation_keys}: "
+          f"space_keys:{space_keys} != obs_keys:{action_observation_keys}: "
           f"differ:{differ_keys} "
           f"space={space} "
           f"observation={action_observation}")
@@ -1435,7 +1437,17 @@ def space_match(space: gym.spaces.Space,
 
   if (isinstance(space, gym.spaces.MultiBinary) and
       isinstance(action_observation, tuple)):
-    assert False, "{0}: not implemented".format(where)
+    # Ugly: Using the internal implementation of gym.spaces.MulitDiscrete!
+    n: Any = space.n
+    assert isinstance(n, int), "Only support int's for now."
+    size = len(action_observation)
+    assert n == size, f"MultiBinary: desired size: {n} != actual_size {size}"
+    value: Any
+    for index, value in enumerate(action_observation):
+      assert isinstance(value,
+                        bool), (f"multibinary[{index}]:{value} is not bool")
+
+    return True
 
   if (isinstance(space, gym.spaces.MultiDiscrete) and
       isinstance(action_observation, tuple)):
@@ -1447,7 +1459,6 @@ def space_match(space: gym.spaces.Space,
     assert nvec_size == len(action_observation), (
         "{0}: nvec.shape:{1} != len(action_observation):{2} ".format(
             where, nvec_size, len(action_observation)))
-    index: int
     for index in range(nvec_size):
       assert isinstance(nvec[index],
                         np.int64), ("Invalid discrete [{0}]:{1}type={2}".format(
@@ -1485,7 +1496,7 @@ def action_observation_eq(ao1: Any, ao2: Any, trace: str = "") -> bool:
   """Return True if two observations are equal."""
   next_trace: str = ""
   if trace:
-    print(f"{trace}=>action_oberervation({ao1}, {ao2})")
+    print(f"{trace}=>action_observation({ao1}, {ao2})")
     next_trace = trace + " "
   if isinstance(ao1, (int, float)) and isinstance(ao2, (int, float)):
     if trace:
@@ -1505,7 +1516,7 @@ def action_observation_eq(ao1: Any, ao2: Any, trace: str = "") -> bool:
     for i in range(len(ao1)):
       if not action_observation_eq(ao1[i], ao2[i], trace=next_trace):
         if trace:
-          print(f"{trace}Tuple Mismatch:ao1[{i}] != ao2[{2}]")
+          print(f"{trace}Tuple Mismatch[{i}]: {ao1[i]} != {ao2[i]}")
         return False
     return True
   if isinstance(ao1, np.ndarray) and isinstance(ao2, np.ndarray):

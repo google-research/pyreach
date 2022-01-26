@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of PyReach Gym Arm Device."""
 
 import copy
@@ -41,17 +40,17 @@ class ReachDeviceArm(reach_device.ReachDevice):
 
   Attributes:
     action_space: A Gym action space represented as a Gym Dict Space with
-      "command", "joint_angles", "pose", "synchronous", "id", "controller"
-      and "command" should be 0 for do nothing, 1 for set joint angles and 2
-      for set pose. "joint_angles" should be the desired joint angles in
-      radians. "pose" should be the desired arm pose. "synchronous" is only
-      valid when the arm is configured as asynchronous. When set to 1, a
-      synchronous move is performed. When set to 0 (or not present), an
-      asynchronous move occurs.  "id" is used to keep track of asynchronous
-      move status. When id is present and positive, each asynchronous move
-      can be given a unique id (simple counter bumping adequate) to keep
-      track of the returned status for the move.  The most recent returned
-      statuses are put into the "responses" portion of the arm observation.
+      "command", "joint_angles", "pose", "synchronous", "id", "controller" and
+      "command" should be 0 for do nothing, 1 for set joint angles and 2 for set
+      pose. "joint_angles" should be the desired joint angles in radians. "pose"
+      should be the desired arm pose. "synchronous" is only valid when the arm
+      is configured as asynchronous. When set to 1, a synchronous move is
+      performed. When set to 0 (or not present), an asynchronous move occurs.
+      "id" is used to keep track of asynchronous move status. When id is present
+      and positive, each asynchronous move can be given a unique id (simple
+      counter bumping adequate) to keep track of the returned status for the
+      move.  The most recent returned statuses are put into the "responses"
+      portion of the arm observation.
     observation_space: A Gym observation space represented as a Gym Dict Space
       with "ts", "joint_angles", and "pose" fields.
   """
@@ -294,6 +293,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
                                           pyreach_status))
         status: str = pyreach_status.status
         error: str = pyreach_status.error
+        message: str = pyreach_status.message
         if status == "done":
           if error == "timeout":
             response = arm_element.ReachResponse.RESPONSE_TIMEOUT
@@ -304,8 +304,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
         elif status == "aborted":
           response = arm_element.ReachResponse.RESPONSE_ABORTED
         else:
-          logging.warning("Internal Error: Unexpected response '%s' '%s'",
-                          status, error)
+          logging.warning("Internal Error: Unexpected response '%s' '%s' ' %s'",
+                          status, error, message)
           response = arm_element.ReachResponse.RESPONSE_FAILED
         if not 0 <= response <= arm_element.ReachResponse.RESPONSE_MAX:
           raise pyreach.PyReachError(
@@ -360,6 +360,11 @@ class ReachDeviceArm(reach_device.ReachDevice):
         snapshot_reference = (lib_snapshot.SnapshotReference(
             ts, arm_state.sequence),)
       return observation, snapshot_reference, tuple(responses)
+
+  def synchronize(self) -> None:
+    """Synchronously update the arm state."""
+    if self._arm:
+      _ = self._arm.fetch_state()
 
   def _get_response_queue(
       self
@@ -594,19 +599,24 @@ class ReachDeviceArm(reach_device.ReachDevice):
                     timeout=timeout))
           return cmd_tuple
 
-        # Keep track of the callbacks:
-        count = self._arm_state_capturer.start(action_id)
+        callback = None
+        finished_callback = None
 
-        def arm_state_callback(arm_state: pyreach.PyReachStatus) -> None:
-          """Track asynchronous arm state callbacks."""
-          self._arm_state_capturer.callback(count, arm_state)
+        if self._response_queue_length:
+          # Keep track of the callbacks:
+          count = self._arm_state_capturer.start(action_id)
 
-        def arm_state_finished_callback() -> None:
-          """Track finished arm state callback."""
-          self._arm_state_capturer.finished_callback(count)
+          def arm_state_callback(arm_state: pyreach.PyReachStatus) -> None:
+            """Track asynchronous arm state callbacks."""
+            self._arm_state_capturer.callback(count, arm_state)
 
-        callback = arm_state_callback
-        finished_callback = arm_state_finished_callback
+          def arm_state_finished_callback() -> None:
+            """Track finished arm state callback."""
+            self._arm_state_capturer.finished_callback(count)
+
+          callback = arm_state_callback
+          finished_callback = arm_state_finished_callback
+
         with self._timers.select({"!agent*", "!gym*", "host.arm.to_joints"}):
           arm.async_to_joints(
               joints,
@@ -662,19 +672,23 @@ class ReachDeviceArm(reach_device.ReachDevice):
                 timeout=timeout)
           return cmd_tuple
 
-        # Keep track of the callbacks:
-        count = self._arm_state_capturer.start(action_id)
+        callback = None
+        finished_callback = None
 
-        def arm_state_callback2(arm_state: pyreach.PyReachStatus) -> None:
-          """Track asynchronous arm state callbacks."""
-          self._arm_state_capturer.callback(count, arm_state)
+        if self._response_queue_length:
+          # Keep track of the callbacks:
+          count = self._arm_state_capturer.start(action_id)
 
-        def arm_state_finished_callback2() -> None:
-          """Track finished arm state callback."""
-          self._arm_state_capturer.finished_callback(count)
+          def arm_state_callback2(arm_state: pyreach.PyReachStatus) -> None:
+            """Track asynchronous arm state callbacks."""
+            self._arm_state_capturer.callback(count, arm_state)
 
-        callback = arm_state_callback2
-        finished_callback = arm_state_finished_callback2
+          def arm_state_finished_callback2() -> None:
+            """Track finished arm state callback."""
+            self._arm_state_capturer.finished_callback(count)
+
+          callback = arm_state_callback2
+          finished_callback = arm_state_finished_callback2
 
         with self._timers.select({"!agent*", "!gym*", "host.arm.to_pose"}):
           arm.async_to_pose(

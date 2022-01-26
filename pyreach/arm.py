@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for interacting with a single robot arm.
 
 Supported features
@@ -29,6 +28,7 @@ import numpy as np  # type: ignore
 
 from pyreach import constraints
 from pyreach import core
+from pyreach import digital_output
 
 
 class IKLibType(enum.Enum):
@@ -148,6 +148,14 @@ class Arm(object):
   @property
   def arm_type(self) -> ArmType:
     """Return the arm type of the arm."""
+    raise NotImplementedError
+
+  @property
+  def digital_outputs(
+      self
+  ) -> core.ImmutableDictionary[core.ImmutableDictionary[
+      digital_output.DigitalOutput]]:
+    """Get the digital outputs for this arm device."""
     raise NotImplementedError
 
   @property

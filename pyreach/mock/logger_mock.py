@@ -25,8 +25,8 @@ class LoggerMock(logger.Logger):
 
   def __init__(self) -> None:
     """Initialize the MockLogger."""
-    # super().__init()
-    pass
+    # super().__init__()
+    self._task_state: bool = False
 
   @property
   def task_state(self) -> logger.TaskState:
@@ -65,7 +65,9 @@ class LoggerMock(logger.Logger):
     Returns:
       True if the goal task state has been entered, false otherwise.
     """
-    raise NotImplementedError
+    task_state: bool = self._task_state
+    self._task_state = not task_state
+    return task_state
 
   def start_task(self, event_params: Dict[str, str]) -> None:
     """Indicate a task has started.
