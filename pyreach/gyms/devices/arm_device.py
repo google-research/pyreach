@@ -68,7 +68,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
     is_synchronous: bool = arm_config.is_synchronous
     response_queue_length: int = arm_config.response_queue_length
     controllers: Tuple[str, ...] = arm_config.controllers
-    ik_lib: Optional[str] = arm_config.ik_lib
+    ik_lib: Optional[pyreach_arm.IKLibType] = arm_config.ik_lib
     e_stop_mode: int = arm_config.e_stop_mode
     p_stop_mode: int = arm_config.p_stop_mode
     # For unit testing only.
@@ -149,6 +149,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._controllers: Tuple[str, ...] = controllers
     self._early_done: bool = False
     self._high_joint_angles: Tuple[float, ...] = high_joint_angles
+    self._ik_lib: Optional[pyreach_arm.IKLibType] = ik_lib
     self._low_joint_angles: Tuple[float, ...] = low_joint_angles
     self._joints: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     self._pose: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -156,7 +157,6 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._response_queue_length: int = response_queue_length
     self._apply_tip_adjust_transform: bool = apply_tip_adjust_transform
     self._last_command: int = 0
-    self._ik_lib: Optional[str] = ik_lib
     self._e_stop_mode: int = e_stop_mode
     self._p_stop_mode: int = p_stop_mode
 
@@ -583,7 +583,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
             synchronous=self._is_synchronous or synchronous),)
 
         if self._is_synchronous or synchronous:
-          with self._timers.select({"!agent*", "!gym*", "host.arm.to_joints"}):
+          with self._timers.select(
+              {"!agent*", "!gym*", "host.arm.to_joints.sync"}):
             self._pyreach_status = (
                 arm.to_joints(
                     joints,
@@ -617,7 +618,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
           callback = arm_state_callback
           finished_callback = arm_state_finished_callback
 
-        with self._timers.select({"!agent*", "!gym*", "host.arm.to_joints"}):
+        with self._timers.select(
+            {"!agent*", "!gym*", "host.arm.to_joints.async"}):
           arm.async_to_joints(
               joints,
               controller_name=controller_name,
@@ -656,7 +658,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
             synchronous=self._is_synchronous or synchronous),)
 
         if self._is_synchronous or synchronous:
-          with self._timers.select({"!agent*", "!gym*", "host.arm.to_pose"}):
+          with self._timers.select(
+              {"!agent*", "!gym*", "host.arm.to_pose.sync"}):
             self._pyreach_status = arm.to_pose(
                 pyreach.Pose.from_list(pose_values),
                 controller_name=controller_name,
@@ -690,7 +693,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
           callback = arm_state_callback2
           finished_callback = arm_state_finished_callback2
 
-        with self._timers.select({"!agent*", "!gym*", "host.arm.to_pose"}):
+        with self._timers.select({"!agent*", "!gym*",
+                                  "host.arm.to_pose.async"}):
           arm.async_to_pose(
               pyreach.Pose.from_list(pose_values),
               controller_name=controller_name,

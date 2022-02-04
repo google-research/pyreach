@@ -152,6 +152,7 @@ class HostImpl(pyreach.Host):
       arm_types: Optional[Dict[str, str]] = None,
       enable_streaming: bool = True,
       take_control_at_start: bool = True,
+      arm_default_ik_types: Optional[Dict[str, arm.IKLibType]] = None,
   ) -> None:
     """Initialize the Host.
 
@@ -161,6 +162,7 @@ class HostImpl(pyreach.Host):
       enable_streaming: If True, automatically start streaming for Arm,
         ColorCamera and DepthCamera devices.
       take_control_at_start: If True, immediately take control.
+      arm_default_ik_types: Default ik type for arms.
 
     Raises:
       Exception: when failed to load config.
@@ -418,6 +420,10 @@ class HostImpl(pyreach.Host):
         arm_type = get_arm_type(arm_interface.device_name)
         if arm_type is None:
           continue
+        ik_type = arm.IKLibType.IKFAST
+        if arm_default_ik_types:
+          ik_type = arm_default_ik_types.get(arm_interface.device_name,
+                                             arm.IKLibType.IKFAST)
         arms[arm_interface.device_name] = add_arm_device(
             arm_impl.ArmDevice(
                 arm_type,
@@ -426,7 +432,8 @@ class HostImpl(pyreach.Host):
                 workcell_io_config,
                 arm_interface.device_name,
                 support_controllers=(arm_interface.device_name
-                                     in support_controllers)).get_wrapper())
+                                     in support_controllers),
+                default_ik_lib_type=ik_type).get_wrapper())
     self._arms = core.ImmutableDictionary(arms)
     self._arm = arms.get("")
     # Add vacuums

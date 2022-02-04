@@ -30,8 +30,6 @@ from pyreach import digital_output
 from pyreach import internal
 from pyreach.common.base import transform_util
 from pyreach.common.python import types_gen
-from pyreach.ik_pybullet import ik_pybullet
-from pyreach.ikfast import ikfast
 from pyreach.impl import actions_impl
 from pyreach.impl import calibration_impl
 from pyreach.impl import constraints_impl
@@ -41,6 +39,126 @@ from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
 from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
+
+
+class IKLib:
+  """Internal class for an IK library."""
+
+  def fk(self, joints: List[float]) -> Optional[List[float]]:
+    """Convert joint angles to a pose.
+
+    Args:
+      joints: the joint angles.
+
+    Returns:
+      the pose.
+    """
+    raise NotImplementedError
+
+  def ik_search(self, pose: List[float], current_joints: List[float],
+                ik_hints: Dict[int, List[float]],
+                use_unity_ik: bool) -> Optional[List[float]]:
+    """Perform IK search and return a single joint pose.
+
+    Args:
+      pose: The pose.
+      current_joints: the current joint state.
+      ik_hints: The ik hints for the search.
+      use_unity_ik: If true, use Unity IK.
+
+    Returns:
+      The joint position.
+    """
+    raise NotImplementedError
+
+
+class IKLibIKFast(IKLib):
+  """Internal class for an IK library."""
+
+  def __init__(self, urdf_file: str) -> None:
+    """Init the IK lib."""
+    from pyreach.ikfast import ikfast
+    self._ik: ikfast.IKFast = ikfast.IKFast(urdf_file)
+
+  def fk(self, joints: List[float]) -> Optional[List[float]]:
+    """Convert joint angles to a pose.
+
+    Args:
+      joints: the joint angles.
+
+    Returns:
+      the pose.
+    """
+    pose = self._ik.fk(joints)
+    if pose:
+      return pose.tolist()
+    return None
+
+  def ik_search(self, pose: List[float], current_joints: List[float],
+                ik_hints: Dict[int, List[float]],
+                use_unity_ik: bool) -> Optional[List[float]]:
+    """Perform IK search and return a single joint pose.
+
+    Args:
+      pose: The pose.
+      current_joints: the current joint state.
+      ik_hints: The ik hints for the search.
+      use_unity_ik: If true, use Unity IK.
+
+    Returns:
+      The joint position.
+    """
+    if use_unity_ik:
+      joints = self._ik.unity_ik_solve_search(pose, current_joints, ik_hints)
+      if joints is not None:
+        return joints.tolist()
+      return None
+    joints = self._ik.ik_search(pose, ik_hints)
+    if joints is not None:
+      return joints.tolist()
+    return None
+
+
+class IKLibPyBullet(IKLib):
+  """Internal class for an IK library."""
+
+  def __init__(self) -> None:
+    """Init the IK lib."""
+    from pyreach.ik_pybullet import ik_pybullet
+    self._ik: ik_pybullet.IKPybullet = ik_pybullet.IKPybullet()
+
+  def fk(self, joints: List[float]) -> Optional[List[float]]:
+    """Convert joint angles to a pose.
+
+    Args:
+      joints: the joint angles.
+
+    Returns:
+      the pose.
+    """
+    pose = self._ik.fk(np.array(joints, dtype=np.float64))
+    if pose:
+      return pose.tolist()
+    return None
+
+  def ik_search(self, pose: List[float], current_joints: List[float],
+                ik_hints: Dict[int, List[float]],
+                use_unity_ik: bool) -> Optional[List[float]]:
+    """Perform IK search and return a single joint pose.
+
+    Args:
+      pose: The pose.
+      current_joints: the current joint state.
+      ik_hints: The ik hints for the search.
+      use_unity_ik: If true, use Unity IK.
+
+    Returns:
+      The joint position.
+    """
+    joints = self._ik.ik_search(
+        np.array(pose, dtype=np.float64),
+        np.array(current_joints, dtype=np.float64))
+    return joints.tolist()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -121,7 +239,7 @@ class _Command:
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -193,7 +311,7 @@ class _MoveJoints(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -267,7 +385,7 @@ class _MoveLinear(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -366,9 +484,8 @@ class _MovePose(_Command):
 
   def to_reach_script(
       self, arm_type: arm.ArmType, support_vacuum: bool, support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
-      ik_hints: Dict[int, List[float]], state: arm.ArmState,
-      arm_origin: Optional[np.ndarray],
+      ik_lib: Optional[IKLib], ik_hints: Dict[int, List[float]],
+      state: arm.ArmState, arm_origin: Optional[np.ndarray],
       tip_adjust_transform: Optional[np.ndarray]
   ) -> List[types_gen.ReachScriptCommand]:
     """Convert ArmMovePost to Reach Script commands.
@@ -440,22 +557,12 @@ class _MovePose(_Command):
       if not ik_hints:
         raise core.PyReachError("IKhints have not been loaded")
 
-      if isinstance(ik_lib, ikfast.IKFast):
-        if self._use_unity_ik:
-          joints = ik_lib.unity_ik_solve_search(pose, list(state.joint_angles),
-                                                ik_hints)
-        else:
-          joints = ik_lib.ik_search(pose, ik_hints)
-      elif isinstance(ik_lib, ik_pybullet.IKPybullet):
-        joints = ik_lib.ik_search(pose, np.array(state.joint_angles))
-      else:
-        raise core.PyReachError("Unsupported IK library")
-
+      joints = ik_lib.ik_search(pose.tolist(), list(state.joint_angles),
+                                ik_hints, self._use_unity_ik)
       if joints is None:
         raise core.PyReachError("IK failed to find solution")
       if self._use_linear:
-        return _MoveLinear(self.controller_name, joints.tolist(),
-                           self._velocity,
+        return _MoveLinear(self.controller_name, joints, self._velocity,
                            self._acceleration, self._servo).to_reach_script(
                                arm_type, support_vacuum, support_blowoff,
                                ik_lib, ik_hints, state, arm_origin,
@@ -463,7 +570,7 @@ class _MovePose(_Command):
       else:
         return _MoveJoints(
             self.controller_name,
-            joints.tolist(),
+            joints,
             self._velocity,
             self._acceleration,
             self._servo,
@@ -507,7 +614,7 @@ class _SetVacuumState(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -584,7 +691,7 @@ class _SetDigitalOut(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -637,7 +744,7 @@ class _SetToolDigitalOut(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -690,7 +797,7 @@ class _SetAnalogOut(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -751,7 +858,7 @@ class _SetOutput(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -819,7 +926,7 @@ class _AcquireImage(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -871,7 +978,7 @@ class _Stop(_Command):
       arm_type: arm.ArmType,
       support_vacuum: bool,
       support_blowoff: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -920,7 +1027,7 @@ class _Commands:
       support_blowoff: bool,
       allow_uncalibrated: bool,
       preemptive: bool,
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]],
+      ik_lib: Optional[IKLib],
       ik_hints: Dict[int, List[float]],
       state: arm.ArmState,
       arm_origin: Optional[np.ndarray],
@@ -978,7 +1085,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _device_name: str
   _ik_lib_lock: threading.Lock
   _ik_hints: Dict[int, List[float]]
-  _ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]]
+  _ik_lib: Optional[IKLib]
+  _ik_lib_type: arm.IKLibType
   _constraints_device: constraints_impl.ConstraintsDevice
   _internal_devices: List[device_base.DeviceBase]
   _digital_outputs: core.ImmutableDictionary[core.ImmutableDictionary[
@@ -999,19 +1107,20 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       actions: Optional[actions_impl.ActionDevice] = None,
       workcell_io_config: Optional[workcell_io.IOConfig] = None,
       device_name: str = "",
-      ik_lib: Optional[Union[ikfast.IKFast, ik_pybullet.IKPybullet]] = None,
+      ik_lib: Optional[IKLib] = None,
       support_controllers: bool = False,
-  ) -> None:
+      default_ik_lib_type: arm.IKLibType = arm.IKLibType.IKFAST) -> None:
     """Construct the Arm Device.
 
     Args:
       arm_type: The arm type.
       calibration_device: The Calibration device.
       actions: The Action device.
-      workcell_io_config: Teh workcell IO config.
+      workcell_io_config: The workcell IO config.
       device_name: The name of the device.
       ik_lib: Override creation of ikfast.
       support_controllers: Robot supports controllers
+      default_ik_lib_type: The default ik library.
     """
     requester.Requester.__init__(self)
     self._arm_type = arm_type
@@ -1019,8 +1128,9 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     self._ik_lib_lock = threading.Lock()
     self._ik_hints = {}
     self._ik_lib = ik_lib
+    self._ik_lib_type = default_ik_lib_type
     if not ik_lib:
-      self._ik_lib = ikfast.IKFast(arm_type.urdf_file)
+      self.set_ik_lib(self._ik_lib_type)
     self._constraints_device = constraints_impl.ConstraintsDevice(device_name)
     self._internal_devices = [self._constraints_device]
     self._calibration = calibration_device
@@ -1115,9 +1225,12 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   def set_ik_lib(self, ik_lib: arm.IKLibType) -> None:
     """Set the IK library to be used."""
     if ik_lib == arm.IKLibType.IKFAST:
-      self._ik_lib = ikfast.IKFast(self._arm_type.urdf_file)
+      self._ik_lib = IKLibIKFast(self._arm_type.urdf_file)
     elif ik_lib == arm.IKLibType.IKPYBULLET:
-      self._ik_lib = ik_pybullet.IKPybullet()
+      if self._arm_type.urdf_file != "XArm6.urdf":
+        raise core.PyReachError("PyBullet is only supported on xarm, not: " +
+                                self._arm_type.urdf_file)
+      self._ik_lib = IKLibPyBullet()
     else:
       raise core.PyReachError("IK name not recognized.")
 
@@ -1208,25 +1321,33 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       was not yet initialized, this will return None.
     """
 
-    pose: Optional[np.ndarray] = None
+    pose: Optional[List[float]] = None
 
     with self._ik_lib_lock:
-      if isinstance(self._ik_lib, ikfast.IKFast):
+      if not self._ik_lib:
+        return None
+      if isinstance(joints, tuple):
+        pose = self._ik_lib.fk(list(joints))
+      elif isinstance(joints, list):
         pose = self._ik_lib.fk(joints)
-      elif isinstance(self._ik_lib, ik_pybullet.IKPybullet):
-        pose = self._ik_lib.fk(np.ndarray(joints))
+      else:
+        pose = self._ik_lib.fk(joints.tolist())
 
     if pose is None:
       return None
 
     if not apply_tip_adjust_transform:
-      return core.Pose.from_list(pose.tolist())
+      return core.Pose.from_list(pose)
 
     data_cache = self._update_data_cache()
     if data_cache and data_cache.tip_adjust_transform is not None:
-      pose = transform_util.multiply_pose(pose, data_cache.tip_adjust_transform)
+      pose = transform_util.multiply_pose(
+          np.array(pose, dtype=np.float64),
+          data_cache.tip_adjust_transform).tolist()
 
-    return core.Pose.from_list(pose.tolist())
+    if pose is None:
+      return None
+    return core.Pose.from_list(pose)
 
   def _update_data_cache(self) -> Optional[_ArmDataCache]:
     with self._data_cache_lock:
@@ -1610,7 +1731,7 @@ class ArmImpl(arm.Arm):
       timeout: The amount time to wait before giving up. (Default: No timeout)
 
     Returns:
-      Return the latest Arm status upon success; othewise None.
+      Return the latest Arm status upon success; otherwise None.
 
     """
     move_command: Union[_MoveLinear, _MoveJoints]

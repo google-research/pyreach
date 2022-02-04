@@ -22,6 +22,7 @@ import gym  # type: ignore
 import numpy as np  # type: ignore
 
 import pyreach
+from pyreach import arm as pyreach_arm
 from pyreach import factory
 from pyreach import internal
 from pyreach import snapshot as lib_snapshot
@@ -165,9 +166,11 @@ class ReachEnv(gym.Env):  # type: ignore
         "host.arm.fk",
         "host.arm.state",
         "host.arm.status",
-        "host.arm.to_joints",
+        "host.arm.to_joints.async",
+        "host.arm.to_joints.sync",
         "host.arm.stop",
-        "host.arm.to_pose",
+        "host.arm.to_pose.async",
+        "host.arm.to_pose.sync",
         "host.color",
         "host.depth",
         "host.force_torque_sensor",
@@ -201,7 +204,24 @@ class ReachEnv(gym.Env):  # type: ignore
         if not isinstance(value, str):
           raise pyreach.PyReachError(
               f"task_params['{key}'] does not specify a str")
-      host_kwargs: Dict[str, Any] = {"enable_streaming": False}
+
+      # Prescan pyreach_config for inverse kinematics library selection.
+      # It must be determined before connecting to the host..
+      arm_default_ik_types: Dict[str, pyreach_arm.IKLibType] = {}
+      config_name: str
+      config_element: reach_element.ReachElement
+      for config_name, config_element in pyreach_config.items():
+        if isinstance(config_element, arm_element.ReachArm):
+          ik_lib: Optional[pyreach_arm.IKLibType] = config_element.ik_lib
+          if not ik_lib:
+            # Historically defaults to IKFast.
+            ik_lib = pyreach_arm.IKLibType.IKFAST
+          arm_default_ik_types[config_element.reach_name] = ik_lib
+      host_kwargs: Dict[str, Any] = {
+          "enable_streaming": True,
+          "arm_default_ik_types": arm_default_ik_types,
+      }
+
       if not host:
         if not connection_string:
           connection_string = ""
@@ -214,9 +234,7 @@ class ReachEnv(gym.Env):  # type: ignore
       # Create the composite action space from the configuration.
       element: Optional[ReachDevice] = None
       action_space_dict: Dict[str, gyms_core.Space] = {}
-      config_element: reach_element.ReachElement
       config_names: Set[str] = set()
-      config_name: str
       arm_elements: List[ReachDeviceArm] = []
       elements: Dict[str, ReachDevice] = {}
 

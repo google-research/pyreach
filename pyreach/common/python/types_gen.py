@@ -3823,7 +3823,12 @@ class DeviceData:
   # ==============================
 
   # === Fields for dataType exposure-complete:
-  # (no fields)
+  # (also field status)
+  # (also field script)
+  # (also field error)
+  # (also field progress)
+  # (also field message)
+  # (also field code)
   # ==============================
 
   # === Fields for dataType start-shutdown:
@@ -4800,6 +4805,16 @@ class DeviceData:
         proto_prediction.depth_ts.nanos = int(self.depth_ts % 1000) * 1000000
       if self.error:
         proto_prediction.error = self.error
+      proto_prediction_key_value = logs_pb2.KeyValue()
+      if self.key:
+        proto_prediction_key_value.key = self.key
+      if self.value:
+        proto_prediction_key_value.value = self.value
+      if self.int_value:
+        proto_prediction_key_value.int_value = self.int_value
+      if self.float_value:
+        proto_prediction_key_value.float_value = self.float_value
+      proto_prediction.key_value.CopyFrom(proto_prediction_key_value)
       proto.prediction.CopyFrom(proto_prediction)
     if self.data_type == 'ur-state':
       proto_ur_state = logs_pb2.UrState()
@@ -5135,7 +5150,19 @@ class DeviceData:
       if self.sim_instance_segmentation:
         proto.sim_instance_segmentation.CopyFrom(self.sim_instance_segmentation.to_proto())
     if self.data_type == 'exposure-complete':
-      proto_exposure_complete = logs_pb2.EmptyMessage()
+      proto_exposure_complete = logs_pb2.Status()
+      if self.status:
+        proto_exposure_complete.status = self.status
+      if self.script:
+        proto_exposure_complete.script = self.script
+      if self.error:
+        proto_exposure_complete.error = self.error
+      if self.progress:
+        proto_exposure_complete.progress = self.progress
+      if self.message:
+        proto_exposure_complete.message = self.message
+      if self.code:
+        proto_exposure_complete.code = self.code
       proto.exposure_complete.CopyFrom(proto_exposure_complete)
     if self.data_type == 'start-shutdown':
       proto_start_shutdown = logs_pb2.EmptyMessage()
@@ -5976,6 +6003,15 @@ class DeviceData:
         obj.depth_ts = int(proto.prediction.depth_ts.seconds * 1000) + int(proto.prediction.depth_ts.nanos / 1000000)
       if proto.prediction.HasField('error'):
         obj.error = proto.prediction.error
+      if proto.prediction.HasField('key_value'):
+        if proto.prediction.key_value.HasField('key'):
+          obj.key = proto.prediction.key_value.key
+        if proto.prediction.key_value.HasField('value'):
+          obj.value = proto.prediction.key_value.value
+        if proto.prediction.key_value.HasField('int_value'):
+          obj.int_value = proto.prediction.key_value.int_value
+        if proto.prediction.key_value.HasField('float_value'):
+          obj.float_value = proto.prediction.key_value.float_value
     if proto.HasField('ur_state'):
       for obj_pose in proto.ur_state.pose:
         obj.pose.append(obj_pose)
@@ -6268,7 +6304,18 @@ class DeviceData:
     if proto.HasField('sim_instance_segmentation'):
       obj.sim_instance_segmentation = SimInstanceSegmentation.from_proto(proto.sim_instance_segmentation)
     if proto.HasField('exposure_complete'):
-      pass  # skip empty message
+      if proto.exposure_complete.HasField('status'):
+        obj.status = proto.exposure_complete.status
+      if proto.exposure_complete.HasField('script'):
+        obj.script = proto.exposure_complete.script
+      if proto.exposure_complete.HasField('error'):
+        obj.error = proto.exposure_complete.error
+      if proto.exposure_complete.HasField('progress'):
+        obj.progress = proto.exposure_complete.progress
+      if proto.exposure_complete.HasField('message'):
+        obj.message = proto.exposure_complete.message
+      if proto.exposure_complete.HasField('code'):
+        obj.code = proto.exposure_complete.code
     if proto.HasField('start_shutdown'):
       pass  # skip empty message
     if proto.HasField('finish_shutdown'):

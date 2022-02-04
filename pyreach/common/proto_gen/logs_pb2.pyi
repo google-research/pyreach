@@ -1323,7 +1323,7 @@ global___SyncArgs = SyncArgs
 class DeviceData(google.protobuf.message.Message):
     """DeviceData represents sensor data on the robot and in the Reach
     environment.
-    Next ID: 80
+    Next ID: 81
     """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
@@ -1678,7 +1678,7 @@ class DeviceData(google.protobuf.message.Message):
     @property
     def sim_instance_segmentation(self) -> global___SimInstanceSegmentation: ...
     @property
-    def exposure_complete(self) -> global___EmptyMessage:
+    def exposure_complete(self) -> global___Status:
         """exposure_complete occurs when a camera reports a completed exposure.
 
         Design doc: http://doc/1CAGGX3Bveexks7KWepBdeTX5Z14U7nL-JHxBeVCszD4
@@ -1835,7 +1835,7 @@ class DeviceData(google.protobuf.message.Message):
         device_status : typing.Optional[global___Status] = ...,
         webrtc_audio_request : typing.Optional[global___WebrtcAudioRequest] = ...,
         sim_instance_segmentation : typing.Optional[global___SimInstanceSegmentation] = ...,
-        exposure_complete : typing.Optional[global___EmptyMessage] = ...,
+        exposure_complete : typing.Optional[global___Status] = ...,
         start_shutdown : typing.Optional[global___EmptyMessage] = ...,
         finish_shutdown : typing.Optional[global___EmptyMessage] = ...,
         hangup : typing.Optional[global___EmptyMessage] = ...,
@@ -2720,6 +2720,7 @@ class Prediction(google.protobuf.message.Message):
     DEPTH_TS_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     COLOR_DATA_FIELD_NUMBER: builtins.int
+    KEY_VALUE_FIELD_NUMBER: builtins.int
     color: typing.Text = ...
     """A reference to data for a heat map or other visualization of a prediction.
     In the JSON world, this is a path to the image file in the GCS bucket.
@@ -2773,6 +2774,8 @@ class Prediction(google.protobuf.message.Message):
     JPG) of the binary data in "color_data".
     """
 
+    @property
+    def key_value(self) -> global___KeyValue: ...
     def __init__(self,
         *,
         color : typing.Optional[typing.Text] = ...,
@@ -2788,9 +2791,10 @@ class Prediction(google.protobuf.message.Message):
         depth_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         error : typing.Optional[typing.Text] = ...,
         color_data : typing.Optional[builtins.bytes] = ...,
+        key_value : typing.Optional[global___KeyValue] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","confidence",b"confidence","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request","pick_points",b"pick_points","place_position_3d",b"place_position_3d","place_quaternion_3d",b"place_quaternion_3d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request","key_value",b"key_value"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","confidence",b"confidence","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request","key_value",b"key_value","pick_points",b"pick_points","place_position_3d",b"place_position_3d","place_quaternion_3d",b"place_quaternion_3d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d"]) -> None: ...
 global___Prediction = Prediction
 
 class PickPoint(google.protobuf.message.Message):

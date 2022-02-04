@@ -19,6 +19,7 @@ from typing import Any, Dict, Tuple
 
 import numpy as np  # type: ignore
 
+from pyreach import arm
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
 
@@ -52,7 +53,7 @@ class IntegrationTestXarmEnv(reach_env.ReachEnv):
                 self.MAX_JOINT_ANGLES,
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
-                ik_lib="ik_pybullet"),
+                ik_lib=arm.IKLibType.IKPYBULLET),
         "camera":
             reach_env.ReachColorCamera("realsense", (360, 640)),
         "depth_camera":

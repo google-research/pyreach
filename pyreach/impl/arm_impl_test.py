@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Tuple, List, Dict
+from typing import List, Optional, Tuple, Dict
 import unittest
 import numpy as np  # type: ignore
 from pyreach import arm
 from pyreach import core
 from pyreach.common.python import types_gen
-from pyreach.ikfast import ikfast
 from pyreach.impl import actions_impl
 from pyreach.impl import arm_impl
 from pyreach.impl import calibration_impl as cal
@@ -49,10 +48,11 @@ class TestPyreachArmImpl(unittest.TestCase):
         device_type="settings-engine", device_name="", key="workcell_io.json")
     workcell_io_device.on_set_key_value(key, test_data.get_workcell_io_json())
     workcell_io_device.close()
+    iklib = TestIKFast(urdf_file, expect_ik_search)  # type: ignore
     rdev, extra_devs, dev = arm_impl.ArmDevice(
         arm_impl.ArmTypeImpl.from_urdf_file(urdf_file), calibration_device,
-        actionsets_device, workcell_io_device.get(), "",
-        TestIKFast(urdf_file, expect_ik_search)).get_wrapper()
+        actionsets_device, workcell_io_device.get(), "", iklib, False,
+        arm.IKLibType.IKFAST).get_wrapper()
     dev._enable_randomization = False
     for extra_dev in extra_devs:
       extra_dev.close()
@@ -906,7 +906,7 @@ class TestArm(test_utils.TestResponder):
     return []
 
 
-class TestIKFast(ikfast.IKFast):
+class TestIKFast(arm_impl.IKLibIKFast):
 
   def __init__(self, urdf_file: str,
                expect_ik_search: List[np.ndarray]) -> None:
@@ -914,28 +914,32 @@ class TestIKFast(ikfast.IKFast):
     self._ik_search_count = 0
     self._expect_ik_search = expect_ik_search
 
-  def ik_search(self, pose: np.ndarray,
-                ik_hints: Dict[int, List[float]]) -> np.ndarray:
+  def ik_search(self, pose: List[float], current_joints: List[float],
+                ik_hints: Dict[int, List[float]],
+                use_unity_ik: bool) -> Optional[List[float]]:
     """Perform IK search and return a single joint pose.
 
     Args:
       pose: The pose.
+      current_joints: the current joint state.
       ik_hints: The ik hints for the search.
+      use_unity_ik: If true, use Unity IK.
 
     Returns:
       The joint position.
     """
-    joints = super().ik_search(pose, ik_hints)
+    joints = super().ik_search(pose, current_joints, ik_hints, use_unity_ik)
     assert self._ik_search_count < len(self._expect_ik_search)
     assert joints is not None
-    assert np.allclose(joints, self._expect_ik_search[self._ik_search_count]), (
-        "Got %s, expected %s for step %d" %
-        (joints.tolist(),
-         self._expect_ik_search[self._ik_search_count].tolist(),
-         self._ik_search_count))
-    joints = self._expect_ik_search[self._ik_search_count]
+    assert np.allclose(
+        np.array(joints, dtype=np.float64),
+        self._expect_ik_search[self._ik_search_count]), (
+            "Got %s, expected %s for step %d" %
+            (joints, self._expect_ik_search[self._ik_search_count].tolist(),
+             self._ik_search_count))
+    override_joints = self._expect_ik_search[self._ik_search_count]
     self._ik_search_count += 1
-    return joints
+    return override_joints.tolist()
 
 
 if __name__ == "__main__":

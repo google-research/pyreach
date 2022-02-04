@@ -820,7 +820,6 @@ class PyReachGymExampleEnv(reach_env.ReachEnv):
 
     task_params: Dict[str, str] = {
         "task_code": "122",
-        "intent": "pick",
         "success_type": "vacuum-pressure-sensor"
     }
 

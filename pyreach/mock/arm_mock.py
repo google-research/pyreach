@@ -61,6 +61,14 @@ class ArmMock(arm.Arm):
     """Return the arm type of the arm."""
     raise NotImplementedError
 
+  def set_ik_lib(self, ik_lib: arm.IKLibType) -> None:
+    """Set the IK library to be used.
+
+    Args:
+      ik_lib: str, name for the IK library to use (ikfast or ik_pybullet
+        supported).
+    """
+
   def add_update_callback(
       self,
       callback: Callable[[arm.ArmState], bool],

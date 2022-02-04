@@ -17,7 +17,7 @@
 import dataclasses
 from typing import List, Optional, Tuple
 
-from pyreach import arm
+from pyreach import arm as pyreach_arm
 from pyreach.gyms import reach_element
 
 
@@ -91,7 +91,8 @@ class ReachArm(reach_element.ReachElement):
       it is typically moved asynchronously.  (For further details see above.)
     response_queue_length: When positive, the PyReach Gym returns the last N
       arm status values for asynchronous moves.
-    ik_lib: Whether to use IKFast or IK PyBullet for inverse kinematics.
+    ik_lib: Whether to use IKFast, IK PyBullet, or None for inverse kinematics.
+      This defaults to the IKFast library.
     controllers: A list of the controller names to allow for arm control.
       In the Gym, the controller is specified by a number that indexes into
       this list.  The empty string means "no controller".  This list must
@@ -113,9 +114,9 @@ class ReachArm(reach_element.ReachElement):
   apply_tip_adjust_transform: bool = False
   is_synchronous: bool = False
   response_queue_length: int = 0
-  ik_lib: Optional[str] = None
+  ik_lib: Optional[pyreach_arm.IKLibType] = pyreach_arm.IKLibType.IKFAST
   controllers: Tuple[str] = ("",)
   e_stop_mode: int = ReachStopMode.STOP_ERROR
   p_stop_mode: int = ReachStopMode.STOP_ERROR
   # Used for unit testing only:
-  test_states: Optional[List[arm.ArmState]] = None
+  test_states: Optional[List[pyreach_arm.ArmState]] = None

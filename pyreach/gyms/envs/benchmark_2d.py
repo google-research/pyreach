@@ -58,7 +58,7 @@ CHAT_LEN_BYTES = 256
 CHAT_PORT_FILE = "benchmark_2d_chat_port.txt"
 
 # The orientation for the tool to point straight down.
-TOOL_ORIENTATION_RADS = (1.27, -2.845, -0.054)
+TOOL_ORIENTATION_RADS = (0, -3.14, 0)
 
 # The rough limits for the workspace. This is based on the end effector tip.
 # It's a bit sloppy, because there may be some areas which can't be reached,
@@ -488,7 +488,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
               short_horizon_instruction.text = short-horizon instruction
       * Annotation: end test case:
             annotation.point_measurement.space = "benchmark-2d-v1",
-            annotation.point_measurement.name = "test_case_begin_ts",
+            annotation.point_measurement.name = "test_case_time",
             annotation.point_measurement.value.seconds = time from
                 test_case_begin_ts
       * Robot arm moves out of the way.

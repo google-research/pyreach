@@ -19,6 +19,7 @@ from typing import Any, Dict, Tuple, cast
 
 import numpy as np  # type: ignore
 
+from pyreach import arm
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
 
@@ -53,7 +54,7 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
                 self.MAX_JOINT_ANGLES,
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
-                ik_lib="ikfast"),
+                ik_lib=arm.IKLibType.IKFAST),
         "camera":
             reach_env.ReachColorCamera("realsense", (360, 640)),
         "depth_camera":
@@ -61,15 +62,15 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
         "server":
             reach_env.ReachServer("Server"),
         "vacuum":
-            reach_env.ReachVacuum("",
-                                  is_synchronous=is_synchronous,
-                                  state_enable=True,
-                                  vacuum_gauge_enable=True,
-                                  vacuum_detect_enable=True),
+            reach_env.ReachVacuum(
+                "",
+                is_synchronous=is_synchronous,
+                state_enable=True,
+                vacuum_gauge_enable=True,
+                vacuum_detect_enable=True),
         "annotation":
-            reach_env.ReachAnnotation("",
-                                      is_synchronous=False,
-                                      maximum_size=1024),
+            reach_env.ReachAnnotation(
+                "", is_synchronous=False, maximum_size=1024),
     }
 
     self.has_fts = True
