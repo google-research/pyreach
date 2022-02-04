@@ -35,6 +35,7 @@ from gym.utils import seeding  # type: ignore
 import numpy as np  # type: ignore
 from google.protobuf import timestamp_pb2
 from pyreach.common.proto_gen import logs_pb2
+from pyreach import arm as pyreach_arm
 from pyreach.core import Pose
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
@@ -97,9 +98,6 @@ RESPONSE_TIMEOUT: int = 5  # Done with timeout error.
 # one string per line, the long-horizon text instruction to carry out. It must
 # be no more than 256 bytes long when encoded as UTF-8.
 INSTRUCTIONS_PATH: str = "benchmark_2d_long_horizon_instrs.txt"
-
-# The maximum number of test cases to present.
-NUM_TEST_CASES: int = 3
 
 # Required for mypy to pass typechecking.
 if TYPE_CHECKING:
@@ -296,13 +294,14 @@ class ChatClient:
   If the server disconnects, we either ran out of time or the agent claims
   the long-horizon instruction is done.
 
-  This happens as many as NUM_TEST_CASES times.
+  This happens as many as num_test_cases times.
   """
 
   client: socket.socket
 
-  def __init__(self) -> None:
-    for _ in range(NUM_TEST_CASES):
+  def __init__(self, num_test_cases: int) -> None:
+    self.num_test_cases = num_test_cases
+    for _ in range(self.num_test_cases):
       print("-------------------- RESET --------------------------------")
       print("1. E-stop the robot.")
       print("2. Roughly bunch all the blocks in the center.")
@@ -506,6 +505,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
 
     tc (str): The task code to override the standard task code with.
     disable_time_limit (bool): Whether to disable the standard time limit.
+    num_test_cases (int): The number of long-horizon instructions.
     """
     self._low_level_queue: SimpleQueue[str] = SimpleQueue()
     self._timer_running: bool = False
@@ -547,6 +547,10 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     if "disable_time_limit" in kwargs:
       self._disable_time_limit = bool(kwargs["disable_time_limit"])
 
+    self.num_test_cases = 3
+    if "num_test_cases" in kwargs:
+      self.num_test_cases = int(kwargs["num_test_cases"])
+
     self.seed()
 
     low_joint_angles = tuple([-6.283, -2.059, -3.926, -3.141, -1.692, -6.283])
@@ -557,7 +561,8 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "arm":
             reach_env.ReachArm("", low_joint_angles, high_joint_angles,
-                               response_queue_length=1, is_synchronous=False),
+                               response_queue_length=1, is_synchronous=False,
+                               ik_lib=pyreach_arm.IKLibType.IKPYBULLET),
         "color_camera":  # realsense
             reach_env.ReachColorCamera("", shape=(360, 640),
                                        initial_stream_request_period=0.03),
@@ -918,7 +923,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     observation, _, _, info = self._stop_task()
 
     # Any more long-horizon instructions?
-    if self._instr_num == NUM_TEST_CASES:
+    if self._instr_num == self.num_test_cases:
       return (observation, reward, True, info)
 
     # Ignore what the agent wanted to do prior to done.
@@ -1116,8 +1121,11 @@ class Benchmark2DEnv(reach_env.ReachEnv):
 
 def main(_: Any) -> None:
   if flags.FLAGS.instructor:
-    ChatClient()
+    ChatClient(flags.FLAGS.num_test_cases)
 
 if __name__ == "__main__":
   flags.DEFINE_bool("instructor", False, "Run as the instructor.")
+  flags.DEFINE_integer(
+      "num_test_cases", 3,
+      ("Number of consecutive instructions. Challenge definition is 3."))
   app.run(main)
