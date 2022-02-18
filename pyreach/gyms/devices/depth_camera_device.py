@@ -63,7 +63,6 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     depth_shape: Tuple[int, int] = shape
     color_shape: Tuple[int, int, int] = shape + (3,)
 
-    observation_space_dict: Dict[str, gym.spaces.Space]
     observation_dict: Dict[str, Any] = {
         "ts":
             gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
@@ -279,7 +278,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
 
     return observation, snapshot_reference, ()
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously fetch an image."""
     if self._depth_camera:
       _ = self._depth_camera.fetch_image()

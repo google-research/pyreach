@@ -120,7 +120,8 @@ class ReachDevice(object):
           "Internal Error: No ReachDeviceSynchronous object")
     reach_synchronous.add_update_callback(add_update_callback, self)
 
-  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+  def set_task_synchronize(
+      self, task_synchronize: Callable[[pyreach.Host], None]) -> None:
     """Provide a global task synchronize function."""
     pass  # Most devices will ignore this.
 
@@ -190,7 +191,7 @@ class ReachDevice(object):
     """Set the reach environment."""
     self._timers = timers
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Force the device synchronize its observations."""
     raise NotImplementedError(f"Device {self._reach_name}; no synchronize()")
 

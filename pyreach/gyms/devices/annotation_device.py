@@ -185,6 +185,6 @@ class ReachDeviceAnnotation(reach_device.ReachDevice):
       return str(pyreach_error)
     return ""
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Force the annotation device synchronize its observations."""
     pass

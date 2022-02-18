@@ -33,6 +33,7 @@ from pyreach.gyms import constraints_element
 from pyreach.gyms import core as gyms_core
 from pyreach.gyms import depth_camera_element
 from pyreach.gyms import force_torque_sensor_element
+from pyreach.gyms import io_element
 from pyreach.gyms import oracle_element
 from pyreach.gyms import reach_element
 from pyreach.gyms import server_element
@@ -50,6 +51,7 @@ from pyreach.gyms.devices.color_camera_device import ReachDeviceColorCamera
 from pyreach.gyms.devices.constraints_device import ReachDeviceConstraints
 from pyreach.gyms.devices.depth_camera_device import ReachDeviceDepthCamera
 from pyreach.gyms.devices.force_torque_sensor_device import ReachDeviceForceTorqueSensor
+from pyreach.gyms.devices.io_device import ReachDeviceIO
 from pyreach.gyms.devices.oracle_device import ReachDeviceOracle
 from pyreach.gyms.devices.reach_device import ReachDevice
 from pyreach.gyms.devices.reach_device import ReachDeviceSynchronous
@@ -154,6 +156,7 @@ class ReachEnv(gym.Env):  # type: ignore
         "gym.constraints",
         "gym.depth",
         "gym.force_torque_sensor",
+        "gym.io",
         "gym.init",
         "gym.obs",
         "gym.oracle",
@@ -253,6 +256,8 @@ class ReachEnv(gym.Env):  # type: ignore
         elif isinstance(config_element,
                         force_torque_sensor_element.ReachForceTorqueSensor):
           element = ReachDeviceForceTorqueSensor(config_element)
+        elif isinstance(config_element, io_element.ReachIO):
+          element = ReachDeviceIO(config_element)
         elif isinstance(config_element, oracle_element.ReachOracle):
           element = ReachDeviceOracle(config_element)
         elif isinstance(config_element, server_element.ReachServer):
@@ -360,7 +365,7 @@ class ReachEnv(gym.Env):  # type: ignore
 
       # Synchronize all devices
       for element in self._elements.values():
-        element.synchronize()
+        element.synchronize(host)
 
   @staticmethod
   def _nop_reward_done_function(
@@ -568,10 +573,10 @@ class ReachEnv(gym.Env):  # type: ignore
       return observations, tuple(snapshot_references), tuple(
           snapshot_responses), server_time
 
-  def task_synchronize(self) -> None:
+  def task_synchronize(self, host: pyreach.Host) -> None:
     """Synchronize all of the devices."""
     for element in self._elements.values():
-      element.synchronize()
+      element.synchronize(host)
 
   def set_reward_done_function(
       self, reward_done_function: gyms_core.RewardDoneFunction) -> None:

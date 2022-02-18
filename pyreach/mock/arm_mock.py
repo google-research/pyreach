@@ -21,8 +21,17 @@ import numpy as np  # type: ignore
 from pyreach import arm
 from pyreach import constraints
 from pyreach import core
+from pyreach import digital_output
 from pyreach.gyms import arm_element
 from pyreach.gyms import reach_element
+from pyreach.mock import digital_output_mock
+
+# Type hint appreviations:
+DigOutput = digital_output.DigitalOutput
+DigOutputMock = digital_output_mock.DigitalOutputMock
+DigOutState = digital_output.DigitalOutputState
+DigOutPinState = digital_output.DigitalOutputPinState
+ImmutableDict = core.ImmutableDictionary
 
 
 class ArmMock(arm.Arm):
@@ -61,6 +70,23 @@ class ArmMock(arm.Arm):
     """Return the arm type of the arm."""
     raise NotImplementedError
 
+  @property
+  def digital_outputs(self) -> ImmutableDict[ImmutableDict[DigOutput]]:
+    """Get the digital outputs for this arm device."""
+    # time: float = 1.0
+    # sequence: int = 1
+    # robot_name: str = "robot_robot_name"
+    # capability_name: str = "capability_name"
+    # pin_states: Tuple[DigOutPinState, ...] = ()  # TODO(gramlich): fix
+    dig_output: DigOutput = DigOutputMock()
+    pin_outputs: ImmutableDict[DigOutput] = ImmutableDict({
+        "pin_name": dig_output,
+    })
+    capabilities: ImmutableDict[ImmutableDict[DigOutput]] = ImmutableDict({
+        "capability_type": pin_outputs,
+    })
+    return capabilities
+
   def set_ik_lib(self, ik_lib: arm.IKLibType) -> None:
     """Set the IK library to be used.
 
@@ -87,7 +113,17 @@ class ArmMock(arm.Arm):
       A function that when called stops the callback.
 
     """
-    raise NotImplementedError
+    # arm_state: arm.ArmState = arm.ArmState(
+    #     time=1.0,
+    #     sequence=1
+    # )
+    # _ = callback(arm_state)
+
+    # def stop_callback() -> None:
+    #   assert False  # Fail hard
+
+    raise NotImplementedError("arm_mock.py:add_update_callback()")
+    # return stop_callback
 
   def start_streaming(self, request_period: float = 0.1) -> None:
     """Start streaming of arm state.

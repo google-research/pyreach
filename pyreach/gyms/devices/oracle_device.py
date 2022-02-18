@@ -301,7 +301,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       }
       return observation, (), ()
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the oracle state."""
     pass
 

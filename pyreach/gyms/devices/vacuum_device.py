@@ -189,7 +189,7 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
         observation["vacuum_gauge"] = np.array(gauge_state)
       return observation, tuple(snapshots), ()
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the vacuum state."""
     vacuum: Optional[pyreach.Vacuum] = self._vacuum
     if vacuum is None:

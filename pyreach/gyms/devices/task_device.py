@@ -54,7 +54,7 @@ class ReachDeviceTask(reach_device.ReachDevice):
                      is_synchronous)
     self._active: bool = False
     self._action_id: int = 0
-    self._task_synchronize: Optional[Callable[[], None]] = None
+    self._task_synchronize: Optional[Callable[[pyreach.Host], None]] = None
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -112,12 +112,12 @@ class ReachDeviceTask(reach_device.ReachDevice):
         if action_request == task_element.ReachAction.START and not active:
           host.logger.start_task(task_params)
           host.logger.wait_for_task_state(logger.TaskState.TASK_STARTED)
-          self._task_synchronize()
+          self._task_synchronize(host)
           self._active = True
           self._action_id += 1
           changed = True
         elif action_request == task_element.ReachAction.STOP and active:
-          self._task_synchronize()
+          self._task_synchronize(host)
           host.logger.end_task(task_params)
           host.logger.wait_for_task_state(logger.TaskState.TASK_ENDED)
           self._active = False
@@ -131,11 +131,12 @@ class ReachDeviceTask(reach_device.ReachDevice):
     """Start a synchronous observation."""
     return False
 
-  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+  def set_task_synchronize(
+      self, task_synchronize: Callable[[pyreach.Host], None]) -> None:
     """Set the global task synchronize function."""
     self._task_synchronize = task_synchronize
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the task device."""
     pass  # The task device does not have state to synchronize.
 

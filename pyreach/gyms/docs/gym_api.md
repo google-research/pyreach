@@ -149,6 +149,9 @@ The PyReach Gym currently has the following devices:
 *   [Force Torque Sensor Device](#force-torque-sensor-device): Represents a
     force/torque sensor attach to an end effector.
 
+*   [I/O Device](#io-device): Represents a generic digital/analog input/output
+    capability. Currently only digital output is implemented.
+
 *   [Oracle Device](#oracle-device): A deprecated a way to run an machine
     learning algorithm locally on a robot.
 
@@ -464,6 +467,51 @@ The force torque sensor observation has the following observation entries:
 Currently, there is no status information from the device being captured.
 Thus, the sensor could be disabled, broken, inactive, with no visible
 information in the returned observation.
+
+### I/O Device
+
+The I/O device provides the ability to access digital/analog input/output signal
+wires. Currently, only digital output is specified.
+
+The I/O device provides a two level Gym dictionary action space, where the first
+level is `"digital_outputs"` and with a sub-dictionary space with one entry for
+each named pin named in the device configuration (e.g. `"gym_pin_number1"`, ...,
+`"gym_pin_numberN"`.)
+
+Each value is a Gym multi-discrete that takes a value of 0, 1, or 2, where:
+
+*   `0`: Sets the output to 0.
+
+*   `1`: Sets the output to 1.
+
+*   `2`: Leaves the output unchanged.
+
+If the pin name is not included in the action space the pin output is left
+unchanged. If the `"digital_outputs"` is not provided by the in the action
+space, no digital outputs are changed. Thus, only the entries that need to
+change need to be present.
+
+The I/O device observation space is a three level nested Gym Dictionary space of
+the form:
+
+```
+ "digital_output": {
+     "gym_point_name1": {
+         "value": True/False,
+         "ts": timestamp,
+     },
+     # ...
+     "gym_point_name1": {
+         "value": True/False,
+         "ts": timestamp,
+     },
+ }
+```
+
+The `"value"` space is Gym returned as a `numpy.ndarray` of type `bool` and a
+shape of `()`. In other words, `True` or `False`. The `"ts"` space as is
+returned as scalar `numpy.ndarray` of type `float` and a shape of `()`. In other
+words, a `float` measured in seconds.
 
 ### Oracle Device
 
@@ -968,6 +1016,8 @@ Each device configuration is described in a separate section below:
 *   [Depth Camera Configuration](#depth-camera-configuration): Configure a Depth
     Camera device.
 
+*   [I/O Configuration](#io-configuration): Configure a the signal I/O device.
+
 *   [Force Torque Sensor Configuration](#force-torque-sensor-configuration):
     Configure a Force Torque Sensor device.
 
@@ -1137,6 +1187,44 @@ with the following arguments:
 *   `is_synchronous`: (Optional, default = `False`) If `True`, all image
     requests for this device are made synchronously; otherwise, they are made
     asynchronously.
+
+#### I/O Configuration
+
+This device provides the ability to perform read and/or modify I/O pins.
+Currently, only digital output us supported. The [`I/O Device`](#io-device) is
+initialized with the with a dictionary of the following structure:
+
+```
+ {
+     "digital_outputs": {
+         "gym_pin_name1":
+             ("reach_name", "capability_type", "reach_pin_name"),
+         "gym_pin_name2":
+             ("reach_name", "capability_type", "reach_pin_name"),
+         # ...
+         "gym_pin_nameN":
+             ("reach_name", "capability_type", "reach_pin_name"),
+     },
+     # Eventually, there will be "digital_inputs", "analog_outputs"
+     # and "analog_inputs", but not for now.
+ }
+```
+
+The `"digital_outputs"` configuration space consists of a dictionary of type
+`Dict[str, Tuple(str, str, str)]` where the key is a user specified name (e.g.
+`"gym_pin_nameI"`) with a three string tuple of the form `("reach_name"",
+"capability_type", "reach_pin_name")`, where
+
+*   `reach_name`: The reach device that hosts the I/O pin.
+
+*   `capability_type`: The capability type string for the pin. This is specified
+    by the robot configuration and is supplied by the operation team.
+
+*   `reach_pin_name`: The specific pin name for the capability. Again, this is
+    specified by the robot configuration and is supplied by the operation team.
+
+Eventually, as other I/O types show up, additional top level configuration
+dictionaries will be added (e.g. `digital_inputs`, etc.)
 
 #### Oracle Configuration
 

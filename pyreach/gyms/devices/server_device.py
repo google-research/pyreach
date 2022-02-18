@@ -81,7 +81,7 @@ class ReachDeviceServer(reach_device.ReachDevice):
     }
     return server_observation, (), ()
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously the server."""
     pass
 

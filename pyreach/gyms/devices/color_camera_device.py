@@ -239,7 +239,7 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
             ts, color_frame.sequence),)
       return observation, snapshot_reference, ()
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously fetch an image."""
     if self._color_camera:
       _ = self._color_camera.fetch_image()

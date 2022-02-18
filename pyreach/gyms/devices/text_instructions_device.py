@@ -85,7 +85,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     self._counter: int = 0
     self._task_enable: bool = False
     self._task_disable: bool = text_instructions_config.task_disable
-    self._task_synchronize: Optional[Callable[[], None]] = None
+    self._task_synchronize: Optional[Callable[[pyreach.Host], None]] = None
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -156,7 +156,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
           counter, "text-instruction", self.config_name,
           lib_snapshot.SnapshotReference(ts, seq)),)
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the text instructions."""
     if self._text_instructions:
       _ = self._text_instructions.fetch_text_instruction()
@@ -193,9 +193,9 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
             if task_enable:
               # TODO(gramlich): Do the synchronous task start here.
               host.logger.start_task(task_params)
-              self._task_synchronize()
+              self._task_synchronize(host)
             else:
-              self._task_synchronize()
+              self._task_synchronize(host)
               # TODO(gramlich): Do the synchronous task end here.
               host.logger.end_task(task_params)
             self._task_enable = task_enable
@@ -207,7 +207,8 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     """Start a synchronous observation."""
     return False
 
-  def set_task_synchronize(self, task_synchronize: Callable[[], None]) -> None:
+  def set_task_synchronize(
+      self, task_synchronize: Callable[[pyreach.Host], None]) -> None:
     """Set the global task synchronize function."""
     self._task_synchronize = task_synchronize
 

@@ -15,6 +15,7 @@
 """Tests of PyReach Gym."""
 
 import collections
+import collections.abc as collections_abc
 import math
 import sys
 from typing import Any, Dict, Set, Tuple
@@ -28,6 +29,7 @@ from pyreach import host
 from pyreach.gyms import arm_element
 from pyreach.gyms import constraints_element
 from pyreach.gyms import core as gyms_core
+from pyreach.gyms import io_element
 from pyreach.gyms import reach_env
 from pyreach.gyms import task_element
 from pyreach.gyms.registration import register
@@ -873,6 +875,212 @@ class TestGymForcetorqueSensorEnv(unittest.TestCase):
                            ("observation",)), observation
         assert action_observation_eq(observation_match,
                                      observation), observation
+
+
+class GymIOEnv(reach_env.ReachEnv):
+  """Configure a Gym environment with an IO device."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init GymIOEnv."""
+    # Since digital I/O is currently done through the arm controller,
+    # an arm must be configured.  If the arm is not configured, a
+    # configuration error occurs.  Other than that, the arm is completely
+    # ignored in this test.  In the tests below, the arm observation is simply
+    # deleted, prior to testing for arm matching observation.
+    pi: float = math.pi
+    low_joint_angles: Tuple[float, ...] = (-pi, -pi, -pi, -pi, -pi, -pi)
+    high_joint_angles: Tuple[float, ...] = (pi, pi, pi, pi, pi, pi)
+    response_queue_length: int = 0 if is_synchronous else 2
+
+    pyreach_config: Dict[str, reach_env.ReachElement] = {
+        "arm":
+            reach_env.ReachArm(
+                reach_name="robot",
+                low_joint_angles=low_joint_angles,
+                high_joint_angles=high_joint_angles,
+                apply_tip_adjust_transform=False,
+                is_synchronous=is_synchronous,
+                response_queue_length=response_queue_length,
+                p_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
+                e_stop_mode=arm_element.ReachStopMode.STOP_DONE,
+                test_states=[
+                    arm.ArmState(),
+                    arm.ArmState(),
+                    arm.ArmState(),
+                    arm.ArmState(),
+                ]),
+        "io":
+            io_element.ReachIO(
+                reach_name="",
+                is_synchronous=is_synchronous,
+                digital_outputs={
+                    "gym_pin_name":
+                        io_element.ReachIODigitalOutput("robot",
+                                                        "capability_type",
+                                                        "pin_name"),
+                }),
+    }
+
+    mock_host: host.Host = host_mock.HostMock(pyreach_config)
+    assert isinstance(mock_host, host.Host)
+    assert isinstance(mock_host, host_mock.HostMock)
+    super().__init__(pyreach_config=pyreach_config, host=mock_host, **kwargs)
+
+
+class GymIOSyncEnv(GymIOEnv):
+  """Configure a Gym environment with synchronous IO."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init a synchronous io."""
+    super().__init__(is_synchronous=is_synchronous, **kwargs)
+
+
+class GymIOAsyncEnv(GymIOEnv):
+  """Configure a Gym environment with asynchronous IO."""
+
+  def __init__(self, is_synchronous: bool = True, **kwargs: Any) -> None:
+    """Init an asynchronous io."""
+    super().__init__(is_synchronous=False, **kwargs)
+
+
+class TestGymIOEnv(unittest.TestCase):
+  """Test the Gym IOElement environments."""
+
+  def test_asynchronous_io_register(self) -> None:
+    """Test asynchronous IO registration."""
+    self.io_register_test(is_synchronous=False)
+
+  # This is currently hard to test -- so skip it for now.
+  #
+  # def test_synchronous_io_register(self) -> None:
+  #   """Test synchronous IO registration."""
+  #   self.io_register_test(is_synchronous=True)
+
+  def io_register_test(self, is_synchronous: bool = True) -> None:
+    """Test Gym IOElement."""
+    env_id_name: str = "{0}_io_element_env-v0".format(
+        "sync" if is_synchronous else "async")
+    class_name: str = "GymIO{0}Env".format(
+        "Sync" if is_synchronous else "Async")
+    entry_point: str = GYMS_PATH + "reach_env_test:" + class_name
+    register(
+        id=env_id_name,
+        entry_point=entry_point,
+        max_episode_steps=200,
+        reward_threshold=25.0)
+
+    env: Any
+    with gym.make(env_id_name) as env:
+      assert isinstance(env, gym.Env), env
+
+      # Verify that the action/observation spaces are correct.
+      # To keep clutter down ignore the "arm" spaces:
+      action_space: Any = env.action_space
+      assert isinstance(action_space, gym.spaces.Space)
+      assert action_space["arm"], action_space
+      assert action_space["io"], action_space
+      assert len(action_space) == 2, action_space
+
+      observation_space: Any = env.observation_space
+      assert isinstance(observation_space, gym.spaces.Space)
+      assert observation_space["arm"], observation_space
+      assert observation_space["io"], observation_space
+      assert len(observation_space) == 2, observation_space
+
+      # Now only test the "io" spaces for correctness:
+      action_match: Dict[str, Any] = {
+          "digital_outputs": {
+              "gym_pin_name": 0
+          },
+      }
+      assert space_match(action_space["io"], action_match, ("action",))
+      observation_match: Dict[str, Any] = {
+          "digital_outputs": {
+              "gym_pin_name": {
+                  "state": 0,
+                  "ts": gyms_core.Timestamp.new(1.0),
+              }
+          }
+      }
+      assert isinstance(observation_space, gym.spaces.Dict)
+      # assert False, observation_space.spaces
+      assert space_match(observation_space["io"], observation_match,
+                         ("observation",))
+
+      # Perform the reset():
+      observation: gyms_core.Observation = env.reset()
+      reset_match: Dict[str, Any] = {
+          "digital_outputs": {
+              "gym_pin_name": {
+                  "state": 0,
+                  "ts": gyms_core.Timestamp.new(3.0),
+              }
+          }
+      }
+      assert isinstance(observation, collections_abc.Mapping), observation
+      assert action_observation_eq(observation["io"],
+                                   reset_match), ("got_observation=",
+                                                  observation["io"],
+                                                  "want_observation=",
+                                                  reset_match)
+
+      # Now do some steps:
+      done: bool
+      if not is_synchronous:
+        # Empty action Test:
+        empty_action: gyms_core.Action = {}
+        observation, _, done, _ = env.step(empty_action)
+        assert not done
+        empty_match: Dict[str, Any] = {
+            "digital_outputs": {
+                "gym_pin_name": {
+                    "state": 0,
+                    "ts": gyms_core.Timestamp.new(4.0),
+                }
+            }
+        }
+        assert isinstance(observation, collections_abc.Mapping), observation
+        assert action_observation_eq(observation["io"],
+                                     empty_match), ("got_observation=",
+                                                    observation["io"],
+                                                    "want_observation=",
+                                                    empty_match)
+
+        on: int = io_element.ReachDigitalIOState.ON
+        off: int = io_element.ReachDigitalIOState.OFF
+        no_change: int = io_element.ReachDigitalIOState.NO_CHANGE
+
+        def step_test(test_name: str, action_value: int, result_value: int,
+                      timestamp: float) -> None:
+          """Perform one step test."""
+          action: gyms_core.Action = {
+              "io": {
+                  "digital_outputs": {
+                      "gym_pin_name": action_value,
+                  }
+              }
+          }
+          observation, _, done, _ = env.step(action)
+          assert not done
+          match: Dict[str, Any] = {
+              "digital_outputs": {
+                  "gym_pin_name": {
+                      "state": result_value,
+                      "ts": gyms_core.Timestamp.new(timestamp),
+                  }
+              }
+          }
+          assert isinstance(observation, collections_abc.Mapping), observation
+          assert action_observation_eq(observation["io"],
+                                       match), (test_name, "got_observation=",
+                                                observation["io"],
+                                                "want_observation=", match)
+
+        # Sequence through all of the states:
+        step_test("on test", on, on, 6.0)
+        step_test("no_change1 test", no_change, on, 7.0)
+        step_test("off test", off, off, 9.0)
+        step_test("no_change2 test", no_change, off, 10.0)
 
 
 class GymOracleEnv(reach_env.ReachEnv):

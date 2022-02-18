@@ -361,7 +361,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             ts, arm_state.sequence),)
       return observation, snapshot_reference, tuple(responses)
 
-  def synchronize(self) -> None:
+  def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the arm state."""
     if self._arm:
       _ = self._arm.fetch_state()
