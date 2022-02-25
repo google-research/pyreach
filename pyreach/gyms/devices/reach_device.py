@@ -21,7 +21,7 @@ import sys
 import threading
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import internal

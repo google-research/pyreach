@@ -22,7 +22,7 @@ import time
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import arm as pyreach_arm

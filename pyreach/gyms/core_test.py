@@ -16,7 +16,7 @@
 
 import unittest
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import core
 from pyreach.gyms import core as gyms_core
@@ -34,15 +34,15 @@ class CoreTest(unittest.TestCase):
     error_message: str = (
         "Timestamp ts=xyzzy is type <class 'str'> not float or numpy scalar")
     try:
-      gyms_core.Timestamp.new("xyzzy")
-      assert "missing exception"
+      gyms_core.Timestamp.new("xyzzy")  # type: ignore
+      assert False, "missing exception"
     except core.PyReachError as error:
       assert error_message == str(error), f"Wrong error message '{error}'"
 
     error_message = "Timestamp ts=[1.23] is not scalar numpy array"
     try:
       gyms_core.Timestamp.new(np.array([1.23]))
-      assert "missing exception"
+      assert False, "missing exception"
     except core.PyReachError as error:
       assert error_message == str(error), f"Wrong error message '{error}'"
 
@@ -202,7 +202,7 @@ class TestObservationGet(unittest.TestCase):
           observation, "", default=np.array([], dtype=np.uint8))
       assert False, "Missing exception"
     except core.PyReachError as error:
-      error_message = "default has type uint8 not <class 'numpy.float64'>"
+      error_message = "default has type uint8 not float64"
       assert str(error) == error_message, error
 
     try:
@@ -221,7 +221,7 @@ class TestObservationGet(unittest.TestCase):
           observation, "", default=np.array([1., 2., 3.], dtype=np.float_))
       assert False, "Missing exception"
     except core.PyReachError as error:
-      error_message = "default has type float64 not <class 'numpy.int64'>"
+      error_message = "default has type float64 not int64"
       assert str(error) == error_message, error
 
     try:
@@ -238,7 +238,7 @@ class TestObservationGet(unittest.TestCase):
           observation, "", default=np.array([[0, 1], [2, 3]], dtype=np.float_))
       assert False, "Missing exception"
     except core.PyReachError as error:
-      error_message = "default has type float64 not <class 'numpy.uint16'>"
+      error_message = "default has type float64 not uint16"
       assert str(error) == error_message, error
 
     try:
@@ -255,7 +255,7 @@ class TestObservationGet(unittest.TestCase):
           observation, "", default=np.array([[[0]]], dtype=np.float_))
       assert False, "Missing exception"
     except core.PyReachError as error:
-      error_message = "default has type float64 not <class 'numpy.uint8'>"
+      error_message = "default has type float64 not uint8"
       assert str(error) == error_message, error
 
     try:

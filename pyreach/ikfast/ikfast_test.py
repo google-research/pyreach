@@ -23,8 +23,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_ur3e(self) -> None:
     resolver = ikfast.IKFast("ur3e.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [[
         0.15575925, -2.9682486, 0.93033262, -2.6334274, 1.5101384, -1.53257425
@@ -45,12 +44,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -64,8 +64,7 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -78,6 +77,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -86,10 +86,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -1.53257425
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -107,8 +107,7 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -125,6 +124,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -135,8 +135,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_ur5(self) -> None:
     resolver = ikfast.IKFast("ur5.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [[
         0.10294705189091624,
@@ -206,12 +205,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -225,10 +225,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -241,6 +241,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -249,10 +250,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -0.8787322918414351, 1.655420395887572, 0.18456659620035673
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -270,10 +271,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -290,6 +291,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -300,8 +302,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_ur5e(self) -> None:
     resolver = ikfast.IKFast("ur5e.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -341,12 +342,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -360,10 +362,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -376,6 +378,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -384,10 +387,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -0.7416700537416318, 1.6556240465808028, 0.22212078814240713
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -405,10 +408,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -425,6 +428,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -435,8 +439,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_xarm6(self) -> None:
     resolver = ikfast.IKFast("XArm6.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -476,12 +479,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -495,10 +499,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -511,6 +515,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -519,10 +524,10 @@ class IkfastUtilTest(unittest.TestCase):
                 0.11240818685999415, 0.8226610103120375, 1.5128080302488023
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -540,10 +545,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -560,6 +565,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -570,8 +576,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_lrmate200ic(self) -> None:
     resolver = ikfast.IKFast("lrmate200ic.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [[
         -0.14702247913212219, 0.16034728889163374, 0.17485384923751324,
@@ -596,12 +601,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -615,10 +621,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -631,6 +637,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -639,10 +646,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -3.2255700376773384, 1.362807584317037, 1.576470205253172
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -660,10 +667,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -680,6 +687,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -690,8 +698,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_lrmate200id(self) -> None:
     resolver = ikfast.IKFast("lrmate200id.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -731,12 +738,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -750,10 +758,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -766,6 +774,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -774,10 +783,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -3.224789478317228, 1.4131949941018875, 1.5721775665784599
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -795,10 +804,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -815,6 +824,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -825,8 +835,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_fanuccr7ia(self) -> None:
     resolver = ikfast.IKFast("FanucCR7ia.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -866,12 +875,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -885,10 +895,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -901,6 +911,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -909,10 +920,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -3.224789478317228, 1.4131949941018875, 1.5721775665784599
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -930,10 +941,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -950,6 +961,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -960,8 +972,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_fcr7ia(self) -> None:
     resolver = ikfast.IKFast("FanucLrmate200id7l.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -1001,12 +1012,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1020,10 +1032,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1036,6 +1048,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -1044,10 +1057,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -0.14878476484202274, 2.5548526994125202, 1.4349097267086428
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1065,10 +1078,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1085,6 +1098,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -1095,8 +1109,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_ur10e(self) -> None:
     resolver = ikfast.IKFast("ur10e.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -1136,12 +1149,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1155,10 +1169,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1171,6 +1185,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -1179,10 +1194,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -0.4437021074813956, 1.6556986786980046, 0.28482443103632815
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1200,10 +1215,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1220,6 +1235,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -1230,8 +1246,7 @@ class IkfastUtilTest(unittest.TestCase):
 
   def test_ikfast_fr2000ia165f(self) -> None:
     resolver = ikfast.IKFast("FanucR2000ia165f.urdf")
-    test_pose = np.array(
-        [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276])
+    test_pose = [0.441, -0.069, 0.296, 3.07915249, 0.17924206, 0.07207276]
     inverse = resolver.ik(test_pose)
     expect: List[List[float]] = [
         [
@@ -1271,12 +1286,13 @@ class IkfastUtilTest(unittest.TestCase):
     self.assertTrue(np.allclose(np.asarray(expect), inverse))
     for idx in range(inverse.shape[0]):
       forward = resolver.fk(inverse[idx, :])
+      assert forward is not None
       self.assertTrue(np.allclose(forward, test_pose))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1290,10 +1306,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     ik_hints = {
         0: [
             1.68749761581421, -1.98929464817047, -1.89353466033936,
@@ -1306,6 +1322,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.ik_search(test_pose, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,
@@ -1314,10 +1331,10 @@ class IkfastUtilTest(unittest.TestCase):
                 -3.2263601374152837, 1.3047586646041642, 1.5988320979125414
             ])))
 
-    test_pose = np.array([
+    test_pose = [
         10000.0, 10000.0, 10000.0, 3.11639138331322, 0.005372085246919482,
         -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1335,10 +1352,10 @@ class IkfastUtilTest(unittest.TestCase):
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNone(joints)
 
-    test_pose = np.array([
+    test_pose = [
         -0.01672919342733003, 0.6336892500729367, 0.1106076186519042,
         3.11639138331322, 0.005372085246919482, -0.1276226213011794
-    ])
+    ]
     current_joints = [
         1.793768405914307, -2.222002168694967, -1.752705574035645,
         -0.7431128782084961, 1.653548717498779, 0.2220320701599121
@@ -1355,6 +1372,7 @@ class IkfastUtilTest(unittest.TestCase):
     }
     joints = resolver.unity_ik_solve_search(test_pose, current_joints, ik_hints)
     self.assertIsNotNone(joints)
+    assert joints is not None
     self.assertTrue(
         np.allclose(
             joints,

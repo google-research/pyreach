@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional, Tuple, Dict
+from typing import Dict, List, Optional, Tuple, Union
 import unittest
 import numpy as np  # type: ignore
 from pyreach import arm
@@ -914,8 +914,9 @@ class TestIKFast(arm_impl.IKLibIKFast):
     self._ik_search_count = 0
     self._expect_ik_search = expect_ik_search
 
-  def ik_search(self, pose: List[float], current_joints: List[float],
-                ik_hints: Dict[int, List[float]],
+  def ik_search(self, pose: Union[List[Union[float, int]], Tuple[Union[float,
+                                                                       int]]],
+                current_joints: List[float], ik_hints: Dict[int, List[float]],
                 use_unity_ik: bool) -> Optional[List[float]]:
     """Perform IK search and return a single joint pose.
 
@@ -928,7 +929,8 @@ class TestIKFast(arm_impl.IKLibIKFast):
     Returns:
       The joint position.
     """
-    joints = super().ik_search(pose, current_joints, ik_hints, use_unity_ik)
+    joints = super().ik_search([float(v) for v in pose], current_joints,
+                               ik_hints, use_unity_ik)
     assert self._ik_search_count < len(self._expect_ik_search)
     assert joints is not None
     assert np.allclose(

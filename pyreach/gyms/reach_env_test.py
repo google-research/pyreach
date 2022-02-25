@@ -22,7 +22,7 @@ from typing import Any, Dict, Set, Tuple
 import unittest
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 import pyreach
 from pyreach import arm
 from pyreach import host

@@ -338,6 +338,6 @@ class ColorCameraImpl(color_camera.ColorCamera):
           (not isinstance(z, float)) or (not isinstance(rx, float)) or
           (not isinstance(ry, float)) or (not isinstance(rz, float))):
         raise core.PyReachError("Internal Error: Did not get floats")
-      return core.Pose.from_list(base_transform_device)
+      return core.Pose.from_list(base_transform_device.tolist())
     logging.warning("Camera had a parent ID. Currently unsupported.")
     return None

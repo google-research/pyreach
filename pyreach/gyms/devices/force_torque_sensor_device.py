@@ -18,7 +18,7 @@ import sys
 from typing import List, Optional, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import core

@@ -16,7 +16,7 @@
 
 import json
 import math
-from typing import List, Tuple
+from typing import List, Optional, Tuple, Union
 import unittest
 
 import numpy as np  # type: ignore
@@ -26,7 +26,7 @@ from pyreach.common.base.transform_util import ZERO_VECTOR3
 
 PI_2 = np.pi / 2.0
 
-INTRINSICS_VEC = [2, 3, 4, 5]
+INTRINSICS_VEC: List[Union[float, int]] = [2, 3, 4, 5]
 INTRINSICS_MAT = [[INTRINSICS_VEC[0], 0, INTRINSICS_VEC[2]],
                   [0, INTRINSICS_VEC[1], INTRINSICS_VEC[3]], [0, 0, 1]]
 
@@ -110,7 +110,7 @@ class ProjectionTest(unittest.TestCase):
     """Test simple projection (with identity extrinsics)."""
     intrinsics, distortion, _, _, _ = self._load_cal_params()
 
-    def proj(p: Tuple[int, int, int]) -> np.ndarray:
+    def proj(p: Tuple[int, int, int]) -> Optional[Tuple[int, int]]:
       return transform_util.project_2d_int(
           p=p,
           extrinsics=np.zeros((6)),
@@ -125,6 +125,7 @@ class ProjectionTest(unittest.TestCase):
     self.assertIsNone(proj((0, -100, 1)))  # Off the frame (clip range).
 
     proj_pix = proj((0, 0, 1))
+    assert proj_pix is not None
     self.assertIs(type(proj_pix), tuple)
     self.assertEqual(len(proj_pix), 2)
 
@@ -214,14 +215,14 @@ class ProjectionTest(unittest.TestCase):
 class ConversionTest(unittest.TestCase):
 
   @staticmethod
-  def _get_random_pose() -> List[float]:
+  def _get_random_pose() -> np.ndarray:
     pose = [.0, .0, .0, .0, .0, .0]
     pose[0:3] = np.random.random(3) - 0.5
     axis_angle = np.random.random(3) - 0.5
     old_angle = np.linalg.norm(axis_angle)
     new_angle = (np.random.random() - 0.5) * math.pi
     pose[3:] = axis_angle * new_angle / old_angle
-    return pose
+    return np.asarray(pose, dtype=float)
 
   def test_pose_matrix_conversion(self) -> None:
     pose = self._get_random_pose()
@@ -295,8 +296,8 @@ class ConversionTest(unittest.TestCase):
     extrinsics = np.array([0.20, -0.73, 0.55, -2.91, 0., 0.])
 
     # Viewing from (0, -1, 1) and looking straight down the z-axis.
-    origin = [0., -1., 1.]
-    direction = [0., 0., -1.]
+    origin = np.array([0., -1., 1.], dtype=float)
+    direction = np.array([0., 0., -1.], dtype=float)
     direction /= np.linalg.norm(direction)
 
     raycast = transform_util.raycast_into_depth_image(origin, direction,
@@ -328,7 +329,7 @@ class ConversionTest(unittest.TestCase):
     self.assertTrue(np.allclose([math.pi / 2, 0., 0.], x_90degree_pose[3:]))
 
   def test_get_z_direction(self) -> None:
-    pose = [1., 1., 1., 0., 0., 1.]
+    pose = np.array([1., 1., 1., 0., 0., 1.], dtype=float)
     z_direction = transform_util.get_z_direction(pose)
     self.assertTrue(np.allclose([0, 0, 1], z_direction))
 
@@ -341,12 +342,12 @@ class ConversionTest(unittest.TestCase):
     self.assertEqual(pose[2:], [0, 0, 0, 0])
 
   def test_axis_angle_to_quaternion(self) -> None:
-    axis_angle = [0, 0, 0]
+    axis_angle: List[Union[float, int]] = [0, 0, 0]
     quaternion = transform_util.axis_angle_to_quaternion(axis_angle)
     self.assertTrue(np.allclose([0, 0, 0, 1], quaternion))
 
   def test_quaternion_to_axis_angle(self) -> None:
-    quaternion = [0, 0, 0, 1]
+    quaternion: List[Union[float, int]] = [0, 0, 0, 1]
     axis_angle = transform_util.quaternion_to_axis_angle(quaternion)
     self.assertTrue(np.allclose([0, 0, 0], axis_angle))
 

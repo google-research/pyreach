@@ -165,8 +165,8 @@ def project(p: ArrayOrList3, extrinsics: np.ndarray, intrinsics: np.ndarray,
   return p2
 
 
-def intrinsics_to_matrix(v: ArrayOrList4,
-                         dtype: np.dtype = np.float64) -> np.ndarray:
+def intrinsics_to_matrix(
+    v: ArrayOrList4, dtype: np.dtype = np.dtype(np.float64)) -> np.ndarray:
   """Convert a flattened list of intrinsics to 3x3 intrincis matrix."""
   return np.array([[v[0], 0, v[2]], [0, v[1], v[3]], [0, 0, 1]], dtype=dtype)
 
@@ -176,7 +176,7 @@ def intrinsics_to_list(v: np.ndarray) -> List[float]:
   return [v[0, 0], v[1, 1], v[0, 2], v[1, 2]]
 
 
-def unproject(p: ArrayOrList, z: float, intrinsic: np.ndarray,
+def unproject(p: ArrayOrList2, z: float, intrinsic: np.ndarray,
               distortion: ArrayOrList) -> np.ndarray:
   """Unproject (u,v) pixel coordinate, with depth z, into x,y,z coordinate.
 
@@ -350,7 +350,7 @@ def convert_to_matrix(translation: ArrayOrList3,
            [R20, R21, R22, T2],
            [0.,  0.,  0.,  1.]])
   """
-  m = np.zeros((4, 4), dtype=np.float)
+  m = np.zeros((4, 4), dtype=float)
   m[:3, :3] = cv2.Rodrigues(np.array(rotation))[0]
   m[0, 3] = translation[0]
   m[1, 3] = translation[1]
@@ -712,7 +712,7 @@ def raycast_into_depth_image(
     # point
     step /= 5
 
-  if hit is None:
+  if hit is None or img_pt is None:
     return None
 
   return pt_normal_depth_sample(img_pt, direction, depth_img, radius,
@@ -760,7 +760,7 @@ def pos_quaternion_to_matrix(translation: List[float],
   sqx = qx * qx
   sqy = qy * qy
   sqz = qz * qz
-  m = np.zeros((4, 4), dtype=np.float)
+  m = np.zeros((4, 4), dtype=float)
   m[0, 0] = 1.0 - 2.0 * sqy - 2.0 * sqz
   m[0, 1] = 2.0 * qx * qy - 2.0 * qz * qw
   m[0, 2] = 2.0 * qx * qz + 2.0 * qy * qw
@@ -812,7 +812,7 @@ def unity_pos_quaternion_to_pose(translation: List[float],
     equivalent pose.
 
   """
-  real_to_unity = np.zeros((4, 4), dtype=np.float)
+  real_to_unity = np.zeros((4, 4), dtype=float)
   real_to_unity[0, 0] = 1.0
   real_to_unity[1, 2] = 1.0
   real_to_unity[2, 1] = 1.0

@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 import uuid
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import arm as pyreach_arm
@@ -221,7 +221,7 @@ class ReachEnv(gym.Env):  # type: ignore
             ik_lib = pyreach_arm.IKLibType.IKFAST
           arm_default_ik_types[config_element.reach_name] = ik_lib
       host_kwargs: Dict[str, Any] = {
-          "enable_streaming": True,
+          "enable_streaming": False,
           "arm_default_ik_types": arm_default_ik_types,
       }
 

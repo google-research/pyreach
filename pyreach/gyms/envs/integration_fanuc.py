@@ -17,7 +17,7 @@
 import time
 from typing import Any, Dict, Tuple
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import arm
 from pyreach.gyms import core
@@ -45,8 +45,8 @@ class IntegrationTestFanucEnv(reach_env.ReachEnv):
         "arm":
             reach_env.ReachArm(
                 "",
-                self.MIN_JOINT_ANGLES,
-                self.MAX_JOINT_ANGLES,
+                tuple(self.MIN_JOINT_ANGLES.tolist()),
+                tuple(self.MAX_JOINT_ANGLES.tolist()),
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
                 ik_lib=arm.IKLibType.IKFAST),

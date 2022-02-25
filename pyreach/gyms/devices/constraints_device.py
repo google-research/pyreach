@@ -17,7 +17,7 @@ import sys
 from typing import Dict, Optional, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import constraints

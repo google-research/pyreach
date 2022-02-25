@@ -18,7 +18,7 @@ import collections
 import time
 from typing import Any, Dict, Tuple, Optional
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
@@ -263,8 +263,8 @@ class BenchmarkFoldingEnv(reach_env.ReachEnv):
         "arm":
             reach_env.ReachArm(
                 "",
-                self.MIN_JOINT_ANGLES,
-                self.MAX_JOINT_ANGLES,
+                tuple(self.MIN_JOINT_ANGLES.tolist()),
+                tuple(self.MAX_JOINT_ANGLES.tolist()),
                 response_queue_length=1),
         "camera":
             reach_env.ReachColorCamera("realsense", (240, 424)),
@@ -384,8 +384,9 @@ class BenchmarkFoldingEnv(reach_env.ReachEnv):
 
     return obs
 
-  def _clamp_joint_velocity_limits(self, q_target: np.ndarray,
-                                   obs: core.Observation) -> np.ndarray:
+  def _clamp_joint_velocity_limits(
+      self, q_target: np.ndarray,
+      obs: Optional[core.Observation]) -> np.ndarray:
     """Clamp joint angles based on joint speed limits and last observed joints.
 
     The joint velocity is computed based on the timestamp and joint angles from
@@ -407,8 +408,8 @@ class BenchmarkFoldingEnv(reach_env.ReachEnv):
     try:
       q_obs = obs["arm"]["joint_angles"]
       ts_obs = obs["arm"]["ts"]
-    except KeyError:
-      raise KeyError("Unable to read joint_angles or timestamp in obs")
+    except KeyError as key_error:
+      raise KeyError from key_error
 
     q_delta = q_target - q_obs
 
@@ -518,7 +519,8 @@ class BenchmarkFoldingEnv(reach_env.ReachEnv):
     if "arm" in action:
       if "joint_angles" in action["arm"]:
         q_action = action["arm"]["joint_angles"]
-
+        assert q_action is not None
+        assert self.last_join_move_observation is not None
         q_clamped = self._clamp_joint_velocity_limits(
             q_action, self.last_joint_move_observation)
         action["arm"]["joint_angles"] = q_clamped

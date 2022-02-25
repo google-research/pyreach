@@ -3,7 +3,7 @@
 import sys
 from typing import Any, Optional, Tuple
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach.common.proto_gen import logs_pb2

@@ -16,7 +16,7 @@
 import json
 import logging  # type: ignore
 import math
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Sequence, Tuple, Union
 
 import numpy as np  # type: ignore
 from scipy.spatial import transform  # type: ignore
@@ -74,34 +74,33 @@ class BoxImpl(constraints.Box):
     """Return the size of the box."""
     return self.scale.as_list()
 
-  def get_vertices(self) -> List[np.array]:
+  def get_vertices(self) -> List[np.ndarray]:
     """Return the vertices of the box."""
     self._vertices = []
     self._vertices.append(
         np.array([-self.scale.x / 2, -self.scale.y / 2, -self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
         np.array([-self.scale.x / 2, self.scale.y / 2, -self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
         np.array([self.scale.x / 2, self.scale.y / 2, -self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
         np.array([self.scale.x / 2, -self.scale.y / 2, -self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
         np.array([-self.scale.x / 2, -self.scale.y / 2, self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
         np.array([-self.scale.x / 2, self.scale.y / 2, self.scale.z / 2],
-                 dtype=np.float))
+                 float))
     self._vertices.append(
-        np.array([self.scale.x / 2, self.scale.y / 2, self.scale.z / 2],
-                 dtype=np.float))
+        np.array([self.scale.x / 2, self.scale.y / 2, self.scale.z / 2], float))
     self._vertices.append(
         np.array([self.scale.x / 2, -self.scale.y / 2, self.scale.z / 2],
-                 dtype=np.float))
-    self._vertices.append(np.array([0, 0, 0], dtype=np.float))
+                 float))
+    self._vertices.append(np.array([0, 0, 0], dtype=np.dtype(float)))
     rotation = transform.Rotation.from_euler(
         "zxy", np.array(self.get_rotation()), degrees=True).as_rotvec()
     for i in range(len(self._vertices)):
@@ -583,11 +582,15 @@ class ConstraintsImpl(constraints.Constraints):
         return None
 
       for vertex in geo.get_vertices():
-        vertex = transform_util.transform(vertex, np.array(position), rotation)
+        vertex = transform_util.transform(vertex, np.array(position),
+                                          np.array(rotation, dtype=float))
         points.append((vertex[0], vertex[1]))
     return shapely.geometry.MultiPoint(points).convex_hull
 
-  def is_point_in_object(self, point: np.array, device_name: str) -> bool:
+  def is_point_in_object(self, point: Union[Sequence[Union[int, float]],
+                                            Sequence[int], Sequence[float],
+                                            np.ndarray],
+                         device_name: str) -> bool:
     """Check if a 3D point is colliding with a named device.
 
     set_bin_hulls() must have been previously called.

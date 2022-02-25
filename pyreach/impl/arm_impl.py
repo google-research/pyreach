@@ -523,7 +523,8 @@ class _MovePose(_Command):
           # Convert tip adjust transform in Unity space.
           tip_adjust_unity = transform_util.unity_pos_quaternion_to_pose(
               tip_adjust_transform[:3],
-              transform_util.axis_angle_to_quaternion(tip_adjust_transform[3:]))
+              transform_util.axis_angle_to_quaternion(
+                  tip_adjust_transform[3:]).tolist())
           tip_adjust_unity_translation = tip_adjust_unity[:3]
           tip_adjust_unity_rotation = tip_adjust_unity[3:]
           tip_adjust_unity_rotation_quat = transform_util.axis_angle_to_quaternion(
@@ -535,7 +536,8 @@ class _MovePose(_Command):
 
           # Convert back to pose form in Unity space.
           tip_adjust_pose_unity = transform_util.pos_quaternion_to_pose(
-              tip_adjust_unity_translation, tip_adjust_unity_rotation)
+              tip_adjust_unity_translation.tolist(),
+              tip_adjust_unity_rotation.tolist())
 
           # Calculate the inverse matrix in Unity space.
           tip_adjust_pose_unity_matrix = np.linalg.inv(
@@ -547,8 +549,8 @@ class _MovePose(_Command):
 
           # Convert back to pose in robot space before sending to IK solver.
           pose = transform_util.unity_pos_quaternion_to_pose(
-              pose_unity[:3],
-              transform_util.axis_angle_to_quaternion(pose_unity[3:]))
+              pose_unity[:3].tolist(),
+              transform_util.axis_angle_to_quaternion(pose_unity[3:]).tolist())
         else:
           pose = transform_util.multiply_pose(pose, tip_adjust_transform)
       else:
@@ -1767,7 +1769,7 @@ class ArmImpl(arm.Arm):
 
   def async_to_joints(
       self,
-      joints: Union[List[float], np.ndarray],
+      joints: Union[List[float], Tuple[float, ...], np.ndarray],
       use_linear: bool = False,
       servo: bool = False,
       intent: str = "",
@@ -2127,7 +2129,7 @@ class ArmImpl(arm.Arm):
         apply_tip_adjust_transform = False
         if step.get_parent_type() == actions_impl.ActionStepParentType.ABSOLUTE:
           target_tip_transform = transform_util.unity_pos_quaternion_to_pose(
-              np_pos, np_rot)
+              np_pos.tolist(), np_rot.tolist())
           target_tip_transform = transform_util.multiply_pose(
               target_tip_transform, offset)
 
@@ -2147,7 +2149,7 @@ class ArmImpl(arm.Arm):
             input_pose_normal = input_data.prediction_point
             np_pos = np_pos / 100
             target_tip_transform = transform_util.pos_quaternion_to_pose(
-                np_pos, np_rot)
+                np_pos.tolist(), np_rot.tolist())
             target_tip_transform = transform_util.multiply_pose(
                 input_pose_normal[0], target_tip_transform)
             target_tip_transform = transform_util.multiply_pose(
@@ -2169,7 +2171,7 @@ class ArmImpl(arm.Arm):
 
             # This is already in Unity space.
             target_tip_transform = transform_util.pos_quaternion_to_pose(
-                np_pos, np_rot)
+                np_pos.tolist(), np_rot.tolist())
             position_list = [
                 input_data.position.x, input_data.position.y,
                 input_data.position.z
@@ -2196,7 +2198,8 @@ class ArmImpl(arm.Arm):
 
             # Adjusted input pose in Unity space.
             new_input_pose_unity = transform_util.pos_quaternion_to_pose(
-                input_matrix_unity_translation, input_matrix_unity_rotation)
+                input_matrix_unity_translation.tolist(),
+                input_matrix_unity_rotation.tolist())
 
             # Input and step pose in Unity space.
             target_tip_transform = transform_util.multiply_pose(

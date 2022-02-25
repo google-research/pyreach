@@ -141,15 +141,15 @@ class IKFast:
         return
 
     getattr(self._libik, self._ik_function).argtypes = [
-        np.ctypeslib.ndpointer(np.float),
-        np.ctypeslib.ndpointer(np.float),
-        np.ctypeslib.ndpointer(np.float)
+        np.ctypeslib.ndpointer(float),
+        np.ctypeslib.ndpointer(float),
+        np.ctypeslib.ndpointer(float)
     ]
     getattr(self._libik, self._ik_function).restype = ctypes.c_int
     getattr(self._libik, self._fk_function).argtypes = [
-        np.ctypeslib.ndpointer(np.float),
-        np.ctypeslib.ndpointer(np.float),
-        np.ctypeslib.ndpointer(np.float)
+        np.ctypeslib.ndpointer(float),
+        np.ctypeslib.ndpointer(float),
+        np.ctypeslib.ndpointer(float)
     ]
 
   def ik(self, pose: ArrayOrList) -> Optional[np.ndarray]:
@@ -193,8 +193,8 @@ class IKFast:
     if not self._libik:
       return None
 
-    r = np.zeros((3, 3), dtype=np.float)
-    t = np.zeros((1, 3), dtype=np.float)[0]
+    r = np.zeros((3, 3), dtype=float)
+    t = np.zeros((1, 3), dtype=float)[0]
     getattr(self._libik, self._fk_function)(np.array(joints, dtype=np.float64),
                                             t, r)
     if hasattr(Rotation, "from_matrix"):

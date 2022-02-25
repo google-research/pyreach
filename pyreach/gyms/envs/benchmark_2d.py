@@ -32,7 +32,7 @@ from absl import flags  # type: ignore
 import gym  # type: ignore
 import gym.core  # type: ignore
 from gym.utils import seeding  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 from google.protobuf import timestamp_pb2
 from pyreach.common.proto_gen import logs_pb2
 from pyreach import arm as pyreach_arm
@@ -191,7 +191,7 @@ class TextInstruction:
     bs = s.encode("utf-8")[:CHAT_LEN_BYTES]
     buff = bytearray([0] * CHAT_LEN_BYTES)
     buff[:len(bs)] = bs
-    return np.array(list(buff), dtype=np.float)
+    return np.array(list(buff), dtype=np.dtype(np.float_))
 
 
 class ChatServer:
@@ -692,7 +692,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     observation, reward, _, info = self._end_test_case(reward=0, reset=True)
 
     # Shuffle the test cases.
-    self._np_random.shuffle(self._long_horizon_instructions)
+    self._np_random.shuffle(self._long_horizon_instructions)  # type: ignore
     self._setup_state = SetupState.AWAIT_CLIENT
     self._instr_num = 0
 
@@ -716,7 +716,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     Returns:
       A StepReturn tuple.
     """
-    observation: core.Observation = None
+    observation: core.Observation = ()
     reward: float = 0.0
     instr_done: bool = False
     info: Any = None
@@ -1074,7 +1074,7 @@ class Benchmark2DEnv(reach_env.ReachEnv):
     bs = proto.SerializeToString()
     enc = annotation_size * [256]
     enc[:len(bs)] = bs
-    enc_ndarray = np.array(enc, dtype=np.int)
+    enc_ndarray = np.array(enc, dtype=np.dtype(np.int_))
     action = {
         "annotation": {
             "disable": 0,

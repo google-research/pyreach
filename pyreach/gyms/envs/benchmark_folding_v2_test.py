@@ -17,7 +17,7 @@ from typing import Any, List, Tuple
 import unittest
 from unittest import mock
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
@@ -64,7 +64,7 @@ class MockReachEnv(reach_env.ReachEnv):
     self._next_instruction_no = 0
     self._task_enabled = True
     print('reset called')
-    return None
+    return {}
 
   def close(self) -> None:
     pass
@@ -114,4 +114,3 @@ class BenchmarkFoldingTest(unittest.TestCase):
 
 if __name__ == '__main__':
   unittest.main()
-

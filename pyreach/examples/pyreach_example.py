@@ -85,7 +85,7 @@ def main() -> None:
     global_constraint = host.config.constraint
     if global_constraint is not None:
       print("Constraint:", global_constraint)
-      global_constraint.is_point_in_object([1, 1, 2], "LeftBin")
+      global_constraint.is_point_in_object([1.0, 1.0, 2.0], "LeftBin")
 
     # Turning the vacuum on/off.
     print("Vac on:", host.vacuum.on())

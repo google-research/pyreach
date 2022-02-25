@@ -381,7 +381,7 @@ class Pendant(object):
       self._target_pose = np.array(state.pose.as_list())
 
     if transform is not None:
-      rot = np.zeros(6, dtype=np.float)
+      rot = np.zeros(6, dtype=np.dtype(float))
       rot[3:] = self._target_pose[3:]
       self._target_pose[3:] = transform[3:]
       self._target_pose = transform_util.multiply_pose(self._target_pose, rot)

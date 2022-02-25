@@ -114,7 +114,7 @@ def _spacecat_thread(pendants: List[pendant_lib.Pendant],
       if event is None:
         break
       if isinstance(event, spacemouse_lib.RSpnavMotionEvent):
-        transform = np.zeros(6, dtype=np.float)
+        transform = np.zeros(6, dtype=np.dtype(float))
         transform[0:3] = _spacemouse_position_sensitivity * np.array(
             [event.translation[0], event.translation[1], event.translation[2]])
         euler = (

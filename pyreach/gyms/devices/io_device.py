@@ -281,7 +281,7 @@ class ReachDeviceIO(reach_device.ReachDevice):
       return snapshots
 
   def _do_digital_outputs_action(
-      self, digital_outputs_action: gyms_core.Action,
+      self, digital_outputs_action: collections_abc.Mapping,
       host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:
     """Perform digital outputs action."""
     digital_outputs_table: Dict[str, Tuple[DigOutput, str]] = (

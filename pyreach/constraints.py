@@ -17,7 +17,7 @@ PyReach only provides bare minimum support for the constraints right now.
 """
 
 import dataclasses
-from typing import Optional, Tuple
+from typing import Optional, Sequence, Tuple, Union
 
 import numpy as np  # type: ignore
 
@@ -71,7 +71,10 @@ class Interactable:
 class Constraints(object):
   """Interface for checking constraints."""
 
-  def is_point_in_object(self, point: np.ndarray, device_name: str) -> bool:
+  def is_point_in_object(self, point: Union[Sequence[Union[int, float]],
+                                            Sequence[int], Sequence[float],
+                                            np.ndarray],
+                         device_name: str) -> bool:
     """Check if a 3D point is colliding with a named device.
 
     Args:

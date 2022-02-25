@@ -20,7 +20,6 @@ from typing import Any
 from absl import logging  # type: ignore
 import numpy as np  # type: ignore
 import six
-
 from pyreach.common.base import transform_util
 import pybullet  # type: ignore
 import pybullet_data  # type: ignore
@@ -196,8 +195,9 @@ class IKPybullet:
     ee_link_state = self._pybullet_client.getLinkState(
         self._arm_urdf, self._effector_link, 0, computeForwardKinematics=True)
     ee_link_pose = np.array(ee_link_state[4] + ee_link_state[5])
-    quaternion_xyzw = np.asarray(
-        [ee_link_pose[3], ee_link_pose[4], ee_link_pose[5], ee_link_pose[6]])
+    quaternion_xyzw = [
+        ee_link_pose[3], ee_link_pose[4], ee_link_pose[5], ee_link_pose[6]
+    ]
     pose = transform_util.pos_quaternion_to_pose(ee_link_pose[0:3],
                                                  quaternion_xyzw)
     return pose

@@ -18,7 +18,7 @@ import sys
 from typing import Callable, List, Optional, Set, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import snapshot as lib_snapshot

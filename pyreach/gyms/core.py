@@ -18,7 +18,7 @@ import collections
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import core
 
@@ -183,7 +183,7 @@ def get_float0(observation: Observation,
   """
   ndarray: Optional[np.ndarray]
   error: str
-  ndarray, error = get_ndarray(observation, path, 0, np.float_)
+  ndarray, error = get_ndarray(observation, path, 0, np.dtype(np.float_))
   if isinstance(ndarray, np.ndarray):
     value: Any = ndarray.flat[0]
     if isinstance(value, float):
@@ -213,11 +213,11 @@ def get_float1(observation: Observation,
   """
   ndarray: Optional[np.ndarray]
   error: str
-  ndarray, error = get_ndarray(observation, path, 1, np.float_)
+  ndarray, error = get_ndarray(observation, path, 1, np.dtype(np.float_))
   if isinstance(ndarray, np.ndarray):
     return ndarray
   if isinstance(default, np.ndarray):
-    error = default_ndarray_check(default, 1, np.float_)
+    error = default_ndarray_check(default, 1, np.dtype(np.float_))
     if not error:
       return default
   raise core.PyReachError(error)
@@ -269,11 +269,11 @@ def get_int1(observation: Observation,
   """
   ndarray: Optional[np.ndarray]
   error: str
-  ndarray, error = get_ndarray(observation, path, 1, np.int64)
+  ndarray, error = get_ndarray(observation, path, 1, np.dtype(np.int64))
   if isinstance(ndarray, np.ndarray):
     return ndarray
   if isinstance(default, np.ndarray):
-    error = default_ndarray_check(default, 1, np.int64)
+    error = default_ndarray_check(default, 1, np.dtype(np.int64))
     if not error:
       return default
   raise core.PyReachError(error)
@@ -299,12 +299,12 @@ def get_int2(observation: Observation,
   """
   ndarray: Optional[np.ndarray]
   error: str
-  ndarray, error = get_ndarray(observation, path, 2, np.uint16)
+  ndarray, error = get_ndarray(observation, path, 2, np.dtype(np.uint16))
   if isinstance(ndarray, np.ndarray):
     assert ndarray.dtype == np.uint16, ndarray.dtype
     return ndarray
   if isinstance(default, np.ndarray):
-    error = default_ndarray_check(default, 2, np.uint16)
+    error = default_ndarray_check(default, 2, np.dtype(np.uint16))
     if not error:
       return default
   raise core.PyReachError(error)
@@ -331,11 +331,11 @@ def get_int3(observation: Observation,
   """
   ndarray: Optional[np.ndarray]
   error: str
-  ndarray, error = get_ndarray(observation, path, 3, np.uint8)
+  ndarray, error = get_ndarray(observation, path, 3, np.dtype(np.uint8))
   if isinstance(ndarray, np.ndarray):
     return ndarray
   if isinstance(default, np.ndarray):
-    error = default_ndarray_check(default, 3, np.uint8)
+    error = default_ndarray_check(default, 3, np.dtype(np.uint8))
     if not error:
       return default
   raise core.PyReachError(error)

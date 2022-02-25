@@ -18,7 +18,7 @@ import sys
 from typing import Any, Callable, Dict, Optional, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import snapshot as lib_snapshot
@@ -138,7 +138,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
             counter += 1
         else:
           counter += 1
-        ts = gyms_core.Timestamp.new(current_text_instruction.time)
+        ts = current_text_instruction.time
         seq = current_text_instruction.sequence
 
         self._text_instruction = current_text_instruction
@@ -149,7 +149,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
 
       observation: gyms_core.Observation = {
           "counter": counter,
-          "ts": ts,
+          "ts": gyms_core.Timestamp.new(ts),
           "instruction": instruction_bytes,
       }
       return observation, (), (lib_snapshot.SnapshotResponse(

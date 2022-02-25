@@ -264,7 +264,7 @@ class ServoJoints2DRandomAgent:
         print(f"{time.time()}: Step returned done")
         break
 
-      next_action: core.Action = None
+      next_action: core.Action = ()
 
       if self.new_long_horizon_instr:
         next_action = self.go_to_center(obs)

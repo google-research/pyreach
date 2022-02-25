@@ -100,9 +100,8 @@ if ! python3 -m mypy -V ; then
   echo "mypy is not installed"
   exit 1
 elif ! python3 -m mypy --config-file "${MYPY_CONFIG}" "${PY_FILES[@]}" ; then
-  echo "FAILED: mypy errors (temp ignored for PIPE-3272)"
-  # temp ignored for https://project-reach.atlassian.net/browse/PIPE-3272
-  # EXIT_CODE=1
+  echo "FAILED: mypy errors"
+  EXIT_CODE=1
 fi
 
 echo "================ flake8 ================"

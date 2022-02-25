@@ -18,7 +18,7 @@ import collections
 import time
 from typing import Tuple, Any, Dict, List
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env

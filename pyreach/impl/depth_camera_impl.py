@@ -102,8 +102,9 @@ class DepthFrameImpl(depth_camera.DepthFrame):
     logging.warning("Camera had a parent ID. Currently unsupported.")
     return None
 
-  def get_point_normal(self, x: int,
-                       y: int) -> Optional[Tuple[np.array, np.array, np.array]]:
+  def get_point_normal(
+      self, x: int,
+      y: int) -> Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]]:
     """Return hit point, surface normal and transform of a pixel.
 
     Cast a ray from the camera center to the point cloud. Found the 3D position
@@ -130,13 +131,15 @@ class DepthFrameImpl(depth_camera.DepthFrame):
     if not isinstance(camera_device, cal.CalibrationCamera):
       return None
 
-    intrinsics = transform_util.intrinsics_to_matrix(camera_device.intrinsics)
+    intrinsics = transform_util.intrinsics_to_matrix(
+        list(camera_device.intrinsics))
     distortion = np.array(camera_device.distortion, np.float64)
     distortion_depth = np.array(camera_device.distortion_depth, np.float64)
     camera_transform = self.pose()
     if not camera_transform:
       return None
-    pose = transform_util.inverse_pose(camera_transform.as_list())
+    pose = transform_util.inverse_pose(
+        np.array(camera_transform.as_list(), dtype=float))
     inv_pose = transform_util.inverse_pose(pose)
 
     ray = transform_util.unproject(

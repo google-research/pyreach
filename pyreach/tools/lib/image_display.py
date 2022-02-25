@@ -111,7 +111,7 @@ def _get_image_to_show(img: Optional[np.ndarray],
   else:
     raise RuntimeError(f"Unexpected image format {img.dtype!r}")
 
-  if show_crosshair:
+  if show_crosshair and img is not None:
     _draw_crosshair(img, _CROSSHAIR_COLOR, _CROSSHAIR_LENGTH_FRAC,
                     _CROSSHAIR_THICKNESS)
   return img
@@ -131,7 +131,8 @@ class ImageDisplay:
     # Threadsafe cv2.
     self._cv2e = cv2_eventloop.get_instance()
     # Stores the latest image file and overlay displayed, per window.
-    self._last_shown: Dict[str, Tuple[np.ndarray, np.ndarray, bool]] = {}
+    self._last_shown: Dict[str, Tuple[np.ndarray, Optional[np.ndarray],
+                                      bool]] = {}
     self._last_detected_objects: Dict[str, List[NamedPolygonT]] = {}
     # Counts number of frames per window.
     self._frames: Dict[str, frame_counter.FrameCounter] = {}
@@ -265,6 +266,8 @@ class ImageDisplay:
       wname, images_tuple = window_tuple
       raw_img, raw_ovl, _ = images_tuple
       img = _get_image_to_show(raw_img, raw_ovl, self._show_crosshair)
+      if img is None:
+        continue
       grid_j = index // h
       grid_i = index % h
       start_y = int(grid_i * self._unified_shape[0] / h)
@@ -357,7 +360,7 @@ class ImageDisplay:
       ovl = img_input
     else:
       img = img_input
-    if intrinsics is not None and distortion is not None:
+    if intrinsics is not None and distortion is not None and img is not None:
       # Render undistortion field.
       undistortion_field.render_onto(img, intrinsics, distortion)
     if img is None:
@@ -369,6 +372,8 @@ class ImageDisplay:
 
     # Optionally apply overlay (e.g. --cameras=depth-camera+oracle.pick-points).
     img = _get_image_to_show(img, ovl, self._show_crosshair)
+    if img is None:
+      return
     # If detections exist, render them.
     img = self._draw_detections(img, window_name)
     self._render(window_name, img)

@@ -17,7 +17,7 @@ from typing import Any, List, Tuple
 import unittest
 from unittest import mock
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
@@ -46,7 +46,7 @@ class MockEnv(reach_env.ReachEnv):
     }, 0, True, None
 
   def reset(self, *params: Any) -> core.Observation:
-    return None
+    return ()
 
   def close(self) -> None:
     pass

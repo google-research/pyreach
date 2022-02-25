@@ -19,7 +19,7 @@ import threading
 from typing import Any, Dict, List, Optional, Tuple
 
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import pyreach
 from pyreach import snapshot as lib_snapshot

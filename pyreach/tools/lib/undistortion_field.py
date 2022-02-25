@@ -89,7 +89,7 @@ def render_onto(orig_image: np.ndarray, intrinsics: Tuple[float, ...],
   """
   image = orig_image.copy()
   uv_coords, deltas = _get_undistortion_shifts(image, intrinsics, distortion)
-  center = intrinsics[2:4]
+  center = np.array(intrinsics[2:4], dtype=float)
   for index in range(uv_coords.shape[0]):
     uv = uv_coords[index, :]
     delta = deltas[index, :]
