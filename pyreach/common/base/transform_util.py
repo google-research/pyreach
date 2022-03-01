@@ -20,7 +20,7 @@ import random
 import sys
 from typing import List, Tuple, Union, Optional
 
-import numpy as np  # type: ignore
+import numpy as np
 from scipy.spatial.transform.rotation import Rotation  # type: ignore
 import cv2  # type: ignore
 

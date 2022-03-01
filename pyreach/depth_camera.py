@@ -16,7 +16,7 @@
 
 from typing import Optional, Callable, Tuple
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.calibration import Calibration
 from pyreach.core import Pose

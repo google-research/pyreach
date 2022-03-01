@@ -14,7 +14,7 @@
 """Implementation of the PyReach Internal interface."""
 from typing import Callable, Optional, Tuple
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from google.protobuf import duration_pb2
 from google.protobuf import timestamp_pb2

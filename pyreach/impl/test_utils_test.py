@@ -19,7 +19,7 @@ import queue
 import tempfile
 from typing import List
 import unittest
-import numpy  # type: ignore
+import numpy
 from PIL import Image  # type: ignore
 from pyreach.common.python import types_gen
 from pyreach.impl import device_base

@@ -113,6 +113,10 @@ class ImmutableDictionary(Generic[T]):
     """Return the dictionary keys."""
     return self._data.keys()
 
+  def __len__(self) -> int:
+    """Get the length of the dictionary."""
+    return len(self._data)
+
 
 @dataclasses.dataclass(frozen=True)
 class Translation(object):

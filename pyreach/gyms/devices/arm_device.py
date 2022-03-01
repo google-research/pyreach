@@ -142,8 +142,24 @@ class ReachDeviceArm(reach_device.ReachDevice):
           (response_space,) * response_queue_length)
     observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
-    super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+    super().__init__(
+        reach_name, action_space, observation_space, is_synchronous, {
+            "acceleration",
+            "command",
+            "controller",
+            "id",
+            "joint_angles",
+            "pose",
+            "preemptive",
+            "servo",
+            "servo_gain",
+            "servo_lookahead_seconds",
+            "servo_time_seconds",
+            "synchronous",
+            "timeout",
+            "use_linear",
+            "velocity",
+        })
     self._arm: Optional[pyreach.Arm] = None
     self._arm_state_capturer: _ArmStateCapturer = _ArmStateCapturer()
     self._controllers: Tuple[str, ...] = controllers

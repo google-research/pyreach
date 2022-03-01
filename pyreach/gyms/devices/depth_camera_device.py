@@ -99,7 +99,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, set())
     self._depth_shape: Tuple[int, int] = depth_shape
     self._depth_camera: Optional[pyreach.DepthCamera] = None
     self._force_fit: bool = force_fit

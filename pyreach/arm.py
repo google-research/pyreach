@@ -24,7 +24,7 @@ import dataclasses
 import enum
 from typing import Callable, List, Optional, Tuple, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import constraints
 from pyreach import core

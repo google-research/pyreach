@@ -18,7 +18,7 @@ import logging  # type: ignore
 import math
 from typing import Any, Dict, List, Optional, Set, Sequence, Tuple, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 from scipy.spatial import transform  # type: ignore
 import shapely.geometry  # type: ignore
 
@@ -325,7 +325,7 @@ def load_geometry(from_json: Dict[str, Any]) -> Optional[constraints.Geometry]:
     from_json: The JSON to extract the Geometry from.
 
   Returns:
-    Returns Geometry on success and None othewise.
+    Returns Geometry on success and None otherwise.
 
   """
   if from_json.get("type") == "composite":
@@ -443,23 +443,36 @@ class Interactable(ConstraintDevice):
 class ConstraintRobot(ConstraintDevice):
   """Robot device within constraints."""
 
-  _joint_limits: List[constraints.JointLimit]
+  _joint_limits: Optional[Tuple[constraints.JointLimit, ...]]
+  _reference_poses: Optional[core.ImmutableDictionary[
+      constraints.ReferencePose]]
 
-  def __init__(self, device_type: str, device_name: str,
-               joint_limits: List[constraints.JointLimit]) -> None:
+  def __init__(
+      self, device_type: str, device_name: str,
+      joint_limits: Optional[Tuple[constraints.JointLimit, ...]],
+      reference_poses: Optional[core.ImmutableDictionary[
+          constraints.ReferencePose]]
+  ) -> None:
     """Init the Robot type, name and joint limits.
 
     Args:
       device_type: The device type as a string.
       device_name: The device name as a string.
       joint_limits: List of joint limits.
+      reference_poses: The tuple of reference poses for the robot.
     """
     super().__init__(device_type, device_name)
-    self._joint_limits = joint_limits.copy()
+    self._joint_limits = joint_limits
+    self._reference_poses = reference_poses
 
-  def get_joint_limits(self) -> Tuple[constraints.JointLimit, ...]:
+  def __str__(self) -> str:
+    """Return a string version of Device."""
+    return ("Robot('" + self._device_type + "', '" + self._device_name + "'," +
+            str(self._joint_limits) + "," + str(self._reference_poses) + ")")
+
+  def get_joint_limits(self) -> Optional[Tuple[constraints.JointLimit, ...]]:
     """Return the joint limits."""
-    return tuple(self._joint_limits)
+    return self._joint_limits
 
   @classmethod
   def from_json(cls, json_data: Dict[str, Any]) -> Optional["ConstraintRobot"]:
@@ -474,28 +487,98 @@ class ConstraintRobot(ConstraintDevice):
     """
     parameters = json_data.get("parameters", None)
     if parameters is None or not isinstance(parameters, dict):
+      logging.warning("constraints robot has no parameters in %s",
+                      str(json_data))
       return None
     joint_limits = parameters.get("jointLimits", None)
-    if joint_limits is None or not isinstance(joint_limits, list):
-      return None
-    joints = []
-    for joint in joint_limits:
-      if not isinstance(joint, list):
+    joints: Optional[List[constraints.JointLimit]] = None
+    if joint_limits is not None:
+      joints = []
+      if not isinstance(joint_limits, (list, tuple)):
+        logging.warning("constraints jointLimits not list in %s",
+                        str(json_data))
         return None
-      if len(joint) != 2:
-        return None
-      joints.append(
-          constraints.JointLimit(joint[0] * math.pi / 180.,
-                                 joint[1] * math.pi / 180.))
+      for joint in joint_limits:
+        if not isinstance(joint, (list, tuple)):
+          logging.warning("constraints jointLimits value not list in %s",
+                          str(json_data))
+          return None
+        if len(joint) != 2:
+          logging.warning("constraints jointLimits value length not 2 in %s",
+                          str(json_data))
+          return None
+        try:
+          joints.append(
+              constraints.JointLimit(
+                  float(joint[0]) * math.pi / 180.,
+                  float(joint[1]) * math.pi / 180.))
+        except ValueError:
+          logging.warning("constraints jointLimits value not float in %s",
+                          str(json_data))
+          return None
     for d in json_data:
       if d not in {"parameters", "deviceType", "deviceName"}:
         logging.warning("extra Robot field: %s", d)
+    reference_poses: Optional[Dict[str, constraints.ReferencePose]] = None
+    if ("referencePoses" in json_data["parameters"] and
+        json_data["parameters"]["referencePoses"]):
+      poses = json_data["parameters"]["referencePoses"]
+      reference_poses = {}
+      if not isinstance(poses, dict):
+        logging.warning("constraints referencePoses not a dictionary in %s",
+                        str(json_data))
+        return None
+      for name, pose in poses.items():
+        if not isinstance(pose, dict):
+          logging.warning("constraints referencePoses pose not a dict in %s",
+                          str(json_data))
+          return None
+        if "pose" not in pose:
+          logging.warning("constraints referencePoses does not contain pose %s",
+                          str(pose))
+          return None
+        if "type" not in pose:
+          logging.warning("constraints referencePoses does not contain type %s",
+                          str(pose))
+          return None
+        if not isinstance(pose["pose"], list):
+          logging.warning("constraints referencePoses list not a dict in %s",
+                          str(json_data))
+          return None
+        if not isinstance(pose["type"], str):
+          logging.warning("constraints referencePoses type not a str in %s",
+                          str(json_data))
+          return None
+        if len(pose["pose"]) != 6:
+          logging.warning("constraints referencePoses pose not length 6 in %s",
+                          str(json_data))
+          return None
+        pose_f: List[float] = []
+        for v in pose["pose"]:
+          try:
+            pose_f.append(float(v))
+          except ValueError:
+            logging.warning("constraints referencePoses value not float in %s",
+                            str(json_data))
+            return None
+        reference_poses[name] = constraints.ReferencePose(
+            name, str(pose["type"]), core.Pose.from_list(pose_f))
     for d in json_data["parameters"]:
-      if d not in {"jointLimits"}:
+      if d not in {"jointLimits", "referencePoses"}:
         logging.warning("extra Robot parameter: %s", d)
     return ConstraintRobot(
         json_data.get("deviceType", ""), json_data.get("deviceName", ""),
-        joints)
+        tuple(joints) if joints else None,
+        core.ImmutableDictionary(reference_poses) if reference_poses else None)
+
+  def get_reference_poses(
+      self) -> Optional[core.ImmutableDictionary[constraints.ReferencePose]]:
+    """Get the reference poses.
+
+    Returns:
+      The reference poses as a list of poses or None if they are not loaded.
+    """
+    return self._reference_poses
 
 
 class ConstraintsImpl(constraints.Constraints):
@@ -521,8 +604,8 @@ class ConstraintsImpl(constraints.Constraints):
     return ("Constraints(_devices=[" + devices_text + "], _bins=" +
             str(self._bins) + ")")
 
-  def _get_device(self, device_type: str,
-                  device_name: str) -> Optional[ConstraintDevice]:
+  def _get_devices(self, device_type: str,
+                   device_name: str) -> Tuple[ConstraintDevice, ...]:
     """Lookup a device.
 
     Args:
@@ -533,20 +616,20 @@ class ConstraintsImpl(constraints.Constraints):
       The device is returned if successfully found and None otherwise.
 
     """
-    for device in self._devices:
-      if (device.device_type == device_type and
-          device.device_name == device_name):
-        return device
-    return None
+    return tuple([
+        device for device in self._devices if
+        device.device_type == device_type and device.device_name == device_name
+    ])
 
   def _construct_bin(self,
                      device_name: str) -> Optional[shapely.geometry.Polygon]:
-    object_constraint = self._get_device("object", device_name)
-    if object_constraint is None:
+    object_constraints = self._get_devices("object", device_name)
+    if not object_constraints:
       logging.warning(
           "Unable to make bin, no object in constraint with "
           "name: %s", device_name)
       return None
+    object_constraint = object_constraints[0]
     if (not isinstance(object_constraint, Interactable) and
         not isinstance(object_constraint, ConstraintObject)):
       logging.warning(
@@ -610,14 +693,12 @@ class ConstraintsImpl(constraints.Constraints):
   def get_joint_limits(
       self, device_name: str) -> Optional[Tuple[constraints.JointLimit, ...]]:
     """Return the joint limits."""
-    device = self._get_device("robot", device_name)
-    if device is None:
-      return None
-
-    if not isinstance(device, ConstraintRobot):
-      return None
-
-    return device.get_joint_limits()
+    for device in self._get_devices("robot", device_name):
+      if isinstance(device, ConstraintRobot):
+        joints = device.get_joint_limits()
+        if joints is not None:
+          return joints
+    return None
 
   def get_interactables(self) -> Tuple[constraints.Interactable, ...]:
     """Get the list of interactable geometries.
@@ -634,11 +715,38 @@ class ConstraintsImpl(constraints.Constraints):
               constraints.Interactable(dev.device_name, dev.get_geometry()))
     return tuple(interactables)
 
+  def get_reference_poses(
+      self, device_name: str
+  ) -> Optional[core.ImmutableDictionary[constraints.ReferencePose]]:
+    """Get the reference poses for a given robot.
+
+    Args:
+      device_name: the name of the robot device to load from.
+
+    Returns:
+      The reference poses as tuple of tuple of poses.
+    """
+    output_poses: Optional[Dict[str, constraints.ReferencePose]] = None
+    for device in self._get_devices("robot", device_name):
+      if isinstance(device, ConstraintRobot):
+        poses = device.get_reference_poses()
+        if poses is not None:
+          if not output_poses:
+            output_poses = {}
+          for name, pose in poses.items():
+            output_poses[name] = pose
+    if output_poses is not None:
+      return core.ImmutableDictionary(output_poses)
+    return None
+
 
 class ConstraintsDevice(device_base.DeviceBase):
   """Represents a Constraints Device."""
 
   _robot_name: Optional[str]
+  _constraints: Optional[ConstraintsImpl]
+  _cached_workcell: Optional[str]
+  _cached_robot: Optional[str]
 
   def __init__(self, robot_name: Optional[str] = None) -> None:
     """Init a ConstraintsDevice.
@@ -648,6 +756,9 @@ class ConstraintsDevice(device_base.DeviceBase):
     """
     super().__init__()
     self._robot_name = robot_name
+    self._constraints = None
+    self._cached_workcell = None
+    self._cached_robot = None
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
     """Return the key values.
@@ -706,29 +817,47 @@ class ConstraintsDevice(device_base.DeviceBase):
       Return the constraints if available or None otherwise.
 
     """
-    const = self.get_key_value(
-        device_base.KeyValueKey(
-            device_type="settings-engine",
-            device_name="",
-            key="workcell_constraints.json"))
+    return self._constraints
+
+  def on_set_key_value(self, key: device_base.KeyValueKey, value: str) -> None:
+    """Invoke after a new key-value is just set.
+
+    Args:
+      key: The KeyValueKey to use.
+      value: The value to set it to.
+    """
+    if (key.device_type == "settings-engine" and not key.device_name and
+        key.key == "workcell_constraints.json"):
+      if self._cached_workcell == value:
+        return
+      self._cached_workcell = value
+    elif (self._robot_name is not None and key.device_type == "robot" and
+          key.device_name == self._robot_name and
+          key.key == "robot_constraints.json"):
+      if self._cached_robot == value:
+        return
+      self._cached_robot = value
+    else:
+      return
+    const = self._cached_workcell
     if not const or not const.strip():
-      return None
+      self._constraints = None
+      return
     devices = self._extract_devices(const, "workcell_constraints.json", True)
     if devices is None:
-      return None
+      self._constraints = None
+      return
     if self._robot_name is not None:
-      const = self.get_key_value(
-          device_base.KeyValueKey(
-              device_type="robot",
-              device_name=self._robot_name,
-              key="robot_constraints.json"))
+      const = self._cached_robot
       if not const or not const.strip():
+        self._constraints = None
         return None
       robot_constraints = self._extract_devices(
           const, self._robot_name + " robot_constraints.json"
           if self._robot_name else "robot_constraints.json", False)
       if robot_constraints is None:
-        return None
+        self._constraints = None
+        return
       devices += robot_constraints
     c_devices: List[ConstraintDevice] = []
     for dev in devices:
@@ -741,9 +870,11 @@ class ConstraintsDevice(device_base.DeviceBase):
         obj = ConstraintRobot.from_json(dev)
       else:
         logging.warning("Invalid device type: %s", dev)
-        return None
+        self._constraints = None
+        return
       if obj is None:
         logging.warning("Invalid device element: %s", dev)
-        return None
+        self._constraints = None
+        return
       c_devices.append(obj)
-    return ConstraintsImpl(c_devices)
+    self._constraints = ConstraintsImpl(c_devices)

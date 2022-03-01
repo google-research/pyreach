@@ -94,7 +94,7 @@ class ReachDeviceIO(reach_device.ReachDevice):
     observation_space: gym.spaces.Dict = (
         gym.spaces.Dict(io_observation_config))
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"digital_outputs"})
     self._digital_outputs_table: Optional[Dict[str, Tuple[DigOutput,
                                                           str]]] = None
     self._all_digital_outputs: Tuple[DigOutput, ...] = ()

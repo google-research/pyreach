@@ -24,7 +24,7 @@ import threading
 import time
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, TextIO, Tuple
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from google.protobuf import duration_pb2
 from google.protobuf import timestamp_pb2

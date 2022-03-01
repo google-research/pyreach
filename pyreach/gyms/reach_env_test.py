@@ -214,11 +214,14 @@ class TestGymAnnotationEnv(unittest.TestCase):
               "bogus": 0,
           }
       }
+      bogus_error: str = ("Device annotation action(s) {'bogus'} not allowed. "
+                          "Only ['data', 'disable'] are allowed.")
       try:
         observation, _, done, _ = env.step(action10)
       except pyreach.core.PyReachError as error:
-        assert str(error) == "Unexpected key 'bogus' for annotation.", (
-            f"Step 10: Error is present, but has wrong message: '{str(error)}'")
+        assert str(error) == bogus_error, (
+            "Step 10: Error is present, but has wrong message: "
+            f"'{str(error)}' != '{bogus_error}")
       else:
         assert False, "Step 10: Did not throw expected exception."
 

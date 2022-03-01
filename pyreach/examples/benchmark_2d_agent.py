@@ -58,7 +58,7 @@ import gym  # type: ignore
 import matplotlib.axes as pltaxes  # type: ignore
 import matplotlib.image as pltimage  # type: ignore
 import matplotlib.pyplot as plt  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 from pyreach.gyms.envs import benchmark_2d  # pylint: disable=unused-import

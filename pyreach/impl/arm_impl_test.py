@@ -14,7 +14,7 @@
 
 from typing import Dict, List, Optional, Tuple, Union
 import unittest
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach import arm
 from pyreach import core
 from pyreach.common.python import types_gen
@@ -55,6 +55,22 @@ class TestPyreachArmImpl(unittest.TestCase):
         arm.IKLibType.IKFAST).get_wrapper()
     dev._enable_randomization = False
     for extra_dev in extra_devs:
+      extra_dev.on_set_key_value(
+          device_base.KeyValueKey(
+              device_type="robot", device_name="",
+              key="robot_constraints.json"),
+          test_data.get_robot_constraints_json())
+      extra_dev.on_set_key_value(
+          device_base.KeyValueKey(
+              device_type="settings-engine",
+              device_name="",
+              key="document-config/ikhints"), test_data.get_ikhints_json())
+      extra_dev.on_set_key_value(
+          device_base.KeyValueKey(
+              device_type="settings-engine",
+              device_name="",
+              key="workcell_constraints.json"),
+          test_data.get_workcell_constraints_json())
       extra_dev.close()
     self.assertEqual(dev.device_name, "")
     self.assertEqual(dev.arm_type.urdf_file, urdf_file)
@@ -767,6 +783,11 @@ class TestArm(test_utils.TestResponder):
             data_type="key-value",
             key="document-config/ikhints",
             value=test_data.get_ikhints_json()),
+        types_gen.DeviceData(
+            device_type="settings-engine",
+            data_type="key-value",
+            key="workcell_constraints.json",
+            value=test_data.get_workcell_constraints_json()),
     ]
 
   def step(self, cmd: types_gen.CommandData) -> List[types_gen.DeviceData]:

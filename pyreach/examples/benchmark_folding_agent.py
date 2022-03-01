@@ -23,7 +23,7 @@ from typing import List
 from absl import app  # type: ignore
 from absl import flags  # type: ignore
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach.gyms import core
 from pyreach.gyms import experiment_assigner
 from pyreach.gyms.envs.benchmark_folding_v2 import BenchmarkFoldingEnv

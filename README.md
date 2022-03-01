@@ -1,4 +1,4 @@
-# PyReach - Python Client SDK for robot remote control
+# PyReach - Python Client SDK for Robot Remote Control
 
 ### Disclaimer: this is not an officially supported Google product.
 
@@ -95,4 +95,19 @@ To remove the PyReach pip package:
 
 ```shell
 pip uninstall pyreach
+```
+
+## Citing
+
+If you find this open source release useful, please reference in your paper (authors listed in alphabetical order):
+
+```bibtex
+@misc{reach2022pyreach,
+    author = {Wong, Adrian and Zeng, Andy and Bose, Arnab and Wahid, Ayzaan and Kalashnikov, Dmitry and Krasin, Ivan and Varley, Jake and Lee, Johnny and Tompson, Jonathan and Attarian, Maria and Florence, Pete and Baruch, Robert and Xu, Sichun and Welker, Stefan and Sindhwani, Vikas and Vanhoucke, Vincent and Gramlich, Wayne},
+    title = {PyReach - Python Client SDK for Robot Remote Control},
+    year = {2022},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/google-research/pyreach}},
+}
 ```

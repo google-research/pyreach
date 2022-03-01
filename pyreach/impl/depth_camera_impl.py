@@ -16,7 +16,7 @@
 import logging  # type: ignore
 from typing import Callable, Optional, Tuple, cast
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import calibration as cal
 from pyreach import core

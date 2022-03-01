@@ -342,6 +342,7 @@ class ReachEnv(gym.Env):  # type: ignore
       self._reward_range: Tuple[float, float] = (-float("inf"), float("inf"))
       self._arm_elements: Tuple[ReachDeviceArm, ...] = tuple(arm_elements)
       self._elements: Dict[str, ReachDevice] = elements
+      self._element_names: Set[str] = set(elements.keys())
       self._pyreach_config: Dict[str, ReachElement] = pyreach_config
       self._text_instruction: Optional[ReachDeviceTextInstructions] = None
       for element in self._elements.values():
@@ -398,9 +399,26 @@ class ReachEnv(gym.Env):  # type: ignore
         elements: Dict[str, ReachDevice] = self._elements
         name: str
         element: ReachDevice
+        all_names: Set[str] = set(elements.keys())
+        extra_names: Set[str] = all_names - self._element_names
+        if extra_names:
+          raise pyreach.PyReachError(
+              f"Top-level action(s) {extra_names} are not allowed. "
+              f"Only top-level actions {self._element_names} are allowed.")
+
         for name, element in elements.items():
           if name in action:
-            action_list.extend(element.do_action(action[name], self._host))
+            sub_action: Any = action[name]
+            if not isinstance(sub_action, dict):
+              raise pyreach.PyReachError(f"Action {name} is not a dictionary")
+            sub_action_names: Set[str] = set(sub_action.keys())
+            extra_sub_actions: Set[str] = (
+                sub_action_names - element.allowed_actions)
+            if extra_sub_actions:
+              raise pyreach.PyReachError(
+                  f"Device {name} action(s) {extra_sub_actions} not allowed. "
+                  f"Only {sorted(element.allowed_actions)} are allowed.")
+            action_list.extend(element.do_action(sub_action, self._host))
 
       # Get the next observation.
       observation: Dict[str, gyms_core.Observation]

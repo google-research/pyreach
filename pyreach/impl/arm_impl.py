@@ -20,7 +20,7 @@ import logging  # type: ignore
 import threading
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union, cast
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import arm
 from pyreach import calibration
@@ -1087,6 +1087,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _device_name: str
   _ik_lib_lock: threading.Lock
   _ik_hints: Dict[int, List[float]]
+  _cached_constraints: Optional[constraints.Constraints]
+  _constraints_ik_hints: Optional[Dict[int, List[float]]]
   _ik_lib: Optional[IKLib]
   _ik_lib_type: arm.IKLibType
   _constraints_device: constraints_impl.ConstraintsDevice
@@ -1129,6 +1131,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     self._device_name = device_name
     self._ik_lib_lock = threading.Lock()
     self._ik_hints = {}
+    self._cached_constraints = None
+    self._constraints_ik_hints = None
     self._ik_lib = ik_lib
     self._ik_lib_type = default_ik_lib_type
     if not ik_lib:
@@ -1243,29 +1247,30 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       key: The KeyValueKey to use.
       value: The value to set it to.
     """
+    if self._device_name:
+      return
     if (key.device_type != "settings-engine" or key.device_name or
         key.key != "document-config/ikhints"):
       return
+    if not value:
+      return
     with self._ik_lib_lock:
-      if self._ik_lib is not None and value:
-        try:
-          ikhints_dictionary = json.loads(value)
-          ikhints_array = json.loads(ikhints_dictionary.get("hints"))
-          if not isinstance(ikhints_array, list):
-            raise core.PyReachError("Invalid ikhints")
-          hints = {}
-          for i, l in enumerate(ikhints_array):
-            if not isinstance(l, list):
-              raise core.PyReachError("a list within ikhints not a list")
-            for v in l:
-              if not isinstance(v, (int, float)):
-                raise core.PyReachError()
-            hints[i] = l
-          self._ik_hints = hints
-        except core.PyReachError as e:
-          logging.warning("document-config/ikhints invalid: %s", str(e))
-          self._ik_hints = {}
-      elif self._ik_lib is not None:
+      try:
+        ikhints_dictionary = json.loads(value)
+        ikhints_array = json.loads(ikhints_dictionary.get("hints"))
+        if not isinstance(ikhints_array, list):
+          raise core.PyReachError("Invalid ikhints")
+        hints = {}
+        for i, l in enumerate(ikhints_array):
+          if not isinstance(l, list):
+            raise core.PyReachError("a list within ikhints not a list")
+          for v in l:
+            if not isinstance(v, (int, float)):
+              raise core.PyReachError()
+          hints[i] = l
+        self._ik_hints = hints
+      except core.PyReachError as e:
+        logging.warning("document-config/ikhints invalid: %s", str(e))
         self._ik_hints = {}
 
   def get_message_supplement(
@@ -1294,6 +1299,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
     """Return the current set of key/value pairs."""
+    if self._device_name:
+      return set()
     return {
         device_base.KeyValueKey(
             device_type="settings-engine",
@@ -1350,6 +1357,33 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if pose is None:
       return None
     return core.Pose.from_list(pose)
+
+  def _update_ikhints(self) -> Dict[int, List[float]]:
+    # Needs to be called in the ik lib lock.
+    wc = self._constraints_device.get()
+    if wc != self._cached_constraints:
+      self._cached_constraints = wc
+      if not wc:
+        self._constraints_ik_hints = None
+      else:
+        self._constraints_ik_hints = None
+        reference_poses = wc.get_reference_poses(self._device_name)
+        if reference_poses:
+          self._constraints_ik_hints = {}
+          for name, pose in reference_poses.items():
+            if name.startswith("ikhint"):
+              i: Optional[int] = None
+              try:
+                i = int(name[len("ikhint"):])
+              except ValueError:
+                i = None
+              if i is not None and i > 0:
+                self._constraints_ik_hints[i - 1] = pose.pose.as_list()
+              else:
+                logging.warning("Ikhint %s invalid number", name)
+    if self._constraints_ik_hints:
+      return self._constraints_ik_hints
+    return self._ik_hints
 
   def _update_data_cache(self) -> Optional[_ArmDataCache]:
     with self._data_cache_lock:
@@ -1439,8 +1473,9 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       with self._ik_lib_lock:
         script = commands.to_reach_script(
             self._device_name, tag, intent, pick_id, success_type,
-            self._arm_type, self._support_vacuum, self._support_blowoff,
-            allow_uncalibrated, preemptive, self._ik_lib, self._ik_hints, state,
+            self._arm_type, self._support_vacuum,
+            self._support_blowoff, allow_uncalibrated, preemptive, self._ik_lib,
+            self._update_ikhints(), state,
             data_cache.arm_origin if data_cache else None,
             data_cache.tip_adjust_transform if data_cache else None)
     except core.PyReachError as e:

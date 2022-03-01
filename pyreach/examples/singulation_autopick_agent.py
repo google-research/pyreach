@@ -20,7 +20,7 @@ from typing import Dict, List, Tuple
 from absl import app  # type: ignore
 from absl import flags  # type: ignore
 import gym  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.gyms import core
 

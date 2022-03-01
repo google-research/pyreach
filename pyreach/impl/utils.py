@@ -19,7 +19,7 @@ import time
 from typing import Any, Optional, Union
 import uuid
 
-import numpy as np  # type: ignore
+import numpy as np
 import PIL  # type: ignore
 from PIL import Image  # type: ignore
 

@@ -24,6 +24,63 @@ from pyreach.impl import test_data
 
 class TestConstraintsImpl(unittest.TestCase):
 
+  _expect_hints = [[
+      1.33904457092285, -1.30520141124725, 1.83943212032318, -2.18432211875916,
+      4.76191997528076, -0.295647442340851
+  ],
+                   [
+                       1.3390326499939, -1.30521333217621, 1.83942067623138,
+                       -2.18433356285095, 4.76193189620972, -0.295647442340851
+                   ],
+                   [
+                       1.33897256851196, -1.30512940883636, 1.83931195735931,
+                       -2.18429780006409, 4.76188373565674, -0.295707523822784
+                   ],
+                   [
+                       1.33897256851196, -1.30514132976532, 1.83931195735931,
+                       -2.18429780006409, 4.76191997528076, -0.295671761035919
+                   ],
+                   [
+                       1.33898496627808, -1.30515325069427, 1.83931195735931,
+                       -2.18427348136902, 4.76190805435181, -0.29571944475174
+                   ],
+                   [
+                       1.33898496627808, -1.30517756938934, 1.83931195735931,
+                       -2.18427348136902, 4.76193189620972, -0.295695602893829
+                   ],
+                   [
+                       1.33899688720703, -1.30515325069427, 1.83928716182709,
+                       -2.18432211875916, 4.76191997528076, -0.29571944475174
+                   ],
+                   [
+                       1.33897256851196, -1.30516517162323, 1.83930051326752,
+                       -2.18432211875916, 4.76188373565674, -0.295707523822784
+                   ],
+                   [
+                       1.3390326499939, -1.30515325069427, 1.83930051326752,
+                       -2.18427348136902, 4.76191997528076, -0.295671761035919
+                   ],
+                   [
+                       1.33900880813599, -1.30515325069427, 1.83928716182709,
+                       -2.18429780006409, 4.76190805435181, -0.295695602893829
+                   ],
+                   [
+                       1.33900880813599, -1.30512940883636, 1.83930051326752,
+                       -2.18429780006409, 4.76190805435181, -0.295695602893829
+                   ],
+                   [
+                       1.33899688720703, -1.30516517162323, 1.83931195735931,
+                       -2.18426203727722, 4.76193189620972, -0.295695602893829
+                   ],
+                   [
+                       1.33899688720703, -1.30514132976532, 1.83931195735931,
+                       -2.18433356285095, 4.76191997528076, -0.295707523822784
+                   ],
+                   [
+                       1.33898496627808, -1.30515325069427, 1.83932340145111,
+                       -2.18429780006409, 4.76193189620972, -0.295731365680695
+                   ]]
+
   def test_constraints_impl(self) -> None:
     constraints_device = impl.ConstraintsDevice()
     try:
@@ -66,6 +123,20 @@ class TestConstraintsImpl(unittest.TestCase):
           right_geometry.scale.as_tuple(),
           (0.370000004768372, 0.300000011920929, 0.200000002980232))
 
+      reference_poses = cs.get_reference_poses("")
+      self.assertIsNotNone(reference_poses)
+      assert reference_poses
+      rp = reference_poses.items()
+      sorted(rp, key=lambda x: x[0])
+      self.assertEqual(len(rp), len(self._expect_hints))
+      expect_index = 0
+      for reference_pose_index, expect in zip(rp, self._expect_hints):
+        expect_index += 1
+        index, reference_pose = reference_pose_index
+        self.assertEqual(index, "ikhint" + str(expect_index))
+        self.assertEqual(reference_pose.pose.as_list(), expect)
+      self.assertIsNone(cs.get_reference_poses("test"))
+      self.assertIsNone(cs.get_joint_limits("test"))
     finally:
       constraints_device.close()
 
@@ -109,6 +180,20 @@ class TestConstraintsImpl(unittest.TestCase):
       self.assertEqual(joints[5].min, -6.335545214359173)
       self.assertEqual(joints[5].max, 6.335545187179586)
       self.assertEqual(len(cs.get_interactables()), 2)
+      reference_poses = cs.get_reference_poses("")
+      self.assertIsNotNone(reference_poses)
+      assert reference_poses
+      rp = reference_poses.items()
+      sorted(rp, key=lambda x: x[0])
+      self.assertEqual(len(rp), len(self._expect_hints))
+      expect_index = 0
+      for reference_pose_index, expect in zip(rp, self._expect_hints):
+        expect_index += 1
+        index, reference_pose = reference_pose_index
+        self.assertEqual(index, "ikhint" + str(expect_index))
+        self.assertEqual(reference_pose.pose.as_list(), expect)
+      self.assertIsNone(cs.get_reference_poses("test"))
+      self.assertIsNone(cs.get_joint_limits("test"))
     finally:
       constraints_device.close()
 

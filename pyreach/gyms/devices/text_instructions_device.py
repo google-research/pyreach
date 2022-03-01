@@ -79,7 +79,7 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
     })
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"task_enable"})
     self._text_instruction: Optional[pyreach.TextInstruction] = None
     self._text_instructions: Optional[pyreach.TextInstructions] = None
     self._counter: int = 0

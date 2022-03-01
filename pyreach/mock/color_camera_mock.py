@@ -16,7 +16,7 @@
 
 from typing import Callable, Optional
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import calibration as cal
 from pyreach import color_camera

@@ -22,7 +22,7 @@ import threading
 from typing import Any, Callable, Dict, List, Optional, Tuple
 import urllib.request
 
-import numpy as np  # type: ignore
+import numpy as np
 from PIL import Image  # type: ignore
 
 from pyreach.common.proto_gen import logs_pb2

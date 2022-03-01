@@ -61,7 +61,7 @@ class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):
     })
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, set())
     self._force_torque_sensor_state: Optional[
         force_torque_sensor.ForceTorqueSensorState] = None
     self._force_torque_sensor: Optional[

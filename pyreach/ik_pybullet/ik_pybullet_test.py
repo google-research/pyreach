@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach.ik_pybullet import ik_pybullet
 
 

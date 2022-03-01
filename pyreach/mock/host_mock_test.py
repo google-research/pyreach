@@ -18,8 +18,6 @@ import math
 from typing import Dict, Tuple
 import unittest
 
-# import numpy as np  # type: ignore
-
 from pyreach import host
 from pyreach.gyms import arm_element
 from pyreach.gyms import reach_env

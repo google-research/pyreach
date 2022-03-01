@@ -18,7 +18,7 @@ import os
 import sys
 from typing import Any
 from absl import logging  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 import six
 from pyreach.common.base import transform_util
 import pybullet  # type: ignore

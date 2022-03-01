@@ -15,7 +15,7 @@
 
 from typing import List
 import unittest
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach.ikfast import ikfast
 
 

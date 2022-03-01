@@ -62,7 +62,7 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
         gym.spaces.Dict(observation_space_config))
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"state"})
     self._vacuum: Optional[pyreach.Vacuum] = None
     self._blowoff_ignore: bool = blowoff_ignore
     self._state_enable: bool = state_enable

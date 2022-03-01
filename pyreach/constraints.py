@@ -19,7 +19,7 @@ PyReach only provides bare minimum support for the constraints right now.
 import dataclasses
 from typing import Optional, Sequence, Tuple, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import core
 
@@ -68,6 +68,20 @@ class Interactable:
   geometry: Geometry
 
 
+@dataclasses.dataclass(frozen=True)
+class ReferencePose:
+  """Represents a reference pose for constraints robots.
+
+  Attributes:
+    name: The name of the reference pose.
+    pose_type: The "type" field of the reference pose.
+    pose: The actual reference pose.
+  """
+  name: str
+  pose_type: str
+  pose: core.Pose
+
+
 class Constraints(object):
   """Interface for checking constraints."""
 
@@ -106,5 +120,18 @@ class Constraints(object):
     Returns:
       Limits of all the interactable geometries if available.
 
+    """
+    raise NotImplementedError
+
+  def get_reference_poses(
+      self,
+      device_name: str) -> Optional[core.ImmutableDictionary[ReferencePose]]:
+    """Get the reference poses for a given robot.
+
+    Args:
+      device_name: the name of the robot device to load from.
+
+    Returns:
+      The reference poses as tuple of tuple of poses.
     """
     raise NotImplementedError

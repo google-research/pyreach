@@ -51,7 +51,7 @@ class ReachDeviceServer(reach_device.ReachDevice):
         "server_ts": gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
     })
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, set())
 
   def __str__(self) -> str:
     """Return a string representation of ReachDeviceServer."""

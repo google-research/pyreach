@@ -19,7 +19,7 @@ import math
 from typing import List, Optional, Tuple, Union
 import unittest
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.common.base import transform_util
 from pyreach.common.base.transform_util import ZERO_VECTOR3

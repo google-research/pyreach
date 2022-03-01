@@ -18,7 +18,7 @@ import threading
 from typing import Any, Callable, List, Optional, Tuple
 
 import cv2  # type: ignore  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.arm import Arm
 from pyreach.arm import ArmControllerDescription

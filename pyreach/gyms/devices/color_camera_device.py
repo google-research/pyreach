@@ -85,7 +85,7 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, set())
     self._color_camera: Optional[pyreach.ColorCamera] = None
     self._force_fit: bool = force_fit
     self._shape: Tuple[int, int, int] = color_shape

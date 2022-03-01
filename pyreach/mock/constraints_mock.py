@@ -16,7 +16,7 @@
 
 from typing import Optional, Sequence, Tuple, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach import constraints
 from pyreach import core
 

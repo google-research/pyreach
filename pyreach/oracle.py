@@ -31,7 +31,7 @@ infrastructure team first before developing any new Oracle models.
 import dataclasses
 from typing import Callable, Optional, Tuple
 
-import numpy  # type: ignore
+import numpy
 
 from pyreach import core
 

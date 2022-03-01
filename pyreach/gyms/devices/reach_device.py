@@ -41,8 +41,8 @@ class ReachDevice(object):
   """Base class for all Reach Gym devices."""
 
   def __init__(self, reach_name: str, action_space: gyms_core.Space,
-               observation_space: gyms_core.Space,
-               is_synchronous: bool) -> None:
+               observation_space: gyms_core.Space, is_synchronous: bool,
+               allowed_actions: Set[str]) -> None:
     """Initialize a Reach Element base class.
 
     Args:
@@ -54,6 +54,7 @@ class ReachDevice(object):
         observations elements that have this flag set otherwise the next
         observation is asynchronous.  This argument is optional and defaults to
         False.
+      allowed_actions: A set of allowed action key names.
     """
     self._reach_name: str = reach_name
     self._action_space: gyms_core.Space = action_space
@@ -63,6 +64,7 @@ class ReachDevice(object):
     self._reach_synchronous: Optional[ReachDeviceSynchronous] = None
     self._timers: internal.Timers = internal.Timers(set())
     self._task_params: Dict[str, str] = {}
+    self._allowed_actions: Set[str] = allowed_actions
 
   @property
   def action_space(self) -> gyms_core.Space:
@@ -83,6 +85,11 @@ class ReachDevice(object):
   def is_synchronous(self) -> bool:
     """Get the synchronous flag."""
     return self._is_synchronous
+
+  @property
+  def allowed_actions(self) -> Set[str]:
+    """Return allowed action names."""
+    return self._allowed_actions
 
   def _timers_select(self, timer_names: Set[str]) -> internal.TimersSet:
     """Select timers to enable/disable for a block of code.

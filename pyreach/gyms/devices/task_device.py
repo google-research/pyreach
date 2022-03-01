@@ -51,7 +51,7 @@ class ReachDeviceTask(reach_device.ReachDevice):
     })
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"action"})
     self._active: bool = False
     self._action_id: int = 0
     self._task_synchronize: Optional[Callable[[pyreach.Host], None]] = None

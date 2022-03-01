@@ -22,7 +22,7 @@ import time
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import cv2  # type: ignore  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach.tools.lib import cv2_eventloop
 from pyreach.tools.lib import frame_counter

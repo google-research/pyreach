@@ -71,7 +71,7 @@ class ReachDeviceConstraints(reach_device.ReachDevice):
     action_space: gym.spaces.Dict = gym.spaces.Dict({})
     observation_space: gym.spaces.Dict = gym.spaces.Dict(constraints_dict)
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, set())
 
     # Initialize other values here:
     self._constraint: Optional[constraints.Constraints] = None

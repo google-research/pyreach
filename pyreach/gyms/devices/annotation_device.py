@@ -52,7 +52,7 @@ class ReachDeviceAnnotation(reach_device.ReachDevice):
     })
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"data", "disable"})
     self._previous_data: bytes = bytes()
     self._previous_ts: float = 0.0
     self._maximum_size: int = maximum_size

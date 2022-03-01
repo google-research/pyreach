@@ -19,7 +19,7 @@ import time
 from typing import List, Optional, Tuple
 
 import cv2  # type: ignore  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 
 import google3.third_party.open3d.open3d as o3d  # type: ignore
 

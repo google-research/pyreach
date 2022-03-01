@@ -21,7 +21,7 @@ import time
 from typing import Callable, Dict, List, Optional
 from absl import app  # type: ignore
 from absl import flags  # type: ignore
-import numpy as np  # type: ignore
+import numpy as np
 from pyreach.common.base import transform_util
 from pyreach.common.spacemouse import spacemouse_lib
 from pyreach.tools.lib import pendant_lib

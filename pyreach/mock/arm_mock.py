@@ -16,7 +16,7 @@
 
 from typing import List, Optional, Callable, Tuple, Union
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import arm
 from pyreach import constraints

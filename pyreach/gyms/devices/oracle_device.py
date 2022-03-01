@@ -90,7 +90,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     })
 
     super().__init__(reach_name, action_space, observation_space,
-                     is_synchronous)
+                     is_synchronous, {"request"})
     self._oracle: Optional[pyreach.Oracle] = None
     self._label: str = ""
     self._last_ts: float = -1.0

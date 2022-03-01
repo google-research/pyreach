@@ -16,7 +16,7 @@
 
 from typing import Optional, Callable
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from pyreach import calibration
 from pyreach import core
