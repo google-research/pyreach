@@ -153,7 +153,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
             "preemptive",
             "servo",
             "servo_gain",
-            "servo_lookahead_seconds",
+            "servo_lookahead_time_seconds",
             "servo_time_seconds",
             "synchronous",
             "timeout",
