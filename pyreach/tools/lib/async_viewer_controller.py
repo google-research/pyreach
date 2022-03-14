@@ -64,6 +64,7 @@ def parse_cameras(cameras_arg: str) -> List[Tuple[str, Optional[str]]]:
 class Controller:
   """Controller for the async viewer."""
   _host: Host
+  _start_sequence: Optional[int]
   _overlay_target: Dict[str, str]
   _color_camera_windows: Optional[Dict[str, List[Tuple[str, bool]]]]
   _depth_camera_windows: Optional[Dict[str, List[Tuple[str, bool]]]]
@@ -105,11 +106,15 @@ class Controller:
     self._show_undistortion = show_undistortion
     self._show_detections = show_detections
     self._quiet = quiet
+    self._start_sequence = None
+    self._event_updated = False
 
     self._host = ConnectionFactory(
         connection_string=connection_string,
         take_control_at_start=False,
         enable_streaming=False).connect()
+
+    is_playback = self._host.playback is not None
 
     self._overlay_target = {}
 
@@ -179,9 +184,9 @@ class Controller:
           name not in self._color_camera_windows):
         continue
       color_camera.add_update_callback(self._color_camera_callback)
-      if use_tags and color_camera.supports_tagged_request:
+      if use_tags and color_camera.supports_tagged_request and not is_playback:
         color_camera.enable_tagged_request()
-      elif reqfps > 0:
+      elif reqfps > 0 and not is_playback:
         color_camera.start_streaming(1.0 / reqfps)
 
     for name, depth_camera in self._host.depth_cameras.items():
@@ -189,16 +194,16 @@ class Controller:
           name not in self._depth_camera_windows):
         continue
       depth_camera.add_update_callback(self._depth_camera_callback)
-      if use_tags:
+      if use_tags and not is_playback:
         depth_camera.enable_tagged_request()
-      elif reqfps > 0:
+      elif reqfps > 0 and not is_playback:
         depth_camera.start_streaming(1.0 / reqfps)
 
     for name, oracle in self._host.oracles.items():
       if self._oracle_windows is not None and name not in self._oracle_windows:
         continue
       oracle.add_update_callback(self._oracle_callback)
-      if (use_tags or reqfps > 0) and request_oracles:
+      if (use_tags or reqfps > 0) and request_oracles and not is_playback:
         oracle.enable_tagged_request(
             intent="",
             prediction_type="",
@@ -212,9 +217,9 @@ class Controller:
       if self._vnc_windows is not None and name not in self._vnc_windows:
         continue
       vnc.add_update_callback(self._vnc_callback)
-      if use_tags:
+      if use_tags and not is_playback:
         vnc.enable_tagged_request()
-      elif reqfps > 0:
+      elif reqfps > 0 and not is_playback:
         vnc.start_streaming(1.0 / reqfps)
 
     internal = self._host.internal
@@ -320,7 +325,9 @@ class Controller:
     return dtype + _TYPE_NAME_SEP + dname
 
   def _internal_callback(self, msg: logs_pb2.DeviceData) -> bool:
-    if msg.detection:
+    if not self._start_sequence:
+      self._start_sequence = msg.seq
+    if msg.detection and msg.HasField("detection"):
       self._object_detector_listener(msg)
     self._unrequested_oracle_listener(msg)
     return False
@@ -372,6 +379,7 @@ class Controller:
       coords = [(corners[i], corners[i + 1]) for i in range(0, len(corners), 2)]
       polygons.append((det.type + "-" + det.id, coords))
     self._image_display.update_detections(window_name, polygons)
+    self._event_updated = True
 
   def _device_to_window(self, dtype: str, dname: str) -> Tuple[str, bool]:
     """Returns (virtual) window name assgined for device, and bool indicating overlay."""
@@ -424,6 +432,7 @@ class Controller:
           distortion=calibration_distortion,
           overlay=False,
           depth=True)
+    self._event_updated = True
 
   def _on_mouse(self, window_name: str, x: float, y: float, wx: float,
                 wy: float) -> None:
@@ -454,8 +463,20 @@ class Controller:
         if c > 0x100000:
           c -= 0x100000
 
+        playback = self._host.internal.playback if self._host.internal else None
         if c == ord(" "):
           self._image_display.take_snapshots()
+        elif c == ord("n") and playback:
+          while not self._event_updated:
+            if not playback.next_device_data():
+              if self._start_sequence:
+                print("Last frame in sequence, starting over")
+                playback.seek_device_data(None, self._start_sequence)
+              else:
+                print("No frames loaded, reached end of playback")
+              break
+          self._event_updated = False
+
       print("Controller shutting down.")
     finally:
       self._host.close()

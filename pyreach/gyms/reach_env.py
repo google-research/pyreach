@@ -228,6 +228,8 @@ class ReachEnv(gym.Env):  # type: ignore
       if not host:
         if not connection_string:
           connection_string = ""
+        else:
+          connection_string = "select-snapshot-run-id=true," + connection_string
         host = factory.ConnectionFactory(
             connection_string=connection_string, **host_kwargs).connect()
 

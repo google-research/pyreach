@@ -221,7 +221,8 @@ class HostImpl(pyreach.Host):
       if is_playback and block:
         assert isinstance(client, cli.PlaybackClient)
         playback_client: cli.PlaybackClient = client
-        playback_client.next_device_data()
+        if not playback_client.next_device_data():
+          raise Exception("failed to read messages from the playback client")
       try:
         msg = client.get_queue().get(block=block, timeout=0.1)
         msgs.append(msg)
@@ -501,9 +502,21 @@ class HostImpl(pyreach.Host):
     self._host.start()
     if enable_streaming and not is_playback:
       self._start_streaming()
-    else:
+    if not is_playback:
       for t in self._start_arm_read_controller():
         t.join()
+    else:
+      while True:
+        found_all_arms = True
+        for test_arm in self._arm_devices:
+          if test_arm.supported_controllers is None:
+            found_all_arms = False
+        if not found_all_arms:
+          break
+        assert isinstance(client, cli.PlaybackClient)
+        playback_client_arm: cli.PlaybackClient = client
+        if not playback_client_arm.next_device_data():
+          raise Exception("failed to read messages from the playback client")
 
   def get_timers(self) -> internal.Timers:  # pylint: disable=unused-argument
     """Return the global timers object."""

@@ -102,7 +102,9 @@ class ArmState:
     device_type: The device type of the arm..
     device_name: The device name of the arm.
     joint_angles: The arm joint angles in radians.
-    pose: The pose of the arm.
+    pose: The pose of the arm (alias for tcp_t_base).
+    tcp_t_base: The pose of the tool center point (TCP) relative to the base of
+      the arm.
     force: The arm joint force values in Newton-meters.  Robot specific.
     is_protective_stopped: True if the robot is protective stopped.
     is_emergency_stopped: True if the robot is emergency stopped.
@@ -112,6 +114,9 @@ class ArmState:
     is_program_running: True if a program is running on the robot.
     is_robot_power_on: True if the robot power is on.
     robot_mode: Mode of operation of the robot.
+    tip_adjust_t_tcp: Adjust transform for the tooltip.
+    tip_adjust_t_base: Pose with the tip adjust applied relative to the base of
+      the arm.
   """
 
   time: float = 0.0
@@ -120,6 +125,9 @@ class ArmState:
   device_name: str = ""
   joint_angles: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
   pose: core.Pose = core.Pose(
+      core.Translation(0.0, 0.0, 0.0), core.AxisAngle.from_tuple(
+          (0.0, 0.0, 0.0)))
+  tcp_t_base: core.Pose = core.Pose(
       core.Translation(0.0, 0.0, 0.0), core.AxisAngle.from_tuple(
           (0.0, 0.0, 0.0)))
   force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -131,6 +139,8 @@ class ArmState:
   is_program_running: bool = False
   is_robot_power_on: bool = False
   robot_mode: RobotMode = RobotMode.DEFAULT
+  tip_adjust_t_tcp: Optional[core.Pose] = None
+  tip_adjust_t_base: Optional[core.Pose] = None
 
 
 class Arm(object):

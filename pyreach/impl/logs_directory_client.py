@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Provide a client to play back a logs directory."""
 
 import json
@@ -162,6 +161,12 @@ class _DeviceDataReader(_DirectoryReader[types_gen.DeviceData]):
         if not dir_key:
           dir_key = dev_key
         msg.depth = os.path.join(self._abs_path, dir_key, filename)
+        if not os.path.exists(msg.depth) and msg.upload_depth:
+          abs_path, filename = os.path.split(msg.upload_depth)
+          _, dir_key = os.path.split(abs_path)
+          if not dir_key:
+            dir_key = dev_key
+          msg.depth = os.path.join(self._abs_path, dir_key, filename)
     return msg, utils.time_at_timestamp(msg.ts), msg.seq
 
 
@@ -185,7 +190,7 @@ class LogsDirectoryClient(playback_client.PlaybackClient):
   """Class to implement a logs directory client."""
 
   def __init__(self, robot_id: str, working_directory: str,
-               client_id: Optional[str], select_client: bool,
+               client_id: Optional[str], select_client_id: bool,
                gym_run_id: Optional[str], select_gym_run: bool) -> None:
     """Init a LogsDirectoryClient.
 
@@ -193,7 +198,7 @@ class LogsDirectoryClient(playback_client.PlaybackClient):
       robot_id: the robot id to connect to.
       working_directory: optional directory to run within.
       client_id: the client ID to simulate (e.g. 00005.json vs 00000.json).
-      select_client: if client ID is None, will select first client.
+      select_client_id: if client ID is None, will select first client.
       gym_run_id: if specified, will select the given snapshot by gym_run_id.
       select_gym_run: if specified, but gym_run_id is None, will select first
         snapshot.
@@ -213,7 +218,7 @@ class LogsDirectoryClient(playback_client.PlaybackClient):
       device_iterator.start()
       command_iterator.start()
       self.start_playback(device_iterator, command_iterator, client_id,
-                          select_client, gym_run_id, select_gym_run, True)
+                          select_client_id, gym_run_id, select_gym_run, True)
       started = True
     finally:
       if not started:
@@ -222,7 +227,7 @@ class LogsDirectoryClient(playback_client.PlaybackClient):
 
 
 def connect_logs_directory(robot_id: str, working_directory: str,
-                           client_id: Optional[str], select_client: bool,
+                           client_id: Optional[str], select_client_id: bool,
                            gym_run_id: Optional[str], select_gym_run: bool,
                            kwargs: Dict[str, Any]) -> host.Host:
   """Connect to Reach using TCP on specific host:port.
@@ -231,7 +236,7 @@ def connect_logs_directory(robot_id: str, working_directory: str,
     robot_id: the robot id to connect to.
     working_directory: optional directory to run within.
     client_id: the client ID to simulate.
-    select_client: if client ID is None, will select first client.
+    select_client_id: if client ID is None, will select first client.
     gym_run_id: if specified, will select the given snapshot by gym_run_id.
     select_gym_run: if specified, but gym_run_id is None, will select first
       snapshot.
@@ -241,5 +246,6 @@ def connect_logs_directory(robot_id: str, working_directory: str,
     Host interface if successful.
   """
   return host_impl.HostImpl(
-      LogsDirectoryClient(robot_id, working_directory, client_id, select_client,
-                          gym_run_id, select_gym_run), **kwargs)
+      LogsDirectoryClient(robot_id, working_directory, client_id,
+                          select_client_id, gym_run_id, select_gym_run),
+      **kwargs)

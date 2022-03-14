@@ -179,7 +179,7 @@ class LocalPlaybackHostFactory(HostFactory):
   _working_directory: str
   _robot_id: str
   _client_id: Optional[str]
-  _select_client: bool
+  _select_client_id: bool
   _snapshot_run_id: Optional[str]
   _select_snapshot_run_id: bool
   _kwargs: Any
@@ -188,7 +188,7 @@ class LocalPlaybackHostFactory(HostFactory):
                robot_id: str,
                working_directory: str,
                client_id: Optional[str] = None,
-               select_client: bool = False,
+               select_client_id: bool = False,
                snapshot_run_id: Optional[str] = None,
                select_snapshot_run_id: bool = False,
                **kwargs: Any) -> None:
@@ -198,7 +198,7 @@ class LocalPlaybackHostFactory(HostFactory):
       robot_id: the robot id to connect to.
       working_directory: optional directory to run within.
       client_id: the client ID to simulate.
-      select_client: if client ID is None, will select first client.
+      select_client_id: if client ID is None, will select first client.
       snapshot_run_id: if specified, will select the given snapshot by
         gym_run_id.
       select_snapshot_run_id: if specified, but snapshot_run_id is None, will
@@ -208,7 +208,7 @@ class LocalPlaybackHostFactory(HostFactory):
     self._robot_id = robot_id
     self._working_directory = working_directory
     self._client_id = client_id
-    self._select_client = select_client
+    self._select_client_id = select_client_id
     self._snapshot_run_id = snapshot_run_id
     self._select_snapshot_run_id = select_snapshot_run_id
     if kwargs is None:
@@ -228,7 +228,7 @@ class LocalPlaybackHostFactory(HostFactory):
 
     fn = getattr(mod, 'connect_logs_directory')
     return fn(self._robot_id, self._working_directory, self._client_id,
-              self._select_client, self._snapshot_run_id,
+              self._select_client_id, self._snapshot_run_id,
               self._select_snapshot_run_id, self._kwargs)
 
 

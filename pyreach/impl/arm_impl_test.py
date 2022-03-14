@@ -757,11 +757,33 @@ class TestPyreachArmImpl(unittest.TestCase):
     self.assertEqual(state.pose.orientation.axis_angle.rx, 0.1186541477907012)
     self.assertEqual(state.pose.orientation.axis_angle.ry, -3.075739605978813)
     self.assertEqual(state.pose.orientation.axis_angle.rz, -0.01666054968029903)
+    self.assertEqual(state.tcp_t_base.position.x, 0.1961122234076476)
+    self.assertEqual(state.tcp_t_base.position.y, -0.7146550885497088)
+    self.assertEqual(state.tcp_t_base.position.z, 0.1642837633972083)
+    self.assertEqual(state.tcp_t_base.orientation.axis_angle.rx,
+                     0.1186541477907012)
+    self.assertEqual(state.tcp_t_base.orientation.axis_angle.ry,
+                     -3.075739605978813)
+    self.assertEqual(state.tcp_t_base.orientation.axis_angle.rz,
+                     -0.01666054968029903)
     self.assertEqual(
         state.force,
         (-6.514813773909755, 5.273554158068752, -3.661764071560078,
          -0.1562602891054569, -0.2400126816079334, 0.1363557378946311))
     self.assertFalse(state.is_protective_stopped)
+    tip_adjust = state.tip_adjust_t_tcp
+    self.assertIsNotNone(tip_adjust)
+    assert tip_adjust
+    self.assertEqual(tip_adjust.as_tuple(),
+                     (-0.004453485238087255, 0.055702600244064024,
+                      -0.1626512213476071, 0.0, 0.0, 0.0))
+    pose_with_tip_adjust = state.tip_adjust_t_base
+    self.assertIsNotNone(pose_with_tip_adjust)
+    assert pose_with_tip_adjust
+    self.assertEqual(
+        pose_with_tip_adjust.as_tuple(),
+        (0.20666041510735556, -0.6601364983804328, 0.32705505075589714,
+         0.11865414779070117, -3.075739605978814, -0.0166605496802987))
 
 
 class TestArm(test_utils.TestResponder):

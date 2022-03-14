@@ -13,6 +13,7 @@
 # limitations under the License.
 """Shared utility functions for PyReach implementation."""
 
+import bz2
 import io
 import logging
 import time
@@ -185,7 +186,7 @@ def load_color_image_from_data(
       return color
   except PIL.UnidentifiedImageError as error:
     logging.warning("Unidentified (incorrect format?) image: %s", str(error))
-    raise FileNotFoundError
+    raise FileNotFoundError from error
 
 
 def load_depth_image_from_data(
@@ -217,6 +218,18 @@ def load_depth_image_from_data(
         raise FileNotFoundError
       depth.flags.writeable = False
       return depth
+  if msg.depth.endswith(".bz2"):
+    try:
+      with bz2.open(msg.depth, "rb") as f:
+        content = f.read()
+        nparray = np.asarray(bytearray(content), dtype="uint8")
+        depth = cv2.imdecode(nparray, cv2.IMREAD_ANYDEPTH)
+        if depth is None:
+          raise FileNotFoundError
+        depth.flags.writeable = False
+        return depth
+    except OSError:
+      raise FileNotFoundError from OSError
   depth = cv2.imread(msg.depth, cv2.IMREAD_ANYDEPTH)
   if depth is None:
     raise FileNotFoundError

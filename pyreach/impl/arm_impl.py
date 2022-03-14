@@ -90,7 +90,7 @@ class IKLibIKFast(IKLib):
       the pose.
     """
     pose = self._ik.fk(joints)
-    if pose:
+    if pose is not None:
       return pose.tolist()
     return None
 
@@ -1294,7 +1294,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       self._supported_controllers = tuple(descs)
     if (self._device_name == msg.device_name and msg.device_type == "robot" and
         msg.data_type == "robot-state"):
-      return self._arm_state_from_message(self._arm_type, msg)
+      return self._arm_state_from_message(self._arm_type, msg,
+                                          self._update_data_cache())
     return None
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
@@ -1532,13 +1533,15 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     return (self, tuple(self._internal_devices), ArmImpl(self))
 
   @classmethod
-  def _arm_state_from_message(cls, arm_type: arm.ArmType,
-                              msg: types_gen.DeviceData) -> "arm.ArmState":
+  def _arm_state_from_message(
+      cls, arm_type: arm.ArmType, msg: types_gen.DeviceData,
+      data_cache: Optional[_ArmDataCache]) -> "arm.ArmState":
     """Return the State from a device data message.
 
     Args:
       arm_type: The type of the arm.
       msg: The device data to decode.
+      data_cache: The arm data cache.
 
     Returns:
       The Arm state.
@@ -1576,13 +1579,24 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       robot_mode = arm.RobotMode.from_string(msg.robot_mode)
     except ValueError:
       robot_mode = arm.RobotMode.DEFAULT
+
+    adjust_pose: Optional[core.Pose] = None
+    tip_adjust_transform: Optional[core.Pose] = None
+    if data_cache and data_cache.tip_adjust_transform is not None:
+      adjusted_pose = transform_util.multiply_pose(
+          np.array(pose, dtype=np.float64),
+          data_cache.tip_adjust_transform).tolist()
+      adjust_pose = core.Pose.from_list(adjusted_pose)
+      tip_adjust_transform = core.Pose.from_list(
+          data_cache.tip_adjust_transform.tolist())
+    pose_t = core.Pose.from_list(pose)
     return arm.ArmState(
         utils.time_at_timestamp(msg.ts), msg.seq,
-        msg.device_type, msg.device_name, tuple(joints),
-        core.Pose.from_list(pose), tuple(force), msg.is_protective_stopped,
-        msg.is_emergency_stopped, msg.is_safeguard_stopped, msg.is_reduced_mode,
-        msg.safety_message, msg.is_program_running, msg.is_robot_power_on,
-        robot_mode)
+        msg.device_type, msg.device_name, tuple(joints), pose_t, pose_t,
+        tuple(force), msg.is_protective_stopped, msg.is_emergency_stopped,
+        msg.is_safeguard_stopped, msg.is_reduced_mode, msg.safety_message,
+        msg.is_program_running, msg.is_robot_power_on, robot_mode,
+        tip_adjust_transform, adjust_pose)
 
   @property
   def arm_type(self) -> arm.ArmType:

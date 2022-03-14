@@ -160,8 +160,8 @@ class ArmMock(arm.Arm):
     joint_angles: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     pose: core.Pose = core.Pose.from_tuple((0.0, 0.0, 0.0, 1.0, 0.0, 0.0))
     force: Tuple[float, ...] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    return arm.ArmState(time, sequence, "robot", "", joint_angles, pose, force,
-                        False, False, False, False, "", False, False,
+    return arm.ArmState(time, sequence, "robot", "", joint_angles, pose, pose,
+                        force, False, False, False, False, "", False, False,
                         arm.RobotMode.DEFAULT)
 
   def async_fetch_state(
