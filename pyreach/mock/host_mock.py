@@ -29,6 +29,7 @@ from pyreach import internal as pyreach_internal
 from pyreach import logger
 from pyreach import metrics
 from pyreach import oracle
+from pyreach import playback as pyreach_playback
 from pyreach import sim
 from pyreach import text_instruction
 from pyreach import vacuum
@@ -255,6 +256,11 @@ class HostMock(host.Host):
   def logger(self) -> logger.Logger:
     """Return the Logger object."""
     return self._logger
+
+  @property
+  def playback(self) -> Optional[pyreach_playback.Playback]:
+    """Return the playback object."""
+    return None
 
   @property
   def metrics(self) -> metrics.Metrics:

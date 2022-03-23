@@ -138,7 +138,9 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
               "Depth camera '{0}' needs to specify one of '{1}'".format(
                   reach_name, depth_camera_names))
         self._depth_camera = host.depth_cameras[reach_name]
-        self._depth_camera.start_streaming(self._initial_stream_request_period)
+        if host.playback is None:
+          self._depth_camera.start_streaming(
+              self._initial_stream_request_period)
     return self._depth_camera
 
   def validate(self, host: pyreach.Host) -> str:

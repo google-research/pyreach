@@ -123,7 +123,9 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               "Color camera '{0}' needs to be one of {1}".format(
                   reach_name, camera_names))
         self._color_camera = host.color_cameras[reach_name]
-        self._color_camera.start_streaming(self._initial_stream_request_period)
+        if host.playback is None:
+          self._color_camera.start_streaming(
+              self._initial_stream_request_period)
     return self._color_camera
 
   def validate(self, host: pyreach.Host) -> str:

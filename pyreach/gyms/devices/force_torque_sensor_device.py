@@ -84,7 +84,8 @@ class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):
               f"Force Torque Sensor '{self._reach_name}' "
               f"is not one of {force_torque_sensor_names}")
         self._force_torque_sensor = host.force_torque_sensors[self._reach_name]
-        self._force_torque_sensor.start_streaming()
+        if host.playback is None:
+          self._force_torque_sensor.start_streaming()
     return self._force_torque_sensor
 
   def validate(self, host: pyreach.Host) -> str:
@@ -117,7 +118,8 @@ class ReachDeviceForceTorqueSensor(reach_device.ReachDevice):
               f"Force Torque Sensor '{self._reach_name}' "
               f"is not one of {force_torque_sensor_names}")
         self._force_torque_sensor = host.force_torque_sensors[self._reach_name]
-        self._force_torque_sensor.start_streaming()
+        if host.playback is None:
+          self._force_torque_sensor.start_streaming()
 
     with self._timers_select({"!agent*", "!gym*", "arm.force_torque_sensor"}):
       self._force_torque_sensor_state = (

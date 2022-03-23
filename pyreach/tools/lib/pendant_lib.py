@@ -52,7 +52,7 @@ _RADIAL_ACCELERATION_RAD_PER_SEC2 = 1
 
 _XARM_HOMEJ = [0.0, -1.0, 0.0, 0.0, 0.0,
                0.0]  # shoulder back a bit to prevent tool crashing
-_XARM_HOMEJ_VELOCITY = 0.01
+_XARM_HOMEJ_VELOCITY = 1.5
 
 # 50Hz.  100Hz causes some stuttering on the reach serve side
 _CONTINUOUS_CONTROL_INTERVAL_DELAY_SECONDS = 0.02

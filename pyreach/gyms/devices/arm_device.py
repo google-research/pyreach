@@ -75,6 +75,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
     test_states: Optional[List[pyreach_arm.ArmState]] = arm_config.test_states
     if not test_states:
       test_states = []
+    # For internal debugging only:
+    debug_flags: str = arm_config.debug_flags
 
     if not controllers:
       raise pyreach.PyReachError("At least one controller must be specified")
@@ -85,7 +87,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
 
     action_dict: Dict[str, gyms_core.Action] = {
         "command":
-            gym.spaces.Discrete(4),
+            gym.spaces.Discrete(6),
         "id":
             gym.spaces.Discrete(1 << 30),
         "joint_angles":
@@ -123,6 +125,10 @@ class ReachDeviceArm(reach_device.ReachDevice):
                 high=np.array(high_joint_angles),
                 dtype=np.dtype(float)),
         "pose":
+            gym.spaces.Box(low=-100, high=100, shape=(6,)),
+        "tip_pose":
+            gym.spaces.Box(low=-100, high=100, shape=(6,)),
+        "tip_adjust":
             gym.spaces.Box(low=-100, high=100, shape=(6,)),
         "status":
             gym.spaces.Discrete(arm_element.ReachResponse.RESPONSE_MAX + 1),
@@ -169,12 +175,19 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._low_joint_angles: Tuple[float, ...] = low_joint_angles
     self._joints: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     self._pose: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    self._tip_pose: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    self._tip_transform: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     self._pyreach_status: Optional[pyreach.PyReachStatus] = None
     self._response_queue_length: int = response_queue_length
     self._apply_tip_adjust_transform: bool = apply_tip_adjust_transform
     self._last_command: int = 0
     self._e_stop_mode: int = e_stop_mode
     self._p_stop_mode: int = p_stop_mode
+    # For internal debugging only.
+    self._debug_flags: str = debug_flags
+    self._debug_last_action_command: int = 0
+    self._debug_last_action_pose: np.ndarray = np.array(
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -211,12 +224,13 @@ class ReachDeviceArm(reach_device.ReachDevice):
           config_name: str = self.config_name
           arm_names: List[str] = list(host.arms.keys())
           raise pyreach.PyReachError(
-              "Arm '{0}' specifies '{1}' which is not one of {2}".format(
-                  config_name, reach_name, arm_names))
+              f"Arm '{config_name}' specifies '{reach_name}' "
+              f"which is not one of {arm_names}")
         self._arm = host.arms[reach_name]
         if self._ik_lib:
           self._arm.set_ik_lib(IKLibType(self._ik_lib))
-        self._arm.start_streaming()
+        if host.playback is None:
+          self._arm.start_streaming()
     return self._arm
 
   def validate(self, host: pyreach.Host) -> str:
@@ -359,10 +373,54 @@ class ReachDeviceArm(reach_device.ReachDevice):
           logging.info("++++++++++++++++ Invalid joint angles: %s", joints)
         self._pose = np.array(
             pyreach.Pose.as_list(arm_state.pose), dtype=np.float_)
+
+        tip_adjust_t_tcp: Optional[core.Pose] = arm_state.tip_adjust_t_tcp
+        if tip_adjust_t_tcp is None:
+          tip_adjust_t_tcp = core.Pose(
+              core.Translation(0.0, 0.0, 0.0),
+              core.AxisAngle.from_tuple((0.0, 0.0, 0.0)))
+        tip_adjust_t_base: Optional[core.Pose] = arm_state.tip_adjust_t_base
+        if tip_adjust_t_base is None:
+          tip_adjust_t_base = arm_state.pose
+
+        # Internal debugging:
+        if self._debug_flags and self._debug_last_action_command in (2, 4, 5):
+          action_pose: np.ndarray = self._debug_last_action_pose
+          desired_pose: np.ndarray
+          if self._debug_last_action_command == 2:
+            if self._apply_tip_adjust_transform:
+              desired_pose = self._tip_pose
+            else:
+              desired_pose = self._pose
+          elif self._debug_last_action_command == 4:
+            desired_pose = self._pose
+          elif self._debug_last_action_command == 5:
+            desired_pose = self._tip_pose
+          if not np.allclose(
+              desired_pose,
+              action_pose,
+              rtol=0.001,  # 1mm relative tolerance
+              atol=0.002,  # 2mm absolute tolerance
+          ):
+            raise pyreach.PyReachError(
+                "Pose out of tolerance: "
+                f"command={self._debug_last_action_command}, "
+                f"action_pose={action_pose}, "
+                f"desired_pose={desired_pose}, "
+                f"tip_pose={self._tip_pose}, "
+                f"pose={self._pose}")
+
+        self._tip_pose = np.array(
+            pyreach.Pose.as_list(tip_adjust_t_base), dtype=np.float_)
+        self._tip_adjust = np.array(
+            pyreach.Pose.as_list(tip_adjust_t_tcp), dtype=np.float_)
+
         observation = {
             "ts": gyms_core.Timestamp.new(ts),
             "joint_angles": self._joints,
             "pose": self._pose,
+            "tip_pose": self._tip_pose,
+            "tip_adjust": self._tip_adjust,
             "status": response,
         }
         if self._response_queue_length:
@@ -509,8 +567,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
       if "command" not in action_dict:
         raise pyreach.PyReachError("No command specified in Arm Action.")
       command: Any = action_dict["command"]
-      if not (isinstance(command, int) and (0 <= command <= 3)):
-        raise pyreach.PyReachError("Invalid arm command -- must be 0 - 3")
+      if not (isinstance(command, int) and (0 <= command <= 5)):
+        raise pyreach.PyReachError("Invalid arm command -- must be 0 - 5")
 
       use_linear: bool = action_dict.get("use_linear", 0) == 1
       servo: bool = action_dict.get("servo", 0) == 1
@@ -562,6 +620,9 @@ class ReachDeviceArm(reach_device.ReachDevice):
       count: int
       callback: Optional[Callable[[pyreach.PyReachStatus], None]]
       finished_callback: Optional[reach_device.FinishedCallback]
+
+      # Internal debugging:
+      self._debug_last_action_command = command
 
       if command == 0:
         # Do nothing
@@ -651,13 +712,22 @@ class ReachDeviceArm(reach_device.ReachDevice):
               finished_callback=finished_callback)
         return cmd_tuple
 
-      if command == 2:
+      self._debug_last_action_pose = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      if command in (2, 4, 5):
         # Move using pose.
         if "pose" not in action_dict:
-          raise pyreach.PyReachError("No pose in Arm Action (command == 2)")
+          raise pyreach.PyReachError(
+              f"No pose in Arm Action (command={command})")
         pose: np.ndarray = action_dict["pose"]
         pose_values: List[float] = pose.tolist()
-        tip_adjust: bool = self._apply_tip_adjust_transform
+        tip_adjust: bool = False
+        if command == 2:
+          tip_adjust = self._apply_tip_adjust_transform
+        elif command == 4:
+          tip_adjust = False
+        elif command == 5:
+          tip_adjust = True
+        self._debug_last_action_pose = pose
 
         cmd_tuple = (lib_snapshot.SnapshotGymArmAction(
             device_type="robot",

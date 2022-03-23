@@ -335,6 +335,8 @@ class TestGymArmEnv(unittest.TestCase):
               "ts": gyms_core.Timestamp.new(0.0),
               "joint_angles": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
               "pose": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+              "tip_pose": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+              "tip_adjust": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
               "status": 0,
           }
       }
@@ -388,6 +390,8 @@ class TestGymArmEnv(unittest.TestCase):
             "arm": {
                 "joint_angles": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
                 "pose": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+                "tip_pose": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+                "tip_adjust": np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
                 "responses": (response1, response2),
                 "status": 0,
                 "ts": gyms_core.Timestamp.new(0.0),
@@ -401,8 +405,10 @@ class TestGymArmEnv(unittest.TestCase):
         done: bool
         observation, _, done, _ = env.step(to_joints_action)
         assert not done, "Step 1: Done wrong"
-        assert action_observation_eq(observation,
-                                     to_joints_observation), "Step 1: Obs match"
+        assert action_observation_eq(
+            observation,
+            to_joints_observation), ("Step 1: Obs match", observation,
+                                     to_joints_observation)
 
         # Step 2: To Joints; protective stop:
         observation, _, done, _ = env.step(to_joints_action)

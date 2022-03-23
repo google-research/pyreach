@@ -259,20 +259,36 @@ The Arm action is a Dict with the following keys:
 
 *   `"command"`: Must be specified as an integer where:
 
-    *   0: Means do nothing.
+    *   0: Means do nothing. No `PyReachError` is raised if either the `pose` or
+        `joint_angles` keys are present in the action.
 
     *   1: Means set the joint angles. The `"joint_angles"` key must be present
-        when `"command"` is 1. It is an error if the `"pose"` key is present
-        when `"command"` is 1.
+        when `"command"` is 1 and `PyReachError` is raised if the `"pose"` key
+        is present.
 
-    *   2: Means set the pose. The `"pose"` key must be present when `"command"`
-        is 2. It is an error if the `"joint_angles"` key is present when
-        `"command"` is 1.
+    *   2: Means set the pose as modified by the `apply_tip_adjust_transform`
+        option specified in the arm configuration. When
+        `apply_tip_adjust_transform` is `True`, it is equivalent to command 4
+        below; otherwise, it is equivalent to command 5 below.
 
     *   3: Means to immediately stop any arm motion that is already in progress.
 
-    An value that is not 0, 1, or 2 is not allowed and results in a
-    `PyReachError` exception.
+    *   4: Means set the pose without applying the tool tip transform. The
+        `pose` key must be present as an `np.ndarray` of the form (x, y, z, rx,
+        ry, rz), where (x, y, z) specifies the final "wrist" position and (rx,
+        ry, rz) specifies the final "wrist" pose using angle-axis format. In
+        synchronous mode, the subsequent returned `pose` observation should be
+        close to the `pose` passed in.
+
+    *   5: Means set the pose applying the tool tip transform. The `pose` key
+        must be present as an `np.ndarray` of the form (x, y, z, rx, ry, rz),
+        where (x, y, z) specifies the final tip_ position and (rx, ry, rz)
+        specifies the final tip pose using angle-axis format. In synchronous
+        mode, the subsequent returned `tip_pose` observation should be close to
+        the `pose` passed in.
+
+    An value that is not between 0 and 5 inclusive is not allowed and results in
+    a `PyReachError` exception.
 
 *   `controller`: Specifies the controller to use. It is an index into an a list
     of controller names specified at configuration time. Typically, the first
@@ -328,19 +344,40 @@ The observation is a Dict with the following values:
 
 *   `"joint_angles"`: Specifies the arm joint angles in radians at the time of
     observation.
+
 *   `"pose"`: Specifies the arm pose as 6 element linear `numpy.ndarray` that
     contains, (x, y, z, rx, ry, rz) where (x, y, z) is the arm position and (rx,
-    ry, rz) is the pose.
+    ry, rz) is the pose in axis-angle format. This pose does **NOT** have the
+    tool tip transform applied to it.
+
+*   `tip_pose`: Specifies the arm pose as 6 element linear `numpy.ndarray` that
+    contains, (x, y, z, rx, ry, rz) where (x, y, z) is the arm position and (rx,
+    ry, rz) is the pose in axis-angle format. This pose **DOES** have the tool
+    tip transform applied to it.
+
+*   `tip_adjust`: Specifies the transform to get the `pose` to the `tip_pose` as
+    a 6 element linear `numpy.ndarray` that contains (x, y, z, rx, ry, rz),
+    where (x, y, z) is the tip position and (rx, ry, rz) is the tip pose ins
+    axis-angle format. Until tool tip changing is implemented, this value will
+    not change.
+
 *   `"status"`: Specifies the arm status where:
 
     *   `0`: Means that no response is present yet.
+
     *   `1`: Means that the arm movement is successfully done.
+
     *   `2`: Means that the arm movement failed with an error other than
         timeout.
+
     *   `3`: Means that the arm movement was aborted.
+
     *   `4`: Means that the arm movement request was rejected.
+
     *   `5`: Means that the arm movement timed out.
+
     *   `6`: Means that the arm is in an Emergency-Stop condition.
+
     *   `7`: Means that the arm is in a Protective-Stop condition.
 
 *   `"responses"`: {#arm-device-responses}
@@ -351,8 +388,10 @@ The observation is a Dict with the following values:
     *   `"id"`: Specifies the unique action space id that corresponds to this
         response.
     *   `"status"`: The standard arm status value (see immediately above)
+
     *   `"finished"`: specifies 0 if the arm operation is still taking place and
         1 otherwise.
+
     *   `"ts"`: Specifies the timestamp associated with the finished arm
         operation.
 

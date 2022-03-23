@@ -108,6 +108,7 @@ class ReachArm(reach_element.ReachElement):
       the Gym will cause the step method to return with the Done flag set.
       2 specifies that the arm status will indicate a P-stop condition.
       (Default: 0)
+    debug_flags: Specifies flags for internal debugging.  (Default: "")
   """
   low_joint_angles: Tuple[float, ...] = ()
   high_joint_angles: Tuple[float, ...] = ()
@@ -120,3 +121,5 @@ class ReachArm(reach_element.ReachElement):
   p_stop_mode: int = ReachStopMode.STOP_ERROR
   # Used for unit testing only:
   test_states: Optional[List[pyreach_arm.ArmState]] = None
+  # Used for development testing only:
+  debug_flags: str = ""

@@ -142,7 +142,8 @@ class ReachDeviceIO(reach_device.ReachDevice):
           digital_output: DigOutput = capabilities[pin_name]
           all_digital_outputs[id(digital_output)] = digital_output
           # TODO(gramlich): Should this be conditioned on is_synchronous?
-          digital_output.start_streaming()
+          if host.playback is None:
+            digital_output.start_streaming()
 
           digital_outputs_table[gym_pin_name] = (digital_output, pin_name)
 

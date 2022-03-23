@@ -88,9 +88,10 @@ class ReachDeviceVacuum(reach_device.ReachDevice):
           raise pyreach.PyReachError("Vacuum '{0}' is not one of {1}".format(
               self._reach_name, vacuum_names))
         self._vacuum = host.vacuums[self._reach_name]
-        self._vacuum.start_streaming()
-        if self._vacuum.support_blowoff:
-          self._vacuum.start_blowoff_streaming()
+        if host.playback is None:
+          self._vacuum.start_streaming()
+          if self._vacuum.support_blowoff:
+            self._vacuum.start_blowoff_streaming()
     return self._vacuum
 
   def validate(self, host: pyreach.Host) -> str:

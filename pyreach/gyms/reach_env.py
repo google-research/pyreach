@@ -13,9 +13,12 @@
 # limitations under the License.
 """Implementation of Open AI Gym interface for PyReach."""
 
+import dataclasses
+import json
 import logging
+import os
 import time
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, IO, List, Optional, Set, Tuple, Union
 import uuid
 
 import gym  # type: ignore
@@ -78,6 +81,20 @@ IKLibType = pyreach.arm.IKLibType
 ObservationSnapshot = Tuple[gyms_core.Observation,
                             Tuple[lib_snapshot.SnapshotReference, ...],
                             Tuple[lib_snapshot.SnapshotResponse, ...]]
+
+
+# Reference for how to serialize NumPy arrays into JSON.
+# This is used for snapshot logging.
+# [Python Serialize NumPy ndarray into JSON]
+# (https://pynative.com/python-serialize-numpy-ndarray-into-json/)
+class _NumpyArrayEncoder(json.JSONEncoder):
+  """A helper class to encode NumPy ndarrays into JSON."""
+
+  def default(self, obj: Any) -> Any:
+    """Magic method to do encoding."""
+    if isinstance(obj, np.ndarray):
+      return obj.tolist()
+    return json.JSONEncoder.default(self, obj)
 
 
 # ReachEnv:
@@ -209,7 +226,7 @@ class ReachEnv(gym.Env):  # type: ignore
               f"task_params['{key}'] does not specify a str")
 
       # Prescan pyreach_config for inverse kinematics library selection.
-      # It must be determined before connecting to the host..
+      # It must be determined before connecting to the host.
       arm_default_ik_types: Dict[str, pyreach_arm.IKLibType] = {}
       config_name: str
       config_element: reach_element.ReachElement
@@ -220,6 +237,7 @@ class ReachEnv(gym.Env):  # type: ignore
             # Historically defaults to IKFast.
             ik_lib = pyreach_arm.IKLibType.IKFAST
           arm_default_ik_types[config_element.reach_name] = ik_lib
+
       host_kwargs: Dict[str, Any] = {
           "enable_streaming": False,
           "arm_default_ik_types": arm_default_ik_types,
@@ -232,6 +250,8 @@ class ReachEnv(gym.Env):  # type: ignore
           connection_string = "select-snapshot-run-id=true," + connection_string
         host = factory.ConnectionFactory(
             connection_string=connection_string, **host_kwargs).connect()
+        assert isinstance(host, pyreach.Host), host
+      is_playback: bool = host.playback is not None
 
       reach_synchronous: ReachDeviceSynchronous = (
           ReachDeviceSynchronous(host, self._timers, timeout=timeout))
@@ -244,6 +264,10 @@ class ReachEnv(gym.Env):  # type: ignore
       elements: Dict[str, ReachDevice] = {}
 
       for config_name, config_element in pyreach_config.items():
+        # In playback mode, force all config elements to be asynchronous.
+        if is_playback and hasattr(config_element, "is_synchronous"):
+          config_element = dataclasses.replace(
+              config_element, is_synchronous=False)
         if isinstance(config_element, annotation_element.ReachAnnotation):
           element = ReachDeviceAnnotation(config_element)
         elif isinstance(config_element, arm_element.ReachArm):
@@ -289,7 +313,8 @@ class ReachEnv(gym.Env):  # type: ignore
         element._config_name = config_name
         element.set_timers(self._timers)
 
-        is_synchronous: bool = element.is_synchronous
+        # In playback mode, force to asynchronous mode.
+        is_synchronous: bool = getattr(element, "is_synchronous", False)
         if is_synchronous:
           reach_synchronous._register_element(element)
 
@@ -316,9 +341,10 @@ class ReachEnv(gym.Env):  # type: ignore
 
       # Register task_synchronize() for devices that need to trigger
       # a global synchronize operation.  All other devices will ignore.
-      for element in elements.values():
-        assert isinstance(element, ReachDevice), element
-        element.set_task_synchronize(self.task_synchronize)
+      if not is_playback:
+        for element in elements.values():
+          assert isinstance(element, ReachDevice), element
+          element.set_task_synchronize(self.task_synchronize)
 
       # Create the composite observation space from the configuration.
       observation_space_dict: Dict[str, gyms_core.Space] = {}
@@ -335,6 +361,13 @@ class ReachEnv(gym.Env):  # type: ignore
         raise pyreach.PyReachError(
             "Internal Error: incomplete observation space "
             f"{config_names} != {observation_space_names}")
+
+      snapshot_log_file: Optional[IO[str]] = None
+      log_file_name: str = ""
+      if "PYREACH_SNAPSHOT_LOG" in os.environ:
+        log_file_name = os.environ["PYREACH_SNAPSHOT_LOG"]
+        snapshot_log_file = open(log_file_name, "w")
+        snapshot_log_file.write('[\n"Snapshot Log Started",\n')
 
       # A top level gym.Env requires these 4 fields.
       self._action_space: gyms_core.Space = action_space
@@ -354,6 +387,7 @@ class ReachEnv(gym.Env):  # type: ignore
                 "Can have at most one ReachDeviceTextInstructions "
                 "in the gym configuration")
           self._text_instruction = element
+      self._is_playback: bool = is_playback
       self._episode = 0
       self._step = 0
       self._host = host
@@ -361,14 +395,17 @@ class ReachEnv(gym.Env):  # type: ignore
           self._nop_reward_done_function)
       self._task_started: bool = False
       self._task_params: Dict[str, str] = task_params
+      self._log_file_name: str = log_file_name
+      self._snapshot_log_file: Optional[IO[str]] = snapshot_log_file
 
       # Allow overwride of reward/done/info function from kwargs.
       if "reward_done_function" in kwargs:
         self._reward_done_function = kwargs["reward_done_function"]
 
       # Synchronize all devices
-      for element in self._elements.values():
-        element.synchronize(host)
+      if host.playback is None:
+        for element in self._elements.values():
+          element.synchronize(host)
 
   @staticmethod
   def _nop_reward_done_function(
@@ -408,21 +445,28 @@ class ReachEnv(gym.Env):  # type: ignore
               f"Top-level action(s) {extra_names} are not allowed. "
               f"Only top-level actions {self._element_names} are allowed.")
 
-        for name, element in elements.items():
-          if name in action:
-            sub_action: Any = action[name]
-            if not isinstance(sub_action, dict):
-              raise pyreach.PyReachError(f"Action {name} is not a dictionary")
-            sub_action_names: Set[str] = set(sub_action.keys())
-            extra_sub_actions: Set[str] = (
-                sub_action_names - element.allowed_actions)
-            if extra_sub_actions:
-              raise pyreach.PyReachError(
-                  f"Device {name} action(s) {extra_sub_actions} not allowed. "
-                  f"Only {sorted(element.allowed_actions)} are allowed.")
-            action_list.extend(element.do_action(sub_action, self._host))
+        if not self._is_playback:
+          for name, element in elements.items():
+            if name in action:
+              sub_action: Any = action[name]
+              if not isinstance(sub_action, dict):
+                raise pyreach.PyReachError(f"Action {name} is not a dictionary")
+              sub_action_names: Set[str] = set(sub_action.keys())
+              extra_sub_actions: Set[str] = (
+                  sub_action_names - element.allowed_actions)
+              if extra_sub_actions:
+                raise pyreach.PyReachError(
+                    f"Device {name} action(s) {extra_sub_actions} not allowed. "
+                    f"Only {sorted(element.allowed_actions)} are allowed.")
+              action_list.extend(element.do_action(sub_action, self._host))
 
       # Get the next observation.
+      snapshot: Optional[lib_snapshot.Snapshot] = None
+      if self._host.playback:
+        snapshot = self._host.playback.next_snapshot()
+        if snapshot is not None:
+          self._host.playback.replay_snapshot(snapshot)
+
       observation: Dict[str, gyms_core.Observation]
       snapshot_references: Tuple[lib_snapshot.SnapshotReference, ...]
       snapshot_responses: Tuple[lib_snapshot.SnapshotResponse, ...]
@@ -443,7 +487,7 @@ class ReachEnv(gym.Env):  # type: ignore
       # Snapshot the observation here.
       self._step += 1
 
-      snapshot: lib_snapshot.Snapshot = lib_snapshot.Snapshot(
+      snapshot = lib_snapshot.Snapshot(
           source="pyreach_gym",
           device_data_refs=tuple(snapshot_references),
           responses=tuple(snapshot_responses),
@@ -455,7 +499,9 @@ class ReachEnv(gym.Env):  # type: ignore
           gym_reward=reward,
           gym_done=done,
           gym_actions=tuple(action_list))
-      self._host.logger.send_snapshot(snapshot)
+      if not self._is_playback:
+        assert snapshot is not None
+        self._host.logger.send_snapshot(snapshot)
 
       return observation, reward, done, {}
 
@@ -477,11 +523,19 @@ class ReachEnv(gym.Env):  # type: ignore
       Returns the next Gym Observation as a Gym Dict Space.
     """
     with self._timers.select({"!agent*", "gym.reset"}):
+      # Get the next observation.
+      snapshot: Optional[lib_snapshot.Snapshot] = None
+      if self._host.playback:
+        snapshot = self._host.playback.seek_snapshot(
+            gym_run_id=None, gym_episode=self._episode, gym_step=None)
+        if snapshot:
+          self._host.playback.replay_snapshot(snapshot)
       action_list: List[lib_snapshot.SnapshotGymAction] = []
 
       element: ReachDevice
-      for element in self._elements.values():
-        action_list.extend(element.reset(self._host))
+      if not self._is_playback:
+        for element in self._elements.values():
+          action_list.extend(element.reset(self._host))
 
       observation: Dict[str, gyms_core.Observation] = {}
       snapshot_references: Tuple[lib_snapshot.SnapshotReference, ...] = ()
@@ -490,19 +544,21 @@ class ReachEnv(gym.Env):  # type: ignore
         server_time = time.time() + (self._host.get_server_offset_time() or 0.0)
         server_time = round(server_time, 3)
       else:
-        self._host.reset()
+        if not self._is_playback:
+          self._host.reset()
         self.task_params["reset_id"] = str(uuid.uuid4())
 
         # Do element specific waiting for reset.
-        for element in self._elements.values():
-          element.reset_wait(self._host)
+        if not self._is_playback:
+          for element in self._elements.values():
+            element.reset_wait(self._host)
 
         observation, snapshot_references, snapshot_responses, server_time = (
             self._get_observation(self._host))
 
       self._episode += 1
       self._step = 0
-      snapshot: lib_snapshot.Snapshot = lib_snapshot.Snapshot(
+      snapshot = lib_snapshot.Snapshot(
           source="pyreach_gym",
           device_data_refs=tuple(snapshot_references),
           responses=tuple(snapshot_responses),
@@ -514,7 +570,9 @@ class ReachEnv(gym.Env):  # type: ignore
           gym_reward=0.0,
           gym_done=False,
           gym_actions=tuple(action_list))
-      self._host.logger.send_snapshot(snapshot)
+      if not self._is_playback:
+        assert snapshot is not None
+        self._host.logger.send_snapshot(snapshot)
 
       if not isinstance(observation, dict):
         raise pyreach.PyReachError("Internal Error: non-dictionary observation")
@@ -590,6 +648,21 @@ class ReachEnv(gym.Env):  # type: ignore
             "Internal error: elements({0}) != observation_names({1})".format(
                 element_names, observation_names))
 
+      snapshot_log_file: Optional[IO[str]] = self._snapshot_log_file
+      if snapshot_log_file:
+        # Write data into the log using pretty printing to make it easier
+        # to identify differences between the original run and the replay.
+        episode: Dict[str, int] = {
+            "Episode": self._episode,
+            "Step": self._step,
+        }
+        snapshot_log_file.write(json.dumps(episode, sort_keys=True, indent=2))
+        snapshot_log_file.write(",\n")
+        snapshot_log_file.write(
+            json.dumps(
+                observations, sort_keys=True, indent=2, cls=_NumpyArrayEncoder))
+        snapshot_log_file.write(",\n")
+
       return observations, tuple(snapshot_references), tuple(
           snapshot_responses), server_time
 
@@ -618,6 +691,17 @@ class ReachEnv(gym.Env):  # type: ignore
     self._reach_reset(True)
     self._host.close()
     self._timers.dump()
+    snap_shot_log_file: Optional[IO[str]] = self._snapshot_log_file
+    if snap_shot_log_file:
+      snap_shot_log_file.write('"Snapshot Log Closed"\n]\n')
+      snap_shot_log_file.close()
+      self._snap_shot_log_file = None
+
+      # For now, read the log back in to verify that it is valid JSON.
+      log_file_name: str = self._log_file_name
+      with open(log_file_name, "r") as snap_shot_log_file:
+        log_contents: str = snap_shot_log_file.read()
+      json.loads(log_contents)
 
   def fk(self,
          element: str,
