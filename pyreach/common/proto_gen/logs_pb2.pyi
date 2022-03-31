@@ -432,6 +432,8 @@ class ClientAnnotation(google.protobuf.message.Message):
     POINT_MEASUREMENT_FIELD_NUMBER: builtins.int
     LONG_HORIZON_INSTRUCTION_FIELD_NUMBER: builtins.int
     SHORT_HORIZON_INSTRUCTION_FIELD_NUMBER: builtins.int
+    DATA_SEGMENT_START_FIELD_NUMBER: builtins.int
+    DATA_SEGMENT_END_FIELD_NUMBER: builtins.int
     @property
     def associated_server_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """
@@ -442,7 +444,7 @@ class ClientAnnotation(google.protobuf.message.Message):
         pass
     log_channel_id: typing.Text = ...
     """The channel ID this log message is associated with. If empty, it is
-    associated with the "device-data" channel.
+    associated with the "command-data" channel.
     """
 
     @property
@@ -461,6 +463,10 @@ class ClientAnnotation(google.protobuf.message.Message):
     def long_horizon_instruction(self) -> global___TextAnnotation: ...
     @property
     def short_horizon_instruction(self) -> global___TextAnnotation: ...
+    @property
+    def data_segment_start(self) -> global___DataSegmentStart: ...
+    @property
+    def data_segment_end(self) -> global___DataSegmentEnd: ...
     def __init__(self,
         *,
         associated_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
@@ -472,11 +478,108 @@ class ClientAnnotation(google.protobuf.message.Message):
         point_measurement : typing.Optional[global___PointMeasurement] = ...,
         long_horizon_instruction : typing.Optional[global___TextAnnotation] = ...,
         short_horizon_instruction : typing.Optional[global___TextAnnotation] = ...,
+        data_segment_start : typing.Optional[global___DataSegmentStart] = ...,
+        data_segment_end : typing.Optional[global___DataSegmentEnd] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["log_type_oneof",b"log_type_oneof"]) -> typing.Optional[typing_extensions.Literal["interval_start","interval_end","text_annotation","snapshot_annotation","point_measurement","long_horizon_instruction","short_horizon_instruction"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","data_segment_end",b"data_segment_end","data_segment_start",b"data_segment_start","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","data_segment_end",b"data_segment_end","data_segment_start",b"data_segment_start","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["log_type_oneof",b"log_type_oneof"]) -> typing.Optional[typing_extensions.Literal["interval_start","interval_end","text_annotation","snapshot_annotation","point_measurement","long_horizon_instruction","short_horizon_instruction","data_segment_start","data_segment_end"]]: ...
 global___ClientAnnotation = ClientAnnotation
+
+class DataSegmentStart(google.protobuf.message.Message):
+    """DataSegmentStart marks the start of a data segment for data segmentation.
+    Together, the space, task_code, and name in the content uniquely identifies
+    a type of segment. Each segment's content also has a unique UUID that is
+    used to ensure each start has an end, and may also be used to reference a
+    segment uniquely.
+
+    The associated_server_ts field is REQUIRED, and must be the same as the
+    start_server_ts in the corresponding DataSegmentEnd message.
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    CONTENT_FIELD_NUMBER: builtins.int
+    @property
+    def content(self) -> global___DataSegmentContent: ...
+    def __init__(self,
+        *,
+        content : typing.Optional[global___DataSegmentContent] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["content",b"content"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["content",b"content"]) -> None: ...
+global___DataSegmentStart = DataSegmentStart
+
+class DataSegmentEnd(google.protobuf.message.Message):
+    """DataSegmentEnd marks the end of a data segment for data segmentation.
+    Together, the space, task_code, and name in the content uniquely identifies
+    a type of segment. Each segment's content also has a unique UUID that is
+    used to ensure each start has an end, and may also be used to reference a
+    segment uniquely.
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    CONTENT_FIELD_NUMBER: builtins.int
+    START_SERVER_TS_FIELD_NUMBER: builtins.int
+    @property
+    def content(self) -> global___DataSegmentContent:
+        """Must be identical to the corresponding DataSegmentStart content."""
+        pass
+    @property
+    def start_server_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
+        """Start server timestamp of the data segment START marker. It must be
+        the same as the associated_server_ts used in the DataSegmentStart marker.
+        This is used so that a single DataSegmentEnd marker can fully specify the
+        segment using server timestamps, making segmentation stateless.
+        """
+        pass
+    def __init__(self,
+        *,
+        content : typing.Optional[global___DataSegmentContent] = ...,
+        start_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["content",b"content","start_server_ts",b"start_server_ts"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["content",b"content","start_server_ts",b"start_server_ts"]) -> None: ...
+global___DataSegmentEnd = DataSegmentEnd
+
+class DataSegmentContent(google.protobuf.message.Message):
+    """DataSegmentContent describes a data segment for data segmentation.
+    Together, the space, task_code, and name in the content uniquely identifies
+    a type of segment. Each segment's content also has a unique UUID that is
+    used to ensure each start has an end, and may also be used to reference a
+    segment uniquely.
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    SESSION_CHANNEL_ID_FIELD_NUMBER: builtins.int
+    TASK_CODE_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
+    AGENT_ID_FIELD_NUMBER: builtins.int
+    UUID_FIELD_NUMBER: builtins.int
+    session_channel_id: typing.Text = ...
+    """The log type for the session created for this data segment. Required."""
+
+    task_code: typing.Text = ...
+    """The task code this segment is included in. Required."""
+
+    name: typing.Text = ...
+    """A name for the segment. Required."""
+
+    agent_id: typing.Text = ...
+    """The agent ID in control for this segment. Optional."""
+
+    uuid: typing.Text = ...
+    """A UUID for the segment. Must be unique, and will match segment start
+    to segment end, for data integrity. Required.
+    """
+
+    def __init__(self,
+        *,
+        session_channel_id : typing.Optional[typing.Text] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        agent_id : typing.Optional[typing.Text] = ...,
+        uuid : typing.Optional[typing.Text] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["agent_id",b"agent_id","name",b"name","session_channel_id",b"session_channel_id","task_code",b"task_code","uuid",b"uuid"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["agent_id",b"agent_id","name",b"name","session_channel_id",b"session_channel_id","task_code",b"task_code","uuid",b"uuid"]) -> None: ...
+global___DataSegmentContent = DataSegmentContent
 
 class IntervalStart(google.protobuf.message.Message):
     """IntervalStart starts a named interval.

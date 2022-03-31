@@ -32,9 +32,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='log_entry_reach.proto',
   package='robotics.logging.messages',
   syntax='proto2',
-  serialized_options=b'Z#project-reach/pkg/rc/logentryprotos',
+  serialized_options=b'Z\'project-reach/pkg/rc/reachpayloadprotos',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x15log_entry_reach.proto\x12\x19robotics.logging.messages\x1a\nlogs.proto\"\xf1\x01\n\x0cReachPayload\x12<\n\x0c\x63ommand_data\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.CommandDataH\x00\x12:\n\x0b\x64\x65vice_data\x18\x02 \x01(\x0b\x32#.robotics.learning.reach.DeviceDataH\x00\x12?\n\x0fserver_log_data\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.TextLogDataH\x00\x12\x1e\n\x16reach_serve_session_id\x18\x03 \x01(\tB\x06\n\x04\x64\x61taB%Z#project-reach/pkg/rc/logentryprotos'
+  serialized_pb=b'\n\x15log_entry_reach.proto\x12\x19robotics.logging.messages\x1a\nlogs.proto\"\xf1\x01\n\x0cReachPayload\x12<\n\x0c\x63ommand_data\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.CommandDataH\x00\x12:\n\x0b\x64\x65vice_data\x18\x02 \x01(\x0b\x32#.robotics.learning.reach.DeviceDataH\x00\x12?\n\x0fserver_log_data\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.TextLogDataH\x00\x12\x1e\n\x16reach_serve_session_id\x18\x03 \x01(\tB\x06\n\x04\x64\x61taB)Z\'project-reach/pkg/rc/reachpayloadprotos'
   ,
   dependencies=[logs__pb2.DESCRIPTOR,])
 

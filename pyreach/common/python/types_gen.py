@@ -1112,7 +1112,7 @@ class ClientAnnotation:
   associated_server_ts: int
 
   # The channel ID this log message is associated with. If empty, it is
-  # associated with the "device-data" channel.
+  # associated with the "command-data" channel.
   log_channel_id: str
   interval_start: Optional['IntervalStart']
   interval_end: Optional['IntervalEnd']
@@ -1123,9 +1123,13 @@ class ClientAnnotation:
   point_measurement: Optional['PointMeasurement']
   long_horizon_instruction: Optional['TextAnnotation']
   short_horizon_instruction: Optional['TextAnnotation']
+  data_segment_start: Optional['DataSegmentStart']
+  data_segment_end: Optional['DataSegmentEnd']
 
-  def __init__(self, associated_server_ts: int = 0, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', long_horizon_instruction: Optional['TextAnnotation'] = None, point_measurement: Optional['PointMeasurement'] = None, short_horizon_instruction: Optional['TextAnnotation'] = None, snapshot_annotation: Optional['SnapshotAnnotation'] = None, text_annotation: Optional['TextAnnotation'] = None) -> None:
+  def __init__(self, associated_server_ts: int = 0, data_segment_end: Optional['DataSegmentEnd'] = None, data_segment_start: Optional['DataSegmentStart'] = None, interval_end: Optional['IntervalEnd'] = None, interval_start: Optional['IntervalStart'] = None, log_channel_id: str = '', long_horizon_instruction: Optional['TextAnnotation'] = None, point_measurement: Optional['PointMeasurement'] = None, short_horizon_instruction: Optional['TextAnnotation'] = None, snapshot_annotation: Optional['SnapshotAnnotation'] = None, text_annotation: Optional['TextAnnotation'] = None) -> None:
     self.associated_server_ts = associated_server_ts
+    self.data_segment_end = data_segment_end
+    self.data_segment_start = data_segment_start
     self.interval_end = interval_end
     self.interval_start = interval_start
     self.log_channel_id = log_channel_id
@@ -1142,6 +1146,14 @@ class ClientAnnotation:
     if self.associated_server_ts:
       assert isinstance(self.associated_server_ts, int), 'Wrong type for attribute: associated_server_ts. Expected: int. Got: ' + str(type(self.associated_server_ts)) + '.'
       json_data['associatedServerTS'] = self.associated_server_ts
+
+    if self.data_segment_end:
+      assert self.data_segment_end.__class__.__name__ == 'DataSegmentEnd', 'Wrong type for attribute: data_segment_end. Expected: DataSegmentEnd. Got: ' + str(type(self.data_segment_end)) + '.'
+      json_data['dataSegmentEnd'] = self.data_segment_end.to_json()
+
+    if self.data_segment_start:
+      assert self.data_segment_start.__class__.__name__ == 'DataSegmentStart', 'Wrong type for attribute: data_segment_start. Expected: DataSegmentStart. Got: ' + str(type(self.data_segment_start)) + '.'
+      json_data['dataSegmentStart'] = self.data_segment_start.to_json()
 
     if self.interval_end:
       assert self.interval_end.__class__.__name__ == 'IntervalEnd', 'Wrong type for attribute: interval_end. Expected: IntervalEnd. Got: ' + str(type(self.interval_end)) + '.'
@@ -1199,6 +1211,10 @@ class ClientAnnotation:
       proto.long_horizon_instruction.CopyFrom(self.long_horizon_instruction.to_proto())
     if self.short_horizon_instruction:
       proto.short_horizon_instruction.CopyFrom(self.short_horizon_instruction.to_proto())
+    if self.data_segment_start:
+      proto.data_segment_start.CopyFrom(self.data_segment_start.to_proto())
+    if self.data_segment_end:
+      proto.data_segment_end.CopyFrom(self.data_segment_end.to_proto())
     return proto
 
   @staticmethod
@@ -1206,7 +1222,7 @@ class ClientAnnotation:
     """Convert JSON to type object."""
     obj = ClientAnnotation()
 
-    expected_json_keys: List[str] = ['associatedServerTS', 'intervalEnd', 'intervalStart', 'logChannelID', 'longHorizonInstruction', 'pointMeasurement', 'shortHorizonInstruction', 'snapshotAnnotation', 'textAnnotation']
+    expected_json_keys: List[str] = ['associatedServerTS', 'dataSegmentEnd', 'dataSegmentStart', 'intervalEnd', 'intervalStart', 'logChannelID', 'longHorizonInstruction', 'pointMeasurement', 'shortHorizonInstruction', 'snapshotAnnotation', 'textAnnotation']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid ClientAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -1214,6 +1230,14 @@ class ClientAnnotation:
     if 'associatedServerTS' in json_data:
       assert isinstance(json_data['associatedServerTS'], int), 'Wrong type for attribute: associatedServerTS. Expected: int. Got: ' + str(type(json_data['associatedServerTS'])) + '.'
       obj.associated_server_ts = json_data['associatedServerTS']
+
+    if 'dataSegmentEnd' in json_data:
+      assert isinstance(json_data['dataSegmentEnd'], dict), 'Wrong type for attribute: dataSegmentEnd. Expected: dict. Got: ' + str(type(json_data['dataSegmentEnd'])) + '.'
+      obj.data_segment_end = DataSegmentEnd.from_json(json_data['dataSegmentEnd'])
+
+    if 'dataSegmentStart' in json_data:
+      assert isinstance(json_data['dataSegmentStart'], dict), 'Wrong type for attribute: dataSegmentStart. Expected: dict. Got: ' + str(type(json_data['dataSegmentStart'])) + '.'
+      obj.data_segment_start = DataSegmentStart.from_json(json_data['dataSegmentStart'])
 
     if 'intervalEnd' in json_data:
       assert isinstance(json_data['intervalEnd'], dict), 'Wrong type for attribute: intervalEnd. Expected: dict. Got: ' + str(type(json_data['intervalEnd'])) + '.'
@@ -1273,6 +1297,10 @@ class ClientAnnotation:
       obj.long_horizon_instruction = TextAnnotation.from_proto(proto.long_horizon_instruction)
     if proto.HasField('short_horizon_instruction'):
       obj.short_horizon_instruction = TextAnnotation.from_proto(proto.short_horizon_instruction)
+    if proto.HasField('data_segment_start'):
+      obj.data_segment_start = DataSegmentStart.from_proto(proto.data_segment_start)
+    if proto.HasField('data_segment_end'):
+      obj.data_segment_end = DataSegmentEnd.from_proto(proto.data_segment_end)
     return obj
 
 
@@ -2867,6 +2895,270 @@ class ConveyorState:
     obj = ConveyorState()
     if proto.HasField('is_object_detected'):
       obj.is_object_detected = proto.is_object_detected
+    return obj
+
+
+class DataSegmentContent:
+  """Representation of proto message DataSegmentContent.
+
+   DataSegmentContent describes a data segment for data segmentation.
+   Together, the space, task_code, and name in the content uniquely identifies
+   a type of segment. Each segment's content also has a unique UUID that is
+   used to ensure each start has an end, and may also be used to reference a
+   segment uniquely.
+  """
+  # The log type for the session created for this data segment. Required.
+  session_channel_id: str
+
+  # The task code this segment is included in. Required.
+  task_code: str
+
+  # A name for the segment. Required.
+  name: str
+
+  # The agent ID in control for this segment. Optional.
+  agent_id: str
+
+  # A UUID for the segment. Must be unique, and will match segment start
+  # to segment end, for data integrity. Required.
+  uuid: str
+
+  def __init__(self, agent_id: str = '', name: str = '', session_channel_id: str = '', task_code: str = '', uuid: str = '') -> None:
+    self.agent_id = agent_id
+    self.name = name
+    self.session_channel_id = session_channel_id
+    self.task_code = task_code
+    self.uuid = uuid
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.agent_id:
+      assert isinstance(self.agent_id, str), 'Wrong type for attribute: agent_id. Expected: str. Got: ' + str(type(self.agent_id)) + '.'
+      json_data['agentId'] = self.agent_id
+
+    if self.name:
+      assert isinstance(self.name, str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(self.name)) + '.'
+      json_data['name'] = self.name
+
+    if self.session_channel_id:
+      assert isinstance(self.session_channel_id, str), 'Wrong type for attribute: session_channel_id. Expected: str. Got: ' + str(type(self.session_channel_id)) + '.'
+      json_data['sessionChannelId'] = self.session_channel_id
+
+    if self.task_code:
+      assert isinstance(self.task_code, str), 'Wrong type for attribute: task_code. Expected: str. Got: ' + str(type(self.task_code)) + '.'
+      json_data['taskCode'] = self.task_code
+
+    if self.uuid:
+      assert isinstance(self.uuid, str), 'Wrong type for attribute: uuid. Expected: str. Got: ' + str(type(self.uuid)) + '.'
+      json_data['uuid'] = self.uuid
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.DataSegmentContent':
+    """Convert DataSegmentContent to proto."""
+    proto = logs_pb2.DataSegmentContent()
+    if self.session_channel_id:
+      proto.session_channel_id = self.session_channel_id
+    if self.task_code:
+      proto.task_code = self.task_code
+    if self.name:
+      proto.name = self.name
+    if self.agent_id:
+      proto.agent_id = self.agent_id
+    if self.uuid:
+      proto.uuid = self.uuid
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'DataSegmentContent':
+    """Convert JSON to type object."""
+    obj = DataSegmentContent()
+
+    expected_json_keys: List[str] = ['agentId', 'name', 'sessionChannelId', 'taskCode', 'uuid']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid DataSegmentContent. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'agentId' in json_data:
+      assert isinstance(json_data['agentId'], str), 'Wrong type for attribute: agentId. Expected: str. Got: ' + str(type(json_data['agentId'])) + '.'
+      obj.agent_id = json_data['agentId']
+
+    if 'name' in json_data:
+      assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
+      obj.name = json_data['name']
+
+    if 'sessionChannelId' in json_data:
+      assert isinstance(json_data['sessionChannelId'], str), 'Wrong type for attribute: sessionChannelId. Expected: str. Got: ' + str(type(json_data['sessionChannelId'])) + '.'
+      obj.session_channel_id = json_data['sessionChannelId']
+
+    if 'taskCode' in json_data:
+      assert isinstance(json_data['taskCode'], str), 'Wrong type for attribute: taskCode. Expected: str. Got: ' + str(type(json_data['taskCode'])) + '.'
+      obj.task_code = json_data['taskCode']
+
+    if 'uuid' in json_data:
+      assert isinstance(json_data['uuid'], str), 'Wrong type for attribute: uuid. Expected: str. Got: ' + str(type(json_data['uuid'])) + '.'
+      obj.uuid = json_data['uuid']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.DataSegmentContent) -> Optional['DataSegmentContent']:
+    """Convert DataSegmentContent proto to type object."""
+    if not proto:
+      return None
+    obj = DataSegmentContent()
+    if proto.HasField('session_channel_id'):
+      obj.session_channel_id = proto.session_channel_id
+    if proto.HasField('task_code'):
+      obj.task_code = proto.task_code
+    if proto.HasField('name'):
+      obj.name = proto.name
+    if proto.HasField('agent_id'):
+      obj.agent_id = proto.agent_id
+    if proto.HasField('uuid'):
+      obj.uuid = proto.uuid
+    return obj
+
+
+class DataSegmentEnd:
+  """Representation of proto message DataSegmentEnd.
+
+   DataSegmentEnd marks the end of a data segment for data segmentation.
+   Together, the space, task_code, and name in the content uniquely identifies
+   a type of segment. Each segment's content also has a unique UUID that is
+   used to ensure each start has an end, and may also be used to reference a
+   segment uniquely.
+  """
+  # Must be identical to the corresponding DataSegmentStart content.
+  content: Optional['DataSegmentContent']
+
+  # Start server timestamp of the data segment START marker. It must be
+  # the same as the associated_server_ts used in the DataSegmentStart marker.
+  # This is used so that a single DataSegmentEnd marker can fully specify the
+  # segment using server timestamps, making segmentation stateless.
+  start_server_ts: int
+
+  def __init__(self, content: Optional['DataSegmentContent'] = None, start_server_ts: int = 0) -> None:
+    self.content = content
+    self.start_server_ts = start_server_ts
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.content:
+      assert self.content.__class__.__name__ == 'DataSegmentContent', 'Wrong type for attribute: content. Expected: DataSegmentContent. Got: ' + str(type(self.content)) + '.'
+      json_data['content'] = self.content.to_json()
+
+    if self.start_server_ts:
+      assert isinstance(self.start_server_ts, int), 'Wrong type for attribute: start_server_ts. Expected: int. Got: ' + str(type(self.start_server_ts)) + '.'
+      json_data['startServerTs'] = self.start_server_ts
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.DataSegmentEnd':
+    """Convert DataSegmentEnd to proto."""
+    proto = logs_pb2.DataSegmentEnd()
+    if self.content:
+      proto.content.CopyFrom(self.content.to_proto())
+    if self.start_server_ts:
+      proto.start_server_ts.seconds = int(self.start_server_ts / 1000)
+      proto.start_server_ts.nanos = int(self.start_server_ts % 1000) * 1000000
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'DataSegmentEnd':
+    """Convert JSON to type object."""
+    obj = DataSegmentEnd()
+
+    expected_json_keys: List[str] = ['content', 'startServerTs']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid DataSegmentEnd. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'content' in json_data:
+      assert isinstance(json_data['content'], dict), 'Wrong type for attribute: content. Expected: dict. Got: ' + str(type(json_data['content'])) + '.'
+      obj.content = DataSegmentContent.from_json(json_data['content'])
+
+    if 'startServerTs' in json_data:
+      assert isinstance(json_data['startServerTs'], int), 'Wrong type for attribute: startServerTs. Expected: int. Got: ' + str(type(json_data['startServerTs'])) + '.'
+      obj.start_server_ts = json_data['startServerTs']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.DataSegmentEnd) -> Optional['DataSegmentEnd']:
+    """Convert DataSegmentEnd proto to type object."""
+    if not proto:
+      return None
+    obj = DataSegmentEnd()
+    if proto.HasField('content'):
+      obj.content = DataSegmentContent.from_proto(proto.content)
+    if proto.HasField('start_server_ts'):
+      obj.start_server_ts = int(proto.start_server_ts.seconds * 1000) + int(proto.start_server_ts.nanos / 1000000)
+    return obj
+
+
+class DataSegmentStart:
+  """Representation of proto message DataSegmentStart.
+
+   DataSegmentStart marks the start of a data segment for data segmentation.
+   Together, the space, task_code, and name in the content uniquely identifies
+   a type of segment. Each segment's content also has a unique UUID that is
+   used to ensure each start has an end, and may also be used to reference a
+   segment uniquely.
+
+   The associated_server_ts field is REQUIRED, and must be the same as the
+   start_server_ts in the corresponding DataSegmentEnd message.
+  """
+  content: Optional['DataSegmentContent']
+
+  def __init__(self, content: Optional['DataSegmentContent'] = None) -> None:
+    self.content = content
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.content:
+      assert self.content.__class__.__name__ == 'DataSegmentContent', 'Wrong type for attribute: content. Expected: DataSegmentContent. Got: ' + str(type(self.content)) + '.'
+      json_data['content'] = self.content.to_json()
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.DataSegmentStart':
+    """Convert DataSegmentStart to proto."""
+    proto = logs_pb2.DataSegmentStart()
+    if self.content:
+      proto.content.CopyFrom(self.content.to_proto())
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'DataSegmentStart':
+    """Convert JSON to type object."""
+    obj = DataSegmentStart()
+
+    expected_json_keys: List[str] = ['content']
+
+    if not set(json_data.keys()).issubset(set(expected_json_keys)):
+      raise ValueError('JSON object is not a valid DataSegmentStart. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
+
+    if 'content' in json_data:
+      assert isinstance(json_data['content'], dict), 'Wrong type for attribute: content. Expected: dict. Got: ' + str(type(json_data['content'])) + '.'
+      obj.content = DataSegmentContent.from_json(json_data['content'])
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.DataSegmentStart) -> Optional['DataSegmentStart']:
+    """Convert DataSegmentStart proto to type object."""
+    if not proto:
+      return None
+    obj = DataSegmentStart()
+    if proto.HasField('content'):
+      obj.content = DataSegmentContent.from_proto(proto.content)
     return obj
 
 
