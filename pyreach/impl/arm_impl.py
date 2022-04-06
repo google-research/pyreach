@@ -552,6 +552,8 @@ class _MovePose(_Command):
               pose_unity[:3].tolist(),
               transform_util.axis_angle_to_quaternion(pose_unity[3:]).tolist())
         else:
+          tip_adjust_transform = transform_util.inverse_pose(
+              tip_adjust_transform)
           pose = transform_util.multiply_pose(pose, tip_adjust_transform)
       else:
         raise core.PyReachError("Calibration was not loaded")
@@ -1403,6 +1405,9 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         if (dev.device_type == "object" and dev.sub_type == "tip" and
             dev.tool_mount in {"robot", "ur"} and
             isinstance(dev, calibration.CalibrationObject)):
+          if (tip_dev and tip_dev.device_name.find("tip0") == 0 and
+              dev.device_name.find("tip0") != 0):
+            continue
           tip_dev = cast(calibration.CalibrationObject, dev)
           if tip_dev.extrinsics:
             tip_transform = np.array(tip_dev.extrinsics, dtype=np.float64)
@@ -1418,9 +1423,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
               tip_adjust_transform = transform_util.multiply_pose(
                   tip_adjust_transform,
                   np.array(tip_adjust_dev.extrinsics, dtype=np.float64))
-
-      tip_transform = transform_util.inverse_pose(tip_transform)
-      tip_adjust_transform = transform_util.inverse_pose(tip_adjust_transform)
 
       arm_calibration_dev = calib.get_device("robot", self.device_name)
       if arm_calibration_dev is None:

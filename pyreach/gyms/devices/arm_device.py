@@ -194,6 +194,10 @@ class ReachDeviceArm(reach_device.ReachDevice):
     return "ReachDeviceArm('{0}':'{1}')".format(self.config_name,
                                                 self._reach_name)
 
+  def get_apply_tip_adjust_transform(self) -> bool:
+    """Return the apply tip adjust transform flag."""
+    return self._apply_tip_adjust_transform
+
   def _joints_ok(self, joints: Tuple[float, ...]) -> bool:
     """Validate that the joint angles are OK.
 

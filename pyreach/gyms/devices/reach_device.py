@@ -91,6 +91,10 @@ class ReachDevice(object):
     """Return allowed action names."""
     return self._allowed_actions
 
+  def get_apply_tip_adjust_transform(self) -> bool:
+    """Return the apply tip adjust transform for an arm."""
+    raise pyreach.PyReachError(f"Device {self._config_name} is not an arm")
+
   def _timers_select(self, timer_names: Set[str]) -> internal.TimersSet:
     """Select timers to enable/disable for a block of code.
 

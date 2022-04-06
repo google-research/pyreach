@@ -703,10 +703,12 @@ class ReachEnv(gym.Env):  # type: ignore
         log_contents: str = snap_shot_log_file.read()
       json.loads(log_contents)
 
-  def fk(self,
-         element: str,
-         joints: Union[Tuple[float, ...], List[float], np.ndarray],
-         apply_tip_adjust_transform: bool = False) -> Optional[pyreach.Pose]:
+  def fk(
+      self,
+      element: str,
+      joints: Union[Tuple[float, ...], List[float], np.ndarray],
+      apply_tip_adjust_transform: Optional[bool] = None
+  ) -> Optional[pyreach.Pose]:
     """Uses forward kinematics to get the pose from the joint angles.
 
     Args:
@@ -724,6 +726,8 @@ class ReachEnv(gym.Env):  # type: ignore
     arm = self._elements.get(element)
     if arm is None or not isinstance(arm, ReachDeviceArm):
       return None
+    if apply_tip_adjust_transform is None:
+      apply_tip_adjust_transform = arm.get_apply_tip_adjust_transform()
     return arm.fk(self._host, joints, apply_tip_adjust_transform)
 
   def set_agent_id(self, agent_id: str) -> None:

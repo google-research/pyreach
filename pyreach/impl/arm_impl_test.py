@@ -775,14 +775,14 @@ class TestPyreachArmImpl(unittest.TestCase):
     self.assertIsNotNone(tip_adjust)
     assert tip_adjust
     self.assertEqual(tip_adjust.as_tuple(),
-                     (-0.004453485238087255, 0.055702600244064024,
-                      -0.1626512213476071, 0.0, 0.0, 0.0))
+                     (0.004453485238087255, -0.055702600244064024,
+                      0.1626512213476071, 0.0, 0.0, 0.0))
     pose_with_tip_adjust = state.tip_adjust_t_base
     self.assertIsNotNone(pose_with_tip_adjust)
     assert pose_with_tip_adjust
     self.assertEqual(
         pose_with_tip_adjust.as_tuple(),
-        (0.20666041510735556, -0.6601364983804328, 0.32705505075589714,
+        (0.18556403170793967, -0.7691736787189849, 0.0015124760385194225,
          0.11865414779070117, -3.075739605978814, -0.0166605496802987))
 
 
