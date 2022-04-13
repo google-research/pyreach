@@ -191,12 +191,12 @@ class ReachDeviceTextInstructions(reach_device.ReachDevice):
             if self._task_synchronize is None:
               raise pyreach.PyReachError("Internal Error: no task synchronize")
             if task_enable:
-              # TODO(gramlich): Do the synchronous task start here.
+              # TODO: Do the synchronous task start here.
               host.logger.start_task(task_params)
               self._task_synchronize(host)
             else:
               self._task_synchronize(host)
-              # TODO(gramlich): Do the synchronous task end here.
+              # TODO: Do the synchronous task end here.
               host.logger.end_task(task_params)
             self._task_enable = task_enable
             return (lib_snapshot.SnapshotGymLoggerAction(

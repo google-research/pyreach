@@ -28,8 +28,8 @@ _DEPTH_SCALE = 0.1
 
 
 # Fast conversion of rgbd images to point cloud.
-# TODO(hirak): Include depthDistortions.
-# TODO(hirak): May be this should be moved to transform_utils.py.
+# TODO: Include depthDistortions.
+# TODO: May be this should be moved to transform_utils.py.
 def pgm_to_pointcloud(
     depth_image: np.ndarray, color_image: Optional[np.ndarray],
     intrinsics: Tuple[float, float, float, float],
@@ -72,7 +72,7 @@ def pgm_to_pointcloud(
   return points, colors
 
 
-# TODO(hirak): Correct for extrinsics (useful to test multiple depth cams).
+# TODO: Correct for extrinsics (useful to test multiple depth cams).
 def _pgm_to_pcd(depth_raw: np.ndarray, color_raw: np.ndarray,
                 intrinsics: Tuple[float, float, float, float],
                 distortion: List[float]) -> o3d.geometry.PointCloud:

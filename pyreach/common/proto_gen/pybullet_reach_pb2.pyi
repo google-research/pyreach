@@ -24,7 +24,7 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 class SimCommand(google.protobuf.message.Message):
     """SimCommand is the top level command sent to a sim adapter.
@@ -32,12 +32,12 @@ class SimCommand(google.protobuf.message.Message):
       {"id":"1","world":{"type":"RESET"}}
       {"id":"1","arm":{"type":"TO","target_joint_angles":[0,0,0,0,0,0]}}
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     ID_FIELD_NUMBER: builtins.int
     WORLD_FIELD_NUMBER: builtins.int
     ARM_FIELD_NUMBER: builtins.int
     EXIT_FIELD_NUMBER: builtins.int
-    id: builtins.int = ...
+    id: builtins.int
     @property
     def world(self) -> global___WorldCommand: ...
     @property
@@ -46,10 +46,10 @@ class SimCommand(google.protobuf.message.Message):
     def exit(self) -> global___ExitCommand: ...
     def __init__(self,
         *,
-        id : builtins.int = ...,
-        world : typing.Optional[global___WorldCommand] = ...,
-        arm : typing.Optional[global___ArmCommand] = ...,
-        exit : typing.Optional[global___ExitCommand] = ...,
+        id: builtins.int = ...,
+        world: typing.Optional[global___WorldCommand] = ...,
+        arm: typing.Optional[global___ArmCommand] = ...,
+        exit: typing.Optional[global___ExitCommand] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["arm",b"arm","command",b"command","exit",b"exit","world",b"world"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["arm",b"arm","command",b"command","exit",b"exit","id",b"id","world",b"world"]) -> None: ...
@@ -57,59 +57,61 @@ class SimCommand(google.protobuf.message.Message):
 global___SimCommand = SimCommand
 
 class WorldCommand(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _Type:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[WorldCommand._Type.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        UNKNOWN: WorldCommand._Type.ValueType  # 0
+        RESET: WorldCommand._Type.ValueType  # 1
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         pass
-    class _Type:
-        V = typing.NewType('V', builtins.int)
-    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Type.V], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
-        UNKNOWN = WorldCommand.Type.V(0)
-        RESET = WorldCommand.Type.V(1)
 
-    UNKNOWN = WorldCommand.Type.V(0)
-    RESET = WorldCommand.Type.V(1)
+    UNKNOWN: WorldCommand.Type.ValueType  # 0
+    RESET: WorldCommand.Type.ValueType  # 1
 
     TYPE_FIELD_NUMBER: builtins.int
-    type: global___WorldCommand.Type.V = ...
+    type: global___WorldCommand.Type.ValueType
     def __init__(self,
         *,
-        type : global___WorldCommand.Type.V = ...,
+        type: global___WorldCommand.Type.ValueType = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["type",b"type"]) -> None: ...
 global___WorldCommand = WorldCommand
 
 class ArmCommand(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _Type:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[ArmCommand._Type.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        UNKNOWN: ArmCommand._Type.ValueType  # 0
+        TO: ArmCommand._Type.ValueType  # 1
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         pass
-    class _Type:
-        V = typing.NewType('V', builtins.int)
-    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Type.V], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
-        UNKNOWN = ArmCommand.Type.V(0)
-        TO = ArmCommand.Type.V(1)
 
-    UNKNOWN = ArmCommand.Type.V(0)
-    TO = ArmCommand.Type.V(1)
+    UNKNOWN: ArmCommand.Type.ValueType  # 0
+    TO: ArmCommand.Type.ValueType  # 1
 
     TYPE_FIELD_NUMBER: builtins.int
     TARGET_JOINT_ANGLES_FIELD_NUMBER: builtins.int
-    type: global___ArmCommand.Type.V = ...
+    type: global___ArmCommand.Type.ValueType
     @property
     def target_joint_angles(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """6 DOF joint angles"""
         pass
     def __init__(self,
         *,
-        type : global___ArmCommand.Type.V = ...,
-        target_joint_angles : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        type: global___ArmCommand.Type.ValueType = ...,
+        target_joint_angles: typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["target_joint_angles",b"target_joint_angles","type",b"type"]) -> None: ...
 global___ArmCommand = ArmCommand
 
 class ExitCommand(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     def __init__(self,
         ) -> None: ...
 global___ExitCommand = ExitCommand
@@ -118,13 +120,13 @@ class SimState(google.protobuf.message.Message):
     """SimState is the top level Sim status message.
     An example of serialized JSON is:
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     TS_FIELD_NUMBER: builtins.int
     ARM_FIELD_NUMBER: builtins.int
     COMMAND_FIELD_NUMBER: builtins.int
     CALIBRATION_FIELD_NUMBER: builtins.int
     COLOR_CAMERA_FIELD_NUMBER: builtins.int
-    ts: builtins.int = ...
+    ts: builtins.int
     @property
     def arm(self) -> global___ArmState: ...
     @property
@@ -135,11 +137,11 @@ class SimState(google.protobuf.message.Message):
     def color_camera(self) -> global___ColorCamera: ...
     def __init__(self,
         *,
-        ts : builtins.int = ...,
-        arm : typing.Optional[global___ArmState] = ...,
-        command : typing.Optional[global___CommandState] = ...,
-        calibration : typing.Optional[global___Calibration] = ...,
-        color_camera : typing.Optional[global___ColorCamera] = ...,
+        ts: builtins.int = ...,
+        arm: typing.Optional[global___ArmState] = ...,
+        command: typing.Optional[global___CommandState] = ...,
+        calibration: typing.Optional[global___Calibration] = ...,
+        color_camera: typing.Optional[global___ColorCamera] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["arm",b"arm","calibration",b"calibration","color_camera",b"color_camera","command",b"command","state",b"state"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["arm",b"arm","calibration",b"calibration","color_camera",b"color_camera","command",b"command","state",b"state","ts",b"ts"]) -> None: ...
@@ -147,7 +149,7 @@ class SimState(google.protobuf.message.Message):
 global___SimState = SimState
 
 class ArmState(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     SENSED_JOINT_ANGLES_FIELD_NUMBER: builtins.int
     SENSED_POSE_FIELD_NUMBER: builtins.int
     @property
@@ -158,71 +160,72 @@ class ArmState(google.protobuf.message.Message):
     def sensed_pose(self) -> global___Pose3D: ...
     def __init__(self,
         *,
-        sensed_joint_angles : typing.Optional[typing.Iterable[builtins.float]] = ...,
-        sensed_pose : typing.Optional[global___Pose3D] = ...,
+        sensed_joint_angles: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        sensed_pose: typing.Optional[global___Pose3D] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["sensed_pose",b"sensed_pose"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["sensed_joint_angles",b"sensed_joint_angles","sensed_pose",b"sensed_pose"]) -> None: ...
 global___ArmState = ArmState
 
 class CommandState(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    class _Status:
+        ValueType = typing.NewType('ValueType', builtins.int)
+        V: typing_extensions.TypeAlias = ValueType
+    class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[CommandState._Status.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
+        UNKNOWN: CommandState._Status.ValueType  # 0
+        SUCCESS: CommandState._Status.ValueType  # 1
+        FAIL: CommandState._Status.ValueType  # 2
     class Status(_Status, metaclass=_StatusEnumTypeWrapper):
         pass
-    class _Status:
-        V = typing.NewType('V', builtins.int)
-    class _StatusEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Status.V], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
-        UNKNOWN = CommandState.Status.V(0)
-        SUCCESS = CommandState.Status.V(1)
-        FAIL = CommandState.Status.V(2)
 
-    UNKNOWN = CommandState.Status.V(0)
-    SUCCESS = CommandState.Status.V(1)
-    FAIL = CommandState.Status.V(2)
+    UNKNOWN: CommandState.Status.ValueType  # 0
+    SUCCESS: CommandState.Status.ValueType  # 1
+    FAIL: CommandState.Status.ValueType  # 2
 
     ID_FIELD_NUMBER: builtins.int
     STATUS_FIELD_NUMBER: builtins.int
     MESSAGE_FIELD_NUMBER: builtins.int
-    id: builtins.int = ...
-    status: global___CommandState.Status.V = ...
-    message: typing.Text = ...
+    id: builtins.int
+    status: global___CommandState.Status.ValueType
+    message: typing.Text
     def __init__(self,
         *,
-        id : builtins.int = ...,
-        status : global___CommandState.Status.V = ...,
-        message : typing.Text = ...,
+        id: builtins.int = ...,
+        status: global___CommandState.Status.ValueType = ...,
+        message: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","message",b"message","status",b"status"]) -> None: ...
 global___CommandState = CommandState
 
 class ColorCamera(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     COLOR_FILE_FIELD_NUMBER: builtins.int
-    color_file: typing.Text = ...
+    color_file: typing.Text
     def __init__(self,
         *,
-        color_file : typing.Text = ...,
+        color_file: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["color_file",b"color_file"]) -> None: ...
 global___ColorCamera = ColorCamera
 
 class Calibration(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     LAST_MODIFIED_TS_FIELD_NUMBER: builtins.int
     JSON_FIELD_NUMBER: builtins.int
-    last_modified_ts: builtins.int = ...
-    json: typing.Text = ...
+    last_modified_ts: builtins.int
+    json: typing.Text
     def __init__(self,
         *,
-        last_modified_ts : builtins.int = ...,
-        json : typing.Text = ...,
+        last_modified_ts: builtins.int = ...,
+        json: typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["json",b"json","last_modified_ts",b"last_modified_ts"]) -> None: ...
 global___Calibration = Calibration
 
 class Pose3D(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     POSITION_FIELD_NUMBER: builtins.int
     ORIENTATION_FIELD_NUMBER: builtins.int
     @property
@@ -235,8 +238,8 @@ class Pose3D(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        position : typing.Optional[typing.Iterable[builtins.float]] = ...,
-        orientation : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        position: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        orientation: typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["orientation",b"orientation","position",b"position"]) -> None: ...
 global___Pose3D = Pose3D

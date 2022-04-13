@@ -3818,7 +3818,18 @@ class DeviceData:
 
   # === Fields for dataType ur-state:
   # Robot pose, 6 numbers: x, y, z, rx, ry, rz.
+  # Robot pose is the pose of the "robot flange" where the tool is attached
+  # to the robot arm relative to the base of the robot.
   pose: List[float]
+
+  # tip_t_base is the pose of the tip relative to the base.
+  tip_t_base: List[float]
+
+  # tip_adjust_t_base is the pose of the tip adjust relative to the base.
+  tip_adjust_t_base: List[float]
+
+  # base_t_origin is the offset of the robot base from the origin.
+  base_t_origin: List[float]
 
   # Joints positions in radians.
   joints: List[float]
@@ -4194,7 +4205,7 @@ class DeviceData:
   controller_descriptions: Optional['ControllerDescriptions']
   # ==============================
 
-  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
+  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
     if accept_depth_encoding is None:
       self.accept_depth_encoding = []
     else:
@@ -4214,6 +4225,10 @@ class DeviceData:
       self.analog_out = analog_out
     self.audio_request_mute = audio_request_mute
     self.audio_request_unmute = audio_request_unmute
+    if base_t_origin is None:
+      self.base_t_origin = []
+    else:
+      self.base_t_origin = base_t_origin
     self.board_io_current_a = board_io_current_a
     self.board_temp_c = board_temp_c
     self.calibration_version = calibration_version
@@ -4393,6 +4408,14 @@ class DeviceData:
     self.tag = tag
     self.task_code = task_code
     self.text_instruction = text_instruction
+    if tip_adjust_t_base is None:
+      self.tip_adjust_t_base = []
+    else:
+      self.tip_adjust_t_base = tip_adjust_t_base
+    if tip_t_base is None:
+      self.tip_t_base = []
+    else:
+      self.tip_t_base = tip_t_base
     if tool_analog_in is None:
       self.tool_analog_in = []
     else:
@@ -4463,6 +4486,10 @@ class DeviceData:
     if self.audio_request_unmute:
       assert self.audio_request_unmute.__class__.__name__ == 'AudioRequest', 'Wrong type for attribute: audio_request_unmute. Expected: AudioRequest. Got: ' + str(type(self.audio_request_unmute)) + '.'
       json_data['audioRequestUnmute'] = self.audio_request_unmute.to_json()
+
+    if self.base_t_origin:
+      assert isinstance(self.base_t_origin, list), 'Wrong type for attribute: base_t_origin. Expected: list. Got: ' + str(type(self.base_t_origin)) + '.'
+      json_data['baseTOrigin'] = self.base_t_origin
 
     if self.board_io_current_a:
       assert isinstance(self.board_io_current_a, float) or isinstance(self.board_io_current_a, int), 'Wrong type for attribute: board_io_current_a. Expected: float. Got: ' + str(type(self.board_io_current_a)) + '.'
@@ -4919,6 +4946,14 @@ class DeviceData:
       assert self.text_instruction.__class__.__name__ == 'TextInstruction', 'Wrong type for attribute: text_instruction. Expected: TextInstruction. Got: ' + str(type(self.text_instruction)) + '.'
       json_data['textInstruction'] = self.text_instruction.to_json()
 
+    if self.tip_adjust_t_base:
+      assert isinstance(self.tip_adjust_t_base, list), 'Wrong type for attribute: tip_adjust_t_base. Expected: list. Got: ' + str(type(self.tip_adjust_t_base)) + '.'
+      json_data['tipAdjustTBase'] = self.tip_adjust_t_base
+
+    if self.tip_t_base:
+      assert isinstance(self.tip_t_base, list), 'Wrong type for attribute: tip_t_base. Expected: list. Got: ' + str(type(self.tip_t_base)) + '.'
+      json_data['tipTBase'] = self.tip_t_base
+
     if self.tool_analog_in:
       assert isinstance(self.tool_analog_in, list), 'Wrong type for attribute: tool_analog_in. Expected: list. Got: ' + str(type(self.tool_analog_in)) + '.'
       json_data['toolAnalogIn'] = self.tool_analog_in
@@ -5111,6 +5146,9 @@ class DeviceData:
     if self.data_type == 'ur-state':
       proto_ur_state = logs_pb2.UrState()
       proto_ur_state.pose.extend(self.pose)
+      proto_ur_state.tip_t_base.extend(self.tip_t_base)
+      proto_ur_state.tip_adjust_t_base.extend(self.tip_adjust_t_base)
+      proto_ur_state.base_t_origin.extend(self.base_t_origin)
       proto_ur_state.joints.extend(self.joints)
       proto_ur_state.force.extend(self.force)
       proto_ur_state.torque.extend(self.torque)
@@ -5474,6 +5512,9 @@ class DeviceData:
     if self.data_type == 'robot-state':
       proto_robot_state = logs_pb2.RobotState()
       proto_robot_state.pose.extend(self.pose)
+      proto_robot_state.tip_t_base.extend(self.tip_t_base)
+      proto_robot_state.tip_adjust_t_base.extend(self.tip_adjust_t_base)
+      proto_robot_state.base_t_origin.extend(self.base_t_origin)
       proto_robot_state.joints.extend(self.joints)
       proto_robot_state.force.extend(self.force)
       proto_robot_state.torque.extend(self.torque)
@@ -5563,7 +5604,7 @@ class DeviceData:
     obj = DeviceData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'analogBank', 'analogIn', 'analogOut', 'audioRequestMute', 'audioRequestUnmute', 'boardIOCurrentA', 'boardTempC', 'calibrationVersion', 'clientAnnotation', 'clientOS', 'clientSessionUID', 'code', 'color', 'colorIntrinsics', 'colorTS', 'compressedDepth', 'confidence', 'connectedClients', 'constraintsVersion', 'controllerDescriptions', 'dataType', 'depth', 'depthIntrinsics', 'depthTS', 'detection', 'deviceName', 'deviceType', 'digitalBank', 'digitalIn', 'digitalOut', 'error', 'eventParams', 'experimentToken', 'floatValue', 'force', 'health', 'hint', 'history', 'inhibitFrameSave', 'inhibitFrameSend', 'intValue', 'integerBank', 'intent', 'isEmergencyStopped', 'isObjectDetected', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'key', 'label', 'metricLabels', 'lastTerminatedProgram', 'level', 'localTS', 'machineDescription', 'machineInterfaces', 'message', 'messageLastTimestamps', 'metadata', 'metricValue', 'on', 'operatorType', 'operatorUID', 'pickLabel', 'pickPoints', 'pipelineDescription', 'placeLabel', 'placePosition3D', 'placeQuaternion3D', 'pose', 'position3D', 'predictionType', 'programCounter', 'progress', 'quaternion3D', 'relay', 'remoteTS', 'reportError', 'requestType', 'robotCurrentA', 'robotDexterity', 'robotID', 'robotMode', 'robotName', 'robotPowerState', 'robotPowerStateUpdate', 'robotVoltageV', 'safetyMessage', 'safetyVersion', 'script', 'sendToClients', 'sensorIn', 'seq', 'sessionID', 'simInstanceSegmentation', 'simState', 'startTime', 'state', 'status', 'successType', 'tag', 'taskCode', 'textInstruction', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque', 'transport', 'ts', 'uiVersion', 'uncompressedDepth', 'uploadDepth', 'vacuumLevelPa', 'value', 'webrtcAudioRequest', 'webrtcAudioResponse', 'workcellIOVersion', 'workcellSetupVersion']
+    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'analogBank', 'analogIn', 'analogOut', 'audioRequestMute', 'audioRequestUnmute', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'calibrationVersion', 'clientAnnotation', 'clientOS', 'clientSessionUID', 'code', 'color', 'colorIntrinsics', 'colorTS', 'compressedDepth', 'confidence', 'connectedClients', 'constraintsVersion', 'controllerDescriptions', 'dataType', 'depth', 'depthIntrinsics', 'depthTS', 'detection', 'deviceName', 'deviceType', 'digitalBank', 'digitalIn', 'digitalOut', 'error', 'eventParams', 'experimentToken', 'floatValue', 'force', 'health', 'hint', 'history', 'inhibitFrameSave', 'inhibitFrameSend', 'intValue', 'integerBank', 'intent', 'isEmergencyStopped', 'isObjectDetected', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'key', 'label', 'metricLabels', 'lastTerminatedProgram', 'level', 'localTS', 'machineDescription', 'machineInterfaces', 'message', 'messageLastTimestamps', 'metadata', 'metricValue', 'on', 'operatorType', 'operatorUID', 'pickLabel', 'pickPoints', 'pipelineDescription', 'placeLabel', 'placePosition3D', 'placeQuaternion3D', 'pose', 'position3D', 'predictionType', 'programCounter', 'progress', 'quaternion3D', 'relay', 'remoteTS', 'reportError', 'requestType', 'robotCurrentA', 'robotDexterity', 'robotID', 'robotMode', 'robotName', 'robotPowerState', 'robotPowerStateUpdate', 'robotVoltageV', 'safetyMessage', 'safetyVersion', 'script', 'sendToClients', 'sensorIn', 'seq', 'sessionID', 'simInstanceSegmentation', 'simState', 'startTime', 'state', 'status', 'successType', 'tag', 'taskCode', 'textInstruction', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque', 'transport', 'ts', 'uiVersion', 'uncompressedDepth', 'uploadDepth', 'vacuumLevelPa', 'value', 'webrtcAudioRequest', 'webrtcAudioResponse', 'workcellIOVersion', 'workcellSetupVersion']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid DeviceData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -5607,6 +5648,13 @@ class DeviceData:
     if 'audioRequestUnmute' in json_data:
       assert isinstance(json_data['audioRequestUnmute'], dict), 'Wrong type for attribute: audioRequestUnmute. Expected: dict. Got: ' + str(type(json_data['audioRequestUnmute'])) + '.'
       obj.audio_request_unmute = AudioRequest.from_json(json_data['audioRequestUnmute'])
+
+    if 'baseTOrigin' in json_data:
+      assert isinstance(json_data['baseTOrigin'], list), 'Wrong type for attribute: baseTOrigin. Expected: list. Got: ' + str(type(json_data['baseTOrigin'])) + '.'
+      json_list = []
+      for j in json_data['baseTOrigin']:
+        json_list.append(j)
+      obj.base_t_origin = json_list
 
     if 'boardIOCurrentA' in json_data:
       assert isinstance(json_data['boardIOCurrentA'], float) or isinstance(json_data['boardIOCurrentA'], int), 'Wrong type for attribute: boardIOCurrentA. Expected: float. Got: ' + str(type(json_data['boardIOCurrentA'])) + '.'
@@ -6099,6 +6147,20 @@ class DeviceData:
       assert isinstance(json_data['textInstruction'], dict), 'Wrong type for attribute: textInstruction. Expected: dict. Got: ' + str(type(json_data['textInstruction'])) + '.'
       obj.text_instruction = TextInstruction.from_json(json_data['textInstruction'])
 
+    if 'tipAdjustTBase' in json_data:
+      assert isinstance(json_data['tipAdjustTBase'], list), 'Wrong type for attribute: tipAdjustTBase. Expected: list. Got: ' + str(type(json_data['tipAdjustTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipAdjustTBase']:
+        json_list.append(j)
+      obj.tip_adjust_t_base = json_list
+
+    if 'tipTBase' in json_data:
+      assert isinstance(json_data['tipTBase'], list), 'Wrong type for attribute: tipTBase. Expected: list. Got: ' + str(type(json_data['tipTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipTBase']:
+        json_list.append(j)
+      obj.tip_t_base = json_list
+
     if 'toolAnalogIn' in json_data:
       assert isinstance(json_data['toolAnalogIn'], list), 'Wrong type for attribute: toolAnalogIn. Expected: list. Got: ' + str(type(json_data['toolAnalogIn'])) + '.'
       json_list = []
@@ -6307,6 +6369,12 @@ class DeviceData:
     if proto.HasField('ur_state'):
       for obj_pose in proto.ur_state.pose:
         obj.pose.append(obj_pose)
+      for obj_tip_t_base in proto.ur_state.tip_t_base:
+        obj.tip_t_base.append(obj_tip_t_base)
+      for obj_tip_adjust_t_base in proto.ur_state.tip_adjust_t_base:
+        obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
+      for obj_base_t_origin in proto.ur_state.base_t_origin:
+        obj.base_t_origin.append(obj_base_t_origin)
       for obj_joints in proto.ur_state.joints:
         obj.joints.append(obj_joints)
       for obj_force in proto.ur_state.force:
@@ -6621,6 +6689,12 @@ class DeviceData:
     if proto.HasField('robot_state'):
       for obj_pose in proto.robot_state.pose:
         obj.pose.append(obj_pose)
+      for obj_tip_t_base in proto.robot_state.tip_t_base:
+        obj.tip_t_base.append(obj_tip_t_base)
+      for obj_tip_adjust_t_base in proto.robot_state.tip_adjust_t_base:
+        obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
+      for obj_base_t_origin in proto.robot_state.base_t_origin:
+        obj.base_t_origin.append(obj_base_t_origin)
       for obj_joints in proto.robot_state.joints:
         obj.joints.append(obj_joints)
       for obj_force in proto.robot_state.force:
@@ -10816,7 +10890,7 @@ class ReachScript:
   preemptive_reason: str
 
   # States if the command depends on calibration.
-  # TODO(hirak): Jira VIS-274. Reject reach script without
+  # TODO: Jira VIS-274. Reject reach script without
   # calibration_requirement once all clients are updated to send it.
   calibration_requirement: Optional['ReachScriptCalibrationRequirement']
 
@@ -11806,7 +11880,18 @@ class RobotState:
    dataType == "robot-state".
   """
   # Robot pose, 6 numbers: x, y, z, rx, ry, rz.
+  # Robot pose is the pose of the "robot flange" where the tool is attached
+  # to the robot arm relative to the base of the robot.
   pose: List[float]
+
+  # tip_t_base is the pose of the tip relative to the base.
+  tip_t_base: List[float]
+
+  # tip_adjust_t_base is the pose of the tip adjust relative to the base.
+  tip_adjust_t_base: List[float]
+
+  # base_t_origin is the offset of the robot base from the origin.
+  base_t_origin: List[float]
 
   # Joints positions in radians.
   joints: List[float]
@@ -11875,7 +11960,7 @@ class RobotState:
   # Tag of last terminated (aborted or done) program.
   last_terminated_program: str
 
-  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
+  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
     if analog_bank is None:
       self.analog_bank = []
     else:
@@ -11888,6 +11973,10 @@ class RobotState:
       self.analog_out = []
     else:
       self.analog_out = analog_out
+    if base_t_origin is None:
+      self.base_t_origin = []
+    else:
+      self.base_t_origin = base_t_origin
     self.board_io_current_a = board_io_current_a
     self.board_temp_c = board_temp_c
     if digital_bank is None:
@@ -11947,6 +12036,14 @@ class RobotState:
       self.sensor_in = []
     else:
       self.sensor_in = sensor_in
+    if tip_adjust_t_base is None:
+      self.tip_adjust_t_base = []
+    else:
+      self.tip_adjust_t_base = tip_adjust_t_base
+    if tip_t_base is None:
+      self.tip_t_base = []
+    else:
+      self.tip_t_base = tip_t_base
     if tool_analog_in is None:
       self.tool_analog_in = []
     else:
@@ -11990,6 +12087,10 @@ class RobotState:
     if self.analog_out:
       assert isinstance(self.analog_out, list), 'Wrong type for attribute: analog_out. Expected: list. Got: ' + str(type(self.analog_out)) + '.'
       json_data['analogOut'] = self.analog_out
+
+    if self.base_t_origin:
+      assert isinstance(self.base_t_origin, list), 'Wrong type for attribute: base_t_origin. Expected: list. Got: ' + str(type(self.base_t_origin)) + '.'
+      json_data['baseTOrigin'] = self.base_t_origin
 
     if self.board_io_current_a:
       assert isinstance(self.board_io_current_a, float) or isinstance(self.board_io_current_a, int), 'Wrong type for attribute: board_io_current_a. Expected: float. Got: ' + str(type(self.board_io_current_a)) + '.'
@@ -12101,6 +12202,14 @@ class RobotState:
       assert isinstance(self.sensor_in, list), 'Wrong type for attribute: sensor_in. Expected: list. Got: ' + str(type(self.sensor_in)) + '.'
       json_data['sensorIn'] = self.sensor_in
 
+    if self.tip_adjust_t_base:
+      assert isinstance(self.tip_adjust_t_base, list), 'Wrong type for attribute: tip_adjust_t_base. Expected: list. Got: ' + str(type(self.tip_adjust_t_base)) + '.'
+      json_data['tipAdjustTBase'] = self.tip_adjust_t_base
+
+    if self.tip_t_base:
+      assert isinstance(self.tip_t_base, list), 'Wrong type for attribute: tip_t_base. Expected: list. Got: ' + str(type(self.tip_t_base)) + '.'
+      json_data['tipTBase'] = self.tip_t_base
+
     if self.tool_analog_in:
       assert isinstance(self.tool_analog_in, list), 'Wrong type for attribute: tool_analog_in. Expected: list. Got: ' + str(type(self.tool_analog_in)) + '.'
       json_data['toolAnalogIn'] = self.tool_analog_in
@@ -12139,6 +12248,9 @@ class RobotState:
     """Convert RobotState to proto."""
     proto = logs_pb2.RobotState()
     proto.pose.extend(self.pose)
+    proto.tip_t_base.extend(self.tip_t_base)
+    proto.tip_adjust_t_base.extend(self.tip_adjust_t_base)
+    proto.base_t_origin.extend(self.base_t_origin)
     proto.joints.extend(self.joints)
     proto.force.extend(self.force)
     proto.torque.extend(self.torque)
@@ -12203,7 +12315,7 @@ class RobotState:
     obj = RobotState()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
+    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid RobotState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -12228,6 +12340,13 @@ class RobotState:
       for j in json_data['analogOut']:
         json_list.append(j)
       obj.analog_out = json_list
+
+    if 'baseTOrigin' in json_data:
+      assert isinstance(json_data['baseTOrigin'], list), 'Wrong type for attribute: baseTOrigin. Expected: list. Got: ' + str(type(json_data['baseTOrigin'])) + '.'
+      json_list = []
+      for j in json_data['baseTOrigin']:
+        json_list.append(j)
+      obj.base_t_origin = json_list
 
     if 'boardIOCurrentA' in json_data:
       assert isinstance(json_data['boardIOCurrentA'], float) or isinstance(json_data['boardIOCurrentA'], int), 'Wrong type for attribute: boardIOCurrentA. Expected: float. Got: ' + str(type(json_data['boardIOCurrentA'])) + '.'
@@ -12366,6 +12485,20 @@ class RobotState:
         json_list.append(j)
       obj.sensor_in = json_list
 
+    if 'tipAdjustTBase' in json_data:
+      assert isinstance(json_data['tipAdjustTBase'], list), 'Wrong type for attribute: tipAdjustTBase. Expected: list. Got: ' + str(type(json_data['tipAdjustTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipAdjustTBase']:
+        json_list.append(j)
+      obj.tip_adjust_t_base = json_list
+
+    if 'tipTBase' in json_data:
+      assert isinstance(json_data['tipTBase'], list), 'Wrong type for attribute: tipTBase. Expected: list. Got: ' + str(type(json_data['tipTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipTBase']:
+        json_list.append(j)
+      obj.tip_t_base = json_list
+
     if 'toolAnalogIn' in json_data:
       assert isinstance(json_data['toolAnalogIn'], list), 'Wrong type for attribute: toolAnalogIn. Expected: list. Got: ' + str(type(json_data['toolAnalogIn'])) + '.'
       json_list = []
@@ -12423,6 +12556,12 @@ class RobotState:
     obj = RobotState()
     for obj_pose in proto.pose:
       obj.pose.append(obj_pose)
+    for obj_tip_t_base in proto.tip_t_base:
+      obj.tip_t_base.append(obj_tip_t_base)
+    for obj_tip_adjust_t_base in proto.tip_adjust_t_base:
+      obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
+    for obj_base_t_origin in proto.base_t_origin:
+      obj.base_t_origin.append(obj_base_t_origin)
     for obj_joints in proto.joints:
       obj.joints.append(obj_joints)
     for obj_force in proto.force:
@@ -15314,7 +15453,18 @@ class UrState:
    URRobotState is the message for the state of a robot, dataType == "ur-state".
   """
   # Robot pose, 6 numbers: x, y, z, rx, ry, rz.
+  # Robot pose is the pose of the "robot flange" where the tool is attached
+  # to the robot arm relative to the base of the robot.
   pose: List[float]
+
+  # tip_t_base is the pose of the tip relative to the base.
+  tip_t_base: List[float]
+
+  # tip_adjust_t_base is the pose of the tip adjust relative to the base.
+  tip_adjust_t_base: List[float]
+
+  # base_t_origin is the offset of the robot base from the origin.
+  base_t_origin: List[float]
 
   # Joints positions in radians.
   joints: List[float]
@@ -15383,7 +15533,7 @@ class UrState:
   # Tag of last terminated (aborted or done) program.
   last_terminated_program: str
 
-  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
+  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
     if analog_bank is None:
       self.analog_bank = []
     else:
@@ -15396,6 +15546,10 @@ class UrState:
       self.analog_out = []
     else:
       self.analog_out = analog_out
+    if base_t_origin is None:
+      self.base_t_origin = []
+    else:
+      self.base_t_origin = base_t_origin
     self.board_io_current_a = board_io_current_a
     self.board_temp_c = board_temp_c
     if digital_bank is None:
@@ -15455,6 +15609,14 @@ class UrState:
       self.sensor_in = []
     else:
       self.sensor_in = sensor_in
+    if tip_adjust_t_base is None:
+      self.tip_adjust_t_base = []
+    else:
+      self.tip_adjust_t_base = tip_adjust_t_base
+    if tip_t_base is None:
+      self.tip_t_base = []
+    else:
+      self.tip_t_base = tip_t_base
     if tool_analog_in is None:
       self.tool_analog_in = []
     else:
@@ -15498,6 +15660,10 @@ class UrState:
     if self.analog_out:
       assert isinstance(self.analog_out, list), 'Wrong type for attribute: analog_out. Expected: list. Got: ' + str(type(self.analog_out)) + '.'
       json_data['analogOut'] = self.analog_out
+
+    if self.base_t_origin:
+      assert isinstance(self.base_t_origin, list), 'Wrong type for attribute: base_t_origin. Expected: list. Got: ' + str(type(self.base_t_origin)) + '.'
+      json_data['baseTOrigin'] = self.base_t_origin
 
     if self.board_io_current_a:
       assert isinstance(self.board_io_current_a, float) or isinstance(self.board_io_current_a, int), 'Wrong type for attribute: board_io_current_a. Expected: float. Got: ' + str(type(self.board_io_current_a)) + '.'
@@ -15609,6 +15775,14 @@ class UrState:
       assert isinstance(self.sensor_in, list), 'Wrong type for attribute: sensor_in. Expected: list. Got: ' + str(type(self.sensor_in)) + '.'
       json_data['sensorIn'] = self.sensor_in
 
+    if self.tip_adjust_t_base:
+      assert isinstance(self.tip_adjust_t_base, list), 'Wrong type for attribute: tip_adjust_t_base. Expected: list. Got: ' + str(type(self.tip_adjust_t_base)) + '.'
+      json_data['tipAdjustTBase'] = self.tip_adjust_t_base
+
+    if self.tip_t_base:
+      assert isinstance(self.tip_t_base, list), 'Wrong type for attribute: tip_t_base. Expected: list. Got: ' + str(type(self.tip_t_base)) + '.'
+      json_data['tipTBase'] = self.tip_t_base
+
     if self.tool_analog_in:
       assert isinstance(self.tool_analog_in, list), 'Wrong type for attribute: tool_analog_in. Expected: list. Got: ' + str(type(self.tool_analog_in)) + '.'
       json_data['toolAnalogIn'] = self.tool_analog_in
@@ -15647,6 +15821,9 @@ class UrState:
     """Convert UrState to proto."""
     proto = logs_pb2.UrState()
     proto.pose.extend(self.pose)
+    proto.tip_t_base.extend(self.tip_t_base)
+    proto.tip_adjust_t_base.extend(self.tip_adjust_t_base)
+    proto.base_t_origin.extend(self.base_t_origin)
     proto.joints.extend(self.joints)
     proto.force.extend(self.force)
     proto.torque.extend(self.torque)
@@ -15711,7 +15888,7 @@ class UrState:
     obj = UrState()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
+    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
 
     if not set(json_data.keys()).issubset(set(expected_json_keys)):
       raise ValueError('JSON object is not a valid UrState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
@@ -15736,6 +15913,13 @@ class UrState:
       for j in json_data['analogOut']:
         json_list.append(j)
       obj.analog_out = json_list
+
+    if 'baseTOrigin' in json_data:
+      assert isinstance(json_data['baseTOrigin'], list), 'Wrong type for attribute: baseTOrigin. Expected: list. Got: ' + str(type(json_data['baseTOrigin'])) + '.'
+      json_list = []
+      for j in json_data['baseTOrigin']:
+        json_list.append(j)
+      obj.base_t_origin = json_list
 
     if 'boardIOCurrentA' in json_data:
       assert isinstance(json_data['boardIOCurrentA'], float) or isinstance(json_data['boardIOCurrentA'], int), 'Wrong type for attribute: boardIOCurrentA. Expected: float. Got: ' + str(type(json_data['boardIOCurrentA'])) + '.'
@@ -15874,6 +16058,20 @@ class UrState:
         json_list.append(j)
       obj.sensor_in = json_list
 
+    if 'tipAdjustTBase' in json_data:
+      assert isinstance(json_data['tipAdjustTBase'], list), 'Wrong type for attribute: tipAdjustTBase. Expected: list. Got: ' + str(type(json_data['tipAdjustTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipAdjustTBase']:
+        json_list.append(j)
+      obj.tip_adjust_t_base = json_list
+
+    if 'tipTBase' in json_data:
+      assert isinstance(json_data['tipTBase'], list), 'Wrong type for attribute: tipTBase. Expected: list. Got: ' + str(type(json_data['tipTBase'])) + '.'
+      json_list = []
+      for j in json_data['tipTBase']:
+        json_list.append(j)
+      obj.tip_t_base = json_list
+
     if 'toolAnalogIn' in json_data:
       assert isinstance(json_data['toolAnalogIn'], list), 'Wrong type for attribute: toolAnalogIn. Expected: list. Got: ' + str(type(json_data['toolAnalogIn'])) + '.'
       json_list = []
@@ -15931,6 +16129,12 @@ class UrState:
     obj = UrState()
     for obj_pose in proto.pose:
       obj.pose.append(obj_pose)
+    for obj_tip_t_base in proto.tip_t_base:
+      obj.tip_t_base.append(obj_tip_t_base)
+    for obj_tip_adjust_t_base in proto.tip_adjust_t_base:
+      obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
+    for obj_base_t_origin in proto.base_t_origin:
+      obj.base_t_origin.append(obj_base_t_origin)
     for obj_joints in proto.joints:
       obj.joints.append(obj_joints)
     for obj_force in proto.force:

@@ -77,7 +77,7 @@ class ArmMock(arm.Arm):
     # sequence: int = 1
     # robot_name: str = "robot_robot_name"
     # capability_name: str = "capability_name"
-    # pin_states: Tuple[DigOutPinState, ...] = ()  # TODO(gramlich): fix
+    # pin_states: Tuple[DigOutPinState, ...] = ()  # TODO: fix
     dig_output: DigOutput = DigOutputMock()
     pin_outputs: ImmutableDict[DigOutput] = ImmutableDict({
         "pin_name": dig_output,

@@ -223,7 +223,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       The observation is a Gym Dict Space with "ts", "pick_point",
       and "request" values.
     """
-    # TODO(gramlich): the oracle does not return snapshots.
+    # TODO: the oracle does not return snapshots.
     with self._timers_select({"!agent*", "gym.oracle"}):
       ts: float = 0.0
       if self._request != ReachDeviceOracle.REQUEST_NONE:
@@ -328,7 +328,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     Returns:
         The list of gym action snapshots.
     """
-    # TODO(gramlich): the oracle does not store actions.
+    # TODO: the oracle does not store actions.
     with self._timers_select({"!agent*", "gym.oracle"}):
       oracle: pyreach.Oracle
       if self._oracle is None:

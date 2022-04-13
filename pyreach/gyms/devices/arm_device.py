@@ -354,7 +354,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
         if arm_state.is_emergency_stopped:
           e_stop_mode: int = self._e_stop_mode
           if e_stop_mode == arm_element.ReachStopMode.STOP_ERROR:
-            raise pyreach.PyReachError("Robot is in Protective-Stop mode")
+            raise pyreach.PyReachError("Robot is in Emergency-Stop mode")
           response = arm_element.ReachResponse.RESPONSE_ESTOP
           if e_stop_mode == arm_element.ReachStopMode.STOP_DONE:
             self._early_done = True

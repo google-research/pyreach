@@ -32,9 +32,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='logcontent.proto',
   package='fluxworks.g3.log',
   syntax='proto3',
-  serialized_options=b'Z%project-reach/pkg/rc/logcontentprotos',
+  serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10logcontent.proto\x12\x10\x66luxworks.g3.log\x1a\x19google/protobuf/any.proto\"j\n\x0fLogContentProto\x12\n\n\x02id\x18\x01 \x01(\t\x12$\n\x06header\x18\x02 \x01(\x0b\x32\x14.google.protobuf.Any\x12%\n\x07payload\x18\x03 \x01(\x0b\x32\x14.google.protobuf.AnyB\'Z%project-reach/pkg/rc/logcontentprotosb\x06proto3'
+  serialized_pb=b'\n\x10logcontent.proto\x12\x10\x66luxworks.g3.log\x1a\x19google/protobuf/any.proto\"\xaf\x01\n\x0fLogContentProto\x12\n\n\x02id\x18\x01 \x01(\t\x12$\n\x06header\x18\x02 \x01(\x0b\x32\x14.google.protobuf.Any\x12%\n\x07payload\x18\x03 \x01(\x0b\x32\x14.google.protobuf.Any\x12\x1f\n\x17internal_timestamp_nsec\x18\x64 \x01(\x03\x12\"\n\x1ainternal_session_time_nsec\x18\x65 \x01(\x03\"Z\n\x14LogContentBatchProto\x12\x36\n\x0blog_content\x18\x01 \x03(\x0b\x32!.fluxworks.g3.log.LogContentProto\x12\n\n\x02id\x18\x02 \x01(\tb\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_any__pb2.DESCRIPTOR,])
 
@@ -70,6 +70,20 @@ _LOGCONTENTPROTO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='internal_timestamp_nsec', full_name='fluxworks.g3.log.LogContentProto.internal_timestamp_nsec', index=3,
+      number=100, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='internal_session_time_nsec', full_name='fluxworks.g3.log.LogContentProto.internal_session_time_nsec', index=4,
+      number=101, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -82,13 +96,54 @@ _LOGCONTENTPROTO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=65,
-  serialized_end=171,
+  serialized_start=66,
+  serialized_end=241,
+)
+
+
+_LOGCONTENTBATCHPROTO = _descriptor.Descriptor(
+  name='LogContentBatchProto',
+  full_name='fluxworks.g3.log.LogContentBatchProto',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='log_content', full_name='fluxworks.g3.log.LogContentBatchProto.log_content', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='id', full_name='fluxworks.g3.log.LogContentBatchProto.id', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=243,
+  serialized_end=333,
 )
 
 _LOGCONTENTPROTO.fields_by_name['header'].message_type = google_dot_protobuf_dot_any__pb2._ANY
 _LOGCONTENTPROTO.fields_by_name['payload'].message_type = google_dot_protobuf_dot_any__pb2._ANY
+_LOGCONTENTBATCHPROTO.fields_by_name['log_content'].message_type = _LOGCONTENTPROTO
 DESCRIPTOR.message_types_by_name['LogContentProto'] = _LOGCONTENTPROTO
+DESCRIPTOR.message_types_by_name['LogContentBatchProto'] = _LOGCONTENTBATCHPROTO
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 LogContentProto = _reflection.GeneratedProtocolMessageType('LogContentProto', (_message.Message,), {
@@ -98,6 +153,12 @@ LogContentProto = _reflection.GeneratedProtocolMessageType('LogContentProto', (_
   })
 _sym_db.RegisterMessage(LogContentProto)
 
+LogContentBatchProto = _reflection.GeneratedProtocolMessageType('LogContentBatchProto', (_message.Message,), {
+  'DESCRIPTOR' : _LOGCONTENTBATCHPROTO,
+  '__module__' : 'logcontent_pb2'
+  # @@protoc_insertion_point(class_scope:fluxworks.g3.log.LogContentBatchProto)
+  })
+_sym_db.RegisterMessage(LogContentBatchProto)
 
-DESCRIPTOR._options = None
+
 # @@protoc_insertion_point(module_scope)

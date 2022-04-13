@@ -23,21 +23,21 @@ import google.protobuf.timestamp_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 class LogEntryId(google.protobuf.message.Message):
     """Globally unique ID of a data point in SSOT, used by both LogEntry and
     Session.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
     ROBOT_ID_FIELD_NUMBER: builtins.int
     LOG_TYPE_FIELD_NUMBER: builtins.int
     TIMESTAMP_FIELD_NUMBER: builtins.int
     SEQ_FIELD_NUMBER: builtins.int
-    robot_id: typing.Text = ...
+    robot_id: typing.Text
     """Uniquely identifies robot it belongs to."""
 
-    log_type: typing.Text = ...
+    log_type: typing.Text
     """Provided by robot, identifies stream this log entry belongs to.
     log_type should be in the form of $ssot_repository:$channel, indicating its
     permanent storage place in SSOT.
@@ -58,17 +58,17 @@ class LogEntryId(google.protobuf.message.Message):
         alignment solutions.
         """
         pass
-    seq: builtins.int = ...
+    seq: builtins.int
     """Additional bit assigned by processing pipeline to ensure uniqueness.
     Serialize as a string for web clients; see go/jspb-options#jstype.
     """
 
     def __init__(self,
         *,
-        robot_id : typing.Optional[typing.Text] = ...,
-        log_type : typing.Optional[typing.Text] = ...,
-        timestamp : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        seq : typing.Optional[builtins.int] = ...,
+        robot_id: typing.Optional[typing.Text] = ...,
+        log_type: typing.Optional[typing.Text] = ...,
+        timestamp: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        seq: typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["log_type",b"log_type","robot_id",b"robot_id","seq",b"seq","timestamp",b"timestamp"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["log_type",b"log_type","robot_id",b"robot_id","seq",b"seq","timestamp",b"timestamp"]) -> None: ...

@@ -32,7 +32,7 @@ class ClientAnnotationMock(client_annotation.ClientAnnotation):
     Returns:
       The annotation PyReachStatus.
     """
-    # TODO(gramlich): This is totally broken!
+    # TODO: This is totally broken!
     return core.PyReachStatus(0.0)
 
   def async_annotate(

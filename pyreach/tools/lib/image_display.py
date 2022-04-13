@@ -226,7 +226,7 @@ class ImageDisplay:
       target_extent: the size (width, height) tuple to paste the image to.
       window_name: the name of the window.
     """
-    # TODO(hirak): Height / width and x / y are swapped in this method. Should
+    # TODO: Height / width and x / y are swapped in this method. Should
     # be corrected.
     width, height = target_extent
     owidth, oheight = img.shape[0], img.shape[1]

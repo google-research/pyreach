@@ -20,7 +20,6 @@ from typing import Any, Dict, Tuple, cast
 import numpy as np
 
 from pyreach import arm
-from pyreach.gyms import arm_element
 from pyreach.gyms import core
 from pyreach.gyms import reach_env
 
@@ -55,9 +54,7 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
                 tuple(self.MAX_JOINT_ANGLES.tolist()),
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
-                ik_lib=arm.IKLibType.IKFAST,
-                e_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
-                p_stop_mode=arm_element.ReachStopMode.STOP_STATUS),
+                ik_lib=arm.IKLibType.IKFAST),
         "camera":
             reach_env.ReachColorCamera("realsense", (360, 640)),
         "depth_camera":

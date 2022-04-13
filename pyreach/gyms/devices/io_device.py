@@ -141,7 +141,7 @@ class ReachDeviceIO(reach_device.ReachDevice):
                 f"is not one of {tuple(capabilities.keys())}")
           digital_output: DigOutput = capabilities[pin_name]
           all_digital_outputs[id(digital_output)] = digital_output
-          # TODO(gramlich): Should this be conditioned on is_synchronous?
+          # TODO: Should this be conditioned on is_synchronous?
           if host.playback is None:
             digital_output.start_streaming()
 
