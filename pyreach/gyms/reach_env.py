@@ -143,6 +143,7 @@ class ReachEnv(gym.Env):  # type: ignore
                host: Optional[pyreach.Host] = None,
                gym_env_id: Optional[str] = None,
                connection_string: Optional[str] = None,
+               robot_types: Optional[Dict[str, str]] = None,
                **kwargs: Any) -> None:
     """Initialize a Reach Gym Environment.
 
@@ -153,6 +154,7 @@ class ReachEnv(gym.Env):  # type: ignore
       host: A host to use. (Default: None.)
       gym_env_id: ID used to create this gym. Must be specified.
       connection_string: the connection string (see connection_string.md).
+      robot_types: Overrides for robot types.
       **kwargs: Additional keyword arguments.
 
     Raises:
@@ -242,6 +244,8 @@ class ReachEnv(gym.Env):  # type: ignore
           "enable_streaming": False,
           "arm_default_ik_types": arm_default_ik_types,
       }
+      if robot_types is not None:
+        host_kwargs["robot_types"] = robot_types.copy()
 
       if not host:
         if not connection_string:

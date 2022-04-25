@@ -36,6 +36,20 @@ class DigitalOutputState:
   robot_name: str
   pin_states: Tuple[DigitalOutputPinState, ...]
 
+  def get_pin_state(self, name: str) -> Optional[DigitalOutputPinState]:
+    """Get pin state by name.
+
+    Args:
+      name: the name of the pin.
+
+    Returns:
+      The pin, or None if not specified.
+    """
+    for state in self.pin_states:
+      if state.name == name:
+        return state
+    return None
+
 
 class DigitalOutput:
   """Class for interacting with a digital output."""

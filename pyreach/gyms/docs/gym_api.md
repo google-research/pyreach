@@ -1235,35 +1235,57 @@ initialized with the with a dictionary of the following structure:
 
 ```
  {
-     "digital_outputs": {
-         "gym_pin_name1":
-             ("reach_name", "capability_type", "reach_pin_name"),
-         "gym_pin_name2":
-             ("reach_name", "capability_type", "reach_pin_name"),
-         # ...
-         "gym_pin_nameN":
-             ("reach_name", "capability_type", "reach_pin_name"),
-     },
-     # Eventually, there will be "digital_inputs", "analog_outputs"
-     # and "analog_inputs", but not for now.
+     "io":
+          io_element.ReachIO(
+              reach_name="reach_io_device_name",
+              is_synchronous=True/False,  # synchronous/asynchronous IO device
+              digital_outputs={  # One dict entry for each digital output
+                  "gym_digital_output1":
+                      io_element.ReachDigitalOutuput(
+                          reach_name="",
+                          capability_type="",
+                          pin_name="")
+                  # ...
+                  "gym_digital_outputN":
+                      io_element.ReachDigitalOutuput(
+                          reach_name="",
+                          capability_type="",
+                          pin_name="")
+              )}
+              # digital_inputs={...}  # Not implemented yet
+              # analog_outputs={...}  # Not implemented yet
+              # analog_inputs={...}  # Not implemented yet
  }
 ```
 
-The `"digital_outputs"` configuration space consists of a dictionary of type
-`Dict[str, Tuple(str, str, str)]` where the key is a user specified name (e.g.
-`"gym_pin_nameI"`) with a three string tuple of the form `("reach_name"",
-"capability_type", "reach_pin_name")`, where
+when the action space is filled in, it will look as follows:
 
-*   `reach_name`: The reach device that hosts the I/O pin.
+```
+    action["io"]["digital_outputs"] = {
+       "digital_output1": 0,  # Turn off,
+       "digital_outputN": 1,  # Turn on,
+    }
+```
 
-*   `capability_type`: The capability type string for the pin. This is specified
+The three values fed into the `io_element.ReachDigitalOutput` are:
+
+*   `reach_name`: The name of the controller that is managing the I/O. This is
+    frequently the same name as the Arm name, but not always.
+
+*   `capability_type`: The capability type string for the pin. This is specifie
     by the robot configuration and is supplied by the operation team.
 
 *   `reach_pin_name`: The specific pin name for the capability. Again, this is
     specified by the robot configuration and is supplied by the operation team.
 
+In practice, trying to the correct values for these 3 strings can be quite
+challenging. A useful trick/hack is to specify random strings for these three
+strings. The I/O will complain about ones that are incorrect *AND* provide a
+list of value values. Thus, tremendously simplifies the task of trying to figure
+what values to used.
+
 Eventually, as other I/O types show up, additional top level configuration
-dictionaries will be added (e.g. `digital_inputs`, etc.)
+dictionary enteries are anticipated (e.g. `digital_inputs`, etc.)
 
 #### Oracle Configuration
 

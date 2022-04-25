@@ -153,16 +153,18 @@ class HostImpl(pyreach.Host):
       enable_streaming: bool = True,
       take_control_at_start: bool = True,
       arm_default_ik_types: Optional[Dict[str, arm.IKLibType]] = None,
+      robot_types: Optional[Dict[str, str]] = None,
   ) -> None:
     """Initialize the Host.
 
     Args:
       client: Connection to the client.
-      arm_types: Overrides for arm types.
+      arm_types: Overrides for robot types, deviceName to URDF file mapping.
       enable_streaming: If True, automatically start streaming for Arm,
         ColorCamera and DepthCamera devices.
       take_control_at_start: If True, immediately take control.
       arm_default_ik_types: Default ik type for arms.
+      robot_types: Overrides for robot types, deviceName to URDF file mapping.
 
     Raises:
       Exception: when failed to load config.
@@ -247,6 +249,12 @@ class HostImpl(pyreach.Host):
     interfaces = self._config.machine_interfaces
 
     def get_arm_type(name: str) -> Optional[arm.ArmType]:
+      if robot_types and name in robot_types:
+        try:
+          return arm_impl.ArmTypeImpl.from_urdf_file(robot_types[name])
+        except ValueError:
+          logging.warning("Robot type override %s for %s invalid",
+                          robot_types[name], name)
       if arm_types and name in arm_types:
         try:
           return arm_impl.ArmTypeImpl.from_urdf_file(arm_types[name])

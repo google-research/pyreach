@@ -210,6 +210,8 @@ class ArmTypeImpl(arm.ArmType):
         "FanucR2000ia165f.urdf", "XArm6.urdf"
     }:
       return ArmTypeImpl(urdf_file, 6)
+    if urdf_file == "april-led.urdf":
+      return ArmTypeImpl(urdf_file, 0)
     raise ValueError("invalid URDF file: " + urdf_file)
 
 
@@ -1232,7 +1234,9 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
   def set_ik_lib(self, ik_lib: arm.IKLibType) -> None:
     """Set the IK library to be used."""
-    if ik_lib == arm.IKLibType.IKFAST:
+    if self._arm_type.joint_count == 0:
+      self._ik_lib = None
+    elif ik_lib == arm.IKLibType.IKFAST:
       self._ik_lib = IKLibIKFast(self._arm_type.urdf_file)
     elif ik_lib == arm.IKLibType.IKPYBULLET:
       if self._arm_type.urdf_file != "XArm6.urdf":
