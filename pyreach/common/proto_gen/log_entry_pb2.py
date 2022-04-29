@@ -32,6 +32,7 @@ import pyreach.common.proto_gen.image_pb2 as image__pb2
 import pyreach.common.proto_gen.joints_pb2 as joints__pb2
 import pyreach.common.proto_gen.reach_pb2 as reach__pb2
 import pyreach.common.proto_gen.robot_control_pb2 as robot__control__pb2
+import pyreach.common.proto_gen.simulation_pb2 as simulation__pb2
 import pyreach.common.proto_gen.transform_pb2 as transform__pb2
 
 
@@ -41,9 +42,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0flog_entry.proto\x12\x10robotics.logging\x1a\x19google/protobuf/any.proto\x1a\x12log_entry_id.proto\x1a\x10general_io.proto\x1a\x0bimage.proto\x1a\x0cjoints.proto\x1a\x0breach.proto\x1a\x13robot_control.proto\x1a\x0ftransform.proto\"\xe7\x02\n\x10LogEntryMetadata\x12>\n\tkey_value\x18\x01 \x03(\x0b\x32+.robotics.logging.LogEntryMetadata.KeyValue\x12\x0f\n\x07part_id\x18\x02 \x01(\t\x12\x11\n\tsignal_id\x18\x0b \x01(\t\x12\x11\n\tsource_id\x18\x0e \x01(\t\x12\x42\n\x0bpayload_tag\x18\x07 \x01(\x0e\x32-.robotics.logging.LogEntryMetadata.PayloadTag\x1a&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"p\n\nPayloadTag\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\t\n\x05STATE\x10\x01\x12\x0b\n\x07\x43OMMAND\x10\x02\x12\x12\n\x0e\x45\x43HOED_COMMAND\x10\x03\x12\x13\n\x0fIRREGULAR_STATE\x10\x04\x12\x10\n\x0cMERGED_STATE\x10\x05\"\x96\x04\n\x08LogEntry\x12(\n\x02id\x18\x01 \x01(\x0b\x32\x1c.robotics.logging.LogEntryId\x12\x30\n\x04meta\x18\x0f \x01(\x0b\x32\".robotics.logging.LogEntryMetadata\x12:\n\ngeneral_io\x18\x0b \x01(\x0b\x32$.robotics.logging.messages.GeneralIoH\x00\x12\x33\n\x06joints\x18\x0c \x01(\x0b\x32!.robotics.logging.messages.JointsH\x00\x12\x39\n\ttransform\x18\r \x01(\x0b\x32$.robotics.logging.messages.TransformH\x00\x12\x38\n\rencoded_image\x18\x0e \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12\x42\n\x0esystem_command\x18\x13 \x01(\x0b\x32(.robotics.logging.messages.SystemCommandH\x00\x12>\n\x0csystem_state\x18\x16 \x01(\x0b\x32&.robotics.logging.messages.SystemStateH\x00\x12\x39\n\x05reach\x18\xe8\x07 \x01(\x0b\x32\'.robotics.logging.messages.ReachPayloadH\x00\x42\t\n\x07payload'
+  serialized_pb=b'\n\x0flog_entry.proto\x12\x10robotics.logging\x1a\x19google/protobuf/any.proto\x1a\x12log_entry_id.proto\x1a\x10general_io.proto\x1a\x0bimage.proto\x1a\x0cjoints.proto\x1a\x0breach.proto\x1a\x13robot_control.proto\x1a\x10simulation.proto\x1a\x0ftransform.proto\"\xe7\x02\n\x10LogEntryMetadata\x12>\n\tkey_value\x18\x01 \x03(\x0b\x32+.robotics.logging.LogEntryMetadata.KeyValue\x12\x0f\n\x07part_id\x18\x02 \x01(\t\x12\x11\n\tsignal_id\x18\x0b \x01(\t\x12\x11\n\tsource_id\x18\x0e \x01(\t\x12\x42\n\x0bpayload_tag\x18\x07 \x01(\x0e\x32-.robotics.logging.LogEntryMetadata.PayloadTag\x1a&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"p\n\nPayloadTag\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\t\n\x05STATE\x10\x01\x12\x0b\n\x07\x43OMMAND\x10\x02\x12\x12\n\x0e\x45\x43HOED_COMMAND\x10\x03\x12\x13\n\x0fIRREGULAR_STATE\x10\x04\x12\x10\n\x0cMERGED_STATE\x10\x05\"\xe2\x04\n\x08LogEntry\x12(\n\x02id\x18\x01 \x01(\x0b\x32\x1c.robotics.logging.LogEntryId\x12\x30\n\x04meta\x18\x0f \x01(\x0b\x32\".robotics.logging.LogEntryMetadata\x12:\n\ngeneral_io\x18\x0b \x01(\x0b\x32$.robotics.logging.messages.GeneralIoH\x00\x12\x33\n\x06joints\x18\x0c \x01(\x0b\x32!.robotics.logging.messages.JointsH\x00\x12\x39\n\ttransform\x18\r \x01(\x0b\x32$.robotics.logging.messages.TransformH\x00\x12\x38\n\rencoded_image\x18\x0e \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12J\n\x12simulation_command\x18\x1a \x01(\x0b\x32,.robotics.logging.messages.SimulationCommandH\x00\x12\x42\n\x0esystem_command\x18\x13 \x01(\x0b\x32(.robotics.logging.messages.SystemCommandH\x00\x12>\n\x0csystem_state\x18\x16 \x01(\x0b\x32&.robotics.logging.messages.SystemStateH\x00\x12\x39\n\x05reach\x18\xe8\x07 \x01(\x0b\x32\'.robotics.logging.messages.ReachPayloadH\x00\x42\t\n\x07payload'
   ,
-  dependencies=[google_dot_protobuf_dot_any__pb2.DESCRIPTOR,log__entry__id__pb2.DESCRIPTOR,general__io__pb2.DESCRIPTOR,image__pb2.DESCRIPTOR,joints__pb2.DESCRIPTOR,reach__pb2.DESCRIPTOR,robot__control__pb2.DESCRIPTOR,transform__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_any__pb2.DESCRIPTOR,log__entry__id__pb2.DESCRIPTOR,general__io__pb2.DESCRIPTOR,image__pb2.DESCRIPTOR,joints__pb2.DESCRIPTOR,reach__pb2.DESCRIPTOR,robot__control__pb2.DESCRIPTOR,simulation__pb2.DESCRIPTOR,transform__pb2.DESCRIPTOR,])
 
 
 
@@ -87,8 +88,8 @@ _LOGENTRYMETADATA_PAYLOADTAG = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=428,
-  serialized_end=540,
+  serialized_start=446,
+  serialized_end=558,
 )
 _sym_db.RegisterEnumDescriptor(_LOGENTRYMETADATA_PAYLOADTAG)
 
@@ -127,8 +128,8 @@ _LOGENTRYMETADATA_KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=388,
-  serialized_end=426,
+  serialized_start=406,
+  serialized_end=444,
 )
 
 _LOGENTRYMETADATA = _descriptor.Descriptor(
@@ -187,8 +188,8 @@ _LOGENTRYMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=181,
-  serialized_end=540,
+  serialized_start=199,
+  serialized_end=558,
 )
 
 
@@ -243,21 +244,28 @@ _LOGENTRY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='system_command', full_name='robotics.logging.LogEntry.system_command', index=6,
+      name='simulation_command', full_name='robotics.logging.LogEntry.simulation_command', index=6,
+      number=26, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='system_command', full_name='robotics.logging.LogEntry.system_command', index=7,
       number=19, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='system_state', full_name='robotics.logging.LogEntry.system_state', index=7,
+      name='system_state', full_name='robotics.logging.LogEntry.system_state', index=8,
       number=22, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reach', full_name='robotics.logging.LogEntry.reach', index=8,
+      name='reach', full_name='robotics.logging.LogEntry.reach', index=9,
       number=1000, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -280,8 +288,8 @@ _LOGENTRY = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=543,
-  serialized_end=1077,
+  serialized_start=561,
+  serialized_end=1171,
 )
 
 _LOGENTRYMETADATA_KEYVALUE.containing_type = _LOGENTRYMETADATA
@@ -294,6 +302,7 @@ _LOGENTRY.fields_by_name['general_io'].message_type = general__io__pb2._GENERALI
 _LOGENTRY.fields_by_name['joints'].message_type = joints__pb2._JOINTS
 _LOGENTRY.fields_by_name['transform'].message_type = transform__pb2._TRANSFORM
 _LOGENTRY.fields_by_name['encoded_image'].message_type = image__pb2._ENCODEDIMAGE
+_LOGENTRY.fields_by_name['simulation_command'].message_type = simulation__pb2._SIMULATIONCOMMAND
 _LOGENTRY.fields_by_name['system_command'].message_type = robot__control__pb2._SYSTEMCOMMAND
 _LOGENTRY.fields_by_name['system_state'].message_type = robot__control__pb2._SYSTEMSTATE
 _LOGENTRY.fields_by_name['reach'].message_type = reach__pb2._REACHPAYLOAD
@@ -309,6 +318,9 @@ _LOGENTRY.fields_by_name['transform'].containing_oneof = _LOGENTRY.oneofs_by_nam
 _LOGENTRY.oneofs_by_name['payload'].fields.append(
   _LOGENTRY.fields_by_name['encoded_image'])
 _LOGENTRY.fields_by_name['encoded_image'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']
+_LOGENTRY.oneofs_by_name['payload'].fields.append(
+  _LOGENTRY.fields_by_name['simulation_command'])
+_LOGENTRY.fields_by_name['simulation_command'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']
 _LOGENTRY.oneofs_by_name['payload'].fields.append(
   _LOGENTRY.fields_by_name['system_command'])
 _LOGENTRY.fields_by_name['system_command'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']

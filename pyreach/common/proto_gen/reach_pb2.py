@@ -34,7 +34,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0breach.proto\x12\x19robotics.logging.messages\x1a\nlogs.proto\"\x83\x03\n\x0cReachPayload\x12<\n\x0c\x63ommand_data\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.CommandDataH\x00\x12:\n\x0b\x64\x65vice_data\x18\x02 \x01(\x0b\x32#.robotics.learning.reach.DeviceDataH\x00\x12?\n\x0fserver_log_data\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.TextLogDataH\x00\x12I\n\x12task_start_command\x18\x05 \x01(\x0b\x32+.robotics.logging.messages.TaskStartCommandH\x00\x12\x45\n\x10task_end_command\x18\x06 \x01(\x0b\x32).robotics.logging.messages.TaskEndCommandH\x00\x12\x1e\n\x16reach_serve_session_id\x18\x03 \x01(\tB\x06\n\x04\x64\x61ta\"5\n\x10TaskStartCommand\x12\x0e\n\x06intent\x18\x01 \x01(\t\x12\x11\n\ttask_code\x18\x02 \x01(\t\"\x94\x01\n\x0eTaskEndCommand\x12\x12\n\nevent_name\x18\x01 \x01(\t\x12>\n\x05state\x18\x02 \x01(\x0e\x32/.robotics.logging.messages.TaskEndCommand.State\".\n\x05State\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x0b\n\x07SUCCESS\x10\x02'
+  serialized_pb=b'\n\x0breach.proto\x12\x19robotics.logging.messages\x1a\nlogs.proto\"\xcb\x03\n\x0cReachPayload\x12<\n\x0c\x63ommand_data\x18\x01 \x01(\x0b\x32$.robotics.learning.reach.CommandDataH\x00\x12:\n\x0b\x64\x65vice_data\x18\x02 \x01(\x0b\x32#.robotics.learning.reach.DeviceDataH\x00\x12?\n\x0fserver_log_data\x18\x04 \x01(\x0b\x32$.robotics.learning.reach.TextLogDataH\x00\x12I\n\x12task_start_command\x18\x05 \x01(\x0b\x32+.robotics.logging.messages.TaskStartCommandH\x00\x12\x45\n\x10task_end_command\x18\x06 \x01(\x0b\x32).robotics.logging.messages.TaskEndCommandH\x00\x12\x46\n\x10text_instruction\x18\x07 \x01(\x0b\x32*.robotics.logging.messages.TextInstructionH\x00\x12\x1e\n\x16reach_serve_session_id\x18\x03 \x01(\tB\x06\n\x04\x64\x61ta\"5\n\x10TaskStartCommand\x12\x0e\n\x06intent\x18\x01 \x01(\t\x12\x11\n\ttask_code\x18\x02 \x01(\t\"\x94\x01\n\x0eTaskEndCommand\x12\x12\n\nevent_name\x18\x01 \x01(\t\x12>\n\x05state\x18\x02 \x01(\x0e\x32/.robotics.logging.messages.TaskEndCommand.State\".\n\x05State\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0b\n\x07\x46\x41ILURE\x10\x01\x12\x0b\n\x07SUCCESS\x10\x02\"\x8a\x01\n\x0fTextInstruction\x12\x0e\n\x06intent\x18\x01 \x01(\t\x12\x14\n\x0csuccess_type\x18\x02 \x01(\t\x12\x19\n\x11success_detection\x18\x03 \x01(\t\x12\x13\n\x0binstruction\x18\x04 \x01(\t\x12\x0b\n\x03uid\x18\x05 \x01(\t\x12\x14\n\x0csupertask_id\x18\x06 \x01(\t'
   ,
   dependencies=[logs__pb2.DESCRIPTOR,])
 
@@ -65,8 +65,8 @@ _TASKENDCOMMAND_STATE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=602,
-  serialized_end=648,
+  serialized_start=674,
+  serialized_end=720,
 )
 _sym_db.RegisterEnumDescriptor(_TASKENDCOMMAND_STATE)
 
@@ -115,7 +115,14 @@ _REACHPAYLOAD = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reach_serve_session_id', full_name='robotics.logging.messages.ReachPayload.reach_serve_session_id', index=5,
+      name='text_instruction', full_name='robotics.logging.messages.ReachPayload.text_instruction', index=5,
+      number=7, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='reach_serve_session_id', full_name='robotics.logging.messages.ReachPayload.reach_serve_session_id', index=6,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -139,7 +146,7 @@ _REACHPAYLOAD = _descriptor.Descriptor(
     fields=[]),
   ],
   serialized_start=55,
-  serialized_end=442,
+  serialized_end=514,
 )
 
 
@@ -177,8 +184,8 @@ _TASKSTARTCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=444,
-  serialized_end=497,
+  serialized_start=516,
+  serialized_end=569,
 )
 
 
@@ -217,8 +224,75 @@ _TASKENDCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=500,
-  serialized_end=648,
+  serialized_start=572,
+  serialized_end=720,
+)
+
+
+_TEXTINSTRUCTION = _descriptor.Descriptor(
+  name='TextInstruction',
+  full_name='robotics.logging.messages.TextInstruction',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='intent', full_name='robotics.logging.messages.TextInstruction.intent', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='success_type', full_name='robotics.logging.messages.TextInstruction.success_type', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='success_detection', full_name='robotics.logging.messages.TextInstruction.success_detection', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='instruction', full_name='robotics.logging.messages.TextInstruction.instruction', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='uid', full_name='robotics.logging.messages.TextInstruction.uid', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='supertask_id', full_name='robotics.logging.messages.TextInstruction.supertask_id', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=723,
+  serialized_end=861,
 )
 
 _REACHPAYLOAD.fields_by_name['command_data'].message_type = logs__pb2._COMMANDDATA
@@ -226,6 +300,7 @@ _REACHPAYLOAD.fields_by_name['device_data'].message_type = logs__pb2._DEVICEDATA
 _REACHPAYLOAD.fields_by_name['server_log_data'].message_type = logs__pb2._TEXTLOGDATA
 _REACHPAYLOAD.fields_by_name['task_start_command'].message_type = _TASKSTARTCOMMAND
 _REACHPAYLOAD.fields_by_name['task_end_command'].message_type = _TASKENDCOMMAND
+_REACHPAYLOAD.fields_by_name['text_instruction'].message_type = _TEXTINSTRUCTION
 _REACHPAYLOAD.oneofs_by_name['data'].fields.append(
   _REACHPAYLOAD.fields_by_name['command_data'])
 _REACHPAYLOAD.fields_by_name['command_data'].containing_oneof = _REACHPAYLOAD.oneofs_by_name['data']
@@ -241,11 +316,15 @@ _REACHPAYLOAD.fields_by_name['task_start_command'].containing_oneof = _REACHPAYL
 _REACHPAYLOAD.oneofs_by_name['data'].fields.append(
   _REACHPAYLOAD.fields_by_name['task_end_command'])
 _REACHPAYLOAD.fields_by_name['task_end_command'].containing_oneof = _REACHPAYLOAD.oneofs_by_name['data']
+_REACHPAYLOAD.oneofs_by_name['data'].fields.append(
+  _REACHPAYLOAD.fields_by_name['text_instruction'])
+_REACHPAYLOAD.fields_by_name['text_instruction'].containing_oneof = _REACHPAYLOAD.oneofs_by_name['data']
 _TASKENDCOMMAND.fields_by_name['state'].enum_type = _TASKENDCOMMAND_STATE
 _TASKENDCOMMAND_STATE.containing_type = _TASKENDCOMMAND
 DESCRIPTOR.message_types_by_name['ReachPayload'] = _REACHPAYLOAD
 DESCRIPTOR.message_types_by_name['TaskStartCommand'] = _TASKSTARTCOMMAND
 DESCRIPTOR.message_types_by_name['TaskEndCommand'] = _TASKENDCOMMAND
+DESCRIPTOR.message_types_by_name['TextInstruction'] = _TEXTINSTRUCTION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ReachPayload = _reflection.GeneratedProtocolMessageType('ReachPayload', (_message.Message,), {
@@ -268,6 +347,13 @@ TaskEndCommand = _reflection.GeneratedProtocolMessageType('TaskEndCommand', (_me
   # @@protoc_insertion_point(class_scope:robotics.logging.messages.TaskEndCommand)
   })
 _sym_db.RegisterMessage(TaskEndCommand)
+
+TextInstruction = _reflection.GeneratedProtocolMessageType('TextInstruction', (_message.Message,), {
+  'DESCRIPTOR' : _TEXTINSTRUCTION,
+  '__module__' : 'reach_pb2'
+  # @@protoc_insertion_point(class_scope:robotics.logging.messages.TextInstruction)
+  })
+_sym_db.RegisterMessage(TextInstruction)
 
 
 # @@protoc_insertion_point(module_scope)

@@ -518,10 +518,6 @@ class _MovePose(_Command):
           quaternion_const = transform_util.inverse_quat(
               np.array([0.0000, 0.7071, -0.7071, 0.0000]))
 
-          # First, inverse the tip adjust transform in robot space.
-          tip_adjust_transform = transform_util.inverse_pose(
-              tip_adjust_transform)
-
           # Convert tip adjust transform in Unity space.
           tip_adjust_unity = transform_util.unity_pos_quaternion_to_pose(
               tip_adjust_transform[:3],

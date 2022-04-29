@@ -28,6 +28,13 @@ class ReachStopMode:
   STOP_STATUS = 2  # Return the EStop/PStop in arm status
 
 
+class ReachNoPowerMode:
+  """Arm stop mode enumeration."""
+  NO_POWER_ERROR = 0  # Raise PyReachError on EStop/PStop (default)
+  NO_POWER_DONE = 1  # Force step() to set Done to True
+  NO_POWER_STATUS = 2  # Return the EStop/PStop in arm status
+
+
 class ReachResponse:
   """Arm response code enumeration."""
   RESPONSE_NONE: int = 0
@@ -38,9 +45,10 @@ class ReachResponse:
   RESPONSE_TIMEOUT: int = 5  # Done with timeout error.
   RESPONSE_ESTOP: int = 6  # Emergency Stop
   RESPONSE_PSTOP: int = 7  # Protective Stop
+  RESPONSE_NO_POWER: int = 8  # Robot powered off
   RESPONSE_MAX: int = max(RESPONSE_NONE, RESPONSE_DONE, RESPONSE_FAILED,
                           RESPONSE_ABORTED, RESPONSE_REJECTED, RESPONSE_TIMEOUT,
-                          RESPONSE_ESTOP, RESPONSE_PSTOP)
+                          RESPONSE_ESTOP, RESPONSE_PSTOP, RESPONSE_NO_POWER)
 
 
 class ReachArmCommand:
@@ -53,7 +61,7 @@ class ReachArmCommand:
 
 @dataclasses.dataclass(frozen=True)
 class ReachArm(reach_element.ReachElement):
-  """Base class for for Reach arm configuration.
+  """Base class for Reach arm configuration.
 
   The arm may be moved either synchronously or asynchronously.
   In synchronous mode, the follow on observation is delayed until
@@ -79,7 +87,7 @@ class ReachArm(reach_element.ReachElement):
   For the arm, this means is that the color camera(s) and depth camera(s)
   will contain images after arm has stopped moving.
 
-  Atrributes:
+  Attributes:
     reach_name: The Reach name of the arm.
     low_joint_angles : The minimum values for the joint angles in radians. Use
       an empty list if no low limits are specified.
@@ -108,6 +116,9 @@ class ReachArm(reach_element.ReachElement):
       the Gym will cause the step method to return with the Done flag set.
       2 specifies that the arm status will indicate a P-stop condition.
       (Default: 0)
+    synchronous_pose_error: Specifies the maximum allowable distance between
+      requested pose position and actual pose position. Set to negative
+      value to disable check.  (Default: -1.00.)
     debug_flags: Specifies flags for internal debugging.  (Default: "")
   """
   low_joint_angles: Tuple[float, ...] = ()
@@ -119,6 +130,8 @@ class ReachArm(reach_element.ReachElement):
   controllers: Tuple[str] = ("",)
   e_stop_mode: int = ReachStopMode.STOP_ERROR
   p_stop_mode: int = ReachStopMode.STOP_ERROR
+  no_power_mode: int = ReachStopMode.STOP_ERROR
+  synchronous_pose_error: Optional[float] = None
   # Used for unit testing only:
   test_states: Optional[List[pyreach_arm.ArmState]] = None
   # Used for development testing only:

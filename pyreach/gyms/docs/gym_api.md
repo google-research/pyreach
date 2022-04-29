@@ -1128,13 +1128,28 @@ arguments:
     emergency stop occurs. 0 specifies that a `PyreachError` will be raised. 1
     specifies that a the gym will immediately terminate by setting the Done flag
     returned from `step()` to `True`. 2 specifies that the arm status will
-    indicate an E-stop condition.
+    contain the value `arm_element.ReachResponse.RESPONSE_ESTOP` when the robot
+    is in emergency stop mode.
 
 *   `p_stop_mode`: (Optional, default = 0) Specifies the Gym behavior when an
     protective stop occurs. 0 specifies that a `PyreachError` will be raised. 1
     specifies that a the gym will immediately terminate by setting the Done flag
     returned from `step()` to `True`. 2 specifies that the arm status will
-    indicate an P-stop condition.
+    contain the value `arm_element.ReachResponse.RESPONSE_PSTOP` when the robot
+    is in protective stop mode.
+
+*   `no_power_mode`: (Optional, default = 0) Specifies the Gym behavior when
+    there is no robot power present. 0 specifies that a `PyreachError` will be
+    raised. 1 specifies that a the gym will immediately terminate by setting the
+    Done flag returned from `step()` to `True`. 2 specifies that the arm status
+    will contain the value `arm_element.ReachResponse.RESPONSE_NO_POWER` when
+    the robot arm is not powered up.
+
+*   `synchronous_pose_error`: (Optional, default = None) When this value is
+    positive, it specifies a maximum allowable pose error measured in meters.
+    The pose error is the distance from the last requested pose and the current
+    actual pose. This comparison is only performed when the arm is moved
+    synchronously.
 
 #### Color Camera Configuration
 

@@ -27,6 +27,7 @@ import joints_pb2
 import log_entry_id_pb2
 import reach_pb2
 import robot_control_pb2
+import simulation_pb2
 import transform_pb2
 import typing
 import typing_extensions
@@ -155,6 +156,7 @@ class LogEntry(google.protobuf.message.Message):
     JOINTS_FIELD_NUMBER: builtins.int
     TRANSFORM_FIELD_NUMBER: builtins.int
     ENCODED_IMAGE_FIELD_NUMBER: builtins.int
+    SIMULATION_COMMAND_FIELD_NUMBER: builtins.int
     SYSTEM_COMMAND_FIELD_NUMBER: builtins.int
     SYSTEM_STATE_FIELD_NUMBER: builtins.int
     REACH_FIELD_NUMBER: builtins.int
@@ -175,6 +177,8 @@ class LogEntry(google.protobuf.message.Message):
     @property
     def encoded_image(self) -> image_pb2.EncodedImage: ...
     @property
+    def simulation_command(self) -> simulation_pb2.SimulationCommand: ...
+    @property
     def system_command(self) -> robot_control_pb2.SystemCommand: ...
     @property
     def system_state(self) -> robot_control_pb2.SystemState: ...
@@ -188,11 +192,12 @@ class LogEntry(google.protobuf.message.Message):
         joints: typing.Optional[joints_pb2.Joints] = ...,
         transform: typing.Optional[transform_pb2.Transform] = ...,
         encoded_image: typing.Optional[image_pb2.EncodedImage] = ...,
+        simulation_command: typing.Optional[simulation_pb2.SimulationCommand] = ...,
         system_command: typing.Optional[robot_control_pb2.SystemCommand] = ...,
         system_state: typing.Optional[robot_control_pb2.SystemState] = ...,
         reach: typing.Optional[reach_pb2.ReachPayload] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","system_command","system_state","reach"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","simulation_command","system_command","system_state","reach"]]: ...
 global___LogEntry = LogEntry

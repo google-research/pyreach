@@ -88,11 +88,6 @@ class Flag:
     """Convert JSON to type object."""
     obj = Flag()
 
-    expected_json_keys: List[str] = ['bool_value', 'double_value', 'int_value', 'name', 'string_value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Flag. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'bool_value' in json_data:
       assert isinstance(json_data['bool_value'], bool), 'Wrong type for attribute: bool_value. Expected: bool. Got: ' + str(type(json_data['bool_value'])) + '.'
       obj.bool_value = json_data['bool_value']
@@ -179,11 +174,6 @@ class Flags:
     """Convert JSON to type object."""
     obj = Flags()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['experiment_token', 'flags']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Flags. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'experiment_token' in json_data:
       assert isinstance(json_data['experiment_token'], str), 'Wrong type for attribute: experiment_token. Expected: str. Got: ' + str(type(json_data['experiment_token'])) + '.'
@@ -273,11 +263,6 @@ class AcquireImageArgs:
     """Convert JSON to type object."""
     obj = AcquireImageArgs()
 
-    expected_json_keys: List[str] = ['deviceName', 'deviceType', 'mode', 'tag']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid AcquireImageArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'deviceName' in json_data:
       assert isinstance(json_data['deviceName'], str), 'Wrong type for attribute: deviceName. Expected: str. Got: ' + str(type(json_data['deviceName'])) + '.'
       obj.device_name = json_data['deviceName']
@@ -364,11 +349,6 @@ class AddObject:
     """Convert JSON to type object."""
     obj = AddObject()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['poseXYZXYZW', 'id', 'type']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid AddObject. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'poseXYZXYZW' in json_data:
       assert isinstance(json_data['poseXYZXYZW'], list), 'Wrong type for attribute: poseXYZXYZW. Expected: list. Got: ' + str(type(json_data['poseXYZXYZW'])) + '.'
@@ -467,11 +447,6 @@ class AnalogBank:
     """Convert JSON to type object."""
     obj = AnalogBank()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['output', 'space', 'start', 'state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid AnalogBank. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'output' in json_data:
       assert isinstance(json_data['output'], bool), 'Wrong type for attribute: output. Expected: bool. Got: ' + str(type(json_data['output'])) + '.'
@@ -708,11 +683,6 @@ class ArmActionParams:
     obj = ArmActionParams()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceleration', 'actionName', 'allowUncalibrated', 'applyTipAdjustTransform', 'cid', 'command', 'controllerName', 'intent', 'jointAngles', 'pickID', 'pose', 'reachAction', 'servo', 'servoGain', 'servoLookaheadTimeSecs', 'servoTSecs', 'successType', 'timeoutSec', 'useLinear', 'useUnityIk', 'velocity']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ArmActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acceleration' in json_data:
       assert isinstance(json_data['acceleration'], float) or isinstance(json_data['acceleration'], int), 'Wrong type for attribute: acceleration. Expected: float. Got: ' + str(type(json_data['acceleration'])) + '.'
       obj.acceleration = json_data['acceleration']
@@ -889,11 +859,6 @@ class AudioRequest:
     """Convert JSON to type object."""
     obj = AudioRequest()
 
-    expected_json_keys: List[str] = ['textCue']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid AudioRequest. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'textCue' in json_data:
       assert isinstance(json_data['textCue'], str), 'Wrong type for attribute: textCue. Expected: str. Got: ' + str(type(json_data['textCue'])) + '.'
       obj.text_cue = json_data['textCue']
@@ -908,6 +873,227 @@ class AudioRequest:
     obj = AudioRequest()
     if proto.HasField('text_cue'):
       obj.text_cue = proto.text_cue
+    return obj
+
+
+class CameraCalibration:
+  """Representation of proto message CameraCalibration.
+
+   CameraCalibration represents the calibration of a camera.
+  """
+  # Camera intrinsics values.
+  intrinsics: List[float]
+
+  # Residual value for intrinsics optimization
+  intrinsics_residual: float
+
+  # Lens model for the camera (generally "pinhole").
+  lens_model: str
+
+  # Calibrated width
+  calibrated_width: int
+
+  # Calibrated height
+  calibrated_height: int
+
+  # Camera pose, 6 numbers: x, y, z, rx, ry, rz.
+  extrinsics: List[float]
+
+  # Residual value for extrinsics optimization
+  extrinsics_residual: float
+
+  # Distortion of 5 coefficients from calibration.json
+  distortion: List[float]
+
+  # Distortion of 8 coefficients from calibration.json for the depth. Only
+  # for depth cameras.
+  distortion_depth: List[float]
+
+  # Camera pose in the origin frame, x, y, z, rx, ry, rz.
+  camera_t_origin: List[float]
+
+  def __init__(self, calibrated_height: int = 0, calibrated_width: int = 0, camera_t_origin: Optional[List[float]] = None, distortion: Optional[List[float]] = None, distortion_depth: Optional[List[float]] = None, extrinsics: Optional[List[float]] = None, extrinsics_residual: float = 0.0, intrinsics: Optional[List[float]] = None, intrinsics_residual: float = 0.0, lens_model: str = '') -> None:
+    self.calibrated_height = calibrated_height
+    self.calibrated_width = calibrated_width
+    if camera_t_origin is None:
+      self.camera_t_origin = []
+    else:
+      self.camera_t_origin = camera_t_origin
+    if distortion is None:
+      self.distortion = []
+    else:
+      self.distortion = distortion
+    if distortion_depth is None:
+      self.distortion_depth = []
+    else:
+      self.distortion_depth = distortion_depth
+    if extrinsics is None:
+      self.extrinsics = []
+    else:
+      self.extrinsics = extrinsics
+    self.extrinsics_residual = extrinsics_residual
+    if intrinsics is None:
+      self.intrinsics = []
+    else:
+      self.intrinsics = intrinsics
+    self.intrinsics_residual = intrinsics_residual
+    self.lens_model = lens_model
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.calibrated_height:
+      assert isinstance(self.calibrated_height, int), 'Wrong type for attribute: calibrated_height. Expected: int. Got: ' + str(type(self.calibrated_height)) + '.'
+      json_data['calibratedHeight'] = self.calibrated_height
+
+    if self.calibrated_width:
+      assert isinstance(self.calibrated_width, int), 'Wrong type for attribute: calibrated_width. Expected: int. Got: ' + str(type(self.calibrated_width)) + '.'
+      json_data['calibratedWidth'] = self.calibrated_width
+
+    if self.camera_t_origin:
+      assert isinstance(self.camera_t_origin, list), 'Wrong type for attribute: camera_t_origin. Expected: list. Got: ' + str(type(self.camera_t_origin)) + '.'
+      json_data['cameraTOrigin'] = self.camera_t_origin
+
+    if self.distortion:
+      assert isinstance(self.distortion, list), 'Wrong type for attribute: distortion. Expected: list. Got: ' + str(type(self.distortion)) + '.'
+      json_data['distortion'] = self.distortion
+
+    if self.distortion_depth:
+      assert isinstance(self.distortion_depth, list), 'Wrong type for attribute: distortion_depth. Expected: list. Got: ' + str(type(self.distortion_depth)) + '.'
+      json_data['distortionDepth'] = self.distortion_depth
+
+    if self.extrinsics:
+      assert isinstance(self.extrinsics, list), 'Wrong type for attribute: extrinsics. Expected: list. Got: ' + str(type(self.extrinsics)) + '.'
+      json_data['extrinsics'] = self.extrinsics
+
+    if self.extrinsics_residual:
+      assert isinstance(self.extrinsics_residual, float) or isinstance(self.extrinsics_residual, int), 'Wrong type for attribute: extrinsics_residual. Expected: float. Got: ' + str(type(self.extrinsics_residual)) + '.'
+      json_data['extrinsicsResidual'] = self.extrinsics_residual
+
+    if self.intrinsics:
+      assert isinstance(self.intrinsics, list), 'Wrong type for attribute: intrinsics. Expected: list. Got: ' + str(type(self.intrinsics)) + '.'
+      json_data['intrinsics'] = self.intrinsics
+
+    if self.intrinsics_residual:
+      assert isinstance(self.intrinsics_residual, float) or isinstance(self.intrinsics_residual, int), 'Wrong type for attribute: intrinsics_residual. Expected: float. Got: ' + str(type(self.intrinsics_residual)) + '.'
+      json_data['intrinsicsResidual'] = self.intrinsics_residual
+
+    if self.lens_model:
+      assert isinstance(self.lens_model, str), 'Wrong type for attribute: lens_model. Expected: str. Got: ' + str(type(self.lens_model)) + '.'
+      json_data['lensModel'] = self.lens_model
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.CameraCalibration':
+    """Convert CameraCalibration to proto."""
+    proto = logs_pb2.CameraCalibration()
+    proto.intrinsics.extend(self.intrinsics)
+    if self.intrinsics_residual:
+      proto.intrinsics_residual = self.intrinsics_residual
+    if self.lens_model:
+      proto.lens_model = self.lens_model
+    if self.calibrated_width:
+      proto.calibrated_width = self.calibrated_width
+    if self.calibrated_height:
+      proto.calibrated_height = self.calibrated_height
+    proto.extrinsics.extend(self.extrinsics)
+    if self.extrinsics_residual:
+      proto.extrinsics_residual = self.extrinsics_residual
+    proto.distortion.extend(self.distortion)
+    proto.distortion_depth.extend(self.distortion_depth)
+    proto.camera_t_origin.extend(self.camera_t_origin)
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'CameraCalibration':
+    """Convert JSON to type object."""
+    obj = CameraCalibration()
+    json_list: List[Any]
+
+    if 'calibratedHeight' in json_data:
+      assert isinstance(json_data['calibratedHeight'], int), 'Wrong type for attribute: calibratedHeight. Expected: int. Got: ' + str(type(json_data['calibratedHeight'])) + '.'
+      obj.calibrated_height = json_data['calibratedHeight']
+
+    if 'calibratedWidth' in json_data:
+      assert isinstance(json_data['calibratedWidth'], int), 'Wrong type for attribute: calibratedWidth. Expected: int. Got: ' + str(type(json_data['calibratedWidth'])) + '.'
+      obj.calibrated_width = json_data['calibratedWidth']
+
+    if 'cameraTOrigin' in json_data:
+      assert isinstance(json_data['cameraTOrigin'], list), 'Wrong type for attribute: cameraTOrigin. Expected: list. Got: ' + str(type(json_data['cameraTOrigin'])) + '.'
+      json_list = []
+      for j in json_data['cameraTOrigin']:
+        json_list.append(j)
+      obj.camera_t_origin = json_list
+
+    if 'distortion' in json_data:
+      assert isinstance(json_data['distortion'], list), 'Wrong type for attribute: distortion. Expected: list. Got: ' + str(type(json_data['distortion'])) + '.'
+      json_list = []
+      for j in json_data['distortion']:
+        json_list.append(j)
+      obj.distortion = json_list
+
+    if 'distortionDepth' in json_data:
+      assert isinstance(json_data['distortionDepth'], list), 'Wrong type for attribute: distortionDepth. Expected: list. Got: ' + str(type(json_data['distortionDepth'])) + '.'
+      json_list = []
+      for j in json_data['distortionDepth']:
+        json_list.append(j)
+      obj.distortion_depth = json_list
+
+    if 'extrinsics' in json_data:
+      assert isinstance(json_data['extrinsics'], list), 'Wrong type for attribute: extrinsics. Expected: list. Got: ' + str(type(json_data['extrinsics'])) + '.'
+      json_list = []
+      for j in json_data['extrinsics']:
+        json_list.append(j)
+      obj.extrinsics = json_list
+
+    if 'extrinsicsResidual' in json_data:
+      assert isinstance(json_data['extrinsicsResidual'], float) or isinstance(json_data['extrinsicsResidual'], int), 'Wrong type for attribute: extrinsicsResidual. Expected: float. Got: ' + str(type(json_data['extrinsicsResidual'])) + '.'
+      obj.extrinsics_residual = json_data['extrinsicsResidual']
+
+    if 'intrinsics' in json_data:
+      assert isinstance(json_data['intrinsics'], list), 'Wrong type for attribute: intrinsics. Expected: list. Got: ' + str(type(json_data['intrinsics'])) + '.'
+      json_list = []
+      for j in json_data['intrinsics']:
+        json_list.append(j)
+      obj.intrinsics = json_list
+
+    if 'intrinsicsResidual' in json_data:
+      assert isinstance(json_data['intrinsicsResidual'], float) or isinstance(json_data['intrinsicsResidual'], int), 'Wrong type for attribute: intrinsicsResidual. Expected: float. Got: ' + str(type(json_data['intrinsicsResidual'])) + '.'
+      obj.intrinsics_residual = json_data['intrinsicsResidual']
+
+    if 'lensModel' in json_data:
+      assert isinstance(json_data['lensModel'], str), 'Wrong type for attribute: lensModel. Expected: str. Got: ' + str(type(json_data['lensModel'])) + '.'
+      obj.lens_model = json_data['lensModel']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.CameraCalibration) -> Optional['CameraCalibration']:
+    """Convert CameraCalibration proto to type object."""
+    if not proto:
+      return None
+    obj = CameraCalibration()
+    for obj_intrinsics in proto.intrinsics:
+      obj.intrinsics.append(obj_intrinsics)
+    if proto.HasField('intrinsics_residual'):
+      obj.intrinsics_residual = proto.intrinsics_residual
+    if proto.HasField('lens_model'):
+      obj.lens_model = proto.lens_model
+    if proto.HasField('calibrated_width'):
+      obj.calibrated_width = proto.calibrated_width
+    if proto.HasField('calibrated_height'):
+      obj.calibrated_height = proto.calibrated_height
+    for obj_extrinsics in proto.extrinsics:
+      obj.extrinsics.append(obj_extrinsics)
+    if proto.HasField('extrinsics_residual'):
+      obj.extrinsics_residual = proto.extrinsics_residual
+    for obj_distortion in proto.distortion:
+      obj.distortion.append(obj_distortion)
+    for obj_distortion_depth in proto.distortion_depth:
+      obj.distortion_depth.append(obj_distortion_depth)
+    for obj_camera_t_origin in proto.camera_t_origin:
+      obj.camera_t_origin.append(obj_camera_t_origin)
     return obj
 
 
@@ -971,11 +1157,6 @@ class CameraShiftDetection:
     """Convert JSON to type object."""
     obj = CameraShiftDetection()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['maxShift', 'maxShiftObject', 'shiftsPerDetection']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid CameraShiftDetection. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'maxShift' in json_data:
       assert isinstance(json_data['maxShift'], float) or isinstance(json_data['maxShift'], int), 'Wrong type for attribute: maxShift. Expected: float. Got: ' + str(type(json_data['maxShift'])) + '.'
@@ -1063,11 +1244,6 @@ class CapabilityState:
   def from_json(json_data: Dict[str, Any]) -> 'CapabilityState':
     """Convert JSON to type object."""
     obj = CapabilityState()
-
-    expected_json_keys: List[str] = ['floatValue', 'intValue', 'pin']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid CapabilityState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'floatValue' in json_data:
       assert isinstance(json_data['floatValue'], float) or isinstance(json_data['floatValue'], int), 'Wrong type for attribute: floatValue. Expected: float. Got: ' + str(type(json_data['floatValue'])) + '.'
@@ -1222,11 +1398,6 @@ class ClientAnnotation:
     """Convert JSON to type object."""
     obj = ClientAnnotation()
 
-    expected_json_keys: List[str] = ['associatedServerTS', 'dataSegmentEnd', 'dataSegmentStart', 'intervalEnd', 'intervalStart', 'logChannelID', 'longHorizonInstruction', 'pointMeasurement', 'shortHorizonInstruction', 'snapshotAnnotation', 'textAnnotation']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ClientAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'associatedServerTS' in json_data:
       assert isinstance(json_data['associatedServerTS'], int), 'Wrong type for attribute: associatedServerTS. Expected: int. Got: ' + str(type(json_data['associatedServerTS'])) + '.'
       obj.associated_server_ts = json_data['associatedServerTS']
@@ -1336,11 +1507,6 @@ class ClientAnnotationActionParams:
     """Convert JSON to type object."""
     obj = ClientAnnotationActionParams()
 
-    expected_json_keys: List[str] = ['annotation']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ClientAnnotationActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'annotation' in json_data:
       assert isinstance(json_data['annotation'], dict), 'Wrong type for attribute: annotation. Expected: dict. Got: ' + str(type(json_data['annotation'])) + '.'
       obj.annotation = ClientAnnotation.from_json(json_data['annotation'])
@@ -1393,11 +1559,6 @@ class ClientSessionStart:
     """Convert JSON to type object."""
     obj = ClientSessionStart()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['acceptDepthEncoding']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ClientSessionStart. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'acceptDepthEncoding' in json_data:
       assert isinstance(json_data['acceptDepthEncoding'], list), 'Wrong type for attribute: acceptDepthEncoding. Expected: list. Got: ' + str(type(json_data['acceptDepthEncoding'])) + '.'
@@ -2108,11 +2269,6 @@ class CommandData:
     obj = CommandData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['args', 'clientAnnotation', 'clientSessionStart', 'cmd', 'dataType', 'detailedError', 'deviceName', 'deviceType', 'error', 'eventDuration', 'eventLabels', 'eventName', 'eventParams', 'exp', 'expArray', 'experimentFlags', 'experimentToken', 'floatValue', 'history', 'intValue', 'intent', 'key', 'label', 'message', 'metadata', 'origin', 'originClient', 'originControl', 'originTransportType', 'originType', 'pickID', 'predictionType', 'progress', 'reachScript', 'requestType', 'robotID', 'script', 'seq', 'sessionInfo', 'simAction', 'snapshot', 'streamRequest', 'successType', 'tag', 'taskCode', 'textCue', 'ts', 'value', 'webrtcAudioRequest', 'x', 'y']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid CommandData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'args' in json_data:
       assert isinstance(json_data['args'], list), 'Wrong type for attribute: args. Expected: list. Got: ' + str(type(json_data['args'])) + '.'
       json_list = []
@@ -2533,11 +2689,6 @@ class CompressedDepth:
     obj = CompressedDepth()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['depth', 'encodings']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid CompressedDepth. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'depth' in json_data:
       assert isinstance(json_data['depth'], str), 'Wrong type for attribute: depth. Expected: str. Got: ' + str(type(json_data['depth'])) + '.'
       obj.depth = json_data['depth']
@@ -2622,11 +2773,6 @@ class ConnectedClient:
     """Convert JSON to type object."""
     obj = ConnectedClient()
 
-    expected_json_keys: List[str] = ['controlSessionActive', 'isCurrent', 'uid']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ConnectedClient. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'controlSessionActive' in json_data:
       assert isinstance(json_data['controlSessionActive'], bool), 'Wrong type for attribute: controlSessionActive. Expected: bool. Got: ' + str(type(json_data['controlSessionActive'])) + '.'
       obj.control_session_active = json_data['controlSessionActive']
@@ -2696,11 +2842,6 @@ class ConnectedClients:
     obj = ConnectedClients()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['clients']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ConnectedClients. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'clients' in json_data:
       assert isinstance(json_data['clients'], list), 'Wrong type for attribute: clients. Expected: list. Got: ' + str(type(json_data['clients'])) + '.'
       json_list = []
@@ -2753,11 +2894,6 @@ class ControllerDescription:
   def from_json(json_data: Dict[str, Any]) -> 'ControllerDescription':
     """Convert JSON to type object."""
     obj = ControllerDescription()
-
-    expected_json_keys: List[str] = ['name']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ControllerDescription. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'name' in json_data:
       assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
@@ -2816,11 +2952,6 @@ class ControllerDescriptions:
     obj = ControllerDescriptions()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['descriptions']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ControllerDescriptions. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'descriptions' in json_data:
       assert isinstance(json_data['descriptions'], list), 'Wrong type for attribute: descriptions. Expected: list. Got: ' + str(type(json_data['descriptions'])) + '.'
       json_list = []
@@ -2875,11 +3006,6 @@ class ConveyorState:
   def from_json(json_data: Dict[str, Any]) -> 'ConveyorState':
     """Convert JSON to type object."""
     obj = ConveyorState()
-
-    expected_json_keys: List[str] = ['isObjectDetected']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ConveyorState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'isObjectDetected' in json_data:
       assert isinstance(json_data['isObjectDetected'], bool), 'Wrong type for attribute: isObjectDetected. Expected: bool. Got: ' + str(type(json_data['isObjectDetected'])) + '.'
@@ -2976,11 +3102,6 @@ class DataSegmentContent:
     """Convert JSON to type object."""
     obj = DataSegmentContent()
 
-    expected_json_keys: List[str] = ['agentId', 'name', 'sessionChannelId', 'taskCode', 'uuid']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DataSegmentContent. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'agentId' in json_data:
       assert isinstance(json_data['agentId'], str), 'Wrong type for attribute: agentId. Expected: str. Got: ' + str(type(json_data['agentId'])) + '.'
       obj.agent_id = json_data['agentId']
@@ -3073,11 +3194,6 @@ class DataSegmentEnd:
     """Convert JSON to type object."""
     obj = DataSegmentEnd()
 
-    expected_json_keys: List[str] = ['content', 'startServerTs']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DataSegmentEnd. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'content' in json_data:
       assert isinstance(json_data['content'], dict), 'Wrong type for attribute: content. Expected: dict. Got: ' + str(type(json_data['content'])) + '.'
       obj.content = DataSegmentContent.from_json(json_data['content'])
@@ -3140,11 +3256,6 @@ class DataSegmentStart:
     """Convert JSON to type object."""
     obj = DataSegmentStart()
 
-    expected_json_keys: List[str] = ['content']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DataSegmentStart. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'content' in json_data:
       assert isinstance(json_data['content'], dict), 'Wrong type for attribute: content. Expected: dict. Got: ' + str(type(json_data['content'])) + '.'
       obj.content = DataSegmentContent.from_json(json_data['content'])
@@ -3194,11 +3305,6 @@ class DeleteObject:
   def from_json(json_data: Dict[str, Any]) -> 'DeleteObject':
     """Convert JSON to type object."""
     obj = DeleteObject()
-
-    expected_json_keys: List[str] = ['id']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DeleteObject. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'id' in json_data:
       assert isinstance(json_data['id'], str), 'Wrong type for attribute: id. Expected: str. Got: ' + str(type(json_data['id'])) + '.'
@@ -3276,11 +3382,6 @@ class Detection:
     """Convert JSON to type object."""
     obj = Detection()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['cameraShift', 'detections', 'source']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Detection. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'cameraShift' in json_data:
       assert isinstance(json_data['cameraShift'], dict), 'Wrong type for attribute: cameraShift. Expected: dict. Got: ' + str(type(json_data['cameraShift'])) + '.'
@@ -3362,11 +3463,6 @@ class DetectionAprilGroupAprilTag:
     obj = DetectionAprilGroupAprilTag()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['corners', 'id']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DetectionAprilGroupAprilTag. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'corners' in json_data:
       assert isinstance(json_data['corners'], list), 'Wrong type for attribute: corners. Expected: list. Got: ' + str(type(json_data['corners'])) + '.'
       json_list = []
@@ -3432,11 +3528,6 @@ class DetectionAprilGroupInfo:
     """Convert JSON to type object."""
     obj = DetectionAprilGroupInfo()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['aprilTags']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DetectionAprilGroupInfo. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'aprilTags' in json_data:
       assert isinstance(json_data['aprilTags'], list), 'Wrong type for attribute: aprilTags. Expected: list. Got: ' + str(type(json_data['aprilTags'])) + '.'
@@ -3550,11 +3641,6 @@ class DetectionEntry:
     obj = DetectionEntry()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['aprilGroup', 'corners', 'extrinsics', 'intrinsics', 'id', 'type']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DetectionEntry. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'aprilGroup' in json_data:
       assert isinstance(json_data['aprilGroup'], dict), 'Wrong type for attribute: aprilGroup. Expected: dict. Got: ' + str(type(json_data['aprilGroup'])) + '.'
       obj.april_group = DetectionAprilGroupInfo.from_json(json_data['aprilGroup'])
@@ -3656,11 +3742,6 @@ class DetectionKey:
     """Convert JSON to type object."""
     obj = DetectionKey()
 
-    expected_json_keys: List[str] = ['id', 'type']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DetectionKey. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'id' in json_data:
       assert isinstance(json_data['id'], str), 'Wrong type for attribute: id. Expected: str. Got: ' + str(type(json_data['id'])) + '.'
       obj.py_id = json_data['id']
@@ -3740,6 +3821,9 @@ class DeviceData:
   # A list containing a camera intrinsics of the form  [cx, cy, fx, fy].
   # Can be left blank or omitted, if intrinsics are unknown.
   color_intrinsics: List[float]
+
+  # The calibration of the camera.
+  camera_calibration: Optional['CameraCalibration']
   # ==============================
 
   # === Fields for dataType color-depth:
@@ -3763,6 +3847,7 @@ class DeviceData:
   # CompressedDepth is a list of compressed files and algorithms used
   # to generate the same.
   compressed_depth: List['CompressedDepth']
+  # (also field camera_calibration)
   # ==============================
 
   # === Fields for dataType key-value:
@@ -4205,7 +4290,7 @@ class DeviceData:
   controller_descriptions: Optional['ControllerDescriptions']
   # ==============================
 
-  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
+  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', camera_calibration: Optional['CameraCalibration'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
     if accept_depth_encoding is None:
       self.accept_depth_encoding = []
     else:
@@ -4232,6 +4317,7 @@ class DeviceData:
     self.board_io_current_a = board_io_current_a
     self.board_temp_c = board_temp_c
     self.calibration_version = calibration_version
+    self.camera_calibration = camera_calibration
     self.client_annotation = client_annotation
     self.client_os = client_os
     self.client_session_uid = client_session_uid
@@ -4502,6 +4588,10 @@ class DeviceData:
     if self.calibration_version:
       assert isinstance(self.calibration_version, str), 'Wrong type for attribute: calibration_version. Expected: str. Got: ' + str(type(self.calibration_version)) + '.'
       json_data['calibrationVersion'] = self.calibration_version
+
+    if self.camera_calibration:
+      assert self.camera_calibration.__class__.__name__ == 'CameraCalibration', 'Wrong type for attribute: camera_calibration. Expected: CameraCalibration. Got: ' + str(type(self.camera_calibration)) + '.'
+      json_data['cameraCalibration'] = self.camera_calibration.to_json()
 
     if self.client_annotation:
       assert self.client_annotation.__class__.__name__ == 'ClientAnnotation', 'Wrong type for attribute: client_annotation. Expected: ClientAnnotation. Got: ' + str(type(self.client_annotation)) + '.'
@@ -5072,6 +5162,8 @@ class DeviceData:
       if self.color:
         proto_color.color = self.color
       proto_color.color_intrinsics.extend(self.color_intrinsics)
+      if self.camera_calibration:
+        proto_color.camera_calibration.CopyFrom(self.camera_calibration.to_proto())
       proto.color.CopyFrom(proto_color)
     if self.data_type == 'color-depth':
       proto_color_depth = logs_pb2.ColorDepth()
@@ -5086,6 +5178,8 @@ class DeviceData:
       if self.uncompressed_depth:
         proto_color_depth.uncompressed_depth = self.uncompressed_depth
       proto_color_depth.compressed_depth.extend([v.to_proto() for v in self.compressed_depth])
+      if self.camera_calibration:
+        proto_color_depth.camera_calibration.CopyFrom(self.camera_calibration.to_proto())
       proto.color_depth.CopyFrom(proto_color_depth)
     if self.data_type == 'key-value':
       proto_key_value = logs_pb2.KeyValue()
@@ -5604,11 +5698,6 @@ class DeviceData:
     obj = DeviceData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'analogBank', 'analogIn', 'analogOut', 'audioRequestMute', 'audioRequestUnmute', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'calibrationVersion', 'clientAnnotation', 'clientOS', 'clientSessionUID', 'code', 'color', 'colorIntrinsics', 'colorTS', 'compressedDepth', 'confidence', 'connectedClients', 'constraintsVersion', 'controllerDescriptions', 'dataType', 'depth', 'depthIntrinsics', 'depthTS', 'detection', 'deviceName', 'deviceType', 'digitalBank', 'digitalIn', 'digitalOut', 'error', 'eventParams', 'experimentToken', 'floatValue', 'force', 'health', 'hint', 'history', 'inhibitFrameSave', 'inhibitFrameSend', 'intValue', 'integerBank', 'intent', 'isEmergencyStopped', 'isObjectDetected', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'key', 'label', 'metricLabels', 'lastTerminatedProgram', 'level', 'localTS', 'machineDescription', 'machineInterfaces', 'message', 'messageLastTimestamps', 'metadata', 'metricValue', 'on', 'operatorType', 'operatorUID', 'pickLabel', 'pickPoints', 'pipelineDescription', 'placeLabel', 'placePosition3D', 'placeQuaternion3D', 'pose', 'position3D', 'predictionType', 'programCounter', 'progress', 'quaternion3D', 'relay', 'remoteTS', 'reportError', 'requestType', 'robotCurrentA', 'robotDexterity', 'robotID', 'robotMode', 'robotName', 'robotPowerState', 'robotPowerStateUpdate', 'robotVoltageV', 'safetyMessage', 'safetyVersion', 'script', 'sendToClients', 'sensorIn', 'seq', 'sessionID', 'simInstanceSegmentation', 'simState', 'startTime', 'state', 'status', 'successType', 'tag', 'taskCode', 'textInstruction', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque', 'transport', 'ts', 'uiVersion', 'uncompressedDepth', 'uploadDepth', 'vacuumLevelPa', 'value', 'webrtcAudioRequest', 'webrtcAudioResponse', 'workcellIOVersion', 'workcellSetupVersion']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DeviceData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acceptDepthEncoding' in json_data:
       assert isinstance(json_data['acceptDepthEncoding'], list), 'Wrong type for attribute: acceptDepthEncoding. Expected: list. Got: ' + str(type(json_data['acceptDepthEncoding'])) + '.'
       json_list = []
@@ -5667,6 +5756,10 @@ class DeviceData:
     if 'calibrationVersion' in json_data:
       assert isinstance(json_data['calibrationVersion'], str), 'Wrong type for attribute: calibrationVersion. Expected: str. Got: ' + str(type(json_data['calibrationVersion'])) + '.'
       obj.calibration_version = json_data['calibrationVersion']
+
+    if 'cameraCalibration' in json_data:
+      assert isinstance(json_data['cameraCalibration'], dict), 'Wrong type for attribute: cameraCalibration. Expected: dict. Got: ' + str(type(json_data['cameraCalibration'])) + '.'
+      obj.camera_calibration = CameraCalibration.from_json(json_data['cameraCalibration'])
 
     if 'clientAnnotation' in json_data:
       assert isinstance(json_data['clientAnnotation'], dict), 'Wrong type for attribute: clientAnnotation. Expected: dict. Got: ' + str(type(json_data['clientAnnotation'])) + '.'
@@ -6297,6 +6390,8 @@ class DeviceData:
         obj.color = proto.color.color
       for obj_color_intrinsics in proto.color.color_intrinsics:
         obj.color_intrinsics.append(obj_color_intrinsics)
+      if proto.color.HasField('camera_calibration'):
+        obj.camera_calibration = CameraCalibration.from_proto(proto.color.camera_calibration)
     if proto.HasField('color_depth'):
       if proto.color_depth.HasField('color'):
         obj.color = proto.color_depth.color
@@ -6312,6 +6407,8 @@ class DeviceData:
         obj.uncompressed_depth = proto.color_depth.uncompressed_depth
       for obj_compressed_depth in proto.color_depth.compressed_depth:
         obj.compressed_depth.append(CompressedDepth.from_proto(obj_compressed_depth))
+      if proto.color_depth.HasField('camera_calibration'):
+        obj.camera_calibration = CameraCalibration.from_proto(proto.color_depth.camera_calibration)
     if proto.HasField('key_value'):
       if proto.key_value.HasField('key'):
         obj.key = proto.key_value.key
@@ -6845,11 +6942,6 @@ class DeviceDataRef:
     """Convert JSON to type object."""
     obj = DeviceDataRef()
 
-    expected_json_keys: List[str] = ['deviceName', 'deviceType', 'seq', 'ts']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DeviceDataRef. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'deviceName' in json_data:
       assert isinstance(json_data['deviceName'], str), 'Wrong type for attribute: deviceName. Expected: str. Got: ' + str(type(json_data['deviceName'])) + '.'
       obj.device_name = json_data['deviceName']
@@ -6950,11 +7042,6 @@ class DigitalBank:
     """Convert JSON to type object."""
     obj = DigitalBank()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['output', 'space', 'start', 'state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid DigitalBank. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'output' in json_data:
       assert isinstance(json_data['output'], bool), 'Wrong type for attribute: output. Expected: bool. Got: ' + str(type(json_data['output'])) + '.'
@@ -7115,11 +7202,6 @@ class ExperimentalCommandData:
     obj = ExperimentalCommandData()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['depthTS', 'deviceName', 'deviceType', 'label', 'pose2D', 'position3D', 'quaternion3D', 'tags', 'userTS']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ExperimentalCommandData. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'depthTS' in json_data:
       assert isinstance(json_data['depthTS'], int), 'Wrong type for attribute: depthTS. Expected: int. Got: ' + str(type(json_data['depthTS'])) + '.'
       obj.depth_ts = json_data['depthTS']
@@ -7233,11 +7315,6 @@ class ForceLimits:
     obj = ForceLimits()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['maximum', 'minimum']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ForceLimits. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'maximum' in json_data:
       assert isinstance(json_data['maximum'], list), 'Wrong type for attribute: maximum. Expected: list. Got: ' + str(type(json_data['maximum'])) + '.'
       json_list = []
@@ -7294,11 +7371,7 @@ class GetAllObjectPoses:
     """Convert JSON to type object."""
     obj = GetAllObjectPoses()
 
-    expected_json_keys: List[str] = []
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid GetAllObjectPoses. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
+    _ = json_data
     return obj
 
   @staticmethod
@@ -7342,11 +7415,6 @@ class GetSegmentedImage:
   def from_json(json_data: Dict[str, Any]) -> 'GetSegmentedImage':
     """Convert JSON to type object."""
     obj = GetSegmentedImage()
-
-    expected_json_keys: List[str] = ['deviceKey']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid GetSegmentedImage. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'deviceKey' in json_data:
       assert isinstance(json_data['deviceKey'], str), 'Wrong type for attribute: deviceKey. Expected: str. Got: ' + str(type(json_data['deviceKey'])) + '.'
@@ -7444,11 +7512,6 @@ class GymAction:
   def from_json(json_data: Dict[str, Any]) -> 'GymAction':
     """Convert JSON to type object."""
     obj = GymAction()
-
-    expected_json_keys: List[str] = ['armActionParams', 'clientAnnotationActionParams', 'deviceName', 'deviceType', 'loggerActionParams', 'synchronous', 'vacuumActionParams']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid GymAction. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'armActionParams' in json_data:
       assert isinstance(json_data['armActionParams'], dict), 'Wrong type for attribute: armActionParams. Expected: dict. Got: ' + str(type(json_data['armActionParams'])) + '.'
@@ -7551,11 +7614,6 @@ class Health:
     """Convert JSON to type object."""
     obj = Health()
 
-    expected_json_keys: List[str] = ['displayName', 'heartBeats', 'intervalLengthMs']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Health. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'displayName' in json_data:
       assert isinstance(json_data['displayName'], str), 'Wrong type for attribute: displayName. Expected: str. Got: ' + str(type(json_data['displayName'])) + '.'
       obj.display_name = json_data['displayName']
@@ -7625,11 +7683,6 @@ class HealthState:
   def from_json(json_data: Dict[str, Any]) -> 'HealthState':
     """Convert JSON to type object."""
     obj = HealthState()
-
-    expected_json_keys: List[str] = ['info', 'ok']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid HealthState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'info' in json_data:
       assert isinstance(json_data['info'], str), 'Wrong type for attribute: info. Expected: str. Got: ' + str(type(json_data['info'])) + '.'
@@ -7766,11 +7819,6 @@ class HeartBeats:
   def from_json(json_data: Dict[str, Any]) -> 'HeartBeats':
     """Convert JSON to type object."""
     obj = HeartBeats()
-
-    expected_json_keys: List[str] = ['anyCamera', 'clientConnected', 'colorCamera', 'depthCamera', 'joints', 'movement', 'noReachScriptFailure', 'notEstopped', 'notPstopped', 'notSafeguardstopped', 'teleopGeneratesMetric']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid HeartBeats. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'anyCamera' in json_data:
       assert isinstance(json_data['anyCamera'], dict), 'Wrong type for attribute: anyCamera. Expected: dict. Got: ' + str(type(json_data['anyCamera'])) + '.'
@@ -7916,11 +7964,6 @@ class History:
     obj = History()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['historyEnd', 'historyStart', 'key', 'values']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid History. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'historyEnd' in json_data:
       assert isinstance(json_data['historyEnd'], int), 'Wrong type for attribute: historyEnd. Expected: int. Got: ' + str(type(json_data['historyEnd'])) + '.'
       obj.history_end = json_data['historyEnd']
@@ -8001,11 +8044,6 @@ class IOState:
     """Convert JSON to type object."""
     obj = IOState()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid IOState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'state' in json_data:
       assert isinstance(json_data['state'], list), 'Wrong type for attribute: state. Expected: list. Got: ' + str(type(json_data['state'])) + '.'
@@ -8092,11 +8130,6 @@ class IntegerBank:
     """Convert JSON to type object."""
     obj = IntegerBank()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['output', 'space', 'start', 'state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid IntegerBank. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'output' in json_data:
       assert isinstance(json_data['output'], bool), 'Wrong type for attribute: output. Expected: bool. Got: ' + str(type(json_data['output'])) + '.'
@@ -8192,11 +8225,6 @@ class IntervalEnd:
     """Convert JSON to type object."""
     obj = IntervalEnd()
 
-    expected_json_keys: List[str] = ['endTS', 'name', 'startTS']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid IntervalEnd. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'endTS' in json_data:
       assert isinstance(json_data['endTS'], int), 'Wrong type for attribute: endTS. Expected: int. Got: ' + str(type(json_data['endTS'])) + '.'
       obj.end_ts = json_data['endTS']
@@ -8259,11 +8287,6 @@ class IntervalStart:
   def from_json(json_data: Dict[str, Any]) -> 'IntervalStart':
     """Convert JSON to type object."""
     obj = IntervalStart()
-
-    expected_json_keys: List[str] = ['name']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid IntervalStart. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'name' in json_data:
       assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
@@ -8337,11 +8360,6 @@ class KeyValue:
   def from_json(json_data: Dict[str, Any]) -> 'KeyValue':
     """Convert JSON to type object."""
     obj = KeyValue()
-
-    expected_json_keys: List[str] = ['floatValue', 'intValue', 'key', 'value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid KeyValue. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'floatValue' in json_data:
       assert isinstance(json_data['floatValue'], float) or isinstance(json_data['floatValue'], int), 'Wrong type for attribute: floatValue. Expected: float. Got: ' + str(type(json_data['floatValue'])) + '.'
@@ -8434,11 +8452,6 @@ class Limits:
     obj = Limits()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['force', 'sensor', 'torque']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Limits. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'force' in json_data:
       assert isinstance(json_data['force'], dict), 'Wrong type for attribute: force. Expected: dict. Got: ' + str(type(json_data['force'])) + '.'
       obj.force = ForceLimits.from_json(json_data['force'])
@@ -8518,11 +8531,6 @@ class LoggerActionParams:
     obj = LoggerActionParams()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['eventParams', 'isStart']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid LoggerActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'eventParams' in json_data:
       assert isinstance(json_data['eventParams'], list), 'Wrong type for attribute: eventParams. Expected: list. Got: ' + str(type(json_data['eventParams'])) + '.'
       json_list = []
@@ -8588,11 +8596,6 @@ class MachineDescription:
     """Convert JSON to type object."""
     obj = MachineDescription()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['interfaces']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MachineDescription. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'interfaces' in json_data:
       assert isinstance(json_data['interfaces'], list), 'Wrong type for attribute: interfaces. Expected: list. Got: ' + str(type(json_data['interfaces'])) + '.'
@@ -8712,11 +8715,6 @@ class MachineInterface:
     obj = MachineInterface()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['dataType', 'deviceName', 'deviceType', 'keys', 'type', 'replaces', 'stopPropagation']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MachineInterface. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
       obj.data_type = json_data['dataType']
@@ -8813,11 +8811,6 @@ class MachineInterfaces:
     obj = MachineInterfaces()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['interfaces']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MachineInterfaces. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'interfaces' in json_data:
       assert isinstance(json_data['interfaces'], list), 'Wrong type for attribute: interfaces. Expected: list. Got: ' + str(type(json_data['interfaces'])) + '.'
       json_list = []
@@ -8869,11 +8862,6 @@ class Measurement:
   def from_json(json_data: Dict[str, Any]) -> 'Measurement':
     """Convert JSON to type object."""
     obj = Measurement()
-
-    expected_json_keys: List[str] = ['seconds']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Measurement. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'seconds' in json_data:
       assert isinstance(json_data['seconds'], float) or isinstance(json_data['seconds'], int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(json_data['seconds'])) + '.'
@@ -8958,11 +8946,6 @@ class MessageLastTimestamp:
   def from_json(json_data: Dict[str, Any]) -> 'MessageLastTimestamp':
     """Convert JSON to type object."""
     obj = MessageLastTimestamp()
-
-    expected_json_keys: List[str] = ['dataType', 'deviceName', 'deviceType', 'key', 'LastTS']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MessageLastTimestamp. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
@@ -9068,11 +9051,6 @@ class Metadata:
     """Convert JSON to type object."""
     obj = Metadata()
 
-    expected_json_keys: List[str] = ['beginFile', 'comment', 'endFile', 'realTimeLogs']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Metadata. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'beginFile' in json_data:
       assert isinstance(json_data['beginFile'], bool), 'Wrong type for attribute: beginFile. Expected: bool. Got: ' + str(type(json_data['beginFile'])) + '.'
       obj.begin_file = json_data['beginFile']
@@ -9156,11 +9134,6 @@ class Metric:
     obj = Metric()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['metricLabels', 'metricValue']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Metric. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'metricLabels' in json_data:
       assert isinstance(json_data['metricLabels'], list), 'Wrong type for attribute: metricLabels. Expected: list. Got: ' + str(type(json_data['metricLabels'])) + '.'
       json_list = []
@@ -9225,11 +9198,6 @@ class MoveJPathArgs:
     """Convert JSON to type object."""
     obj = MoveJPathArgs()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['waypoints']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MoveJPathArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'waypoints' in json_data:
       assert isinstance(json_data['waypoints'], list), 'Wrong type for attribute: waypoints. Expected: list. Got: ' + str(type(json_data['waypoints'])) + '.'
@@ -9409,11 +9377,6 @@ class MoveJWaypointArgs:
     obj = MoveJWaypointArgs()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceleration', 'blendRadius', 'limits', 'rotation', 'servo', 'servoGain', 'servoLookaheadTimeSecs', 'servoTSecs', 'velocity']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MoveJWaypointArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acceleration' in json_data:
       assert isinstance(json_data['acceleration'], float) or isinstance(json_data['acceleration'], int), 'Wrong type for attribute: acceleration. Expected: float. Got: ' + str(type(json_data['acceleration'])) + '.'
       obj.acceleration = json_data['acceleration']
@@ -9520,11 +9483,6 @@ class MoveLPathArgs:
     """Convert JSON to type object."""
     obj = MoveLPathArgs()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['waypoints']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MoveLPathArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'waypoints' in json_data:
       assert isinstance(json_data['waypoints'], list), 'Wrong type for attribute: waypoints. Expected: list. Got: ' + str(type(json_data['waypoints'])) + '.'
@@ -9633,11 +9591,6 @@ class MoveLWaypointArgs:
     obj = MoveLWaypointArgs()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceleration', 'blendRadius', 'limits', 'rotation', 'servo', 'velocity']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MoveLWaypointArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acceleration' in json_data:
       assert isinstance(json_data['acceleration'], float) or isinstance(json_data['acceleration'], int), 'Wrong type for attribute: acceleration. Expected: float. Got: ' + str(type(json_data['acceleration'])) + '.'
       obj.acceleration = json_data['acceleration']
@@ -9726,11 +9679,6 @@ class MovePosePathArgs:
     """Convert JSON to type object."""
     obj = MovePosePathArgs()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['waypoints']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MovePosePathArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'waypoints' in json_data:
       assert isinstance(json_data['waypoints'], list), 'Wrong type for attribute: waypoints. Expected: list. Got: ' + str(type(json_data['waypoints'])) + '.'
@@ -9850,11 +9798,6 @@ class MovePoseWaypointArgs:
   def from_json(json_data: Dict[str, Any]) -> 'MovePoseWaypointArgs':
     """Convert JSON to type object."""
     obj = MovePoseWaypointArgs()
-
-    expected_json_keys: List[str] = ['acceleration', 'blendRadius', 'limits', 'linear', 'rotation', 'translation', 'velocity']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid MovePoseWaypointArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'acceleration' in json_data:
       assert isinstance(json_data['acceleration'], float) or isinstance(json_data['acceleration'], int), 'Wrong type for attribute: acceleration. Expected: float. Got: ' + str(type(json_data['acceleration'])) + '.'
@@ -9977,11 +9920,6 @@ class ObjectState:
     """Convert JSON to type object."""
     obj = ObjectState()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['linearVel', 'objectName', 'poseXYZXYZW', 'id']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ObjectState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'linearVel' in json_data:
       assert isinstance(json_data['linearVel'], list), 'Wrong type for attribute: linearVel. Expected: list. Got: ' + str(type(json_data['linearVel'])) + '.'
@@ -10185,11 +10123,6 @@ class PickLabel:
     obj = PickLabel()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['depthTS', 'deviceDataRef', 'intent', 'label', 'pickID', 'pose2D', 'position3D', 'quaternion3D', 'successType', 'tags', 'taskCode', 'userDataRef']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid PickLabel. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'depthTS' in json_data:
       assert isinstance(json_data['depthTS'], int), 'Wrong type for attribute: depthTS. Expected: int. Got: ' + str(type(json_data['depthTS'])) + '.'
       obj.depth_ts = json_data['depthTS']
@@ -10331,11 +10264,6 @@ class PickPoint:
     """Convert JSON to type object."""
     obj = PickPoint()
 
-    expected_json_keys: List[str] = ['x', 'y']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid PickPoint. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'x' in json_data:
       assert isinstance(json_data['x'], float) or isinstance(json_data['x'], int), 'Wrong type for attribute: x. Expected: float. Got: ' + str(type(json_data['x'])) + '.'
       obj.x = json_data['x']
@@ -10398,11 +10326,6 @@ class PipelineDescription:
     """Convert JSON to type object."""
     obj = PipelineDescription()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['descriptions']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid PipelineDescription. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'descriptions' in json_data:
       assert isinstance(json_data['descriptions'], list), 'Wrong type for attribute: descriptions. Expected: list. Got: ' + str(type(json_data['descriptions'])) + '.'
@@ -10498,11 +10421,6 @@ class PlaceLabel:
     """Convert JSON to type object."""
     obj = PlaceLabel()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['label', 'pose2D', 'position3D', 'quaternion3D']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid PlaceLabel. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'label' in json_data:
       assert isinstance(json_data['label'], str), 'Wrong type for attribute: label. Expected: str. Got: ' + str(type(json_data['label'])) + '.'
@@ -10613,11 +10531,6 @@ class PointMeasurement:
     """Convert JSON to type object."""
     obj = PointMeasurement()
 
-    expected_json_keys: List[str] = ['name', 'space', 'timestamp', 'value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid PointMeasurement. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'name' in json_data:
       assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
       obj.name = json_data['name']
@@ -10692,11 +10605,6 @@ class Pose2d:
   def from_json(json_data: Dict[str, Any]) -> 'Pose2d':
     """Convert JSON to type object."""
     obj = Pose2d()
-
-    expected_json_keys: List[str] = ['x', 'y']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Pose2d. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'x' in json_data:
       assert isinstance(json_data['x'], float) or isinstance(json_data['x'], int), 'Wrong type for attribute: x. Expected: float. Got: ' + str(type(json_data['x'])) + '.'
@@ -10777,11 +10685,6 @@ class Quaternion3d:
     """Convert JSON to type object."""
     obj = Quaternion3d()
 
-    expected_json_keys: List[str] = ['w', 'x', 'y', 'z']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Quaternion3d. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'w' in json_data:
       assert isinstance(json_data['w'], float) or isinstance(json_data['w'], int), 'Wrong type for attribute: w. Expected: float. Got: ' + str(type(json_data['w'])) + '.'
       obj.w = json_data['w']
@@ -10850,11 +10753,6 @@ class RawArgs:
   def from_json(json_data: Dict[str, Any]) -> 'RawArgs':
     """Convert JSON to type object."""
     obj = RawArgs()
-
-    expected_json_keys: List[str] = ['text']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid RawArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'text' in json_data:
       assert isinstance(json_data['text'], str), 'Wrong type for attribute: text. Expected: str. Got: ' + str(type(json_data['text'])) + '.'
@@ -10953,11 +10851,6 @@ class ReachScript:
     """Convert JSON to type object."""
     obj = ReachScript()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['calibrationRequirement', 'commands', 'preemptive', 'preemptiveReason', 'version']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScript. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'calibrationRequirement' in json_data:
       assert isinstance(json_data['calibrationRequirement'], dict), 'Wrong type for attribute: calibrationRequirement. Expected: dict. Got: ' + str(type(json_data['calibrationRequirement'])) + '.'
@@ -11068,11 +10961,6 @@ class ReachScriptBooleanExpression:
     """Convert JSON to type object."""
     obj = ReachScriptBooleanExpression()
 
-    expected_json_keys: List[str] = ['arg1', 'arg2', 'op']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptBooleanExpression. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'arg1' in json_data:
       assert isinstance(json_data['arg1'], dict), 'Wrong type for attribute: arg1. Expected: dict. Got: ' + str(type(json_data['arg1'])) + '.'
       obj.arg1 = ReachScriptExpression.from_json(json_data['arg1'])
@@ -11136,11 +11024,6 @@ class ReachScriptCalibrationRequirement:
   def from_json(json_data: Dict[str, Any]) -> 'ReachScriptCalibrationRequirement':
     """Convert JSON to type object."""
     obj = ReachScriptCalibrationRequirement()
-
-    expected_json_keys: List[str] = ['allowUncalibrated']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptCalibrationRequirement. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'allowUncalibrated' in json_data:
       assert isinstance(json_data['allowUncalibrated'], bool), 'Wrong type for attribute: allowUncalibrated. Expected: bool. Got: ' + str(type(json_data['allowUncalibrated'])) + '.'
@@ -11220,11 +11103,6 @@ class ReachScriptCapability:
     """Convert JSON to type object."""
     obj = ReachScriptCapability()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['name', 'type', 'state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptCapability. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'name' in json_data:
       assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
@@ -11418,11 +11296,6 @@ class ReachScriptCommand:
     """Convert JSON to type object."""
     obj = ReachScriptCommand()
 
-    expected_json_keys: List[str] = ['acquireImage', 'controllerName', 'movejPath', 'movelPath', 'movePosePath', 'raw', 'setAnalogOut', 'setBlendRadius', 'setDigitalOut', 'setOutput', 'setRadialSpeed', 'setToolDigitalOut', 'sleep', 'stopJ', 'sync', 'wait']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptCommand. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acquireImage' in json_data:
       assert isinstance(json_data['acquireImage'], dict), 'Wrong type for attribute: acquireImage. Expected: dict. Got: ' + str(type(json_data['acquireImage'])) + '.'
       obj.acquire_image = AcquireImageArgs.from_json(json_data['acquireImage'])
@@ -11572,11 +11445,6 @@ class ReachScriptConst:
     """Convert JSON to type object."""
     obj = ReachScriptConst()
 
-    expected_json_keys: List[str] = ['boolValue', 'capability']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptConst. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'boolValue' in json_data:
       assert isinstance(json_data['boolValue'], bool), 'Wrong type for attribute: boolValue. Expected: bool. Got: ' + str(type(json_data['boolValue'])) + '.'
       obj.bool_value = json_data['boolValue']
@@ -11654,11 +11522,6 @@ class ReachScriptExpression:
     """Convert JSON to type object."""
     obj = ReachScriptExpression()
 
-    expected_json_keys: List[str] = ['boolExpr', 'constExpr', 'varExpr']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptExpression. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'boolExpr' in json_data:
       assert isinstance(json_data['boolExpr'], dict), 'Wrong type for attribute: boolExpr. Expected: dict. Got: ' + str(type(json_data['boolExpr'])) + '.'
       obj.bool_expr = ReachScriptBooleanExpression.from_json(json_data['boolExpr'])
@@ -11723,11 +11586,6 @@ class ReachScriptVar:
     """Convert JSON to type object."""
     obj = ReachScriptVar()
 
-    expected_json_keys: List[str] = ['capability']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReachScriptVar. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'capability' in json_data:
       assert isinstance(json_data['capability'], dict), 'Wrong type for attribute: capability. Expected: dict. Got: ' + str(type(json_data['capability'])) + '.'
       obj.capability = ReachScriptCapability.from_json(json_data['capability'])
@@ -11788,11 +11646,6 @@ class ReportError:
     obj = ReportError()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['error', 'tags']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ReportError. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'error' in json_data:
       assert isinstance(json_data['error'], str), 'Wrong type for attribute: error. Expected: str. Got: ' + str(type(json_data['error'])) + '.'
       obj.error = json_data['error']
@@ -11850,11 +11703,6 @@ class RobotPowerState:
   def from_json(json_data: Dict[str, Any]) -> 'RobotPowerState':
     """Convert JSON to type object."""
     obj = RobotPowerState()
-
-    expected_json_keys: List[str] = ['isRobotPowerOn']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid RobotPowerState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'isRobotPowerOn' in json_data:
       assert isinstance(json_data['isRobotPowerOn'], bool), 'Wrong type for attribute: isRobotPowerOn. Expected: bool. Got: ' + str(type(json_data['isRobotPowerOn'])) + '.'
@@ -12315,11 +12163,6 @@ class RobotState:
     obj = RobotState()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid RobotState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'analogBank' in json_data:
       assert isinstance(json_data['analogBank'], list), 'Wrong type for attribute: analogBank. Expected: list. Got: ' + str(type(json_data['analogBank'])) + '.'
       json_list = []
@@ -12704,11 +12547,6 @@ class RobotStopState:
     """Convert JSON to type object."""
     obj = RobotStopState()
 
-    expected_json_keys: List[str] = ['isEmergencyStopped', 'isProtectiveStopped', 'isReducedMode', 'isSafeguardStopped', 'safetyMessage']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid RobotStopState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'isEmergencyStopped' in json_data:
       assert isinstance(json_data['isEmergencyStopped'], bool), 'Wrong type for attribute: isEmergencyStopped. Expected: bool. Got: ' + str(type(json_data['isEmergencyStopped'])) + '.'
       obj.is_emergency_stopped = json_data['isEmergencyStopped']
@@ -12792,11 +12630,6 @@ class SendToClient:
   def from_json(json_data: Dict[str, Any]) -> 'SendToClient':
     """Convert JSON to type object."""
     obj = SendToClient()
-
-    expected_json_keys: List[str] = ['tag', 'uid']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SendToClient. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'tag' in json_data:
       assert isinstance(json_data['tag'], str), 'Wrong type for attribute: tag. Expected: str. Got: ' + str(type(json_data['tag'])) + '.'
@@ -12884,11 +12717,6 @@ class SensorLimits:
   def from_json(json_data: Dict[str, Any]) -> 'SensorLimits':
     """Convert JSON to type object."""
     obj = SensorLimits()
-
-    expected_json_keys: List[str] = ['deviceName', 'deviceType', 'maximum', 'minimum', 'value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SensorLimits. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'deviceName' in json_data:
       assert isinstance(json_data['deviceName'], str), 'Wrong type for attribute: deviceName. Expected: str. Got: ' + str(type(json_data['deviceName'])) + '.'
@@ -13113,11 +12941,6 @@ class SessionInfo:
     obj = SessionInfo()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['acceptDepthEncoding', 'actionsetsVersion', 'calibrationVersion', 'clientOS', 'clientSessionUID', 'constraintsVersion', 'operatorType', 'operatorUID', 'relay', 'robotName', 'safetyVersion', 'sessionID', 'startTime', 'transport', 'uiVersion', 'workcellIOVersion', 'workcellSetupVersion']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SessionInfo. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'acceptDepthEncoding' in json_data:
       assert isinstance(json_data['acceptDepthEncoding'], list), 'Wrong type for attribute: acceptDepthEncoding. Expected: list. Got: ' + str(type(json_data['acceptDepthEncoding'])) + '.'
       json_list = []
@@ -13275,11 +13098,6 @@ class SetAnalogOutArgs:
     """Convert JSON to type object."""
     obj = SetAnalogOutArgs()
 
-    expected_json_keys: List[str] = ['output', 'value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetAnalogOutArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'output' in json_data:
       assert isinstance(json_data['output'], int), 'Wrong type for attribute: output. Expected: int. Got: ' + str(type(json_data['output'])) + '.'
       obj.output = json_data['output']
@@ -13334,11 +13152,6 @@ class SetBlendRadiusArgs:
   def from_json(json_data: Dict[str, Any]) -> 'SetBlendRadiusArgs':
     """Convert JSON to type object."""
     obj = SetBlendRadiusArgs()
-
-    expected_json_keys: List[str] = ['radius']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetBlendRadiusArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'radius' in json_data:
       assert isinstance(json_data['radius'], float) or isinstance(json_data['radius'], int), 'Wrong type for attribute: radius. Expected: float. Got: ' + str(type(json_data['radius'])) + '.'
@@ -13416,11 +13229,6 @@ class SetCameraIntrinsics:
     """Convert JSON to type object."""
     obj = SetCameraIntrinsics()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['farClip', 'intrinsics', 'nearClip', 'id']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetCameraIntrinsics. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'farClip' in json_data:
       assert isinstance(json_data['farClip'], float) or isinstance(json_data['farClip'], int), 'Wrong type for attribute: farClip. Expected: float. Got: ' + str(type(json_data['farClip'])) + '.'
@@ -13501,11 +13309,6 @@ class SetDigitalOutArgs:
     """Convert JSON to type object."""
     obj = SetDigitalOutArgs()
 
-    expected_json_keys: List[str] = ['output', 'value']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetDigitalOutArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'output' in json_data:
       assert isinstance(json_data['output'], int), 'Wrong type for attribute: output. Expected: int. Got: ' + str(type(json_data['output'])) + '.'
       obj.output = json_data['output']
@@ -13572,11 +13375,6 @@ class SetObjectPose:
     """Convert JSON to type object."""
     obj = SetObjectPose()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['poseXYZXYZW', 'id']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetObjectPose. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'poseXYZXYZW' in json_data:
       assert isinstance(json_data['poseXYZXYZW'], list), 'Wrong type for attribute: poseXYZXYZW. Expected: list. Got: ' + str(type(json_data['poseXYZXYZW'])) + '.'
@@ -13661,11 +13459,6 @@ class SetOutput:
     obj = SetOutput()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['args', 'name', 'type']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetOutput. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'args' in json_data:
       assert isinstance(json_data['args'], list), 'Wrong type for attribute: args. Expected: list. Got: ' + str(type(json_data['args'])) + '.'
       json_list = []
@@ -13738,11 +13531,6 @@ class SetRadialSpeedArgs:
   def from_json(json_data: Dict[str, Any]) -> 'SetRadialSpeedArgs':
     """Convert JSON to type object."""
     obj = SetRadialSpeedArgs()
-
-    expected_json_keys: List[str] = ['acceleration', 'velocity']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SetRadialSpeedArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'acceleration' in json_data:
       assert isinstance(json_data['acceleration'], float) or isinstance(json_data['acceleration'], int), 'Wrong type for attribute: acceleration. Expected: float. Got: ' + str(type(json_data['acceleration'])) + '.'
@@ -13833,11 +13621,6 @@ class ShiftPerDetection:
   def from_json(json_data: Dict[str, Any]) -> 'ShiftPerDetection':
     """Convert JSON to type object."""
     obj = ShiftPerDetection()
-
-    expected_json_keys: List[str] = ['detectionKey', 'isObjectDetected', 'shiftAmount', 'shiftType']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ShiftPerDetection. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'detectionKey' in json_data:
       assert isinstance(json_data['detectionKey'], dict), 'Wrong type for attribute: detectionKey. Expected: dict. Got: ' + str(type(json_data['detectionKey'])) + '.'
@@ -13946,11 +13729,6 @@ class SimAction:
   def from_json(json_data: Dict[str, Any]) -> 'SimAction':
     """Convert JSON to type object."""
     obj = SimAction()
-
-    expected_json_keys: List[str] = ['addObject', 'deleteObject', 'getAllObjectPoses', 'getSegmentedImage', 'setCameraIntrinsics', 'setObjectPose']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SimAction. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'addObject' in json_data:
       assert isinstance(json_data['addObject'], dict), 'Wrong type for attribute: addObject. Expected: dict. Got: ' + str(type(json_data['addObject'])) + '.'
@@ -14062,11 +13840,6 @@ class SimInstanceSegmentation:
     obj = SimInstanceSegmentation()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['imagePath', 'relation', 'simTS']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SimInstanceSegmentation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'imagePath' in json_data:
       assert isinstance(json_data['imagePath'], str), 'Wrong type for attribute: imagePath. Expected: str. Got: ' + str(type(json_data['imagePath'])) + '.'
       obj.image_path = json_data['imagePath']
@@ -14152,11 +13925,6 @@ class SimState:
     obj = SimState()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['objectState', 'simTS']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SimState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'objectState' in json_data:
       assert isinstance(json_data['objectState'], list), 'Wrong type for attribute: objectState. Expected: list. Got: ' + str(type(json_data['objectState'])) + '.'
       json_list = []
@@ -14216,11 +13984,6 @@ class SleepArgs:
   def from_json(json_data: Dict[str, Any]) -> 'SleepArgs':
     """Convert JSON to type object."""
     obj = SleepArgs()
-
-    expected_json_keys: List[str] = ['seconds']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SleepArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'seconds' in json_data:
       assert isinstance(json_data['seconds'], float) or isinstance(json_data['seconds'], int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(json_data['seconds'])) + '.'
@@ -14396,11 +14159,6 @@ class Snapshot:
     obj = Snapshot()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['deviceDataRefs', 'gymActions', 'gymDone', 'gymEnvId', 'gymEpisode', 'gymReward', 'gymRunId', 'gymServerTS', 'gymStep', 'responses', 'source']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Snapshot. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'deviceDataRefs' in json_data:
       assert isinstance(json_data['deviceDataRefs'], list), 'Wrong type for attribute: deviceDataRefs. Expected: list. Got: ' + str(type(json_data['deviceDataRefs'])) + '.'
       json_list = []
@@ -14512,11 +14270,7 @@ class SnapshotAnnotation:
     """Convert JSON to type object."""
     obj = SnapshotAnnotation()
 
-    expected_json_keys: List[str] = []
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SnapshotAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
+    _ = json_data
     return obj
 
   @staticmethod
@@ -14591,11 +14345,6 @@ class SnapshotResponse:
   def from_json(json_data: Dict[str, Any]) -> 'SnapshotResponse':
     """Convert JSON to type object."""
     obj = SnapshotResponse()
-
-    expected_json_keys: List[str] = ['cid', 'deviceDataRef', 'gymConfigName', 'gymElementType', 'status']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SnapshotResponse. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'cid' in json_data:
       assert isinstance(json_data['cid'], int), 'Wrong type for attribute: cid. Expected: int. Got: ' + str(type(json_data['cid'])) + '.'
@@ -14703,11 +14452,6 @@ class SourceImage:
   def from_json(json_data: Dict[str, Any]) -> 'SourceImage':
     """Convert JSON to type object."""
     obj = SourceImage()
-
-    expected_json_keys: List[str] = ['dataType', 'deviceName', 'deviceType', 'ts']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SourceImage. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
@@ -14818,11 +14562,6 @@ class Status:
     """Convert JSON to type object."""
     obj = Status()
 
-    expected_json_keys: List[str] = ['code', 'error', 'message', 'progress', 'script', 'status']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Status. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'code' in json_data:
       assert isinstance(json_data['code'], int), 'Wrong type for attribute: code. Expected: int. Got: ' + str(type(json_data['code'])) + '.'
       obj.code = json_data['code']
@@ -14903,11 +14642,6 @@ class StopJArgs:
   def from_json(json_data: Dict[str, Any]) -> 'StopJArgs':
     """Convert JSON to type object."""
     obj = StopJArgs()
-
-    expected_json_keys: List[str] = ['deceleration']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid StopJArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'deceleration' in json_data:
       assert isinstance(json_data['deceleration'], float) or isinstance(json_data['deceleration'], int), 'Wrong type for attribute: deceleration. Expected: float. Got: ' + str(type(json_data['deceleration'])) + '.'
@@ -14991,11 +14725,6 @@ class StreamRequest:
     """Convert JSON to type object."""
     obj = StreamRequest()
 
-    expected_json_keys: List[str] = ['dataType', 'deviceName', 'deviceType', 'maxRate']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid StreamRequest. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
       obj.data_type = json_data['dataType']
@@ -15065,11 +14794,6 @@ class SyncArgs:
     """Convert JSON to type object."""
     obj = SyncArgs()
 
-    expected_json_keys: List[str] = ['seconds']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid SyncArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'seconds' in json_data:
       assert isinstance(json_data['seconds'], float) or isinstance(json_data['seconds'], int), 'Wrong type for attribute: seconds. Expected: float. Got: ' + str(type(json_data['seconds'])) + '.'
       obj.seconds = json_data['seconds']
@@ -15131,11 +14855,6 @@ class TextAnnotation:
   def from_json(json_data: Dict[str, Any]) -> 'TextAnnotation':
     """Convert JSON to type object."""
     obj = TextAnnotation()
-
-    expected_json_keys: List[str] = ['category', 'text']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid TextAnnotation. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'category' in json_data:
       assert isinstance(json_data['category'], str), 'Wrong type for attribute: category. Expected: str. Got: ' + str(type(json_data['category'])) + '.'
@@ -15247,11 +14966,6 @@ class TextInstruction:
     """Convert JSON to type object."""
     obj = TextInstruction()
 
-    expected_json_keys: List[str] = ['instruction', 'intent', 'successDetection', 'successType', 'supertaskID', 'uid']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid TextInstruction. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'instruction' in json_data:
       assert isinstance(json_data['instruction'], str), 'Wrong type for attribute: instruction. Expected: str. Got: ' + str(type(json_data['instruction'])) + '.'
       obj.instruction = json_data['instruction']
@@ -15340,11 +15054,6 @@ class ToolState:
     """Convert JSON to type object."""
     obj = ToolState()
 
-    expected_json_keys: List[str] = ['on', 'vacuumLevelPa']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid ToolState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'on' in json_data:
       assert isinstance(json_data['on'], bool), 'Wrong type for attribute: on. Expected: bool. Got: ' + str(type(json_data['on'])) + '.'
       obj.on = json_data['on']
@@ -15412,11 +15121,6 @@ class TorqueLimits:
     """Convert JSON to type object."""
     obj = TorqueLimits()
     json_list: List[Any]
-
-    expected_json_keys: List[str] = ['maximum', 'minimum']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid TorqueLimits. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'maximum' in json_data:
       assert isinstance(json_data['maximum'], list), 'Wrong type for attribute: maximum. Expected: list. Got: ' + str(type(json_data['maximum'])) + '.'
@@ -15888,11 +15592,6 @@ class UrState:
     obj = UrState()
     json_list: List[Any]
 
-    expected_json_keys: List[str] = ['analogBank', 'analogIn', 'analogOut', 'baseTOrigin', 'boardIOCurrentA', 'boardTempC', 'digitalBank', 'digitalIn', 'digitalOut', 'force', 'integerBank', 'isEmergencyStopped', 'isProgramRunning', 'isProtectiveStopped', 'isReducedMode', 'isRobotPowerOn', 'isSafeguardStopped', 'jointCurrentsA', 'jointTempsC', 'jointVoltagesV', 'joints', 'lastTerminatedProgram', 'pose', 'programCounter', 'robotCurrentA', 'robotDexterity', 'robotMode', 'robotVoltageV', 'safetyMessage', 'sensorIn', 'tipAdjustTBase', 'tipTBase', 'toolAnalogIn', 'toolAnalogOut', 'toolCurrentA', 'toolDigitalIn', 'toolDigitalOut', 'toolTempC', 'toolVoltageV', 'torque']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid UrState. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'analogBank' in json_data:
       assert isinstance(json_data['analogBank'], list), 'Wrong type for attribute: analogBank. Expected: list. Got: ' + str(type(json_data['analogBank'])) + '.'
       json_list = []
@@ -16243,11 +15942,6 @@ class VacuumActionParams:
     """Convert JSON to type object."""
     obj = VacuumActionParams()
 
-    expected_json_keys: List[str] = ['state']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid VacuumActionParams. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'state' in json_data:
       assert isinstance(json_data['state'], int), 'Wrong type for attribute: state. Expected: int. Got: ' + str(type(json_data['state'])) + '.'
       obj.state = json_data['state']
@@ -16312,11 +16006,6 @@ class Vec3d:
   def from_json(json_data: Dict[str, Any]) -> 'Vec3d':
     """Convert JSON to type object."""
     obj = Vec3d()
-
-    expected_json_keys: List[str] = ['x', 'y', 'z']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid Vec3d. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'x' in json_data:
       assert isinstance(json_data['x'], float) or isinstance(json_data['x'], int), 'Wrong type for attribute: x. Expected: float. Got: ' + str(type(json_data['x'])) + '.'
@@ -16401,11 +16090,6 @@ class WaitArgs:
     """Convert JSON to type object."""
     obj = WaitArgs()
 
-    expected_json_keys: List[str] = ['expr', 'timeoutAction', 'timeoutSeconds']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid WaitArgs. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'expr' in json_data:
       assert isinstance(json_data['expr'], dict), 'Wrong type for attribute: expr. Expected: dict. Got: ' + str(type(json_data['expr'])) + '.'
       obj.expr = ReachScriptBooleanExpression.from_json(json_data['expr'])
@@ -16486,11 +16170,6 @@ class WaitTimeoutAction:
     """Convert JSON to type object."""
     obj = WaitTimeoutAction()
 
-    expected_json_keys: List[str] = ['abortMessage', 'type']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid WaitTimeoutAction. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'abortMessage' in json_data:
       assert isinstance(json_data['abortMessage'], str), 'Wrong type for attribute: abortMessage. Expected: str. Got: ' + str(type(json_data['abortMessage'])) + '.'
       obj.abort_message = json_data['abortMessage']
@@ -16556,11 +16235,6 @@ class WebrtcAudioRequest:
     """Convert JSON to type object."""
     obj = WebrtcAudioRequest()
 
-    expected_json_keys: List[str] = ['microphoneUnmute', 'speakerUnmute']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid WebrtcAudioRequest. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
-
     if 'microphoneUnmute' in json_data:
       assert isinstance(json_data['microphoneUnmute'], bool), 'Wrong type for attribute: microphoneUnmute. Expected: bool. Got: ' + str(type(json_data['microphoneUnmute'])) + '.'
       obj.microphone_unmute = json_data['microphoneUnmute']
@@ -16616,11 +16290,6 @@ class WebrtcAudioResponse:
   def from_json(json_data: Dict[str, Any]) -> 'WebrtcAudioResponse':
     """Convert JSON to type object."""
     obj = WebrtcAudioResponse()
-
-    expected_json_keys: List[str] = ['success']
-
-    if not set(json_data.keys()).issubset(set(expected_json_keys)):
-      raise ValueError('JSON object is not a valid WebrtcAudioResponse. keys found: ' + str(json_data.keys()) + ', valid keys: ' + str(expected_json_keys))
 
     if 'success' in json_data:
       assert isinstance(json_data['success'], bool), 'Wrong type for attribute: success. Expected: bool. Got: ' + str(type(json_data['success'])) + '.'

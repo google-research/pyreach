@@ -108,7 +108,7 @@ class HostMock(host.Host):
 
   def is_closed(self) -> bool:
     """Determine if the host is closed."""
-    raise NotImplementedError
+    return False
 
   def reset(self) -> None:
     """Reset the host."""

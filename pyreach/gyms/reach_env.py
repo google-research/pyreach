@@ -436,6 +436,8 @@ class ReachEnv(gym.Env):  # type: ignore
     """
     action_list: List[lib_snapshot.SnapshotGymAction] = []
     with self._timers.select({"!agent*", "gym.step"}):
+      if self._host.is_closed():
+        raise pyreach.PyReachError("Host is no longer open")
       # Perform the actual action for each sub device.
       with self._timers.select({"gym.action"}):
         assert isinstance(action, Dict)
@@ -527,6 +529,8 @@ class ReachEnv(gym.Env):  # type: ignore
       Returns the next Gym Observation as a Gym Dict Space.
     """
     with self._timers.select({"!agent*", "gym.reset"}):
+      if self._host.is_closed():
+        raise pyreach.PyReachError("Host is no longer open")
       # Get the next observation.
       snapshot: Optional[lib_snapshot.Snapshot] = None
       if self._host.playback:

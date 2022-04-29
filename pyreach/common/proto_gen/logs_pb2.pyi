@@ -2534,6 +2534,73 @@ class CapabilityState(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["float_value",b"float_value","int_value",b"int_value","pin",b"pin"]) -> None: ...
 global___CapabilityState = CapabilityState
 
+class CameraCalibration(google.protobuf.message.Message):
+    """CameraCalibration represents the calibration of a camera."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    INTRINSICS_FIELD_NUMBER: builtins.int
+    INTRINSICS_RESIDUAL_FIELD_NUMBER: builtins.int
+    LENS_MODEL_FIELD_NUMBER: builtins.int
+    CALIBRATED_WIDTH_FIELD_NUMBER: builtins.int
+    CALIBRATED_HEIGHT_FIELD_NUMBER: builtins.int
+    EXTRINSICS_FIELD_NUMBER: builtins.int
+    EXTRINSICS_RESIDUAL_FIELD_NUMBER: builtins.int
+    DISTORTION_FIELD_NUMBER: builtins.int
+    DISTORTION_DEPTH_FIELD_NUMBER: builtins.int
+    CAMERA_T_ORIGIN_FIELD_NUMBER: builtins.int
+    @property
+    def intrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """Camera intrinsics values."""
+        pass
+    intrinsics_residual: builtins.float
+    """Residual value for intrinsics optimization"""
+
+    lens_model: typing.Text
+    """Lens model for the camera (generally "pinhole")."""
+
+    calibrated_width: builtins.int
+    """Calibrated width"""
+
+    calibrated_height: builtins.int
+    """Calibrated height"""
+
+    @property
+    def extrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """Camera pose, 6 numbers: x, y, z, rx, ry, rz."""
+        pass
+    extrinsics_residual: builtins.float
+    """Residual value for extrinsics optimization"""
+
+    @property
+    def distortion(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """Distortion of 5 coefficients from calibration.json"""
+        pass
+    @property
+    def distortion_depth(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """Distortion of 8 coefficients from calibration.json for the depth. Only
+        for depth cameras.
+        """
+        pass
+    @property
+    def camera_t_origin(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
+        """Camera pose in the origin frame, x, y, z, rx, ry, rz."""
+        pass
+    def __init__(self,
+        *,
+        intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        intrinsics_residual: typing.Optional[builtins.float] = ...,
+        lens_model: typing.Optional[typing.Text] = ...,
+        calibrated_width: typing.Optional[builtins.int] = ...,
+        calibrated_height: typing.Optional[builtins.int] = ...,
+        extrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        extrinsics_residual: typing.Optional[builtins.float] = ...,
+        distortion: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        distortion_depth: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        camera_t_origin: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","extrinsics_residual",b"extrinsics_residual","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","camera_t_origin",b"camera_t_origin","distortion",b"distortion","distortion_depth",b"distortion_depth","extrinsics",b"extrinsics","extrinsics_residual",b"extrinsics_residual","intrinsics",b"intrinsics","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> None: ...
+global___CameraCalibration = CameraCalibration
+
 class Color(google.protobuf.message.Message):
     """Color represents data from dataType == "color"."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -2541,6 +2608,7 @@ class Color(google.protobuf.message.Message):
     COLOR_SSOT_KEY_FIELD_NUMBER: builtins.int
     COLOR_INTRINSICS_FIELD_NUMBER: builtins.int
     COLOR_DATA_FIELD_NUMBER: builtins.int
+    CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
     color: typing.Text
     """A reference to a color image.
     In the JSON world, this is a path to the image file in the GCS bucket.
@@ -2565,15 +2633,20 @@ class Color(google.protobuf.message.Message):
     JPG) of the binary data in "color_data".
     """
 
+    @property
+    def camera_calibration(self) -> global___CameraCalibration:
+        """The calibration of the camera."""
+        pass
     def __init__(self,
         *,
         color: typing.Optional[typing.Text] = ...,
         color_ssot_key: typing.Optional[typing.Text] = ...,
         color_intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
         color_data: typing.Optional[builtins.bytes] = ...,
+        camera_calibration: typing.Optional[global___CameraCalibration] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key"]) -> None: ...
 global___Color = Color
 
 class ColorDepth(google.protobuf.message.Message):
@@ -2590,6 +2663,7 @@ class ColorDepth(google.protobuf.message.Message):
     COMPRESSED_DEPTH_FIELD_NUMBER: builtins.int
     COLOR_DATA_FIELD_NUMBER: builtins.int
     DEPTH_DATA_FIELD_NUMBER: builtins.int
+    CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
     color: typing.Text
     """A reference to a color image.
     In the JSON world, this is a path to the image file in the GCS bucket.
@@ -2655,6 +2729,10 @@ class ColorDepth(google.protobuf.message.Message):
     PGM) of the binary data in "depth_data".
     """
 
+    @property
+    def camera_calibration(self) -> global___CameraCalibration:
+        """The calibration of the camera."""
+        pass
     def __init__(self,
         *,
         color: typing.Optional[typing.Text] = ...,
@@ -2668,9 +2746,10 @@ class ColorDepth(google.protobuf.message.Message):
         compressed_depth: typing.Optional[typing.Iterable[global___CompressedDepth]] = ...,
         color_data: typing.Optional[builtins.bytes] = ...,
         depth_data: typing.Optional[builtins.bytes] = ...,
+        camera_calibration: typing.Optional[global___CameraCalibration] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","depth",b"depth","depth_data",b"depth_data","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key","compressed_depth",b"compressed_depth","depth",b"depth","depth_data",b"depth_data","depth_intrinsics",b"depth_intrinsics","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","depth",b"depth","depth_data",b"depth_data","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key","compressed_depth",b"compressed_depth","depth",b"depth","depth_data",b"depth_data","depth_intrinsics",b"depth_intrinsics","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> None: ...
 global___ColorDepth = ColorDepth
 
 class CompressedDepth(google.protobuf.message.Message):

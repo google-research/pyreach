@@ -33,6 +33,7 @@ class ReachPayload(google.protobuf.message.Message):
     SERVER_LOG_DATA_FIELD_NUMBER: builtins.int
     TASK_START_COMMAND_FIELD_NUMBER: builtins.int
     TASK_END_COMMAND_FIELD_NUMBER: builtins.int
+    TEXT_INSTRUCTION_FIELD_NUMBER: builtins.int
     REACH_SERVE_SESSION_ID_FIELD_NUMBER: builtins.int
     @property
     def command_data(self) -> logs_pb2.CommandData: ...
@@ -41,9 +42,13 @@ class ReachPayload(google.protobuf.message.Message):
     @property
     def server_log_data(self) -> logs_pb2.TextLogData: ...
     @property
-    def task_start_command(self) -> global___TaskStartCommand: ...
+    def task_start_command(self) -> global___TaskStartCommand:
+        """Temporary data for reach tasks as LogEntry payloads."""
+        pass
     @property
     def task_end_command(self) -> global___TaskEndCommand: ...
+    @property
+    def text_instruction(self) -> global___TextInstruction: ...
     reach_serve_session_id: typing.Text
     """robot session, which may have multiple operator sessions within it. This is
     normally unchanged reach serve lifetime.
@@ -56,11 +61,12 @@ class ReachPayload(google.protobuf.message.Message):
         server_log_data: typing.Optional[logs_pb2.TextLogData] = ...,
         task_start_command: typing.Optional[global___TaskStartCommand] = ...,
         task_end_command: typing.Optional[global___TaskEndCommand] = ...,
+        text_instruction: typing.Optional[global___TextInstruction] = ...,
         reach_serve_session_id: typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data",b"data"]) -> typing.Optional[typing_extensions.Literal["command_data","device_data","server_log_data","task_start_command","task_end_command"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command","text_instruction",b"text_instruction"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command","text_instruction",b"text_instruction"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data",b"data"]) -> typing.Optional[typing_extensions.Literal["command_data","device_data","server_log_data","task_start_command","task_end_command","text_instruction"]]: ...
 global___ReachPayload = ReachPayload
 
 class TaskStartCommand(google.protobuf.message.Message):
@@ -129,3 +135,51 @@ class TaskEndCommand(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["event_name",b"event_name","state",b"state"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["event_name",b"event_name","state",b"state"]) -> None: ...
 global___TaskEndCommand = TaskEndCommand
+
+class TextInstruction(google.protobuf.message.Message):
+    """TextInstruction is the description of an instruction for a task."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    INTENT_FIELD_NUMBER: builtins.int
+    SUCCESS_TYPE_FIELD_NUMBER: builtins.int
+    SUCCESS_DETECTION_FIELD_NUMBER: builtins.int
+    INSTRUCTION_FIELD_NUMBER: builtins.int
+    UID_FIELD_NUMBER: builtins.int
+    SUPERTASK_ID_FIELD_NUMBER: builtins.int
+    intent: typing.Text
+    """The intent of the instruction."""
+
+    success_type: typing.Text
+    """The success type of the instruction aka what makes this particular
+    instruction successful.
+    """
+
+    success_detection: typing.Text
+    """The success detection the system may use to define success,
+    if one is available.
+    """
+
+    instruction: typing.Text
+    """The natural language instruction to be presented to the user."""
+
+    uid: typing.Text
+    """UID is a UUID for the instruction."""
+
+    supertask_id: typing.Text
+    """ID that identifies the list of instructions that this instruction is a
+    part of. Used when it is important to identify that an instruction is part
+    of a specific group of instructions.
+    http://doc/1pzA9SHva1Btl6sTIK-QWRGYSVyoEGUwiMo7KQysJmLs#bookmark=id.y1q4asnmf9za
+    """
+
+    def __init__(self,
+        *,
+        intent: typing.Optional[typing.Text] = ...,
+        success_type: typing.Optional[typing.Text] = ...,
+        success_detection: typing.Optional[typing.Text] = ...,
+        instruction: typing.Optional[typing.Text] = ...,
+        uid: typing.Optional[typing.Text] = ...,
+        supertask_id: typing.Optional[typing.Text] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> None: ...
+global___TextInstruction = TextInstruction

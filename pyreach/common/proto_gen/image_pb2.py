@@ -34,7 +34,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0bimage.proto\x12\x11robotics.messages\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x08\n\x0c\x45ncodedImage\x12\x0c\n\x04\x63ols\x18\x01 \x01(\x05\x12\x0c\n\x04rows\x18\x02 \x01(\x05\x12\x34\n\x04type\x18\x03 \x01(\x0e\x32$.robotics.messages.EncodedImage.TypeH\x00\x12?\n\npixel_type\x18\x05 \x01(\x0b\x32).robotics.messages.EncodedImage.PixelTypeH\x00\x12\x0c\n\x04\x64\x61ta\x18\x04 \x01(\x0c\x1a\x84\x06\n\tPixelType\x12Q\n\x0fpixel_primitive\x18\x01 \x01(\x0e\x32\x38.robotics.messages.EncodedImage.PixelType.PixelPrimitive\x12P\n\x0e\x63hannel_type_1\x18\x02 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType1H\x00\x12P\n\x0e\x63hannel_type_3\x18\x03 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType3H\x00\x12P\n\x0e\x63hannel_type_4\x18\x04 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType4H\x00\"z\n\x0ePixelPrimitive\x12\x1f\n\x1bUNSPECIFIED_PIXEL_PRIMITIVE\x10\x00\x12\n\n\x06UCHAR8\x10\x01\x12\n\n\x06UINT16\x10\x02\x12\n\n\x06UINT32\x10\x03\x12\t\n\x05INT32\x10\x06\x12\x0b\n\x07\x46LOAT16\x10\x04\x12\x0b\n\x07\x46LOAT32\x10\x05\"\x89\x01\n\x0c\x43hannelType1\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_1\x10\x00\x12\x08\n\x04MONO\x10\x01\x12\t\n\x05\x44\x45PTH\x10\x02\x12\r\n\tDISPARITY\x10\x08\x12\r\n\tOCCUPANCY\x10\x03\x12\x08\n\x04\x42GGR\x10\x04\x12\x08\n\x04RGGB\x10\x05\x12\x08\n\x04GBRG\x10\x06\x12\x08\n\x04GRBG\x10\x07\"Q\n\x0c\x43hannelType3\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_3\x10\x00\x12\x07\n\x03\x42GR\x10\x01\x12\x07\n\x03RGB\x10\x02\x12\x0f\n\x0bPOINT_CLOUD\x10\x03\"B\n\x0c\x43hannelType4\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_4\x10\x00\x12\x08\n\x04\x42GRA\x10\x01\x12\x08\n\x04RGBA\x10\x02\x42\x0f\n\rchannel_oneof\"\x90\x01\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06PNG_U8\x10\x01\x12\x0e\n\nPNG_GRAYU8\x10\x02\x12\n\n\x06JPG_U8\x10\x03\x12\x0e\n\nJPG_GRAYU8\x10\x04\x12\x10\n\x0cROS_DEPTHF32\x10\x05\x12\x0f\n\x0b\x42\x41YER_GRBG8\x10\x06\x12\r\n\tBZIP2_PGM\x10\x07\x12\x11\n\rDEPTH_16U_RVL\x10\x08\x42\x0c\n\ntype_oneof\"\xae\x02\n\x08RawImage\x12\x0c\n\x04\x63ols\x18\x01 \x01(\x05\x12\x0c\n\x04rows\x18\x02 \x01(\x05\x12.\n\x04type\x18\x03 \x01(\x0e\x32 .robotics.messages.RawImage.Type\x12\x0c\n\x04\x64\x61ta\x18\x04 \x01(\x0c\"\xc7\x01\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06GRAYU8\x10\x01\x12\x0b\n\x07GRAYF32\x10\x02\x12\t\n\x05RGBU8\x10\x03\x12\n\n\x06RGBAU8\x10\x0b\x12\n\n\x06RGBF32\x10\x04\x12\x0b\n\x07RGBAF16\x10\r\x12\x0b\n\x07RGBAF32\x10\x0e\x12\t\n\x05\x42GRU8\x10\x05\x12\n\n\x06\x42GRAU8\x10\n\x12\n\n\x06\x42GRF32\x10\x06\x12\x0c\n\x08\x44\x45PTHF32\x10\x07\x12\x0c\n\x08\x44\x45PTHF64\x10\x0c\x12\x0c\n\x08\x44\x45PTHU16\x10\t\x12\x0f\n\x0bOCCUPANCYU8\x10\x08\"\xbf\x01\n\x14TimestampedImageKind\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x38\n\rencoded_image\x18\x02 \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12\x30\n\traw_image\x18\x03 \x01(\x0b\x32\x1b.robotics.messages.RawImageH\x00\x42\x0c\n\nimage_kindb\x06proto3'
+  serialized_pb=b'\n\x0bimage.proto\x12\x11robotics.messages\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd7\x08\n\x0c\x45ncodedImage\x12\x0c\n\x04\x63ols\x18\x01 \x01(\x05\x12\x0c\n\x04rows\x18\x02 \x01(\x05\x12\x34\n\x04type\x18\x03 \x01(\x0e\x32$.robotics.messages.EncodedImage.TypeH\x00\x12?\n\npixel_type\x18\x05 \x01(\x0b\x32).robotics.messages.EncodedImage.PixelTypeH\x00\x12\x0c\n\x04\x64\x61ta\x18\x04 \x01(\x0c\x1a\x84\x06\n\tPixelType\x12Q\n\x0fpixel_primitive\x18\x01 \x01(\x0e\x32\x38.robotics.messages.EncodedImage.PixelType.PixelPrimitive\x12P\n\x0e\x63hannel_type_1\x18\x02 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType1H\x00\x12P\n\x0e\x63hannel_type_3\x18\x03 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType3H\x00\x12P\n\x0e\x63hannel_type_4\x18\x04 \x01(\x0e\x32\x36.robotics.messages.EncodedImage.PixelType.ChannelType4H\x00\"z\n\x0ePixelPrimitive\x12\x1f\n\x1bUNSPECIFIED_PIXEL_PRIMITIVE\x10\x00\x12\n\n\x06UCHAR8\x10\x01\x12\n\n\x06UINT16\x10\x02\x12\n\n\x06UINT32\x10\x03\x12\t\n\x05INT32\x10\x06\x12\x0b\n\x07\x46LOAT16\x10\x04\x12\x0b\n\x07\x46LOAT32\x10\x05\"\x89\x01\n\x0c\x43hannelType1\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_1\x10\x00\x12\x08\n\x04MONO\x10\x01\x12\t\n\x05\x44\x45PTH\x10\x02\x12\r\n\tDISPARITY\x10\x08\x12\r\n\tOCCUPANCY\x10\x03\x12\x08\n\x04\x42GGR\x10\x04\x12\x08\n\x04RGGB\x10\x05\x12\x08\n\x04GBRG\x10\x06\x12\x08\n\x04GRBG\x10\x07\"Q\n\x0c\x43hannelType3\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_3\x10\x00\x12\x07\n\x03\x42GR\x10\x01\x12\x07\n\x03RGB\x10\x02\x12\x0f\n\x0bPOINT_CLOUD\x10\x03\"B\n\x0c\x43hannelType4\x12\x1e\n\x1aUNSPECIFIED_CHANNEL_TYPE_4\x10\x00\x12\x08\n\x04\x42GRA\x10\x01\x12\x08\n\x04RGBA\x10\x02\x42\x0f\n\rchannel_oneof\"\x90\x01\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06PNG_U8\x10\x01\x12\x0e\n\nPNG_GRAYU8\x10\x02\x12\n\n\x06JPG_U8\x10\x03\x12\x0e\n\nJPG_GRAYU8\x10\x04\x12\x10\n\x0cROS_DEPTHF32\x10\x05\x12\x0f\n\x0b\x42\x41YER_GRBG8\x10\x06\x12\r\n\tBZIP2_PGM\x10\x07\x12\x11\n\rDEPTH_16U_RVL\x10\x08\x42\x0c\n\ntype_oneof\"\xae\x02\n\x08RawImage\x12\x0c\n\x04\x63ols\x18\x01 \x01(\x05\x12\x0c\n\x04rows\x18\x02 \x01(\x05\x12.\n\x04type\x18\x03 \x01(\x0e\x32 .robotics.messages.RawImage.Type\x12\x0c\n\x04\x64\x61ta\x18\x04 \x01(\x0c\"\xc7\x01\n\x04Type\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06GRAYU8\x10\x01\x12\x0b\n\x07GRAYF32\x10\x02\x12\t\n\x05RGBU8\x10\x03\x12\n\n\x06RGBAU8\x10\x0b\x12\n\n\x06RGBF32\x10\x04\x12\x0b\n\x07RGBAF16\x10\r\x12\x0b\n\x07RGBAF32\x10\x0e\x12\t\n\x05\x42GRU8\x10\x05\x12\n\n\x06\x42GRAU8\x10\n\x12\n\n\x06\x42GRF32\x10\x06\x12\x0c\n\x08\x44\x45PTHF32\x10\x07\x12\x0c\n\x08\x44\x45PTHF64\x10\x0c\x12\x0c\n\x08\x44\x45PTHU16\x10\t\x12\x0f\n\x0bOCCUPANCYU8\x10\x08\"\xbf\x01\n\x14TimestampedImageKind\x12-\n\ttimestamp\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x38\n\rencoded_image\x18\x02 \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12\x30\n\traw_image\x18\x03 \x01(\x0b\x32\x1b.robotics.messages.RawImageH\x00\x42\x0c\n\nimage_kind\"\xdb\x01\n\tImageSpec\x12\x0c\n\x04\x63ols\x18\x01 \x01(\x05\x12\x0c\n\x04rows\x18\x02 \x01(\x05\x12\x37\n\x07\x65ncoded\x18\x03 \x01(\x0e\x32$.robotics.messages.EncodedImage.TypeH\x00\x12:\n\x05pixel\x18\x04 \x01(\x0b\x32).robotics.messages.EncodedImage.PixelTypeH\x00\x12/\n\x03raw\x18\x05 \x01(\x0e\x32 .robotics.messages.RawImage.TypeH\x00\x42\x0c\n\nimage_typeb\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 
@@ -597,6 +597,71 @@ _TIMESTAMPEDIMAGEKIND = _descriptor.Descriptor(
   serialized_end=1678,
 )
 
+
+_IMAGESPEC = _descriptor.Descriptor(
+  name='ImageSpec',
+  full_name='robotics.messages.ImageSpec',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cols', full_name='robotics.messages.ImageSpec.cols', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='rows', full_name='robotics.messages.ImageSpec.rows', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='encoded', full_name='robotics.messages.ImageSpec.encoded', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='pixel', full_name='robotics.messages.ImageSpec.pixel', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='raw', full_name='robotics.messages.ImageSpec.raw', index=4,
+      number=5, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='image_type', full_name='robotics.messages.ImageSpec.image_type',
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
+  ],
+  serialized_start=1681,
+  serialized_end=1900,
+)
+
 _ENCODEDIMAGE_PIXELTYPE.fields_by_name['pixel_primitive'].enum_type = _ENCODEDIMAGE_PIXELTYPE_PIXELPRIMITIVE
 _ENCODEDIMAGE_PIXELTYPE.fields_by_name['channel_type_1'].enum_type = _ENCODEDIMAGE_PIXELTYPE_CHANNELTYPE1
 _ENCODEDIMAGE_PIXELTYPE.fields_by_name['channel_type_3'].enum_type = _ENCODEDIMAGE_PIXELTYPE_CHANNELTYPE3
@@ -635,9 +700,22 @@ _TIMESTAMPEDIMAGEKIND.fields_by_name['encoded_image'].containing_oneof = _TIMEST
 _TIMESTAMPEDIMAGEKIND.oneofs_by_name['image_kind'].fields.append(
   _TIMESTAMPEDIMAGEKIND.fields_by_name['raw_image'])
 _TIMESTAMPEDIMAGEKIND.fields_by_name['raw_image'].containing_oneof = _TIMESTAMPEDIMAGEKIND.oneofs_by_name['image_kind']
+_IMAGESPEC.fields_by_name['encoded'].enum_type = _ENCODEDIMAGE_TYPE
+_IMAGESPEC.fields_by_name['pixel'].message_type = _ENCODEDIMAGE_PIXELTYPE
+_IMAGESPEC.fields_by_name['raw'].enum_type = _RAWIMAGE_TYPE
+_IMAGESPEC.oneofs_by_name['image_type'].fields.append(
+  _IMAGESPEC.fields_by_name['encoded'])
+_IMAGESPEC.fields_by_name['encoded'].containing_oneof = _IMAGESPEC.oneofs_by_name['image_type']
+_IMAGESPEC.oneofs_by_name['image_type'].fields.append(
+  _IMAGESPEC.fields_by_name['pixel'])
+_IMAGESPEC.fields_by_name['pixel'].containing_oneof = _IMAGESPEC.oneofs_by_name['image_type']
+_IMAGESPEC.oneofs_by_name['image_type'].fields.append(
+  _IMAGESPEC.fields_by_name['raw'])
+_IMAGESPEC.fields_by_name['raw'].containing_oneof = _IMAGESPEC.oneofs_by_name['image_type']
 DESCRIPTOR.message_types_by_name['EncodedImage'] = _ENCODEDIMAGE
 DESCRIPTOR.message_types_by_name['RawImage'] = _RAWIMAGE
 DESCRIPTOR.message_types_by_name['TimestampedImageKind'] = _TIMESTAMPEDIMAGEKIND
+DESCRIPTOR.message_types_by_name['ImageSpec'] = _IMAGESPEC
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 EncodedImage = _reflection.GeneratedProtocolMessageType('EncodedImage', (_message.Message,), {
@@ -668,6 +746,13 @@ TimestampedImageKind = _reflection.GeneratedProtocolMessageType('TimestampedImag
   # @@protoc_insertion_point(class_scope:robotics.messages.TimestampedImageKind)
   })
 _sym_db.RegisterMessage(TimestampedImageKind)
+
+ImageSpec = _reflection.GeneratedProtocolMessageType('ImageSpec', (_message.Message,), {
+  'DESCRIPTOR' : _IMAGESPEC,
+  '__module__' : 'image_pb2'
+  # @@protoc_insertion_point(class_scope:robotics.messages.ImageSpec)
+  })
+_sym_db.RegisterMessage(ImageSpec)
 
 
 # @@protoc_insertion_point(module_scope)

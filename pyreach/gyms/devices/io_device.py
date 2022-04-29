@@ -216,6 +216,9 @@ class ReachDeviceIO(reach_device.ReachDevice):
             digital_outputs_config.items()):
           pin_name: str = reach_digital_output.pin_name
           digital_output, pin_name = digital_outputs_table[gym_pin_name]
+          if (id(digital_output), pin_name) not in states:
+            raise pyreach.PyReachError(f"{(id(digital_output), pin_name)} "
+                                       f"not one of {tuple(states.keys())}")
           state, pin_state = states[(id(digital_output), pin_name)]
           state_value: Optional[bool] = pin_state.state
           if not isinstance(state_value, bool):
@@ -282,8 +285,10 @@ class ReachDeviceIO(reach_device.ReachDevice):
       return snapshots
 
   def _do_digital_outputs_action(
-      self, digital_outputs_action: collections_abc.Mapping,
-      host: pyreach.Host) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:
+      self,
+      digital_outputs_action: Any,  # Dict[str, Any]
+      host: pyreach.Host
+  ) -> Tuple[lib_snapshot.SnapshotGymAction, ...]:
     """Perform digital outputs action."""
     digital_outputs_table: Dict[str, Tuple[DigOutput, str]] = (
         self._get_digital_outputs_table(host))
@@ -297,7 +302,8 @@ class ReachDeviceIO(reach_device.ReachDevice):
     gym_pin_name: Any
     pin_value: Any
     pin_name: str
-    if not isinstance(digital_outputs_action, collections_abc.Mapping):
+    if not isinstance(digital_outputs_action,
+                      collections_abc.Mapping):  # type: ignore
       raise pyreach.PyReachError(
           f"action is not a dictionary: {digital_outputs_action}")
     for gym_pin_name, pin_value in digital_outputs_action.items():

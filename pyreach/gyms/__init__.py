@@ -140,3 +140,12 @@ register(
     max_episode_steps=9999999999999999999999,
     reward_threshold=99999999999999999999.0,
 )
+
+register(
+    id='april-led-example-v0',
+    entry_point=(
+        'pyreach.gyms.envs.april_led_example:PyReachAprilLEDExampleEnv'
+    ),
+    max_episode_steps=600,
+    reward_threshold=99999999999999999999.0,
+)

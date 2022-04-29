@@ -247,11 +247,15 @@ class GymArmEnv(reach_env.ReachEnv):
                 response_queue_length=response_queue_length,
                 p_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
                 e_stop_mode=arm_element.ReachStopMode.STOP_DONE,
+                no_power_mode=arm_element.ReachStopMode.STOP_STATUS,
                 test_states=[
-                    arm.ArmState(),
-                    arm.ArmState(),
-                    arm.ArmState(is_protective_stopped=True),
-                    arm.ArmState(is_emergency_stopped=True),
+                    arm.ArmState(is_robot_power_on=True),  # Step: 0
+                    arm.ArmState(is_robot_power_on=True),  # Step: 1
+                    arm.ArmState(is_robot_power_on=True,  # Step: 2
+                                 is_protective_stopped=True),
+                    arm.ArmState(is_robot_power_on=False),  # Step: 3
+                    arm.ArmState(is_robot_power_on=True,  # Step: 4
+                                 is_emergency_stopped=True),
                 ])
     }
 
@@ -420,14 +424,24 @@ class TestGymArmEnv(unittest.TestCase):
             to_joints_observation, ("Step 2: obs space",),
             exact=False)
 
-        # Step 3: To Joints; emergency stop with force to Done:
+        # Step 3: To Joints; no power:
+        observation, _, done, _ = env.step(to_joints_action)
+        assert not done, "Step3: Done wrong"
+        to_joints_observation["arm"]["status"] = (
+            arm_element.ReachResponse.RESPONSE_NO_POWER)
+        assert space_match(
+            observation_space,
+            to_joints_observation, ("Step 3: obs space",),
+            exact=False)
+
+        # Step 4: To Joints; emergency stop with force to Done:
         observation, _, done, _ = env.step(to_joints_action)
         assert done, "Step3: Done wrong"
         to_joints_observation["arm"]["status"] = (
             arm_element.ReachResponse.RESPONSE_ESTOP)
         assert space_match(
             observation_space,
-            to_joints_observation, ("Step 3: obs space",),
+            to_joints_observation, ("Step 4: obs space",),
             exact=False)
 
 
@@ -913,10 +927,10 @@ class GymIOEnv(reach_env.ReachEnv):
                 p_stop_mode=arm_element.ReachStopMode.STOP_STATUS,
                 e_stop_mode=arm_element.ReachStopMode.STOP_DONE,
                 test_states=[
-                    arm.ArmState(),
-                    arm.ArmState(),
-                    arm.ArmState(),
-                    arm.ArmState(),
+                    arm.ArmState(is_robot_power_on=True),
+                    arm.ArmState(is_robot_power_on=True),
+                    arm.ArmState(is_robot_power_on=True),
+                    arm.ArmState(is_robot_power_on=True),
                 ]),
         "io":
             io_element.ReachIO(

@@ -71,6 +71,9 @@ class ReachDeviceArm(reach_device.ReachDevice):
     ik_lib: Optional[pyreach_arm.IKLibType] = arm_config.ik_lib
     e_stop_mode: int = arm_config.e_stop_mode
     p_stop_mode: int = arm_config.p_stop_mode
+    no_power_mode: int = arm_config.no_power_mode
+    synchronous_pose_error: Optional[float] = arm_config.synchronous_pose_error
+
     # For unit testing only.
     test_states: Optional[List[pyreach_arm.ArmState]] = arm_config.test_states
     if not test_states:
@@ -183,6 +186,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._last_command: int = 0
     self._e_stop_mode: int = e_stop_mode
     self._p_stop_mode: int = p_stop_mode
+    self._no_power_mode: int = no_power_mode
+    self._synchronous_pose_error: Optional[float] = synchronous_pose_error
     # For internal debugging only.
     self._debug_flags: str = debug_flags
     self._debug_last_action_command: int = 0
@@ -369,6 +374,16 @@ class ReachDeviceArm(reach_device.ReachDevice):
           else:
             response = arm_element.ReachResponse.RESPONSE_PSTOP
 
+        if not arm_state.is_robot_power_on:
+          no_power_mode: int = self._no_power_mode
+          if no_power_mode == arm_element.ReachStopMode.STOP_ERROR:
+            raise pyreach.PyReachError("Robot is in No Power mode")
+          if no_power_mode == arm_element.ReachStopMode.STOP_DONE:
+            response = arm_element.ReachResponse.RESPONSE_NO_POWER
+            self._early_done = True
+          else:
+            response = arm_element.ReachResponse.RESPONSE_NO_POWER
+
         ts = arm_state.time
         joints: Tuple[float, ...] = arm_state.joint_angles
         if self._joints_ok(joints):
@@ -388,7 +403,9 @@ class ReachDeviceArm(reach_device.ReachDevice):
           tip_adjust_t_base = arm_state.pose
 
         # Internal debugging:
-        if self._debug_flags and self._debug_last_action_command in (2, 4, 5):
+        pose_error: Optional[float] = self._synchronous_pose_error
+        if (isinstance(pose_error, float) and pose_error >= 0.0 and
+            self._debug_last_action_command in (2, 4, 5)):
           action_pose: np.ndarray = self._debug_last_action_pose
           desired_pose: np.ndarray
           if self._debug_last_action_command == 2:
@@ -403,8 +420,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
           if not np.allclose(
               desired_pose,
               action_pose,
-              rtol=0.001,  # 1mm relative tolerance
-              atol=0.002,  # 2mm absolute tolerance
+              rtol=pose_error,
+              atol=pose_error,
           ):
             raise pyreach.PyReachError(
                 "Pose out of tolerance: "

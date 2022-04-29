@@ -62,7 +62,7 @@ class ArmMock(arm.Arm):
           arm_state,
           arm.ArmState), (f"Found {type(arm_state)} instead of arm.ArmState")
     if not arm_state:
-      arm_state = arm.ArmState()
+      arm_state = arm.ArmState(is_robot_power_on=True)
     return arm_state
 
   @property

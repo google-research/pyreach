@@ -359,3 +359,30 @@ class TimestampedImageKind(google.protobuf.message.Message):
     def ClearField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","image_kind",b"image_kind","raw_image",b"raw_image","timestamp",b"timestamp"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["image_kind",b"image_kind"]) -> typing.Optional[typing_extensions.Literal["encoded_image","raw_image"]]: ...
 global___TimestampedImageKind = TimestampedImageKind
+
+class ImageSpec(google.protobuf.message.Message):
+    """Specification for an image."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    COLS_FIELD_NUMBER: builtins.int
+    ROWS_FIELD_NUMBER: builtins.int
+    ENCODED_FIELD_NUMBER: builtins.int
+    PIXEL_FIELD_NUMBER: builtins.int
+    RAW_FIELD_NUMBER: builtins.int
+    cols: builtins.int
+    rows: builtins.int
+    encoded: global___EncodedImage.Type.ValueType
+    @property
+    def pixel(self) -> global___EncodedImage.PixelType: ...
+    raw: global___RawImage.Type.ValueType
+    def __init__(self,
+        *,
+        cols: builtins.int = ...,
+        rows: builtins.int = ...,
+        encoded: global___EncodedImage.Type.ValueType = ...,
+        pixel: typing.Optional[global___EncodedImage.PixelType] = ...,
+        raw: global___RawImage.Type.ValueType = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["encoded",b"encoded","image_type",b"image_type","pixel",b"pixel","raw",b"raw"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["cols",b"cols","encoded",b"encoded","image_type",b"image_type","pixel",b"pixel","raw",b"raw","rows",b"rows"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["image_type",b"image_type"]) -> typing.Optional[typing_extensions.Literal["encoded","pixel","raw"]]: ...
+global___ImageSpec = ImageSpec
