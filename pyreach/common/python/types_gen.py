@@ -8565,11 +8565,15 @@ class MachineDescription:
   # The interfaces provided by the machine.
   interfaces: List['MachineInterface']
 
-  def __init__(self, interfaces: Optional[List['MachineInterface']] = None) -> None:
+  # The name of the machine.
+  name: str
+
+  def __init__(self, interfaces: Optional[List['MachineInterface']] = None, name: str = '') -> None:
     if interfaces is None:
       self.interfaces = []
     else:
       self.interfaces = interfaces
+    self.name = name
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -8583,12 +8587,18 @@ class MachineDescription:
         obj_list.append(item.to_json())
       json_data['interfaces'] = obj_list
 
+    if self.name:
+      assert isinstance(self.name, str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(self.name)) + '.'
+      json_data['name'] = self.name
+
     return json_data
 
   def to_proto(self) -> 'logs_pb2.MachineDescription':
     """Convert MachineDescription to proto."""
     proto = logs_pb2.MachineDescription()
     proto.interfaces.extend([v.to_proto() for v in self.interfaces])
+    if self.name:
+      proto.name = self.name
     return proto
 
   @staticmethod
@@ -8604,6 +8614,10 @@ class MachineDescription:
         json_list.append(MachineInterface.from_json(j))
       obj.interfaces = json_list
 
+    if 'name' in json_data:
+      assert isinstance(json_data['name'], str), 'Wrong type for attribute: name. Expected: str. Got: ' + str(type(json_data['name'])) + '.'
+      obj.name = json_data['name']
+
     return obj
 
   @staticmethod
@@ -8614,6 +8628,8 @@ class MachineDescription:
     obj = MachineDescription()
     for obj_interfaces in proto.interfaces:
       obj.interfaces.append(MachineInterface.from_proto(obj_interfaces))
+    if proto.HasField('name'):
+      obj.name = proto.name
     return obj
 
 

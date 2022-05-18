@@ -62,7 +62,7 @@ class ColorFrame:
 
   @property
   def calibration(self) -> Optional[calibration.Calibration]:
-    """Return the Calibration for for the ColorFrame."""
+    """Return the Calibration for the ColorFrame."""
     raise NotImplementedError
 
   def pose(self) -> Optional[core.Pose]:

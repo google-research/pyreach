@@ -17,10 +17,10 @@
 isort:skip_file
 """
 import builtins
+import calibration_pb2
 import general_io_pb2
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
-import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import image_pb2
 import joints_pb2
@@ -44,60 +44,6 @@ class LogEntryMetadata(google.protobuf.message.Message):
     as a payload type in LogEntry.
     """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
-    class _PayloadTag:
-        ValueType = typing.NewType('ValueType', builtins.int)
-        V: typing_extensions.TypeAlias = ValueType
-    class _PayloadTagEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[LogEntryMetadata._PayloadTag.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNSPECIFIED: LogEntryMetadata._PayloadTag.ValueType  # 0
-        """No extra information provided."""
-
-        STATE: LogEntryMetadata._PayloadTag.ValueType  # 1
-        """Sensed or computed (regular) state value."""
-
-        COMMAND: LogEntryMetadata._PayloadTag.ValueType  # 2
-        """Commanded target value."""
-
-        ECHOED_COMMAND: LogEntryMetadata._PayloadTag.ValueType  # 3
-        """A command echoed with other state messages."""
-
-        IRREGULAR_STATE: LogEntryMetadata._PayloadTag.ValueType  # 4
-        """Used to indicate what command is being executed.
-        Irregular state, resulting from certain errors.
-        """
-
-        MERGED_STATE: LogEntryMetadata._PayloadTag.ValueType  # 5
-        """See go/rcv2#irregular-states for details.
-        A state merged from subordinate parts.
-        """
-
-    class PayloadTag(_PayloadTag, metaclass=_PayloadTagEnumTypeWrapper):
-        """Tags that can be applied to a payload."""
-        pass
-
-    UNSPECIFIED: LogEntryMetadata.PayloadTag.ValueType  # 0
-    """No extra information provided."""
-
-    STATE: LogEntryMetadata.PayloadTag.ValueType  # 1
-    """Sensed or computed (regular) state value."""
-
-    COMMAND: LogEntryMetadata.PayloadTag.ValueType  # 2
-    """Commanded target value."""
-
-    ECHOED_COMMAND: LogEntryMetadata.PayloadTag.ValueType  # 3
-    """A command echoed with other state messages."""
-
-    IRREGULAR_STATE: LogEntryMetadata.PayloadTag.ValueType  # 4
-    """Used to indicate what command is being executed.
-    Irregular state, resulting from certain errors.
-    """
-
-    MERGED_STATE: LogEntryMetadata.PayloadTag.ValueType  # 5
-    """See go/rcv2#irregular-states for details.
-    A state merged from subordinate parts.
-    """
-
-
     class KeyValue(google.protobuf.message.Message):
         """Arbitrary key-value pairs. This should function like a map, but SQL does
         not support string-string maps, so instead we use a repeated message.
@@ -116,35 +62,27 @@ class LogEntryMetadata(google.protobuf.message.Message):
         def ClearField(self, field_name: typing_extensions.Literal["key",b"key","value",b"value"]) -> None: ...
 
     KEY_VALUE_FIELD_NUMBER: builtins.int
-    PART_ID_FIELD_NUMBER: builtins.int
-    SIGNAL_ID_FIELD_NUMBER: builtins.int
-    SOURCE_ID_FIELD_NUMBER: builtins.int
-    PAYLOAD_TAG_FIELD_NUMBER: builtins.int
+    COMMAND_FIELD_NUMBER: builtins.int
+    STATE_FIELD_NUMBER: builtins.int
     @property
     def key_value(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___LogEntryMetadata.KeyValue]: ...
-    part_id: typing.Text
-    """Part of the robot that this payload applies to (eg, "arm" or "gripper")."""
-
-    signal_id: typing.Text
-    """The type of signal the payload is expected to contain (eg, "joint_state").
-    Note: This payload is not guaranteed to be available (eg, if there's a
-    fault), in which case payload_case() could be PAYLOAD_NOT_SET.
-    """
-
-    source_id: typing.Text
-    """Id or short description of the module or class that set the payload data."""
-
-    payload_tag: global___LogEntryMetadata.PayloadTag.ValueType
+    @property
+    def command(self) -> robot_control_pb2.CommandMetadata:
+        """Robot command metadata for go/rcv2"""
+        pass
+    @property
+    def state(self) -> robot_control_pb2.StateMetadata:
+        """Robot state metadata for go/rcv2"""
+        pass
     def __init__(self,
         *,
         key_value: typing.Optional[typing.Iterable[global___LogEntryMetadata.KeyValue]] = ...,
-        part_id: typing.Optional[typing.Text] = ...,
-        signal_id: typing.Optional[typing.Text] = ...,
-        source_id: typing.Optional[typing.Text] = ...,
-        payload_tag: typing.Optional[global___LogEntryMetadata.PayloadTag.ValueType] = ...,
+        command: typing.Optional[robot_control_pb2.CommandMetadata] = ...,
+        state: typing.Optional[robot_control_pb2.StateMetadata] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["part_id",b"part_id","payload_tag",b"payload_tag","signal_id",b"signal_id","source_id",b"source_id"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["key_value",b"key_value","part_id",b"part_id","payload_tag",b"payload_tag","signal_id",b"signal_id","source_id",b"source_id"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["command",b"command","data",b"data","state",b"state"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["command",b"command","data",b"data","key_value",b"key_value","state",b"state"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data",b"data"]) -> typing.Optional[typing_extensions.Literal["command","state"]]: ...
 global___LogEntryMetadata = LogEntryMetadata
 
 class LogEntry(google.protobuf.message.Message):
@@ -157,6 +95,7 @@ class LogEntry(google.protobuf.message.Message):
     TRANSFORM_FIELD_NUMBER: builtins.int
     ENCODED_IMAGE_FIELD_NUMBER: builtins.int
     SIMULATION_COMMAND_FIELD_NUMBER: builtins.int
+    CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
     SYSTEM_COMMAND_FIELD_NUMBER: builtins.int
     SYSTEM_STATE_FIELD_NUMBER: builtins.int
     REACH_FIELD_NUMBER: builtins.int
@@ -179,6 +118,8 @@ class LogEntry(google.protobuf.message.Message):
     @property
     def simulation_command(self) -> simulation_pb2.SimulationCommand: ...
     @property
+    def camera_calibration(self) -> calibration_pb2.CameraCalibration: ...
+    @property
     def system_command(self) -> robot_control_pb2.SystemCommand: ...
     @property
     def system_state(self) -> robot_control_pb2.SystemState: ...
@@ -193,11 +134,12 @@ class LogEntry(google.protobuf.message.Message):
         transform: typing.Optional[transform_pb2.Transform] = ...,
         encoded_image: typing.Optional[image_pb2.EncodedImage] = ...,
         simulation_command: typing.Optional[simulation_pb2.SimulationCommand] = ...,
+        camera_calibration: typing.Optional[calibration_pb2.CameraCalibration] = ...,
         system_command: typing.Optional[robot_control_pb2.SystemCommand] = ...,
         system_state: typing.Optional[robot_control_pb2.SystemState] = ...,
         reach: typing.Optional[reach_pb2.ReachPayload] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","simulation_command","system_command","system_state","reach"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","simulation_command","camera_calibration","system_command","system_state","reach"]]: ...
 global___LogEntry = LogEntry

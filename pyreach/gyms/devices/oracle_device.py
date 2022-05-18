@@ -27,6 +27,8 @@ from pyreach.gyms import oracle_element
 from pyreach.gyms.devices import reach_device
 
 TaggedRequest = Tuple[str, str, str, str, str]
+PickPlaceHash = Tuple[str, float, float, float, float, float, float, float,
+                      float, float, float, float, float, float, float]
 
 
 class ReachDeviceOracle(reach_device.ReachDevice):
@@ -105,8 +107,9 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     self._selected_point: Optional[pyreach.PredictionPoint] = None
     self._selected_pick_place_point: Optional[
         pyreach.PredictionPickPlacePoint] = None
+    self._selected_action_name: Optional[str] = None
     self._rejected_pick_points: List[pyreach.PredictionPoint] = []
-    self._rejected_pick_place_points: Set[Tuple[float, ...]] = set()
+    self._rejected_pick_place_points: Set[PickPlaceHash] = set()
 
   def __str__(self) -> str:
     """Return a string represenation of Reach Oracle."""
@@ -122,6 +125,8 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     self._rejected_pick_place_points = set()
     self._execute_action_status = None
     self._selected_point = None
+    self._selected_pick_place_point = None
+    self._selected_action_name = None
     self._request = ReachDeviceOracle.REQUEST_NONE
     return ()
 
@@ -276,21 +281,9 @@ class ReachDeviceOracle(reach_device.ReachDevice):
       elif self._selected_point:
         self._rejected_pick_points.append(self._selected_point)
       elif self._selected_pick_place_point:
-        pick_place_hash: Tuple[float, ...] = (
-            self._selected_pick_place_point.pick_position_3d.x,
-            self._selected_pick_place_point.pick_position_3d.y,
-            self._selected_pick_place_point.pick_position_3d.z,
-            self._selected_pick_place_point.pick_rotation_quat_3d.x,
-            self._selected_pick_place_point.pick_rotation_quat_3d.y,
-            self._selected_pick_place_point.pick_rotation_quat_3d.z,
-            self._selected_pick_place_point.pick_rotation_quat_3d.w,
-            self._selected_pick_place_point.place_position_3d.x,
-            self._selected_pick_place_point.place_position_3d.y,
-            self._selected_pick_place_point.place_position_3d.z,
-            self._selected_pick_place_point.place_rotation_quat_3d.x,
-            self._selected_pick_place_point.place_rotation_quat_3d.y,
-            self._selected_pick_place_point.place_rotation_quat_3d.z,
-            self._selected_pick_place_point.place_rotation_quat_3d.w)
+        assert isinstance(self._selected_action_name, str)
+        pick_place_hash = self._calc_point_hash(self._selected_action_name,
+                                                self._selected_pick_place_point)
         self._rejected_pick_place_points.add(pick_place_hash)
 
       observation: gyms_core.Observation = {
@@ -314,6 +307,27 @@ class ReachDeviceOracle(reach_device.ReachDevice):
     if tagged_request == ReachDeviceOracle.EMPTY_TAGGED_REQUEST:
       return False
     return True
+
+  @classmethod
+  def _calc_point_hash(cls,
+                       action_name: str,
+                       pick_place_point: pyreach.PredictionPickPlacePoint
+                       ) -> PickPlaceHash:
+    return (action_name,
+            pick_place_point.pick_position_3d.x,
+            pick_place_point.pick_position_3d.y,
+            pick_place_point.pick_position_3d.z,
+            pick_place_point.pick_rotation_quat_3d.x,
+            pick_place_point.pick_rotation_quat_3d.y,
+            pick_place_point.pick_rotation_quat_3d.z,
+            pick_place_point.pick_rotation_quat_3d.w,
+            pick_place_point.place_position_3d.x,
+            pick_place_point.place_position_3d.y,
+            pick_place_point.place_position_3d.z,
+            pick_place_point.place_rotation_quat_3d.x,
+            pick_place_point.place_rotation_quat_3d.y,
+            pick_place_point.place_rotation_quat_3d.z,
+            pick_place_point.place_rotation_quat_3d.w)
 
   def do_action(
       self, action: gyms_core.Action,
@@ -407,6 +421,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
 
       self._selected_point = None
       self._selected_pick_place_point = None
+      self._selected_action_name = None
       self._execute_action_status = None
       selected_point_3d: Optional[List[pyreach.ActionInput]] = None
       if prediction:
@@ -439,23 +454,21 @@ class ReachDeviceOracle(reach_device.ReachDevice):
             self._execute_action_status = None
         # Kitting support
         elif prediction_pick_place_points:
+          labels = prediction.label.split(",")
+          if len(labels) != len(prediction_pick_place_points):
+            raise pyreach.PyReachError(
+                "Internal Error: action label points list length mismatch")
+
           pick_place_pt: Optional[pyreach.PredictionPickPlacePoint] = None
-          for pick_place_point in prediction_pick_place_points:
-            point_hash: Tuple[float, ...] = (
-                pick_place_point.pick_position_3d.x,
-                pick_place_point.pick_position_3d.y,
-                pick_place_point.pick_position_3d.z,
-                pick_place_point.pick_rotation_quat_3d.x,
-                pick_place_point.pick_rotation_quat_3d.y,
-                pick_place_point.pick_rotation_quat_3d.z,
-                pick_place_point.pick_rotation_quat_3d.w,
-                pick_place_point.place_position_3d.x,
-                pick_place_point.place_position_3d.y,
-                pick_place_point.place_position_3d.z,
-                pick_place_point.place_rotation_quat_3d.x,
-                pick_place_point.place_rotation_quat_3d.y,
-                pick_place_point.place_rotation_quat_3d.z,
-                pick_place_point.place_rotation_quat_3d.w)
+          for pick_place_point, prediction_label in zip(
+              prediction_pick_place_points, labels):
+            if prediction_label == "FlipAction":
+              label = "flip"
+              action_name = "FlipAction"
+              task_intent = "kitting"
+
+            point_hash: PickPlaceHash = self._calc_point_hash(
+                action_name, pick_place_point)
 
             if point_hash not in self._rejected_pick_place_points:
               pick_place_pt = pick_place_point
@@ -473,6 +486,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
                     rotation=pick_place_pt.place_rotation_quat_3d),
             ]
             self._selected_pick_place_point = pick_place_pt
+            self._selected_action_name = action_name
 
       if ((self._selected_point or self._selected_pick_place_point) and
           self._intent == "pick"):

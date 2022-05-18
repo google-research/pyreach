@@ -22,6 +22,12 @@
 
 set -uxeo pipefail
 
+if [[ "$#" -ne "0" ]] ; then
+    readonly RUN_UNIT_TESTS=${1}
+else
+    readonly RUN_UNIT_TESTS=true
+fi
+
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 readonly MYPY_CONFIG="${SCRIPT_DIR}/mypy.ini"
 cd "$SCRIPT_DIR"
@@ -29,8 +35,10 @@ cd "$SCRIPT_DIR"
 # Code to scan for all Python files and lint most (but not all) of them.
 declare -a SKIP_FILES
 SKIP_FILES=()
+SKIP_FILES+=("tools/async_viewer_3d.py")
 SKIP_FILES+=("tools/view3d.py")
 SKIP_FILES+=("tools/view_rgbd.py")
+SKIP_FILES+=("tools/lib/async_viewer_3d_controller.py")
 SKIP_FILES+=("tools/lib/view3d.py")
 SKIP_FILES+=("tools/lib/view_rgbd.py")
 
@@ -113,23 +121,32 @@ elif ! python3 -m flake8 --ignore=E111,E114,E121,E123,E124,E125,E126,E127,E129,E
   EXIT_CODE=1
 fi
 
-echo "================ unittest ================"
-if ! python3 -m unittest -v -c "${TEST_FILES[@]}" ; then
-  echo "unittest failed"
-  EXIT_CODE=1
+if [[ "${RUN_UNIT_TESTS}" == true ]] ; then
+
+  echo "================ unittest ================"
+  if ! python3 -m unittest -v -c "${TEST_FILES[@]}" ; then
+    echo "unittest failed"
+    EXIT_CODE=1
+  fi
+
+  # Python unittest module shadows common package incorrectly.
+  # Run impl test from within the impl folder.
+  echo "================ impl Unit tests ================"
+  (cd impl ; python3 -m unittest -v -c *.py)
+
+  # Gym register() function breaks in unittest. Run the gym tests individually.
+  echo "================ gyms Unit tests ================"
+  while read -d $'\0' FILE ; do
+    if [[ "${FILE}" != "gyms/__init__.py" ]] ; then
+      python3 "${FILE}"
+    fi
+  done < <(find gyms/* -type f -name "*.py" -print0)
+
+else
+  echo "================ skipping unit tests ================"
+
 fi
 
-# Python unittest module shadows common package incorrectly.
-# Run impl test from within the impl folder.
-echo "================ impl Unit tests ================"
-(cd impl ; python3 -m unittest -v -c *.py)
-
-# Gym register() function breaks in unittest. Run the gym tests individually.
-echo "================ gyms Unit tests ================"
-while read -d $'\0' FILE ; do
-  if [[ "${FILE}" != "gyms/__init__.py" ]] ; then
-    python3 "${FILE}"
-  fi
-done < <(find gyms/* -type f -name "*.py" -print0)
-
 exit "$EXIT_CODE"
+
+

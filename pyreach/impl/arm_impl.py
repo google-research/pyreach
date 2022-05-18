@@ -15,10 +15,9 @@
 
 import dataclasses
 import enum
-import json
 import logging  # type: ignore
 import threading
-from typing import Callable, Dict, List, Optional, Set, Tuple, Union, cast
+from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 
@@ -71,6 +70,10 @@ class IKLib:
     """
     raise NotImplementedError
 
+  def require_ikhints(self) -> bool:
+    """Return if IKHints are required for this IK library."""
+    raise NotImplementedError
+
 
 class IKLibIKFast(IKLib):
   """Internal class for an IK library."""
@@ -118,6 +121,10 @@ class IKLibIKFast(IKLib):
       return joints.tolist()
     return None
 
+  def require_ikhints(self) -> bool:
+    """Return if IKHints are required for this IK library."""
+    return True
+
 
 class IKLibPyBullet(IKLib):
   """Internal class for an IK library."""
@@ -159,6 +166,10 @@ class IKLibPyBullet(IKLib):
         np.array(pose, dtype=np.float64),
         np.array(current_joints, dtype=np.float64))
     return joints.tolist()
+
+  def require_ikhints(self) -> bool:
+    """Return if IKHints are required for this IK library."""
+    return False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -556,7 +567,7 @@ class _MovePose(_Command):
       else:
         raise core.PyReachError("Calibration was not loaded")
     if ik_lib is not None:
-      if not ik_hints:
+      if ik_lib.require_ikhints() and not ik_hints:
         raise core.PyReachError("IKhints have not been loaded")
 
       joints = ik_lib.ik_search(pose.tolist(), list(state.joint_angles),
@@ -1008,6 +1019,55 @@ class _Stop(_Command):
     ]
 
 
+class _Sleep(_Command):
+  """A Sleep Command pauses the arm."""
+
+  _seconds: float
+
+  def __init__(self, controller_name: str, seconds: float = 0.0) -> None:
+    """Init Sleep Arm Command.
+
+    Args:
+      controller_name: the name of the controller.
+      seconds: The seconds to sleep.
+    """
+    super().__init__(controller_name)
+    self._seconds = seconds
+
+  # pylint: disable=unused-argument
+  def to_reach_script(
+      self,
+      arm_type: arm.ArmType,
+      support_vacuum: bool,
+      support_blowoff: bool,
+      ik_lib: Optional[IKLib],
+      ik_hints: Dict[int, List[float]],
+      state: arm.ArmState,
+      arm_origin: Optional[np.ndarray],
+      tip_adjust_transform: Optional[np.ndarray],
+  ) -> List[types_gen.ReachScriptCommand]:
+    """Convert a Wait into some ReachScript commands.
+
+    Args:
+      arm_type: The type of arm to use.
+      support_vacuum: True if vacuum is supported.
+      support_blowoff: True if blowoff is supported.
+      ik_lib: An optional inverse kinematics object.
+      ik_hints: The ik hints.
+      state: The arm state.
+      arm_origin: The origin of the arm.
+      tip_adjust_transform: The transform of the adjusted tip.
+
+    Returns:
+      A list Reach Commands to perform the translation.
+    """
+    return [
+        types_gen.ReachScriptCommand(
+            controller_name=self.controller_name,
+            sleep=types_gen.SleepArgs(seconds=self._seconds)),
+    ]
+
+
 class _Commands:
   """A sequence of Commands."""
 
@@ -1086,7 +1146,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _arm_type: arm.ArmType
   _device_name: str
   _ik_lib_lock: threading.Lock
-  _ik_hints: Dict[int, List[float]]
   _cached_constraints: Optional[constraints.Constraints]
   _constraints_ik_hints: Optional[Dict[int, List[float]]]
   _ik_lib: Optional[IKLib]
@@ -1130,7 +1189,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     self._arm_type = arm_type
     self._device_name = device_name
     self._ik_lib_lock = threading.Lock()
-    self._ik_hints = {}
     self._cached_constraints = None
     self._constraints_ik_hints = None
     self._ik_lib = ik_lib
@@ -1242,39 +1300,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     else:
       raise core.PyReachError("IK name not recognized.")
 
-  def on_set_key_value(self, key: device_base.KeyValueKey, value: str) -> None:
-    """Invoke on setting of a key-value pair.
-
-    Args:
-      key: The KeyValueKey to use.
-      value: The value to set it to.
-    """
-    if self._device_name:
-      return
-    if (key.device_type != "settings-engine" or key.device_name or
-        key.key != "document-config/ikhints"):
-      return
-    if not value:
-      return
-    with self._ik_lib_lock:
-      try:
-        ikhints_dictionary = json.loads(value)
-        ikhints_array = json.loads(ikhints_dictionary.get("hints"))
-        if not isinstance(ikhints_array, list):
-          raise core.PyReachError("Invalid ikhints")
-        hints = {}
-        for i, l in enumerate(ikhints_array):
-          if not isinstance(l, list):
-            raise core.PyReachError("a list within ikhints not a list")
-          for v in l:
-            if not isinstance(v, (int, float)):
-              raise core.PyReachError()
-          hints[i] = l
-        self._ik_hints = hints
-      except core.PyReachError as e:
-        logging.warning("document-config/ikhints invalid: %s", str(e))
-        self._ik_hints = {}
-
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[arm.ArmState]:
     """Return the message state (if available) from a message.
@@ -1299,17 +1324,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       return self._arm_state_from_message(self._arm_type, msg,
                                           self._update_data_cache())
     return None
-
-  def get_key_values(self) -> Set[device_base.KeyValueKey]:
-    """Return the current set of key/value pairs."""
-    if self._device_name:
-      return set()
-    return {
-        device_base.KeyValueKey(
-            device_type="settings-engine",
-            device_name="",
-            key="document-config/ikhints")
-    }
 
   @property
   def device_name(self) -> str:
@@ -1373,20 +1387,16 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         reference_poses = wc.get_reference_poses(self._device_name)
         if reference_poses:
           self._constraints_ik_hints = {}
-          for name, pose in reference_poses.items():
-            if name.startswith("ikhint"):
-              i: Optional[int] = None
-              try:
-                i = int(name[len("ikhint"):])
-              except ValueError:
-                i = None
-              if i is not None and i > 0:
-                self._constraints_ik_hints[i - 1] = pose.pose.as_list()
-              else:
-                logging.warning("Ikhint %s invalid number", name)
+
+          def sorter(named_pose: Tuple[str, constraints.ReferencePose]) -> str:
+            return named_pose[0]
+
+          for idx, named_pose in enumerate(
+              sorted(reference_poses.items(), key=sorter)):
+            self._constraints_ik_hints[idx] = named_pose[1].pose.as_list()
     if self._constraints_ik_hints:
       return self._constraints_ik_hints
-    return self._ik_hints
+    return {}
 
   def _update_data_cache(self) -> Optional[_ArmDataCache]:
     with self._data_cache_lock:
@@ -2126,7 +2136,15 @@ class ArmImpl(arm.Arm):
         if idx in step_pose:
           continue
 
-        if step.get_acquire_image_tag():
+        if step.get_wait() > 0:
+          wait = step.get_wait()
+          commands.append(_Sleep("", wait))
+          if step.get_parent_step_idx() in step_pose:
+            step_pose[idx] = step_pose[step.get_parent_step_idx()]
+          else:
+            step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
+          continue
+        elif step.get_acquire_image_tag():
           commands.append(
               _AcquireImage("", step.get_set_capability_type(),
                             step.get_set_capability_name(),

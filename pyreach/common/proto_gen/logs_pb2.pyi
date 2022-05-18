@@ -4717,15 +4717,21 @@ class MachineDescription(google.protobuf.message.Message):
     """MachineDescription is the description of a state machine in the pipeline."""
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
     INTERFACES_FIELD_NUMBER: builtins.int
+    NAME_FIELD_NUMBER: builtins.int
     @property
     def interfaces(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MachineInterface]:
         """The interfaces provided by the machine."""
         pass
+    name: typing.Text
+    """The name of the machine."""
+
     def __init__(self,
         *,
         interfaces: typing.Optional[typing.Iterable[global___MachineInterface]] = ...,
+        name: typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def ClearField(self, field_name: typing_extensions.Literal["interfaces",b"interfaces"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["name",b"name"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["interfaces",b"interfaces","name",b"name"]) -> None: ...
 global___MachineDescription = MachineDescription
 
 class PipelineDescription(google.protobuf.message.Message):

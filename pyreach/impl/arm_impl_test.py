@@ -64,11 +64,6 @@ class TestPyreachArmImpl(unittest.TestCase):
           device_base.KeyValueKey(
               device_type="settings-engine",
               device_name="",
-              key="document-config/ikhints"), test_data.get_ikhints_json())
-      extra_dev.on_set_key_value(
-          device_base.KeyValueKey(
-              device_type="settings-engine",
-              device_name="",
               key="workcell_constraints.json"),
           test_data.get_workcell_constraints_json())
       extra_dev.close()
@@ -800,11 +795,6 @@ class TestArm(test_utils.TestResponder):
             data_type="key-value",
             key="robot_constraints.json",
             value=test_data.get_robot_constraints_json()),
-        types_gen.DeviceData(
-            device_type="settings-engine",
-            data_type="key-value",
-            key="document-config/ikhints",
-            value=test_data.get_ikhints_json()),
         types_gen.DeviceData(
             device_type="settings-engine",
             data_type="key-value",

@@ -316,7 +316,7 @@ class OracleDevice(requester.Requester[oracle.Prediction]):
         utils.time_at_timestamp(msg.ts), msg.seq,
         msg.device_type, msg.device_name, tuple(pick_points),
         tuple(pick_place_points), color, intent, prediction_type, request_type,
-        task_code, label)
+        task_code, msg.label)
 
 
 class OracleImpl(oracle.Oracle):

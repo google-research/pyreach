@@ -33,14 +33,84 @@ import pyreach.common.proto_gen.status_pb2 as status__pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='robot_control.proto',
   package='robotics.logging.messages',
-  syntax='proto3',
+  syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13robot_control.proto\x12\x19robotics.logging.messages\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x0cstatus.proto\"\xa7\x01\n\x0f\x43ommandMetadata\x12\x10\n\x08\x62locking\x18\x02 \x01(\x08\x12*\n\x07timeout\x18\x03 \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x0f\n\x07updated\x18\x04 \x01(\x08\x12+\n\x08min_time\x18\x06 \x01(\x0b\x32\x19.google.protobuf.DurationJ\x04\x08\x05\x10\x06J\x04\x08\x01\x10\x02R\x08internalR\x02id\"\xd0\x01\n\rSystemCommand\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.SystemCommand.Type\"\x81\x01\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x11\n\rENABLE_MOTION\x10\x01\x12\x12\n\x0e\x44ISABLE_MOTION\x10\x02\x12\x0f\n\x0b\x43LEAR_FAULT\x10\x03\x12\x0f\n\x0bSTOP_MOTION\x10\x04\x12\x10\n\x0cMOVE_TO_HOME\x10\x05\x12\r\n\tFAIL_SAFE\x10\x06\"K\n\x12RobotCommandResult\x12\x12\n\ncommand_id\x18\x01 \x01(\x04\x12!\n\x06status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\"\xc9\x03\n\x0bSystemState\x12\x46\n\x0f\x63ommand_results\x18\x01 \x03(\x0b\x32-.robotics.logging.messages.RobotCommandResult\x12(\n\rdevice_status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x16\n\x0emotion_enabled\x18\x03 \x01(\x08\x12\x18\n\x10\x64\x65vice_fail_safe\x18\x04 \x01(\x08\x12\x19\n\x11\x61\x63tive_command_id\x18\x05 \x01(\x04\x12\x1d\n\x15\x63ontrol_step_time_sec\x18\n \x01(\x02\x12\"\n\x1a\x63ontrol_step_time_exceeded\x18\x0e \x01(\x08\x12<\n\x18\x63ommand_sent_from_client\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12:\n\x16\x63ommand_sent_to_device\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12>\n\x1astate_received_from_device\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.Timestampb\x06proto3'
+  serialized_pb=b'\n\x13robot_control.proto\x12\x19robotics.logging.messages\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x0cstatus.proto\"N\n\rControlEntity\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0f\n\x07part_id\x18\x02 \x01(\t\x12\x19\n\x11\x63ontrol_module_id\x18\x03 \x01(\t\"\x9c\x02\n\rStateMetadata\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.StateMetadata.Type\x12\x11\n\tsignal_id\x18\x04 \x01(\t\x12\x38\n\x06source\x18\x02 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12@\n\x0emerged_sources\x18\x03 \x03(\x0b\x32(.robotics.logging.messages.ControlEntity\"?\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07REGULAR\x10\x01\x12\n\n\x06MERGED\x10\x02\x12\r\n\tIRREGULAR\x10\x03\"\xfb\x03\n\x0f\x43ommandMetadata\x12\x10\n\x08\x62locking\x18\x02 \x01(\x08\x12*\n\x07timeout\x18\x03 \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x0f\n\x07updated\x18\x04 \x01(\x08\x12+\n\x08min_time\x18\x06 \x01(\x0b\x32\x19.google.protobuf.Duration\x12=\n\x04type\x18\x07 \x01(\x0e\x32/.robotics.logging.messages.CommandMetadata.Type\x12\x38\n\x06source\x18\x08 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12\x38\n\x06target\x18\t \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12[\n\x11processing_result\x18\n \x01(\x0e\x32@.robotics.logging.messages.ControlModuleCommandProcessing.Result\"B\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x43LIENT\x10\x01\x12\x0b\n\x07VIRTUAL\x10\x02\x12\x10\n\x0c\x45\x43HOED_INPUT\x10\x03J\x04\x08\x05\x10\x06J\x04\x08\x01\x10\x02R\x08internalR\x02id\"\xd0\x01\n\rSystemCommand\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.SystemCommand.Type\"\x81\x01\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x11\n\rENABLE_MOTION\x10\x01\x12\x12\n\x0e\x44ISABLE_MOTION\x10\x02\x12\x0f\n\x0b\x43LEAR_FAULT\x10\x03\x12\x0f\n\x0bSTOP_MOTION\x10\x04\x12\x10\n\x0cMOVE_TO_HOME\x10\x05\x12\r\n\tFAIL_SAFE\x10\x06\"^\n\x12RobotCommandResult\x12\x12\n\ncommand_id\x18\x01 \x01(\x04\x12!\n\x06status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x11\n\tpreempted\x18\x03 \x01(\x08\"a\n\x1e\x43ontrolModuleCommandProcessing\"?\n\x06Result\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x42YPASS\x10\x01\x12\x0b\n\x07SUCCESS\x10\x02\x12\x0b\n\x07\x46\x41ILURE\x10\x03\"\xc9\x03\n\x0bSystemState\x12\x46\n\x0f\x63ommand_results\x18\x01 \x03(\x0b\x32-.robotics.logging.messages.RobotCommandResult\x12(\n\rdevice_status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x16\n\x0emotion_enabled\x18\x03 \x01(\x08\x12\x18\n\x10\x64\x65vice_fail_safe\x18\x04 \x01(\x08\x12\x19\n\x11\x61\x63tive_command_id\x18\x05 \x01(\x04\x12\x1d\n\x15\x63ontrol_step_time_sec\x18\n \x01(\x02\x12\"\n\x1a\x63ontrol_step_time_exceeded\x18\x0e \x01(\x08\x12<\n\x18\x63ommand_sent_from_client\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12:\n\x16\x63ommand_sent_to_device\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12>\n\x1astate_received_from_device\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.Timestamp'
   ,
   dependencies=[google_dot_protobuf_dot_duration__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,status__pb2.DESCRIPTOR,])
 
 
+
+_STATEMETADATA_TYPE = _descriptor.EnumDescriptor(
+  name='Type',
+  full_name='robotics.logging.messages.StateMetadata.Type',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='UNSPECIFIED', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='REGULAR', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='MERGED', index=2, number=2,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='IRREGULAR', index=3, number=3,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=431,
+  serialized_end=494,
+)
+_sym_db.RegisterEnumDescriptor(_STATEMETADATA_TYPE)
+
+_COMMANDMETADATA_TYPE = _descriptor.EnumDescriptor(
+  name='Type',
+  full_name='robotics.logging.messages.CommandMetadata.Type',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='UNSPECIFIED', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='CLIENT', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='VIRTUAL', index=2, number=2,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='ECHOED_INPUT', index=3, number=3,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=912,
+  serialized_end=978,
+)
+_sym_db.RegisterEnumDescriptor(_COMMANDMETADATA_TYPE)
 
 _SYSTEMCOMMAND_TYPE = _descriptor.EnumDescriptor(
   name='Type',
@@ -87,10 +157,145 @@ _SYSTEMCOMMAND_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=379,
-  serialized_end=508,
+  serialized_start=1086,
+  serialized_end=1215,
 )
 _sym_db.RegisterEnumDescriptor(_SYSTEMCOMMAND_TYPE)
+
+_CONTROLMODULECOMMANDPROCESSING_RESULT = _descriptor.EnumDescriptor(
+  name='Result',
+  full_name='robotics.logging.messages.ControlModuleCommandProcessing.Result',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='UNSPECIFIED', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BYPASS', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SUCCESS', index=2, number=2,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='FAILURE', index=3, number=3,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=1347,
+  serialized_end=1410,
+)
+_sym_db.RegisterEnumDescriptor(_CONTROLMODULECOMMANDPROCESSING_RESULT)
+
+
+_CONTROLENTITY = _descriptor.Descriptor(
+  name='ControlEntity',
+  full_name='robotics.logging.messages.ControlEntity',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='client_id', full_name='robotics.logging.messages.ControlEntity.client_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='part_id', full_name='robotics.logging.messages.ControlEntity.part_id', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='control_module_id', full_name='robotics.logging.messages.ControlEntity.control_module_id', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=129,
+  serialized_end=207,
+)
+
+
+_STATEMETADATA = _descriptor.Descriptor(
+  name='StateMetadata',
+  full_name='robotics.logging.messages.StateMetadata',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='type', full_name='robotics.logging.messages.StateMetadata.type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='signal_id', full_name='robotics.logging.messages.StateMetadata.signal_id', index=1,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='source', full_name='robotics.logging.messages.StateMetadata.source', index=2,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='merged_sources', full_name='robotics.logging.messages.StateMetadata.merged_sources', index=3,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _STATEMETADATA_TYPE,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=210,
+  serialized_end=494,
+)
 
 
 _COMMANDMETADATA = _descriptor.Descriptor(
@@ -129,20 +334,49 @@ _COMMANDMETADATA = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='robotics.logging.messages.CommandMetadata.type', index=4,
+      number=7, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='source', full_name='robotics.logging.messages.CommandMetadata.source', index=5,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='target', full_name='robotics.logging.messages.CommandMetadata.target', index=6,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='processing_result', full_name='robotics.logging.messages.CommandMetadata.processing_result', index=7,
+      number=10, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
+    _COMMANDMETADATA_TYPE,
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=130,
-  serialized_end=297,
+  serialized_start=497,
+  serialized_end=1004,
 )
 
 
@@ -170,12 +404,12 @@ _SYSTEMCOMMAND = _descriptor.Descriptor(
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=300,
-  serialized_end=508,
+  serialized_start=1007,
+  serialized_end=1215,
 )
 
 
@@ -201,6 +435,13 @@ _ROBOTCOMMANDRESULT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='preempted', full_name='robotics.logging.messages.RobotCommandResult.preempted', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -209,12 +450,38 @@ _ROBOTCOMMANDRESULT = _descriptor.Descriptor(
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=510,
-  serialized_end=585,
+  serialized_start=1217,
+  serialized_end=1311,
+)
+
+
+_CONTROLMODULECOMMANDPROCESSING = _descriptor.Descriptor(
+  name='ControlModuleCommandProcessing',
+  full_name='robotics.logging.messages.ControlModuleCommandProcessing',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _CONTROLMODULECOMMANDPROCESSING_RESULT,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto2',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1313,
+  serialized_end=1410,
 )
 
 
@@ -304,29 +571,56 @@ _SYSTEMSTATE = _descriptor.Descriptor(
   ],
   serialized_options=None,
   is_extendable=False,
-  syntax='proto3',
+  syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=588,
-  serialized_end=1045,
+  serialized_start=1413,
+  serialized_end=1870,
 )
 
+_STATEMETADATA.fields_by_name['type'].enum_type = _STATEMETADATA_TYPE
+_STATEMETADATA.fields_by_name['source'].message_type = _CONTROLENTITY
+_STATEMETADATA.fields_by_name['merged_sources'].message_type = _CONTROLENTITY
+_STATEMETADATA_TYPE.containing_type = _STATEMETADATA
 _COMMANDMETADATA.fields_by_name['timeout'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
 _COMMANDMETADATA.fields_by_name['min_time'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
+_COMMANDMETADATA.fields_by_name['type'].enum_type = _COMMANDMETADATA_TYPE
+_COMMANDMETADATA.fields_by_name['source'].message_type = _CONTROLENTITY
+_COMMANDMETADATA.fields_by_name['target'].message_type = _CONTROLENTITY
+_COMMANDMETADATA.fields_by_name['processing_result'].enum_type = _CONTROLMODULECOMMANDPROCESSING_RESULT
+_COMMANDMETADATA_TYPE.containing_type = _COMMANDMETADATA
 _SYSTEMCOMMAND.fields_by_name['type'].enum_type = _SYSTEMCOMMAND_TYPE
 _SYSTEMCOMMAND_TYPE.containing_type = _SYSTEMCOMMAND
 _ROBOTCOMMANDRESULT.fields_by_name['status'].message_type = status__pb2._STATUSPROTO
+_CONTROLMODULECOMMANDPROCESSING_RESULT.containing_type = _CONTROLMODULECOMMANDPROCESSING
 _SYSTEMSTATE.fields_by_name['command_results'].message_type = _ROBOTCOMMANDRESULT
 _SYSTEMSTATE.fields_by_name['device_status'].message_type = status__pb2._STATUSPROTO
 _SYSTEMSTATE.fields_by_name['command_sent_from_client'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _SYSTEMSTATE.fields_by_name['command_sent_to_device'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _SYSTEMSTATE.fields_by_name['state_received_from_device'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+DESCRIPTOR.message_types_by_name['ControlEntity'] = _CONTROLENTITY
+DESCRIPTOR.message_types_by_name['StateMetadata'] = _STATEMETADATA
 DESCRIPTOR.message_types_by_name['CommandMetadata'] = _COMMANDMETADATA
 DESCRIPTOR.message_types_by_name['SystemCommand'] = _SYSTEMCOMMAND
 DESCRIPTOR.message_types_by_name['RobotCommandResult'] = _ROBOTCOMMANDRESULT
+DESCRIPTOR.message_types_by_name['ControlModuleCommandProcessing'] = _CONTROLMODULECOMMANDPROCESSING
 DESCRIPTOR.message_types_by_name['SystemState'] = _SYSTEMSTATE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+ControlEntity = _reflection.GeneratedProtocolMessageType('ControlEntity', (_message.Message,), {
+  'DESCRIPTOR' : _CONTROLENTITY,
+  '__module__' : 'robot_control_pb2'
+  # @@protoc_insertion_point(class_scope:robotics.logging.messages.ControlEntity)
+  })
+_sym_db.RegisterMessage(ControlEntity)
+
+StateMetadata = _reflection.GeneratedProtocolMessageType('StateMetadata', (_message.Message,), {
+  'DESCRIPTOR' : _STATEMETADATA,
+  '__module__' : 'robot_control_pb2'
+  # @@protoc_insertion_point(class_scope:robotics.logging.messages.StateMetadata)
+  })
+_sym_db.RegisterMessage(StateMetadata)
 
 CommandMetadata = _reflection.GeneratedProtocolMessageType('CommandMetadata', (_message.Message,), {
   'DESCRIPTOR' : _COMMANDMETADATA,
@@ -348,6 +642,13 @@ RobotCommandResult = _reflection.GeneratedProtocolMessageType('RobotCommandResul
   # @@protoc_insertion_point(class_scope:robotics.logging.messages.RobotCommandResult)
   })
 _sym_db.RegisterMessage(RobotCommandResult)
+
+ControlModuleCommandProcessing = _reflection.GeneratedProtocolMessageType('ControlModuleCommandProcessing', (_message.Message,), {
+  'DESCRIPTOR' : _CONTROLMODULECOMMANDPROCESSING,
+  '__module__' : 'robot_control_pb2'
+  # @@protoc_insertion_point(class_scope:robotics.logging.messages.ControlModuleCommandProcessing)
+  })
+_sym_db.RegisterMessage(ControlModuleCommandProcessing)
 
 SystemState = _reflection.GeneratedProtocolMessageType('SystemState', (_message.Message,), {
   'DESCRIPTOR' : _SYSTEMSTATE,

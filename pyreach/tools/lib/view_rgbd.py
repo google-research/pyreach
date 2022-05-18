@@ -21,7 +21,7 @@ from typing import List, Optional, Tuple
 import cv2  # type: ignore  # type: ignore
 import numpy as np
 
-import google3.third_party.open3d.open3d as o3d  # type: ignore
+from open3d import open3d as o3d  # type: ignore
 
 
 _DEPTH_SCALE = 0.1

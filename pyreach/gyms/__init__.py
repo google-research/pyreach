@@ -34,6 +34,15 @@ register(
 )
 
 register(
+    id='benchmark-2d-collect-v1',
+    entry_point=(
+        'pyreach.gyms.envs.benchmark_2d_collect:Benchmark2DCollectEnv'
+    ),
+    max_episode_steps=9999999999999999999999,
+    reward_threshold=99999999999999999999.0,
+)
+
+register(
     id='benchmark-kitting-v0',
     entry_point=(
         'pyreach.gyms.envs.benchmark_kitting:KittingBenchmarkEnv'

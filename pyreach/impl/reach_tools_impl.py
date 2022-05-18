@@ -18,7 +18,7 @@ _WEBRTC_SHA256 = {
     },
 }
 
-REACH_LINUX_X86_64_HASH = "ead6e093a4a185b6cdae1cf48bb4c913809dd5fd56b0fe803effdfa0c235a06a"
+REACH_LINUX_X86_64_HASH = "5cd2cb02d2d4bc47f2af92e3a013e64a9d8bfd698565b6ffbd98d19155c0dbf1"
 _REACH_SHA256 = {
     "linux": {
         "x86_64":
@@ -64,9 +64,8 @@ def _download(base: str, digests: Dict[str, Dict[str, str]],
                         (platform.machine().lower(), platform.system().lower()))
   digest = digests[platform.system().lower()][platform.machine().lower()]
   if target_file.exists():
-    bin_file = target_file.open("rb")
-    bin_content = bin_file.read()
-    bin_file.close()
+    with target_file.open("rb") as bin_file_reader:
+      bin_content = bin_file_reader.read()
 
     sha = hashlib.sha256()
     sha.update(bin_content)
@@ -84,9 +83,8 @@ def _download(base: str, digests: Dict[str, Dict[str, str]],
   if os.path.exists(target_file):
     os.remove(target_file)
 
-  bin_file = target_file.open("wb")
-  bin_file.write(remote_file.content)
-  bin_file.close()
+  with target_file.open("wb") as bin_file_writer:
+    bin_file_writer.write(remote_file.content)
 
   st = target_file.stat()
   target_file.chmod(st.st_mode | stat.S_IEXEC)

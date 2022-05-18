@@ -339,6 +339,8 @@ def _interpret_space_navigator(device_num: int, handle: "usb1.USBDeviceHandle",
         if bit != (last_buttons & (1 << i)):
           event_queue.put(RSpnavButtonEvent(device_num, i, bit != 0))
       last_buttons = press_mask
+    elif data[0] == 0x17:  # battery charge report
+      continue
     else:
       print(f"  unknown event: {_rspnav_hexdump(data)}")
 

@@ -65,7 +65,8 @@ class TestPyreachOracle(unittest.TestCase):
                         types_gen.PickPoint(433, 440),
                     ],
                     color=test_utils.get_test_image_file(
-                        "test_images/oracle-pick-points/color.jpg")),),
+                        "test_images/oracle-pick-points/color.jpg"),
+                    label="SingulateLeftBin"),),
             ),
             test_utils.TestResponderStep(
                 types_gen.CommandData(
@@ -105,6 +106,7 @@ class TestPyreachOracle(unittest.TestCase):
                     ],
                     color=test_utils.get_test_image_file(
                         "test_images/oracle-pick-points/color.jpg"),
+                    label="SingulateLeftBin",
                     tag="test-tag"),),
             ),
             test_utils.TestResponderStep(
@@ -360,7 +362,8 @@ class TestOracle(test_utils.TestResponder):
                 types_gen.PickPoint(433, 440),
             ],
             color=os.path.join(self.test_image_dir, "test_images",
-                               self._directory, "color.jpg"))
+                               self._directory, "color.jpg"),
+            label="SingulateLeftBin",)
     ]
 
   def step(self, cmd: types_gen.CommandData) -> List[types_gen.DeviceData]:
