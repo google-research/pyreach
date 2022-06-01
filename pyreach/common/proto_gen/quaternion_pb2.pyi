@@ -21,62 +21,62 @@ import google.protobuf.descriptor
 import google.protobuf.message
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Quaterniond(google.protobuf.message.Message):
     """A double precision quaternion."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
     W_FIELD_NUMBER: builtins.int
-    x: builtins.float
+    x: builtins.float = ...
     """The x-component."""
 
-    y: builtins.float
+    y: builtins.float = ...
     """The y-component."""
 
-    z: builtins.float
+    z: builtins.float = ...
     """The z-component."""
 
-    w: builtins.float
+    w: builtins.float = ...
     """The w-component."""
 
     def __init__(self,
         *,
-        x: builtins.float = ...,
-        y: builtins.float = ...,
-        z: builtins.float = ...,
-        w: builtins.float = ...,
+        x : builtins.float = ...,
+        y : builtins.float = ...,
+        z : builtins.float = ...,
+        w : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> None: ...
 global___Quaterniond = Quaterniond
 
 class Quaternionf(google.protobuf.message.Message):
     """A single precision quaternion."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
     W_FIELD_NUMBER: builtins.int
-    x: builtins.float
+    x: builtins.float = ...
     """The x-component."""
 
-    y: builtins.float
+    y: builtins.float = ...
     """The y-component."""
 
-    z: builtins.float
+    z: builtins.float = ...
     """The z-component."""
 
-    w: builtins.float
+    w: builtins.float = ...
     """The w-component."""
 
     def __init__(self,
         *,
-        x: builtins.float = ...,
-        y: builtins.float = ...,
-        z: builtins.float = ...,
-        w: builtins.float = ...,
+        x : builtins.float = ...,
+        y : builtins.float = ...,
+        z : builtins.float = ...,
+        w : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> None: ...
 global___Quaternionf = Quaternionf

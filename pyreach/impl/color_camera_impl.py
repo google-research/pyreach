@@ -32,7 +32,8 @@ class ColorFrameImpl(color_camera.ColorFrame):
 
   def __init__(self, time: float, sequence: int, device_type: str,
                device_name: str, color_image: np.ndarray,
-               calibration: Optional[cal.Calibration]) -> None:
+               calibration: Optional[cal.Calibration],
+               pose: Optional[core.Pose]) -> None:
     """Init a ColorFrameImpl."""
     self._time: float = time
     self._sequence: int = sequence
@@ -40,6 +41,7 @@ class ColorFrameImpl(color_camera.ColorFrame):
     self._device_name: str = device_name
     self._color_image: np.ndarray = color_image
     self._calibration: Optional[cal.Calibration] = calibration
+    self._pose: Optional[core.Pose] = pose
 
   @property
   def time(self) -> float:
@@ -73,23 +75,7 @@ class ColorFrameImpl(color_camera.ColorFrame):
 
   def pose(self) -> Optional[core.Pose]:
     """Return the pose of the camera when the image is taken."""
-    if self.calibration is None:
-      return None
-    c = self.calibration
-    device = c.get_device(self.device_type, self.device_name)
-    if device is None:
-      return None
-    if not isinstance(device, cal.CalibrationCamera):
-      return None
-    if len(device.extrinsics) != 6:
-      logging.warning("Camera extrinisics not a 6-element list.")
-      return None
-    parent_id = device.tool_mount
-    if parent_id is None:
-      return core.Pose.from_list(list(device.extrinsics))
-
-    logging.warning("Camera had a parent ID. Currently unsupported.")
-    return None
+    return self._pose
 
 
 class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
@@ -167,11 +153,14 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
       self, msg: types_gen.DeviceData, calibration: Optional[cal.Calibration]
   ) -> Optional[color_camera.ColorFrame]:
     """Convert JSON message into a ColorFrame."""
+    pose: Optional[core.Pose] = None
+    if msg.camera_calibration and msg.camera_calibration.camera_t_origin:
+      pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
     try:
       color_image: np.ndarray = utils.load_color_image_from_data(msg)
       return ColorFrameImpl(
           utils.time_at_timestamp(msg.ts), msg.seq, self._display_device_type,
-          self._display_device_name, color_image, calibration)
+          self._display_device_name, color_image, calibration, pose)
     except FileNotFoundError:
       ts = msg.local_ts if msg.local_ts > 0 else msg.ts
       delta = utils.timestamp_now() - ts
@@ -320,24 +309,7 @@ class ColorCameraImpl(color_camera.ColorCamera):
   @property
   def pose(self) -> Optional[core.Pose]:
     """Return the latest pose of the camera."""
-    c = self._device.get_calibration()
-    if c is None:
-      return None
-    device = c.get_device(self._device.device_type, self._device.device_name)
-    if device is None:
-      return None
-    if not isinstance(device, cal.CalibrationCamera):
-      return None
-    base_transform_device = np.array(device.extrinsics, dtype=np.float64)
-    parent_id = device.tool_mount
-    if parent_id is None:
-      if len(base_transform_device) != 6:
-        raise core.PyReachError("Internal Error: transform is wrong size")
-      x, y, z, rx, ry, rz = tuple(base_transform_device)
-      if ((not isinstance(x, float)) or (not isinstance(y, float)) or
-          (not isinstance(z, float)) or (not isinstance(rx, float)) or
-          (not isinstance(ry, float)) or (not isinstance(rz, float))):
-        raise core.PyReachError("Internal Error: Did not get floats")
-      return core.Pose.from_list(base_transform_device.tolist())
-    logging.warning("Camera had a parent ID. Currently unsupported.")
+    current_image = self.image()
+    if current_image:
+      return current_image.pose()
     return None

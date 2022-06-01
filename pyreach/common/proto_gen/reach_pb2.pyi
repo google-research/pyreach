@@ -24,10 +24,10 @@ import logs_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class ReachPayload(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COMMAND_DATA_FIELD_NUMBER: builtins.int
     DEVICE_DATA_FIELD_NUMBER: builtins.int
     SERVER_LOG_DATA_FIELD_NUMBER: builtins.int
@@ -49,20 +49,20 @@ class ReachPayload(google.protobuf.message.Message):
     def task_end_command(self) -> global___TaskEndCommand: ...
     @property
     def text_instruction(self) -> global___TextInstruction: ...
-    reach_serve_session_id: typing.Text
+    reach_serve_session_id: typing.Text = ...
     """robot session, which may have multiple operator sessions within it. This is
     normally unchanged reach serve lifetime.
     """
 
     def __init__(self,
         *,
-        command_data: typing.Optional[logs_pb2.CommandData] = ...,
-        device_data: typing.Optional[logs_pb2.DeviceData] = ...,
-        server_log_data: typing.Optional[logs_pb2.TextLogData] = ...,
-        task_start_command: typing.Optional[global___TaskStartCommand] = ...,
-        task_end_command: typing.Optional[global___TaskEndCommand] = ...,
-        text_instruction: typing.Optional[global___TextInstruction] = ...,
-        reach_serve_session_id: typing.Optional[typing.Text] = ...,
+        command_data : typing.Optional[logs_pb2.CommandData] = ...,
+        device_data : typing.Optional[logs_pb2.DeviceData] = ...,
+        server_log_data : typing.Optional[logs_pb2.TextLogData] = ...,
+        task_start_command : typing.Optional[global___TaskStartCommand] = ...,
+        task_end_command : typing.Optional[global___TaskEndCommand] = ...,
+        text_instruction : typing.Optional[global___TextInstruction] = ...,
+        reach_serve_session_id : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command","text_instruction",b"text_instruction"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["command_data",b"command_data","data",b"data","device_data",b"device_data","reach_serve_session_id",b"reach_serve_session_id","server_log_data",b"server_log_data","task_end_command",b"task_end_command","task_start_command",b"task_start_command","text_instruction",b"text_instruction"]) -> None: ...
@@ -75,15 +75,15 @@ class TaskStartCommand(google.protobuf.message.Message):
     messages are intended to eventually be replaced by generic log entry task
     messages.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTENT_FIELD_NUMBER: builtins.int
     TASK_CODE_FIELD_NUMBER: builtins.int
-    intent: typing.Text
-    task_code: typing.Text
+    intent: typing.Text = ...
+    task_code: typing.Text = ...
     def __init__(self,
         *,
-        intent: typing.Optional[typing.Text] = ...,
-        task_code: typing.Optional[typing.Text] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["intent",b"intent","task_code",b"task_code"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["intent",b"intent","task_code",b"task_code"]) -> None: ...
@@ -95,42 +95,42 @@ class TaskEndCommand(google.protobuf.message.Message):
     button. These messages are intended to eventually be replaced by generic log
     entry task messages.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class _State:
         ValueType = typing.NewType('ValueType', builtins.int)
         V: typing_extensions.TypeAlias = ValueType
-    class _StateEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[TaskEndCommand._State.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNKNOWN: TaskEndCommand._State.ValueType  # 0
+    class _StateEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_State.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        UNKNOWN: TaskEndCommand.State.ValueType = ...  # 0
         """event param task-success not found or invalid"""
 
-        FAILURE: TaskEndCommand._State.ValueType  # 1
+        FAILURE: TaskEndCommand.State.ValueType = ...  # 1
         """event param task-success = FAILURE"""
 
-        SUCCESS: TaskEndCommand._State.ValueType  # 2
+        SUCCESS: TaskEndCommand.State.ValueType = ...  # 2
         """event param task-success = SUCCESS"""
 
     class State(_State, metaclass=_StateEnumTypeWrapper):
         pass
 
-    UNKNOWN: TaskEndCommand.State.ValueType  # 0
+    UNKNOWN: TaskEndCommand.State.ValueType = ...  # 0
     """event param task-success not found or invalid"""
 
-    FAILURE: TaskEndCommand.State.ValueType  # 1
+    FAILURE: TaskEndCommand.State.ValueType = ...  # 1
     """event param task-success = FAILURE"""
 
-    SUCCESS: TaskEndCommand.State.ValueType  # 2
+    SUCCESS: TaskEndCommand.State.ValueType = ...  # 2
     """event param task-success = SUCCESS"""
 
 
     EVENT_NAME_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
-    event_name: typing.Text
-    state: global___TaskEndCommand.State.ValueType
+    event_name: typing.Text = ...
+    state: global___TaskEndCommand.State.ValueType = ...
     def __init__(self,
         *,
-        event_name: typing.Optional[typing.Text] = ...,
-        state: typing.Optional[global___TaskEndCommand.State.ValueType] = ...,
+        event_name : typing.Optional[typing.Text] = ...,
+        state : typing.Optional[global___TaskEndCommand.State.ValueType] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["event_name",b"event_name","state",b"state"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["event_name",b"event_name","state",b"state"]) -> None: ...
@@ -138,33 +138,33 @@ global___TaskEndCommand = TaskEndCommand
 
 class TextInstruction(google.protobuf.message.Message):
     """TextInstruction is the description of an instruction for a task."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTENT_FIELD_NUMBER: builtins.int
     SUCCESS_TYPE_FIELD_NUMBER: builtins.int
     SUCCESS_DETECTION_FIELD_NUMBER: builtins.int
     INSTRUCTION_FIELD_NUMBER: builtins.int
     UID_FIELD_NUMBER: builtins.int
     SUPERTASK_ID_FIELD_NUMBER: builtins.int
-    intent: typing.Text
+    intent: typing.Text = ...
     """The intent of the instruction."""
 
-    success_type: typing.Text
+    success_type: typing.Text = ...
     """The success type of the instruction aka what makes this particular
     instruction successful.
     """
 
-    success_detection: typing.Text
+    success_detection: typing.Text = ...
     """The success detection the system may use to define success,
     if one is available.
     """
 
-    instruction: typing.Text
+    instruction: typing.Text = ...
     """The natural language instruction to be presented to the user."""
 
-    uid: typing.Text
+    uid: typing.Text = ...
     """UID is a UUID for the instruction."""
 
-    supertask_id: typing.Text
+    supertask_id: typing.Text = ...
     """ID that identifies the list of instructions that this instruction is a
     part of. Used when it is important to identify that an instruction is part
     of a specific group of instructions.
@@ -173,12 +173,12 @@ class TextInstruction(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        intent: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
-        success_detection: typing.Optional[typing.Text] = ...,
-        instruction: typing.Optional[typing.Text] = ...,
-        uid: typing.Optional[typing.Text] = ...,
-        supertask_id: typing.Optional[typing.Text] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
+        success_detection : typing.Optional[typing.Text] = ...,
+        instruction : typing.Optional[typing.Text] = ...,
+        uid : typing.Optional[typing.Text] = ...,
+        supertask_id : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> None: ...

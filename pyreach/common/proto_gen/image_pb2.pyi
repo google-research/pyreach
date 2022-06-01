@@ -24,7 +24,7 @@ import google.protobuf.timestamp_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class EncodedImage(google.protobuf.message.Message):
     """A descriptive proto for image storage.  This proto explicitly splits out the
@@ -36,39 +36,39 @@ class EncodedImage(google.protobuf.message.Message):
 
     Decoding can be done via FromProto() in image_utils.h.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class _Type:
         ValueType = typing.NewType('ValueType', builtins.int)
         V: typing_extensions.TypeAlias = ValueType
-    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[EncodedImage._Type.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNKNOWN: EncodedImage._Type.ValueType  # 0
+    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Type.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        UNKNOWN: EncodedImage.Type.ValueType = ...  # 0
         """UNKNOWN is what you get when you to convert an unsupported format into an
         EncodedImage.
         """
 
-        PNG_U8: EncodedImage._Type.ValueType  # 1
+        PNG_U8: EncodedImage.Type.ValueType = ...  # 1
         """A color PNG image that may include an alpha channel. It is distinguished
         by the image pixel type defined in //robotics/image/pixels.h.
         """
 
-        PNG_GRAYU8: EncodedImage._Type.ValueType  # 2
-        JPG_U8: EncodedImage._Type.ValueType  # 3
+        PNG_GRAYU8: EncodedImage.Type.ValueType = ...  # 2
+        JPG_U8: EncodedImage.Type.ValueType = ...  # 3
         """JPGs can represent only RGB images (no alpha)."""
 
-        JPG_GRAYU8: EncodedImage._Type.ValueType  # 4
-        ROS_DEPTHF32: EncodedImage._Type.ValueType  # 5
+        JPG_GRAYU8: EncodedImage.Type.ValueType = ...  # 4
+        ROS_DEPTHF32: EncodedImage.Type.ValueType = ...  # 5
         """The discretized-depth-encoded-as-PNG format used by ROS's
         compressed_depth_transport package. See that package's documentation for
         details.
         """
 
-        BAYER_GRBG8: EncodedImage._Type.ValueType  # 6
+        BAYER_GRBG8: EncodedImage.Type.ValueType = ...  # 6
         """The Bayer pattern corresponding to ROS's BAYER_GRBG8 (see
         sensor_msgs/image_encodings.h), and to OpenCV's BayerGB2<thing>.
         """
 
-        BZIP2_PGM: EncodedImage._Type.ValueType  # 7
+        BZIP2_PGM: EncodedImage.Type.ValueType = ...  # 7
         """TODO:
         - GZIP_DEPTHF32
         - PNG_DEPTHU16  // Once we have DepthU16 pixels.
@@ -77,39 +77,39 @@ class EncodedImage(google.protobuf.message.Message):
         A PGM depth image compressed in BZIP2 format.
         """
 
-        DEPTH_16U_RVL: EncodedImage._Type.ValueType  # 8
+        DEPTH_16U_RVL: EncodedImage.Type.ValueType = ...  # 8
         """Lossless RVL compression with U16 depth image."""
 
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         pass
 
-    UNKNOWN: EncodedImage.Type.ValueType  # 0
+    UNKNOWN: EncodedImage.Type.ValueType = ...  # 0
     """UNKNOWN is what you get when you to convert an unsupported format into an
     EncodedImage.
     """
 
-    PNG_U8: EncodedImage.Type.ValueType  # 1
+    PNG_U8: EncodedImage.Type.ValueType = ...  # 1
     """A color PNG image that may include an alpha channel. It is distinguished
     by the image pixel type defined in //robotics/image/pixels.h.
     """
 
-    PNG_GRAYU8: EncodedImage.Type.ValueType  # 2
-    JPG_U8: EncodedImage.Type.ValueType  # 3
+    PNG_GRAYU8: EncodedImage.Type.ValueType = ...  # 2
+    JPG_U8: EncodedImage.Type.ValueType = ...  # 3
     """JPGs can represent only RGB images (no alpha)."""
 
-    JPG_GRAYU8: EncodedImage.Type.ValueType  # 4
-    ROS_DEPTHF32: EncodedImage.Type.ValueType  # 5
+    JPG_GRAYU8: EncodedImage.Type.ValueType = ...  # 4
+    ROS_DEPTHF32: EncodedImage.Type.ValueType = ...  # 5
     """The discretized-depth-encoded-as-PNG format used by ROS's
     compressed_depth_transport package. See that package's documentation for
     details.
     """
 
-    BAYER_GRBG8: EncodedImage.Type.ValueType  # 6
+    BAYER_GRBG8: EncodedImage.Type.ValueType = ...  # 6
     """The Bayer pattern corresponding to ROS's BAYER_GRBG8 (see
     sensor_msgs/image_encodings.h), and to OpenCV's BayerGB2<thing>.
     """
 
-    BZIP2_PGM: EncodedImage.Type.ValueType  # 7
+    BZIP2_PGM: EncodedImage.Type.ValueType = ...  # 7
     """TODO:
     - GZIP_DEPTHF32
     - PNG_DEPTHU16  // Once we have DepthU16 pixels.
@@ -118,47 +118,47 @@ class EncodedImage(google.protobuf.message.Message):
     A PGM depth image compressed in BZIP2 format.
     """
 
-    DEPTH_16U_RVL: EncodedImage.Type.ValueType  # 8
+    DEPTH_16U_RVL: EncodedImage.Type.ValueType = ...  # 8
     """Lossless RVL compression with U16 depth image."""
 
 
     class PixelType(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class _PixelPrimitive:
             ValueType = typing.NewType('ValueType', builtins.int)
             V: typing_extensions.TypeAlias = ValueType
-        class _PixelPrimitiveEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[EncodedImage.PixelType._PixelPrimitive.ValueType], builtins.type):
-            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-            UNSPECIFIED_PIXEL_PRIMITIVE: EncodedImage.PixelType._PixelPrimitive.ValueType  # 0
-            UCHAR8: EncodedImage.PixelType._PixelPrimitive.ValueType  # 1
-            UINT16: EncodedImage.PixelType._PixelPrimitive.ValueType  # 2
-            UINT32: EncodedImage.PixelType._PixelPrimitive.ValueType  # 3
-            INT32: EncodedImage.PixelType._PixelPrimitive.ValueType  # 6
-            FLOAT16: EncodedImage.PixelType._PixelPrimitive.ValueType  # 4
-            FLOAT32: EncodedImage.PixelType._PixelPrimitive.ValueType  # 5
+        class _PixelPrimitiveEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PixelPrimitive.ValueType], builtins.type):
+            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+            UNSPECIFIED_PIXEL_PRIMITIVE: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 0
+            UCHAR8: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 1
+            UINT16: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 2
+            UINT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 3
+            INT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 6
+            FLOAT16: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 4
+            FLOAT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 5
         class PixelPrimitive(_PixelPrimitive, metaclass=_PixelPrimitiveEnumTypeWrapper):
             """Per channel."""
             pass
 
-        UNSPECIFIED_PIXEL_PRIMITIVE: EncodedImage.PixelType.PixelPrimitive.ValueType  # 0
-        UCHAR8: EncodedImage.PixelType.PixelPrimitive.ValueType  # 1
-        UINT16: EncodedImage.PixelType.PixelPrimitive.ValueType  # 2
-        UINT32: EncodedImage.PixelType.PixelPrimitive.ValueType  # 3
-        INT32: EncodedImage.PixelType.PixelPrimitive.ValueType  # 6
-        FLOAT16: EncodedImage.PixelType.PixelPrimitive.ValueType  # 4
-        FLOAT32: EncodedImage.PixelType.PixelPrimitive.ValueType  # 5
+        UNSPECIFIED_PIXEL_PRIMITIVE: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 0
+        UCHAR8: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 1
+        UINT16: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 2
+        UINT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 3
+        INT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 6
+        FLOAT16: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 4
+        FLOAT32: EncodedImage.PixelType.PixelPrimitive.ValueType = ...  # 5
 
         class _ChannelType1:
             ValueType = typing.NewType('ValueType', builtins.int)
             V: typing_extensions.TypeAlias = ValueType
-        class _ChannelType1EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[EncodedImage.PixelType._ChannelType1.ValueType], builtins.type):
-            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-            UNSPECIFIED_CHANNEL_TYPE_1: EncodedImage.PixelType._ChannelType1.ValueType  # 0
-            MONO: EncodedImage.PixelType._ChannelType1.ValueType  # 1
-            DEPTH: EncodedImage.PixelType._ChannelType1.ValueType  # 2
-            DISPARITY: EncodedImage.PixelType._ChannelType1.ValueType  # 8
-            OCCUPANCY: EncodedImage.PixelType._ChannelType1.ValueType  # 3
-            BGGR: EncodedImage.PixelType._ChannelType1.ValueType  # 4
+        class _ChannelType1EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ChannelType1.ValueType], builtins.type):
+            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+            UNSPECIFIED_CHANNEL_TYPE_1: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 0
+            MONO: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 1
+            DEPTH: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 2
+            DISPARITY: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 8
+            OCCUPANCY: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 3
+            BGGR: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 4
             """Bayer encoded images are single-channel and converted to color images
             using interpolation, i.e., a 1280x1024 single-channel BGGR image would
             be demosaicked to a 1280x1024 3-channel color image (BGR or RGB).
@@ -167,18 +167,18 @@ class EncodedImage(google.protobuf.message.Message):
                                         | C | D |
             """
 
-            RGGB: EncodedImage.PixelType._ChannelType1.ValueType  # 5
-            GBRG: EncodedImage.PixelType._ChannelType1.ValueType  # 6
-            GRBG: EncodedImage.PixelType._ChannelType1.ValueType  # 7
+            RGGB: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 5
+            GBRG: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 6
+            GRBG: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 7
         class ChannelType1(_ChannelType1, metaclass=_ChannelType1EnumTypeWrapper):
             pass
 
-        UNSPECIFIED_CHANNEL_TYPE_1: EncodedImage.PixelType.ChannelType1.ValueType  # 0
-        MONO: EncodedImage.PixelType.ChannelType1.ValueType  # 1
-        DEPTH: EncodedImage.PixelType.ChannelType1.ValueType  # 2
-        DISPARITY: EncodedImage.PixelType.ChannelType1.ValueType  # 8
-        OCCUPANCY: EncodedImage.PixelType.ChannelType1.ValueType  # 3
-        BGGR: EncodedImage.PixelType.ChannelType1.ValueType  # 4
+        UNSPECIFIED_CHANNEL_TYPE_1: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 0
+        MONO: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 1
+        DEPTH: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 2
+        DISPARITY: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 8
+        OCCUPANCY: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 3
+        BGGR: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 4
         """Bayer encoded images are single-channel and converted to color images
         using interpolation, i.e., a 1280x1024 single-channel BGGR image would
         be demosaicked to a 1280x1024 3-channel color image (BGR or RGB).
@@ -187,56 +187,56 @@ class EncodedImage(google.protobuf.message.Message):
                                     | C | D |
         """
 
-        RGGB: EncodedImage.PixelType.ChannelType1.ValueType  # 5
-        GBRG: EncodedImage.PixelType.ChannelType1.ValueType  # 6
-        GRBG: EncodedImage.PixelType.ChannelType1.ValueType  # 7
+        RGGB: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 5
+        GBRG: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 6
+        GRBG: EncodedImage.PixelType.ChannelType1.ValueType = ...  # 7
 
         class _ChannelType3:
             ValueType = typing.NewType('ValueType', builtins.int)
             V: typing_extensions.TypeAlias = ValueType
-        class _ChannelType3EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[EncodedImage.PixelType._ChannelType3.ValueType], builtins.type):
-            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-            UNSPECIFIED_CHANNEL_TYPE_3: EncodedImage.PixelType._ChannelType3.ValueType  # 0
-            BGR: EncodedImage.PixelType._ChannelType3.ValueType  # 1
-            RGB: EncodedImage.PixelType._ChannelType3.ValueType  # 2
-            POINT_CLOUD: EncodedImage.PixelType._ChannelType3.ValueType  # 3
+        class _ChannelType3EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ChannelType3.ValueType], builtins.type):
+            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+            UNSPECIFIED_CHANNEL_TYPE_3: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 0
+            BGR: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 1
+            RGB: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 2
+            POINT_CLOUD: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 3
         class ChannelType3(_ChannelType3, metaclass=_ChannelType3EnumTypeWrapper):
             pass
 
-        UNSPECIFIED_CHANNEL_TYPE_3: EncodedImage.PixelType.ChannelType3.ValueType  # 0
-        BGR: EncodedImage.PixelType.ChannelType3.ValueType  # 1
-        RGB: EncodedImage.PixelType.ChannelType3.ValueType  # 2
-        POINT_CLOUD: EncodedImage.PixelType.ChannelType3.ValueType  # 3
+        UNSPECIFIED_CHANNEL_TYPE_3: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 0
+        BGR: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 1
+        RGB: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 2
+        POINT_CLOUD: EncodedImage.PixelType.ChannelType3.ValueType = ...  # 3
 
         class _ChannelType4:
             ValueType = typing.NewType('ValueType', builtins.int)
             V: typing_extensions.TypeAlias = ValueType
-        class _ChannelType4EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[EncodedImage.PixelType._ChannelType4.ValueType], builtins.type):
-            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-            UNSPECIFIED_CHANNEL_TYPE_4: EncodedImage.PixelType._ChannelType4.ValueType  # 0
-            BGRA: EncodedImage.PixelType._ChannelType4.ValueType  # 1
-            RGBA: EncodedImage.PixelType._ChannelType4.ValueType  # 2
+        class _ChannelType4EnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ChannelType4.ValueType], builtins.type):
+            DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+            UNSPECIFIED_CHANNEL_TYPE_4: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 0
+            BGRA: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 1
+            RGBA: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 2
         class ChannelType4(_ChannelType4, metaclass=_ChannelType4EnumTypeWrapper):
             pass
 
-        UNSPECIFIED_CHANNEL_TYPE_4: EncodedImage.PixelType.ChannelType4.ValueType  # 0
-        BGRA: EncodedImage.PixelType.ChannelType4.ValueType  # 1
-        RGBA: EncodedImage.PixelType.ChannelType4.ValueType  # 2
+        UNSPECIFIED_CHANNEL_TYPE_4: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 0
+        BGRA: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 1
+        RGBA: EncodedImage.PixelType.ChannelType4.ValueType = ...  # 2
 
         PIXEL_PRIMITIVE_FIELD_NUMBER: builtins.int
         CHANNEL_TYPE_1_FIELD_NUMBER: builtins.int
         CHANNEL_TYPE_3_FIELD_NUMBER: builtins.int
         CHANNEL_TYPE_4_FIELD_NUMBER: builtins.int
-        pixel_primitive: global___EncodedImage.PixelType.PixelPrimitive.ValueType
-        channel_type_1: global___EncodedImage.PixelType.ChannelType1.ValueType
-        channel_type_3: global___EncodedImage.PixelType.ChannelType3.ValueType
-        channel_type_4: global___EncodedImage.PixelType.ChannelType4.ValueType
+        pixel_primitive: global___EncodedImage.PixelType.PixelPrimitive.ValueType = ...
+        channel_type_1: global___EncodedImage.PixelType.ChannelType1.ValueType = ...
+        channel_type_3: global___EncodedImage.PixelType.ChannelType3.ValueType = ...
+        channel_type_4: global___EncodedImage.PixelType.ChannelType4.ValueType = ...
         def __init__(self,
             *,
-            pixel_primitive: global___EncodedImage.PixelType.PixelPrimitive.ValueType = ...,
-            channel_type_1: global___EncodedImage.PixelType.ChannelType1.ValueType = ...,
-            channel_type_3: global___EncodedImage.PixelType.ChannelType3.ValueType = ...,
-            channel_type_4: global___EncodedImage.PixelType.ChannelType4.ValueType = ...,
+            pixel_primitive : global___EncodedImage.PixelType.PixelPrimitive.ValueType = ...,
+            channel_type_1 : global___EncodedImage.PixelType.ChannelType1.ValueType = ...,
+            channel_type_3 : global___EncodedImage.PixelType.ChannelType3.ValueType = ...,
+            channel_type_4 : global___EncodedImage.PixelType.ChannelType4.ValueType = ...,
             ) -> None: ...
         def HasField(self, field_name: typing_extensions.Literal["channel_oneof",b"channel_oneof","channel_type_1",b"channel_type_1","channel_type_3",b"channel_type_3","channel_type_4",b"channel_type_4"]) -> builtins.bool: ...
         def ClearField(self, field_name: typing_extensions.Literal["channel_oneof",b"channel_oneof","channel_type_1",b"channel_type_1","channel_type_3",b"channel_type_3","channel_type_4",b"channel_type_4","pixel_primitive",b"pixel_primitive"]) -> None: ...
@@ -247,24 +247,24 @@ class EncodedImage(google.protobuf.message.Message):
     TYPE_FIELD_NUMBER: builtins.int
     PIXEL_TYPE_FIELD_NUMBER: builtins.int
     DATA_FIELD_NUMBER: builtins.int
-    cols: builtins.int
+    cols: builtins.int = ...
     """The cols and rows fields are included to support encodings (like gzip) that
     don't include image metadata. If your encoding includes the image size,
     these should not be set, and you should use the values in the encoded form.
     """
 
-    rows: builtins.int
-    type: global___EncodedImage.Type.ValueType
+    rows: builtins.int = ...
+    type: global___EncodedImage.Type.ValueType = ...
     @property
     def pixel_type(self) -> global___EncodedImage.PixelType: ...
-    data: builtins.bytes
+    data: builtins.bytes = ...
     def __init__(self,
         *,
-        cols: builtins.int = ...,
-        rows: builtins.int = ...,
-        type: global___EncodedImage.Type.ValueType = ...,
-        pixel_type: typing.Optional[global___EncodedImage.PixelType] = ...,
-        data: builtins.bytes = ...,
+        cols : builtins.int = ...,
+        rows : builtins.int = ...,
+        type : global___EncodedImage.Type.ValueType = ...,
+        pixel_type : typing.Optional[global___EncodedImage.PixelType] = ...,
+        data : builtins.bytes = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["pixel_type",b"pixel_type","type",b"type","type_oneof",b"type_oneof"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cols",b"cols","data",b"data","pixel_type",b"pixel_type","rows",b"rows","type",b"type","type_oneof",b"type_oneof"]) -> None: ...
@@ -277,69 +277,69 @@ class RawImage(google.protobuf.message.Message):
     bytes. Rather than wrapping these yourself, see FromProto in
     messages/image_utils.h.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class _Type:
         ValueType = typing.NewType('ValueType', builtins.int)
         V: typing_extensions.TypeAlias = ValueType
-    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[RawImage._Type.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNKNOWN: RawImage._Type.ValueType  # 0
-        GRAYU8: RawImage._Type.ValueType  # 1
-        GRAYF32: RawImage._Type.ValueType  # 2
-        RGBU8: RawImage._Type.ValueType  # 3
-        RGBAU8: RawImage._Type.ValueType  # 11
-        RGBF32: RawImage._Type.ValueType  # 4
-        RGBAF16: RawImage._Type.ValueType  # 13
-        RGBAF32: RawImage._Type.ValueType  # 14
-        BGRU8: RawImage._Type.ValueType  # 5
-        BGRAU8: RawImage._Type.ValueType  # 10
-        BGRF32: RawImage._Type.ValueType  # 6
-        DEPTHF32: RawImage._Type.ValueType  # 7
-        DEPTHF64: RawImage._Type.ValueType  # 12
-        DEPTHU16: RawImage._Type.ValueType  # 9
-        OCCUPANCYU8: RawImage._Type.ValueType  # 8
+    class _TypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Type.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        UNKNOWN: RawImage.Type.ValueType = ...  # 0
+        GRAYU8: RawImage.Type.ValueType = ...  # 1
+        GRAYF32: RawImage.Type.ValueType = ...  # 2
+        RGBU8: RawImage.Type.ValueType = ...  # 3
+        RGBAU8: RawImage.Type.ValueType = ...  # 11
+        RGBF32: RawImage.Type.ValueType = ...  # 4
+        RGBAF16: RawImage.Type.ValueType = ...  # 13
+        RGBAF32: RawImage.Type.ValueType = ...  # 14
+        BGRU8: RawImage.Type.ValueType = ...  # 5
+        BGRAU8: RawImage.Type.ValueType = ...  # 10
+        BGRF32: RawImage.Type.ValueType = ...  # 6
+        DEPTHF32: RawImage.Type.ValueType = ...  # 7
+        DEPTHF64: RawImage.Type.ValueType = ...  # 12
+        DEPTHU16: RawImage.Type.ValueType = ...  # 9
+        OCCUPANCYU8: RawImage.Type.ValueType = ...  # 8
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         """These mirror the types in //robotics/image/pixels.h.
         Next ID: 15.
         """
         pass
 
-    UNKNOWN: RawImage.Type.ValueType  # 0
-    GRAYU8: RawImage.Type.ValueType  # 1
-    GRAYF32: RawImage.Type.ValueType  # 2
-    RGBU8: RawImage.Type.ValueType  # 3
-    RGBAU8: RawImage.Type.ValueType  # 11
-    RGBF32: RawImage.Type.ValueType  # 4
-    RGBAF16: RawImage.Type.ValueType  # 13
-    RGBAF32: RawImage.Type.ValueType  # 14
-    BGRU8: RawImage.Type.ValueType  # 5
-    BGRAU8: RawImage.Type.ValueType  # 10
-    BGRF32: RawImage.Type.ValueType  # 6
-    DEPTHF32: RawImage.Type.ValueType  # 7
-    DEPTHF64: RawImage.Type.ValueType  # 12
-    DEPTHU16: RawImage.Type.ValueType  # 9
-    OCCUPANCYU8: RawImage.Type.ValueType  # 8
+    UNKNOWN: RawImage.Type.ValueType = ...  # 0
+    GRAYU8: RawImage.Type.ValueType = ...  # 1
+    GRAYF32: RawImage.Type.ValueType = ...  # 2
+    RGBU8: RawImage.Type.ValueType = ...  # 3
+    RGBAU8: RawImage.Type.ValueType = ...  # 11
+    RGBF32: RawImage.Type.ValueType = ...  # 4
+    RGBAF16: RawImage.Type.ValueType = ...  # 13
+    RGBAF32: RawImage.Type.ValueType = ...  # 14
+    BGRU8: RawImage.Type.ValueType = ...  # 5
+    BGRAU8: RawImage.Type.ValueType = ...  # 10
+    BGRF32: RawImage.Type.ValueType = ...  # 6
+    DEPTHF32: RawImage.Type.ValueType = ...  # 7
+    DEPTHF64: RawImage.Type.ValueType = ...  # 12
+    DEPTHU16: RawImage.Type.ValueType = ...  # 9
+    OCCUPANCYU8: RawImage.Type.ValueType = ...  # 8
 
     COLS_FIELD_NUMBER: builtins.int
     ROWS_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     DATA_FIELD_NUMBER: builtins.int
-    cols: builtins.int
-    rows: builtins.int
-    type: global___RawImage.Type.ValueType
-    data: builtins.bytes
+    cols: builtins.int = ...
+    rows: builtins.int = ...
+    type: global___RawImage.Type.ValueType = ...
+    data: builtins.bytes = ...
     def __init__(self,
         *,
-        cols: builtins.int = ...,
-        rows: builtins.int = ...,
-        type: global___RawImage.Type.ValueType = ...,
-        data: builtins.bytes = ...,
+        cols : builtins.int = ...,
+        rows : builtins.int = ...,
+        type : global___RawImage.Type.ValueType = ...,
+        data : builtins.bytes = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["cols",b"cols","data",b"data","rows",b"rows","type",b"type"]) -> None: ...
 global___RawImage = RawImage
 
 class TimestampedImageKind(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TIMESTAMP_FIELD_NUMBER: builtins.int
     ENCODED_IMAGE_FIELD_NUMBER: builtins.int
     RAW_IMAGE_FIELD_NUMBER: builtins.int
@@ -351,9 +351,9 @@ class TimestampedImageKind(google.protobuf.message.Message):
     def raw_image(self) -> global___RawImage: ...
     def __init__(self,
         *,
-        timestamp: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        encoded_image: typing.Optional[global___EncodedImage] = ...,
-        raw_image: typing.Optional[global___RawImage] = ...,
+        timestamp : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        encoded_image : typing.Optional[global___EncodedImage] = ...,
+        raw_image : typing.Optional[global___RawImage] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","image_kind",b"image_kind","raw_image",b"raw_image","timestamp",b"timestamp"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["encoded_image",b"encoded_image","image_kind",b"image_kind","raw_image",b"raw_image","timestamp",b"timestamp"]) -> None: ...
@@ -362,25 +362,25 @@ global___TimestampedImageKind = TimestampedImageKind
 
 class ImageSpec(google.protobuf.message.Message):
     """Specification for an image."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COLS_FIELD_NUMBER: builtins.int
     ROWS_FIELD_NUMBER: builtins.int
     ENCODED_FIELD_NUMBER: builtins.int
     PIXEL_FIELD_NUMBER: builtins.int
     RAW_FIELD_NUMBER: builtins.int
-    cols: builtins.int
-    rows: builtins.int
-    encoded: global___EncodedImage.Type.ValueType
+    cols: builtins.int = ...
+    rows: builtins.int = ...
+    encoded: global___EncodedImage.Type.ValueType = ...
     @property
     def pixel(self) -> global___EncodedImage.PixelType: ...
-    raw: global___RawImage.Type.ValueType
+    raw: global___RawImage.Type.ValueType = ...
     def __init__(self,
         *,
-        cols: builtins.int = ...,
-        rows: builtins.int = ...,
-        encoded: global___EncodedImage.Type.ValueType = ...,
-        pixel: typing.Optional[global___EncodedImage.PixelType] = ...,
-        raw: global___RawImage.Type.ValueType = ...,
+        cols : builtins.int = ...,
+        rows : builtins.int = ...,
+        encoded : global___EncodedImage.Type.ValueType = ...,
+        pixel : typing.Optional[global___EncodedImage.PixelType] = ...,
+        raw : global___RawImage.Type.ValueType = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["encoded",b"encoded","image_type",b"image_type","pixel",b"pixel","raw",b"raw"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cols",b"cols","encoded",b"encoded","image_type",b"image_type","pixel",b"pixel","raw",b"raw","rows",b"rows"]) -> None: ...

@@ -29,7 +29,7 @@ def main(unused_argv: Sequence[str]) -> None:
 
 
 if __name__ == "__main__":
-  flags.DEFINE_integer("id", 0, "Spacemouse ID to monitor.")
+  flags.DEFINE_integer("id", None, "Spacemouse ID to monitor.")
   flags.DEFINE_bool("planar", False, "Send only motion on the xy plane.")
   flags.DEFINE_bool("gripper", False, "Button controls gripper.")
   flags.DEFINE_float("scale", 4.0, "Scale of rotation and translation.")

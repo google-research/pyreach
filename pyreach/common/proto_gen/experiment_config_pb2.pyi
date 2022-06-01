@@ -24,56 +24,56 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class RoboticsClientConfig(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PROJECT_NAME_FIELD_NUMBER: builtins.int
-    project_name: typing.Text
+    project_name: typing.Text = ...
     def __init__(self,
         *,
-        project_name: typing.Text = ...,
+        project_name : typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["project_name",b"project_name"]) -> None: ...
 global___RoboticsClientConfig = RoboticsClientConfig
 
 class TaskProperties(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TASK_NAME_FIELD_NUMBER: builtins.int
     EPISODE_ID_FIELD_NUMBER: builtins.int
     TIMESTAMP_COARSE_FIELD_NUMBER: builtins.int
-    task_name: typing.Text
-    episode_id: typing.Text
-    timestamp_coarse: builtins.int
+    task_name: typing.Text = ...
+    episode_id: typing.Text = ...
+    timestamp_coarse: builtins.int = ...
     def __init__(self,
         *,
-        task_name: typing.Text = ...,
-        episode_id: typing.Text = ...,
-        timestamp_coarse: builtins.int = ...,
+        task_name : typing.Text = ...,
+        episode_id : typing.Text = ...,
+        timestamp_coarse : builtins.int = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["episode_id",b"episode_id","task_name",b"task_name","timestamp_coarse",b"timestamp_coarse"]) -> None: ...
 global___TaskProperties = TaskProperties
 
 class Flag(google.protobuf.message.Message):
     """Flag defines a specific experiment flag."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     INT_VALUE_FIELD_NUMBER: builtins.int
     STRING_VALUE_FIELD_NUMBER: builtins.int
     DOUBLE_VALUE_FIELD_NUMBER: builtins.int
     BOOL_VALUE_FIELD_NUMBER: builtins.int
-    name: typing.Text
-    int_value: builtins.int
-    string_value: typing.Text
-    double_value: builtins.float
-    bool_value: builtins.bool
+    name: typing.Text = ...
+    int_value: builtins.int = ...
+    string_value: typing.Text = ...
+    double_value: builtins.float = ...
+    bool_value: builtins.bool = ...
     def __init__(self,
         *,
-        name: typing.Text = ...,
-        int_value: builtins.int = ...,
-        string_value: typing.Text = ...,
-        double_value: builtins.float = ...,
-        bool_value: builtins.bool = ...,
+        name : typing.Text = ...,
+        int_value : builtins.int = ...,
+        string_value : typing.Text = ...,
+        double_value : builtins.float = ...,
+        bool_value : builtins.bool = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["bool_value",b"bool_value","double_value",b"double_value","int_value",b"int_value","string_value",b"string_value","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["bool_value",b"bool_value","double_value",b"double_value","int_value",b"int_value","name",b"name","string_value",b"string_value","value",b"value"]) -> None: ...
@@ -82,63 +82,63 @@ global___Flag = Flag
 
 class Flags(google.protobuf.message.Message):
     """Flags defines a list of experiment flags for a given experiment token."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     FLAGS_FIELD_NUMBER: builtins.int
     EXPERIMENT_TOKEN_FIELD_NUMBER: builtins.int
     @property
     def flags(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Flag]: ...
-    experiment_token: typing.Text
+    experiment_token: typing.Text = ...
     def __init__(self,
         *,
-        flags: typing.Optional[typing.Iterable[global___Flag]] = ...,
-        experiment_token: typing.Text = ...,
+        flags : typing.Optional[typing.Iterable[global___Flag]] = ...,
+        experiment_token : typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["experiment_token",b"experiment_token","flags",b"flags"]) -> None: ...
 global___Flags = Flags
 
 class FwFlagsRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PROPERTIES_FIELD_NUMBER: builtins.int
     @property
     def properties(self) -> google.protobuf.any_pb2.Any: ...
     def __init__(self,
         *,
-        properties: typing.Optional[google.protobuf.any_pb2.Any] = ...,
+        properties : typing.Optional[google.protobuf.any_pb2.Any] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["properties",b"properties"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["properties",b"properties"]) -> None: ...
 global___FwFlagsRequest = FwFlagsRequest
 
 class FwFlagsResponse(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SUBSCRIPTION_ID_FIELD_NUMBER: builtins.int
     FLAGS_FIELD_NUMBER: builtins.int
-    subscription_id: typing.Text
+    subscription_id: typing.Text = ...
     @property
     def flags(self) -> global___Flags: ...
     def __init__(self,
         *,
-        subscription_id: typing.Text = ...,
-        flags: typing.Optional[global___Flags] = ...,
+        subscription_id : typing.Text = ...,
+        flags : typing.Optional[global___Flags] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["flags",b"flags"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["flags",b"flags","subscription_id",b"subscription_id"]) -> None: ...
 global___FwFlagsResponse = FwFlagsResponse
 
 class FwExperimentSubscriptionRequest(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SUBSCRIPTION_ID_FIELD_NUMBER: builtins.int
     PROPERTIES_FIELD_NUMBER: builtins.int
     REFRESH_RATE_SECONDS_FIELD_NUMBER: builtins.int
-    subscription_id: typing.Text
+    subscription_id: typing.Text = ...
     @property
     def properties(self) -> google.protobuf.any_pb2.Any: ...
-    refresh_rate_seconds: builtins.int
+    refresh_rate_seconds: builtins.int = ...
     def __init__(self,
         *,
-        subscription_id: typing.Text = ...,
-        properties: typing.Optional[google.protobuf.any_pb2.Any] = ...,
-        refresh_rate_seconds: builtins.int = ...,
+        subscription_id : typing.Text = ...,
+        properties : typing.Optional[google.protobuf.any_pb2.Any] = ...,
+        refresh_rate_seconds : builtins.int = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["properties",b"properties"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["properties",b"properties","refresh_rate_seconds",b"refresh_rate_seconds","subscription_id",b"subscription_id"]) -> None: ...

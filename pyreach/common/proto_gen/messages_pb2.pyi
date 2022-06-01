@@ -24,7 +24,7 @@ import log_entry_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class LogEntryBatch(google.protobuf.message.Message):
     """A logical collection LogEntry messages.
@@ -33,13 +33,13 @@ class LogEntryBatch(google.protobuf.message.Message):
     a single source at one time (eg, one control step for one robot part,
     synchronized images captured by a set of cameras, etc).
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ENTRIES_FIELD_NUMBER: builtins.int
     @property
     def entries(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[log_entry_pb2.LogEntry]: ...
     def __init__(self,
         *,
-        entries: typing.Optional[typing.Iterable[log_entry_pb2.LogEntry]] = ...,
+        entries : typing.Optional[typing.Iterable[log_entry_pb2.LogEntry]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["entries",b"entries"]) -> None: ...
 global___LogEntryBatch = LogEntryBatch

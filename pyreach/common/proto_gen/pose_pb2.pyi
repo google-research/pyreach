@@ -24,11 +24,11 @@ import typing
 import typing_extensions
 import vector_pb2
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Pose3d(google.protobuf.message.Message):
     """A pose in three-dimensional space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TRANSLATION_FIELD_NUMBER: builtins.int
     ROTATION_FIELD_NUMBER: builtins.int
     @property
@@ -41,8 +41,8 @@ class Pose3d(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        translation: typing.Optional[vector_pb2.Vector3d] = ...,
-        rotation: typing.Optional[quaternion_pb2.Quaterniond] = ...,
+        translation : typing.Optional[vector_pb2.Vector3d] = ...,
+        rotation : typing.Optional[quaternion_pb2.Quaterniond] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> None: ...
@@ -50,7 +50,7 @@ global___Pose3d = Pose3d
 
 class Pose3f(google.protobuf.message.Message):
     """A pose in three-dimensional space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TRANSLATION_FIELD_NUMBER: builtins.int
     ROTATION_FIELD_NUMBER: builtins.int
     @property
@@ -63,8 +63,8 @@ class Pose3f(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        translation: typing.Optional[vector_pb2.Vector3f] = ...,
-        rotation: typing.Optional[quaternion_pb2.Quaternionf] = ...,
+        translation : typing.Optional[vector_pb2.Vector3f] = ...,
+        rotation : typing.Optional[quaternion_pb2.Quaternionf] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> None: ...
@@ -72,20 +72,20 @@ global___Pose3f = Pose3f
 
 class Pose2d(google.protobuf.message.Message):
     """A pose in two-dimensional space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TRANSLATION_FIELD_NUMBER: builtins.int
     ROTATION_FIELD_NUMBER: builtins.int
     @property
     def translation(self) -> vector_pb2.Vector2d:
         """The translation, in meters."""
         pass
-    rotation: builtins.float
+    rotation: builtins.float = ...
     """Rotation angle in radians."""
 
     def __init__(self,
         *,
-        translation: typing.Optional[vector_pb2.Vector2d] = ...,
-        rotation: builtins.float = ...,
+        translation : typing.Optional[vector_pb2.Vector2d] = ...,
+        rotation : builtins.float = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["translation",b"translation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> None: ...
@@ -93,20 +93,20 @@ global___Pose2d = Pose2d
 
 class Pose2f(google.protobuf.message.Message):
     """A pose in two-dimensional space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TRANSLATION_FIELD_NUMBER: builtins.int
     ROTATION_FIELD_NUMBER: builtins.int
     @property
     def translation(self) -> vector_pb2.Vector2f:
         """The translation, in meters."""
         pass
-    rotation: builtins.float
+    rotation: builtins.float = ...
     """Rotation angle in radians."""
 
     def __init__(self,
         *,
-        translation: typing.Optional[vector_pb2.Vector2f] = ...,
-        rotation: builtins.float = ...,
+        translation : typing.Optional[vector_pb2.Vector2f] = ...,
+        rotation : builtins.float = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["translation",b"translation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["rotation",b"rotation","translation",b"translation"]) -> None: ...
@@ -114,29 +114,29 @@ global___Pose2f = Pose2f
 
 class Rotation2d(google.protobuf.message.Message):
     """A rotation about the origin in two dimensions, represented as (cos, sin)."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COS_ANGLE_FIELD_NUMBER: builtins.int
     SIN_ANGLE_FIELD_NUMBER: builtins.int
-    cos_angle: builtins.float
-    sin_angle: builtins.float
+    cos_angle: builtins.float = ...
+    sin_angle: builtins.float = ...
     def __init__(self,
         *,
-        cos_angle: builtins.float = ...,
-        sin_angle: builtins.float = ...,
+        cos_angle : builtins.float = ...,
+        sin_angle : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["cos_angle",b"cos_angle","sin_angle",b"sin_angle"]) -> None: ...
 global___Rotation2d = Rotation2d
 
 class Rotation2f(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COS_ANGLE_FIELD_NUMBER: builtins.int
     SIN_ANGLE_FIELD_NUMBER: builtins.int
-    cos_angle: builtins.float
-    sin_angle: builtins.float
+    cos_angle: builtins.float = ...
+    sin_angle: builtins.float = ...
     def __init__(self,
         *,
-        cos_angle: builtins.float = ...,
-        sin_angle: builtins.float = ...,
+        cos_angle : builtins.float = ...,
+        sin_angle : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["cos_angle",b"cos_angle","sin_angle",b"sin_angle"]) -> None: ...
 global___Rotation2f = Rotation2f

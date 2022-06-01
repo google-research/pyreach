@@ -24,7 +24,7 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class ObjectId(google.protobuf.message.Message):
     """----------------------------------------------------------------------------
@@ -60,99 +60,99 @@ class ObjectId(google.protobuf.message.Message):
     described here.
     ----------------------------------------------------------------------------
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class _ObjectType:
         ValueType = typing.NewType('ValueType', builtins.int)
         V: typing_extensions.TypeAlias = ValueType
-    class _ObjectTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[ObjectId._ObjectType.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNDEFINED: ObjectId._ObjectType.ValueType  # 0
-        BODY: ObjectId._ObjectType.ValueType  # 1
+    class _ObjectTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ObjectType.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        UNDEFINED: ObjectId.ObjectType.ValueType = ...  # 0
+        BODY: ObjectId.ObjectType.ValueType = ...  # 1
         """An independent physical object."""
 
-        LINK: ObjectId._ObjectType.ValueType  # 2
+        LINK: ObjectId.ObjectType.ValueType = ...  # 2
         """A link (a rigid piece) in a robot or assembly."""
 
-        JOINT: ObjectId._ObjectType.ValueType  # 3
+        JOINT: ObjectId.ObjectType.ValueType = ...  # 3
         """A joint between links in a robot or assembly."""
 
-        VISUAL_SHAPE: ObjectId._ObjectType.ValueType  # 4
+        VISUAL_SHAPE: ObjectId.ObjectType.ValueType = ...  # 4
         """A shape that is part of a visual model."""
 
-        COLLISION_SHAPE: ObjectId._ObjectType.ValueType  # 5
+        COLLISION_SHAPE: ObjectId.ObjectType.ValueType = ...  # 5
         """A shape that is part of a collision model."""
 
-        AXIS: ObjectId._ObjectType.ValueType  # 6
+        AXIS: ObjectId.ObjectType.ValueType = ...  # 6
         """An axis in a joint."""
 
-        WORLD: ObjectId._ObjectType.ValueType  # 7
+        WORLD: ObjectId.ObjectType.ValueType = ...  # 7
         """The world coordinate frame."""
 
-        FRAME: ObjectId._ObjectType.ValueType  # 8
+        FRAME: ObjectId.ObjectType.ValueType = ...  # 8
         """A named frame of reference."""
 
-        LIGHT: ObjectId._ObjectType.ValueType  # 9
+        LIGHT: ObjectId.ObjectType.ValueType = ...  # 9
         """A light source."""
 
-        SENSOR: ObjectId._ObjectType.ValueType  # 10
+        SENSOR: ObjectId.ObjectType.ValueType = ...  # 10
         """A camera or other sensor."""
 
-        SHAPE: ObjectId._ObjectType.ValueType  # 11
+        SHAPE: ObjectId.ObjectType.ValueType = ...  # 11
         """An abstract shape that is not part of a body."""
 
-        CONSTRAINT: ObjectId._ObjectType.ValueType  # 12
+        CONSTRAINT: ObjectId.ObjectType.ValueType = ...  # 12
         """A constraint between two objects."""
 
-        IMAGE: ObjectId._ObjectType.ValueType  # 13
+        IMAGE: ObjectId.ObjectType.ValueType = ...  # 13
         """An image that can be used as texture or backdrop."""
 
-        COLLISION_FILTER: ObjectId._ObjectType.ValueType  # 14
+        COLLISION_FILTER: ObjectId.ObjectType.ValueType = ...  # 14
         """A filter that enables or disables collision detection."""
 
     class ObjectType(_ObjectType, metaclass=_ObjectTypeEnumTypeWrapper):
         pass
 
-    UNDEFINED: ObjectId.ObjectType.ValueType  # 0
-    BODY: ObjectId.ObjectType.ValueType  # 1
+    UNDEFINED: ObjectId.ObjectType.ValueType = ...  # 0
+    BODY: ObjectId.ObjectType.ValueType = ...  # 1
     """An independent physical object."""
 
-    LINK: ObjectId.ObjectType.ValueType  # 2
+    LINK: ObjectId.ObjectType.ValueType = ...  # 2
     """A link (a rigid piece) in a robot or assembly."""
 
-    JOINT: ObjectId.ObjectType.ValueType  # 3
+    JOINT: ObjectId.ObjectType.ValueType = ...  # 3
     """A joint between links in a robot or assembly."""
 
-    VISUAL_SHAPE: ObjectId.ObjectType.ValueType  # 4
+    VISUAL_SHAPE: ObjectId.ObjectType.ValueType = ...  # 4
     """A shape that is part of a visual model."""
 
-    COLLISION_SHAPE: ObjectId.ObjectType.ValueType  # 5
+    COLLISION_SHAPE: ObjectId.ObjectType.ValueType = ...  # 5
     """A shape that is part of a collision model."""
 
-    AXIS: ObjectId.ObjectType.ValueType  # 6
+    AXIS: ObjectId.ObjectType.ValueType = ...  # 6
     """An axis in a joint."""
 
-    WORLD: ObjectId.ObjectType.ValueType  # 7
+    WORLD: ObjectId.ObjectType.ValueType = ...  # 7
     """The world coordinate frame."""
 
-    FRAME: ObjectId.ObjectType.ValueType  # 8
+    FRAME: ObjectId.ObjectType.ValueType = ...  # 8
     """A named frame of reference."""
 
-    LIGHT: ObjectId.ObjectType.ValueType  # 9
+    LIGHT: ObjectId.ObjectType.ValueType = ...  # 9
     """A light source."""
 
-    SENSOR: ObjectId.ObjectType.ValueType  # 10
+    SENSOR: ObjectId.ObjectType.ValueType = ...  # 10
     """A camera or other sensor."""
 
-    SHAPE: ObjectId.ObjectType.ValueType  # 11
+    SHAPE: ObjectId.ObjectType.ValueType = ...  # 11
     """An abstract shape that is not part of a body."""
 
-    CONSTRAINT: ObjectId.ObjectType.ValueType  # 12
+    CONSTRAINT: ObjectId.ObjectType.ValueType = ...  # 12
     """A constraint between two objects."""
 
-    IMAGE: ObjectId.ObjectType.ValueType  # 13
+    IMAGE: ObjectId.ObjectType.ValueType = ...  # 13
     """An image that can be used as texture or backdrop."""
 
-    COLLISION_FILTER: ObjectId.ObjectType.ValueType  # 14
+    COLLISION_FILTER: ObjectId.ObjectType.ValueType = ...  # 14
     """A filter that enables or disables collision detection."""
 
 
@@ -160,16 +160,16 @@ class ObjectId(google.protobuf.message.Message):
     INDEX0_FIELD_NUMBER: builtins.int
     INDEX1_FIELD_NUMBER: builtins.int
     INDEX2_FIELD_NUMBER: builtins.int
-    object_type: global___ObjectId.ObjectType.ValueType
-    index0: builtins.int
-    index1: builtins.int
-    index2: builtins.int
+    object_type: global___ObjectId.ObjectType.ValueType = ...
+    index0: builtins.int = ...
+    index1: builtins.int = ...
+    index2: builtins.int = ...
     def __init__(self,
         *,
-        object_type: global___ObjectId.ObjectType.ValueType = ...,
-        index0: typing.Optional[builtins.int] = ...,
-        index1: typing.Optional[builtins.int] = ...,
-        index2: typing.Optional[builtins.int] = ...,
+        object_type : global___ObjectId.ObjectType.ValueType = ...,
+        index0 : typing.Optional[builtins.int] = ...,
+        index1 : typing.Optional[builtins.int] = ...,
+        index2 : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_index0",b"_index0","_index1",b"_index1","_index2",b"_index2","index0",b"index0","index1",b"index1","index2",b"index2"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_index0",b"_index0","_index1",b"_index1","_index2",b"_index2","index0",b"index0","index1",b"index1","index2",b"index2","object_type",b"object_type"]) -> None: ...
@@ -183,13 +183,13 @@ global___ObjectId = ObjectId
 
 class ObjectIdList(google.protobuf.message.Message):
     """A list of ObjectId."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IDS_FIELD_NUMBER: builtins.int
     @property
     def ids(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ObjectId]: ...
     def __init__(self,
         *,
-        ids: typing.Optional[typing.Iterable[global___ObjectId]] = ...,
+        ids : typing.Optional[typing.Iterable[global___ObjectId]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["ids",b"ids"]) -> None: ...
 global___ObjectIdList = ObjectIdList

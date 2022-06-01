@@ -24,7 +24,7 @@ import typing
 import typing_extensions
 import units_pb2
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class GeneralIo(google.protobuf.message.Message):
     """GeneralIo represents a set of I/O values that together abstracts the
@@ -34,7 +34,7 @@ class GeneralIo(google.protobuf.message.Message):
     discretion. Please only use this type if the value being logged does not have
     more structure than plain I/O.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DIGITALS_FIELD_NUMBER: builtins.int
     ANALOGS_FIELD_NUMBER: builtins.int
     @property
@@ -43,8 +43,8 @@ class GeneralIo(google.protobuf.message.Message):
     def analogs(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     def __init__(self,
         *,
-        digitals: typing.Optional[typing.Iterable[builtins.int]] = ...,
-        analogs: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        digitals : typing.Optional[typing.Iterable[builtins.int]] = ...,
+        analogs : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["analogs",b"analogs","digitals",b"digitals"]) -> None: ...
 global___GeneralIo = GeneralIo
@@ -53,19 +53,19 @@ class GeneralIoMeta(google.protobuf.message.Message):
     """Metadata type that comes with GeneralIo. Length of analog_units should always
     equal to num_analogs.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NUM_DIGITALS_FIELD_NUMBER: builtins.int
     NUM_ANALOGS_FIELD_NUMBER: builtins.int
     ANALOG_UNITS_FIELD_NUMBER: builtins.int
-    num_digitals: builtins.int
-    num_analogs: builtins.int
+    num_digitals: builtins.int = ...
+    num_analogs: builtins.int = ...
     @property
     def analog_units(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[units_pb2.Unit.ValueType]: ...
     def __init__(self,
         *,
-        num_digitals: typing.Optional[builtins.int] = ...,
-        num_analogs: typing.Optional[builtins.int] = ...,
-        analog_units: typing.Optional[typing.Iterable[units_pb2.Unit.ValueType]] = ...,
+        num_digitals : typing.Optional[builtins.int] = ...,
+        num_analogs : typing.Optional[builtins.int] = ...,
+        analog_units : typing.Optional[typing.Iterable[units_pb2.Unit.ValueType]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["num_analogs",b"num_analogs","num_digitals",b"num_digitals"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["analog_units",b"analog_units","num_analogs",b"num_analogs","num_digitals",b"num_digitals"]) -> None: ...

@@ -32,7 +32,7 @@ import transform_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class LogEntryMetadata(google.protobuf.message.Message):
     """Metadata that can apply to a number of different payload types.
@@ -43,20 +43,20 @@ class LogEntryMetadata(google.protobuf.message.Message):
     Otherwise, project-specific fields using a custom data type should be added
     as a payload type in LogEntry.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class KeyValue(google.protobuf.message.Message):
         """Arbitrary key-value pairs. This should function like a map, but SQL does
         not support string-string maps, so instead we use a repeated message.
         """
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         KEY_FIELD_NUMBER: builtins.int
         VALUE_FIELD_NUMBER: builtins.int
-        key: typing.Text
-        value: typing.Text
+        key: typing.Text = ...
+        value: typing.Text = ...
         def __init__(self,
             *,
-            key: typing.Optional[typing.Text] = ...,
-            value: typing.Optional[typing.Text] = ...,
+            key : typing.Optional[typing.Text] = ...,
+            value : typing.Optional[typing.Text] = ...,
             ) -> None: ...
         def HasField(self, field_name: typing_extensions.Literal["key",b"key","value",b"value"]) -> builtins.bool: ...
         def ClearField(self, field_name: typing_extensions.Literal["key",b"key","value",b"value"]) -> None: ...
@@ -76,9 +76,9 @@ class LogEntryMetadata(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        key_value: typing.Optional[typing.Iterable[global___LogEntryMetadata.KeyValue]] = ...,
-        command: typing.Optional[robot_control_pb2.CommandMetadata] = ...,
-        state: typing.Optional[robot_control_pb2.StateMetadata] = ...,
+        key_value : typing.Optional[typing.Iterable[global___LogEntryMetadata.KeyValue]] = ...,
+        command : typing.Optional[robot_control_pb2.CommandMetadata] = ...,
+        state : typing.Optional[robot_control_pb2.StateMetadata] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["command",b"command","data",b"data","state",b"state"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["command",b"command","data",b"data","key_value",b"key_value","state",b"state"]) -> None: ...
@@ -87,7 +87,7 @@ global___LogEntryMetadata = LogEntryMetadata
 
 class LogEntry(google.protobuf.message.Message):
     """Processed result for single log event from robot."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     META_FIELD_NUMBER: builtins.int
     GENERAL_IO_FIELD_NUMBER: builtins.int
@@ -127,17 +127,17 @@ class LogEntry(google.protobuf.message.Message):
     def reach(self) -> reach_pb2.ReachPayload: ...
     def __init__(self,
         *,
-        id: typing.Optional[log_entry_id_pb2.LogEntryId] = ...,
-        meta: typing.Optional[global___LogEntryMetadata] = ...,
-        general_io: typing.Optional[general_io_pb2.GeneralIo] = ...,
-        joints: typing.Optional[joints_pb2.Joints] = ...,
-        transform: typing.Optional[transform_pb2.Transform] = ...,
-        encoded_image: typing.Optional[image_pb2.EncodedImage] = ...,
-        simulation_command: typing.Optional[simulation_pb2.SimulationCommand] = ...,
-        camera_calibration: typing.Optional[calibration_pb2.CameraCalibration] = ...,
-        system_command: typing.Optional[robot_control_pb2.SystemCommand] = ...,
-        system_state: typing.Optional[robot_control_pb2.SystemState] = ...,
-        reach: typing.Optional[reach_pb2.ReachPayload] = ...,
+        id : typing.Optional[log_entry_id_pb2.LogEntryId] = ...,
+        meta : typing.Optional[global___LogEntryMetadata] = ...,
+        general_io : typing.Optional[general_io_pb2.GeneralIo] = ...,
+        joints : typing.Optional[joints_pb2.Joints] = ...,
+        transform : typing.Optional[transform_pb2.Transform] = ...,
+        encoded_image : typing.Optional[image_pb2.EncodedImage] = ...,
+        simulation_command : typing.Optional[simulation_pb2.SimulationCommand] = ...,
+        camera_calibration : typing.Optional[calibration_pb2.CameraCalibration] = ...,
+        system_command : typing.Optional[robot_control_pb2.SystemCommand] = ...,
+        system_state : typing.Optional[robot_control_pb2.SystemState] = ...,
+        reach : typing.Optional[reach_pb2.ReachPayload] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...

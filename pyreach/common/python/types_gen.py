@@ -3916,6 +3916,9 @@ class DeviceData:
   # base_t_origin is the offset of the robot base from the origin.
   base_t_origin: List[float]
 
+  # urdf_file is the filename for the URDF (e.g. ur5e.urdf).
+  urdf_file: str
+
   # Joints positions in radians.
   joints: List[float]
 
@@ -4290,7 +4293,7 @@ class DeviceData:
   controller_descriptions: Optional['ControllerDescriptions']
   # ==============================
 
-  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', camera_calibration: Optional['CameraCalibration'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
+  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', camera_calibration: Optional['CameraCalibration'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', urdf_file: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
     if accept_depth_encoding is None:
       self.accept_depth_encoding = []
     else:
@@ -4530,6 +4533,7 @@ class DeviceData:
     self.ui_version = ui_version
     self.uncompressed_depth = uncompressed_depth
     self.upload_depth = upload_depth
+    self.urdf_file = urdf_file
     self.vacuum_level_pa = vacuum_level_pa
     self.value = value
     self.webrtc_audio_request = webrtc_audio_request
@@ -5096,6 +5100,10 @@ class DeviceData:
       assert isinstance(self.upload_depth, str), 'Wrong type for attribute: upload_depth. Expected: str. Got: ' + str(type(self.upload_depth)) + '.'
       json_data['uploadDepth'] = self.upload_depth
 
+    if self.urdf_file:
+      assert isinstance(self.urdf_file, str), 'Wrong type for attribute: urdf_file. Expected: str. Got: ' + str(type(self.urdf_file)) + '.'
+      json_data['urdfFile'] = self.urdf_file
+
     if self.vacuum_level_pa:
       assert isinstance(self.vacuum_level_pa, float) or isinstance(self.vacuum_level_pa, int), 'Wrong type for attribute: vacuum_level_pa. Expected: float. Got: ' + str(type(self.vacuum_level_pa)) + '.'
       json_data['vacuumLevelPa'] = self.vacuum_level_pa
@@ -5243,6 +5251,8 @@ class DeviceData:
       proto_ur_state.tip_t_base.extend(self.tip_t_base)
       proto_ur_state.tip_adjust_t_base.extend(self.tip_adjust_t_base)
       proto_ur_state.base_t_origin.extend(self.base_t_origin)
+      if self.urdf_file:
+        proto_ur_state.urdf_file = self.urdf_file
       proto_ur_state.joints.extend(self.joints)
       proto_ur_state.force.extend(self.force)
       proto_ur_state.torque.extend(self.torque)
@@ -5609,6 +5619,8 @@ class DeviceData:
       proto_robot_state.tip_t_base.extend(self.tip_t_base)
       proto_robot_state.tip_adjust_t_base.extend(self.tip_adjust_t_base)
       proto_robot_state.base_t_origin.extend(self.base_t_origin)
+      if self.urdf_file:
+        proto_robot_state.urdf_file = self.urdf_file
       proto_robot_state.joints.extend(self.joints)
       proto_robot_state.force.extend(self.force)
       proto_robot_state.torque.extend(self.torque)
@@ -6321,6 +6333,10 @@ class DeviceData:
       assert isinstance(json_data['uploadDepth'], str), 'Wrong type for attribute: uploadDepth. Expected: str. Got: ' + str(type(json_data['uploadDepth'])) + '.'
       obj.upload_depth = json_data['uploadDepth']
 
+    if 'urdfFile' in json_data:
+      assert isinstance(json_data['urdfFile'], str), 'Wrong type for attribute: urdfFile. Expected: str. Got: ' + str(type(json_data['urdfFile'])) + '.'
+      obj.urdf_file = json_data['urdfFile']
+
     if 'vacuumLevelPa' in json_data:
       assert isinstance(json_data['vacuumLevelPa'], float) or isinstance(json_data['vacuumLevelPa'], int), 'Wrong type for attribute: vacuumLevelPa. Expected: float. Got: ' + str(type(json_data['vacuumLevelPa'])) + '.'
       obj.vacuum_level_pa = json_data['vacuumLevelPa']
@@ -6472,6 +6488,8 @@ class DeviceData:
         obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
       for obj_base_t_origin in proto.ur_state.base_t_origin:
         obj.base_t_origin.append(obj_base_t_origin)
+      if proto.ur_state.HasField('urdf_file'):
+        obj.urdf_file = proto.ur_state.urdf_file
       for obj_joints in proto.ur_state.joints:
         obj.joints.append(obj_joints)
       for obj_force in proto.ur_state.force:
@@ -6792,6 +6810,8 @@ class DeviceData:
         obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
       for obj_base_t_origin in proto.robot_state.base_t_origin:
         obj.base_t_origin.append(obj_base_t_origin)
+      if proto.robot_state.HasField('urdf_file'):
+        obj.urdf_file = proto.robot_state.urdf_file
       for obj_joints in proto.robot_state.joints:
         obj.joints.append(obj_joints)
       for obj_force in proto.robot_state.force:
@@ -11757,6 +11777,9 @@ class RobotState:
   # base_t_origin is the offset of the robot base from the origin.
   base_t_origin: List[float]
 
+  # urdf_file is the filename for the URDF (e.g. ur5e.urdf).
+  urdf_file: str
+
   # Joints positions in radians.
   joints: List[float]
 
@@ -11824,7 +11847,7 @@ class RobotState:
   # Tag of last terminated (aborted or done) program.
   last_terminated_program: str
 
-  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
+  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, urdf_file: str = '') -> None:
     if analog_bank is None:
       self.analog_bank = []
     else:
@@ -11931,6 +11954,7 @@ class RobotState:
       self.torque = []
     else:
       self.torque = torque
+    self.urdf_file = urdf_file
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -12106,6 +12130,10 @@ class RobotState:
       assert isinstance(self.torque, list), 'Wrong type for attribute: torque. Expected: list. Got: ' + str(type(self.torque)) + '.'
       json_data['torque'] = self.torque
 
+    if self.urdf_file:
+      assert isinstance(self.urdf_file, str), 'Wrong type for attribute: urdf_file. Expected: str. Got: ' + str(type(self.urdf_file)) + '.'
+      json_data['urdfFile'] = self.urdf_file
+
     return json_data
 
   def to_proto(self) -> 'logs_pb2.RobotState':
@@ -12115,6 +12143,8 @@ class RobotState:
     proto.tip_t_base.extend(self.tip_t_base)
     proto.tip_adjust_t_base.extend(self.tip_adjust_t_base)
     proto.base_t_origin.extend(self.base_t_origin)
+    if self.urdf_file:
+      proto.urdf_file = self.urdf_file
     proto.joints.extend(self.joints)
     proto.force.extend(self.force)
     proto.torque.extend(self.torque)
@@ -12405,6 +12435,10 @@ class RobotState:
         json_list.append(j)
       obj.torque = json_list
 
+    if 'urdfFile' in json_data:
+      assert isinstance(json_data['urdfFile'], str), 'Wrong type for attribute: urdfFile. Expected: str. Got: ' + str(type(json_data['urdfFile'])) + '.'
+      obj.urdf_file = json_data['urdfFile']
+
     return obj
 
   @staticmethod
@@ -12421,6 +12455,8 @@ class RobotState:
       obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
     for obj_base_t_origin in proto.base_t_origin:
       obj.base_t_origin.append(obj_base_t_origin)
+    if proto.HasField('urdf_file'):
+      obj.urdf_file = proto.urdf_file
     for obj_joints in proto.joints:
       obj.joints.append(obj_joints)
     for obj_force in proto.force:
@@ -15186,6 +15222,9 @@ class UrState:
   # base_t_origin is the offset of the robot base from the origin.
   base_t_origin: List[float]
 
+  # urdf_file is the filename for the URDF (e.g. ur5e.urdf).
+  urdf_file: str
+
   # Joints positions in radians.
   joints: List[float]
 
@@ -15253,7 +15292,7 @@ class UrState:
   # Tag of last terminated (aborted or done) program.
   last_terminated_program: str
 
-  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None) -> None:
+  def __init__(self, analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, force: Optional[List[float]] = None, integer_bank: Optional[List['IntegerBank']] = None, is_emergency_stopped: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, last_terminated_program: str = '', pose: Optional[List[float]] = None, program_counter: int = 0, robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_mode: str = '', robot_voltage_v: float = 0.0, safety_message: str = '', sensor_in: Optional[List[bool]] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, urdf_file: str = '') -> None:
     if analog_bank is None:
       self.analog_bank = []
     else:
@@ -15360,6 +15399,7 @@ class UrState:
       self.torque = []
     else:
       self.torque = torque
+    self.urdf_file = urdf_file
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -15535,6 +15575,10 @@ class UrState:
       assert isinstance(self.torque, list), 'Wrong type for attribute: torque. Expected: list. Got: ' + str(type(self.torque)) + '.'
       json_data['torque'] = self.torque
 
+    if self.urdf_file:
+      assert isinstance(self.urdf_file, str), 'Wrong type for attribute: urdf_file. Expected: str. Got: ' + str(type(self.urdf_file)) + '.'
+      json_data['urdfFile'] = self.urdf_file
+
     return json_data
 
   def to_proto(self) -> 'logs_pb2.UrState':
@@ -15544,6 +15588,8 @@ class UrState:
     proto.tip_t_base.extend(self.tip_t_base)
     proto.tip_adjust_t_base.extend(self.tip_adjust_t_base)
     proto.base_t_origin.extend(self.base_t_origin)
+    if self.urdf_file:
+      proto.urdf_file = self.urdf_file
     proto.joints.extend(self.joints)
     proto.force.extend(self.force)
     proto.torque.extend(self.torque)
@@ -15834,6 +15880,10 @@ class UrState:
         json_list.append(j)
       obj.torque = json_list
 
+    if 'urdfFile' in json_data:
+      assert isinstance(json_data['urdfFile'], str), 'Wrong type for attribute: urdfFile. Expected: str. Got: ' + str(type(json_data['urdfFile'])) + '.'
+      obj.urdf_file = json_data['urdfFile']
+
     return obj
 
   @staticmethod
@@ -15850,6 +15900,8 @@ class UrState:
       obj.tip_adjust_t_base.append(obj_tip_adjust_t_base)
     for obj_base_t_origin in proto.base_t_origin:
       obj.base_t_origin.append(obj_base_t_origin)
+    if proto.HasField('urdf_file'):
+      obj.urdf_file = proto.urdf_file
     for obj_joints in proto.joints:
       obj.joints.append(obj_joints)
     for obj_force in proto.force:

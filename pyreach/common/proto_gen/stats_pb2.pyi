@@ -23,21 +23,21 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Stats(google.protobuf.message.Message):
     """For duration type, the double values below are nanoseconds."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class Quantile(google.protobuf.message.Message):
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         QUANTILE_FIELD_NUMBER: builtins.int
         SAMPLE_FIELD_NUMBER: builtins.int
-        quantile: builtins.float
-        sample: builtins.float
+        quantile: builtins.float = ...
+        sample: builtins.float = ...
         def __init__(self,
             *,
-            quantile: builtins.float = ...,
-            sample: builtins.float = ...,
+            quantile : builtins.float = ...,
+            sample : builtins.float = ...,
             ) -> None: ...
         def ClearField(self, field_name: typing_extensions.Literal["quantile",b"quantile","sample",b"sample"]) -> None: ...
 
@@ -49,25 +49,25 @@ class Stats(google.protobuf.message.Message):
     MAX_FIELD_NUMBER: builtins.int
     QUANTILES_FIELD_NUMBER: builtins.int
     RMS_FIELD_NUMBER: builtins.int
-    count: builtins.int
-    stored_count: builtins.int
-    mean: builtins.float
-    stdev: builtins.float
-    min: builtins.float
-    max: builtins.float
+    count: builtins.int = ...
+    stored_count: builtins.int = ...
+    mean: builtins.float = ...
+    stdev: builtins.float = ...
+    min: builtins.float = ...
+    max: builtins.float = ...
     @property
     def quantiles(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Stats.Quantile]: ...
-    rms: builtins.float
+    rms: builtins.float = ...
     def __init__(self,
         *,
-        count: builtins.int = ...,
-        stored_count: builtins.int = ...,
-        mean: typing.Optional[builtins.float] = ...,
-        stdev: typing.Optional[builtins.float] = ...,
-        min: typing.Optional[builtins.float] = ...,
-        max: typing.Optional[builtins.float] = ...,
-        quantiles: typing.Optional[typing.Iterable[global___Stats.Quantile]] = ...,
-        rms: typing.Optional[builtins.float] = ...,
+        count : builtins.int = ...,
+        stored_count : builtins.int = ...,
+        mean : typing.Optional[builtins.float] = ...,
+        stdev : typing.Optional[builtins.float] = ...,
+        min : typing.Optional[builtins.float] = ...,
+        max : typing.Optional[builtins.float] = ...,
+        quantiles : typing.Optional[typing.Iterable[global___Stats.Quantile]] = ...,
+        rms : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["_max",b"_max","_mean",b"_mean","_min",b"_min","_rms",b"_rms","_stdev",b"_stdev","max",b"max","mean",b"mean","min",b"min","rms",b"rms","stdev",b"stdev"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["_max",b"_max","_mean",b"_mean","_min",b"_min","_rms",b"_rms","_stdev",b"_stdev","count",b"count","max",b"max","mean",b"mean","min",b"min","quantiles",b"quantiles","rms",b"rms","stdev",b"stdev","stored_count",b"stored_count"]) -> None: ...

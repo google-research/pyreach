@@ -23,6 +23,7 @@ import numpy as np
 import pyreach
 from pyreach import calibration
 from pyreach import color_camera
+from pyreach import core
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import color_camera_element
 from pyreach.gyms import core as gyms_core
@@ -48,13 +49,15 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     """
     reach_name: str = color_camera_config.reach_name
     shape: Tuple[int, int] = color_camera_config.shape
+    frame_rate: float = color_camera_config.frame_rate
     force_fit: bool = color_camera_config.force_fit
     is_synchronous: bool = color_camera_config.is_synchronous
     calibration_enable: bool = color_camera_config.calibration_enable
     lens_model: Optional[str] = color_camera_config.lens_model
     link_name: Optional[str] = color_camera_config.link_name
-    initial_stream_request_period: float = (
-        color_camera_config.initial_stream_request_period)
+    pose_enable: bool = color_camera_config.pose_enable
+    if frame_rate <= 0.0:
+      frame_rate = 10.0
 
     if len(shape) != 2:
       raise pyreach.PyReachError("ColorCamera shape is {shape}, not (DX,DY)")
@@ -64,6 +67,8 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
             gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
         "color":
             gym.spaces.Box(low=0, high=255, shape=color_shape, dtype=np.uint8),
+        "frame_rate":
+            gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
     }
     if calibration_enable:
       lens_models: Tuple[str, ...] = ("fisheye", "pinhole")
@@ -81,18 +86,22 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(4,))
       })
       observation_dict["calibration"] = calibration_space
+    if pose_enable:
+      observation_dict["pose"] = gym.spaces.Box(
+          low=-sys.maxsize, high=sys.maxsize, shape=(6,))
     action_space: gym.spaces.Dict = gym.spaces.Dict({})
     observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
     super().__init__(reach_name, action_space, observation_space,
                      is_synchronous, set())
     self._color_camera: Optional[pyreach.ColorCamera] = None
+    self._frame_rate: float = frame_rate
     self._force_fit: bool = force_fit
     self._shape: Tuple[int, int, int] = color_shape
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
     self._link_name: str = link_name if link_name else ""
-    self._initial_stream_request_period: float = initial_stream_request_period
+    self._pose_enable: bool = pose_enable
 
   def __str__(self) -> str:
     """Return string representation of a Reach Color Camera."""
@@ -124,8 +133,7 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
                   reach_name, camera_names))
         self._color_camera = host.color_cameras[reach_name]
         if host.playback is None:
-          self._color_camera.start_streaming(
-              self._initial_stream_request_period)
+          self._color_camera.start_streaming(1.0 / self._frame_rate)
     return self._color_camera
 
   def validate(self, host: pyreach.Host) -> str:
@@ -220,20 +228,36 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
         assert isinstance(calibration_camera, calibration.CalibrationCamera)
         observation = {
             "ts": gyms_core.Timestamp.new(ts),
-            "color": image,
             "calibration": {
                 "distortion": np.array(calibration_camera.distortion),
                 "distortion_depth":
                     (np.array(calibration_camera.distortion_depth)),
                 "extrinsics": np.array(calibration_camera.extrinsics),
                 "intrinsics": np.array(calibration_camera.intrinsics),
-            }
+            },
+            "color": image,
+            "frame_rate": np.array(self._frame_rate)
         }
       else:
         observation = {
             "ts": gyms_core.Timestamp.new(ts),
             "color": image,
+            "frame_rate": np.array(self._frame_rate)
         }
+      if self._pose_enable:
+        observation_pose: np.ndarray
+        if isinstance(color_frame, color_camera.ColorFrame):
+          pose: Optional[core.Pose] = color_frame.pose()
+          if isinstance(pose, core.Pose):
+            observation_pose = np.array(pose.as_list())
+          else:
+            raise pyreach.PyReachError(
+                f"ColorCamera {self.config_name} does not have a pose")
+        else:
+          raise pyreach.PyReachError(
+              f"ColorCamera {self.config_name} does not have an image"
+              "to extract a pose from")
+        observation["pose"] = observation_pose
 
       snapshot_reference: Tuple[lib_snapshot.SnapshotReference, ...] = ()
       if color_frame:

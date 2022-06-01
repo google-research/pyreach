@@ -22,6 +22,7 @@ import numpy as np
 
 import pyreach
 from pyreach import calibration
+from pyreach import core
 from pyreach import depth_camera
 from pyreach import snapshot as lib_snapshot
 from pyreach.gyms import core as gyms_core
@@ -50,13 +51,19 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     reach_name: str = depth_camera_config.reach_name
     shape: Tuple[int, int] = depth_camera_config.shape
     color_enabled: bool = depth_camera_config.color_enabled
+    color_frame_rate: float = depth_camera_config.color_frame_rate
+    depth_frame_rate: float = depth_camera_config.depth_frame_rate
     force_fit: bool = depth_camera_config.force_fit
     is_synchronous: bool = depth_camera_config.is_synchronous
     calibration_enable: bool = depth_camera_config.calibration_enable
     lens_model: Optional[str] = depth_camera_config.lens_model
     link_name: Optional[str] = depth_camera_config.link_name
-    initial_stream_request_period: float = (
-        depth_camera_config.initial_stream_request_period)
+    pose_enable: bool = depth_camera_config.pose_enable
+    if depth_frame_rate <= 0.0:
+      depth_frame_rate = 1.0
+    if color_frame_rate <= 0.0:
+      color_frame_rate = 10.0
+    frame_rate: float = max(depth_frame_rate, color_frame_rate)
 
     if len(shape) != 2:
       raise pyreach.PyReachError(f"Depth camera has shape {shape}, not (DX,DY)")
@@ -72,7 +79,11 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
                 high=65535,
                 shape=depth_shape,
                 dtype=np.uint16,
-            )
+            ),
+        "color_frame_rate":
+            gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
+        "depth_frame_rate":
+            gym.spaces.Box(low=0, high=sys.maxsize, shape=()),
     }
     if color_enabled:
       observation_dict["color"] = gym.spaces.Box(
@@ -94,7 +105,9 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
               gym.spaces.Box(low=-sys.maxsize, high=sys.maxsize, shape=(4,))
       })
       observation_dict["calibration"] = calibration_space
-
+    if pose_enable:
+      observation_dict["pose"] = gym.spaces.Box(
+          low=-sys.maxsize, high=sys.maxsize, shape=(6,))
     action_space: gym.spaces.Dict = gym.spaces.Dict({})
     observation_space: gym.spaces.Dict = gym.spaces.Dict(observation_dict)
 
@@ -108,7 +121,10 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
     self._link_name: str = link_name if link_name else ""
-    self._initial_stream_request_period: float = initial_stream_request_period
+    self._color_frame_rate = color_frame_rate
+    self._depth_frame_rate = depth_frame_rate
+    self._frame_rate: float = frame_rate
+    self._pose_enable: bool = pose_enable
 
   def __str__(self) -> str:
     """Return a string representation of ReachDeviceDepthCamera."""
@@ -139,8 +155,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
                   reach_name, depth_camera_names))
         self._depth_camera = host.depth_cameras[reach_name]
         if host.playback is None:
-          self._depth_camera.start_streaming(
-              self._initial_stream_request_period)
+          self._depth_camera.start_streaming(1.0 / self._frame_rate)
     return self._depth_camera
 
   def validate(self, host: pyreach.Host) -> str:
@@ -229,7 +244,9 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
 
       observation: Dict[str, Any] = {
           "ts": gyms_core.Timestamp.new(ts),
+          "color_frame_rate": np.array(self._color_frame_rate),
           "depth": depth_image,
+          "depth_frame_rate": np.array(self._depth_frame_rate),
       }
       if color_image is not None:
         observation["color"] = color_image
@@ -277,6 +294,20 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
             "extrinsics": np.array(calibration_camera.extrinsics),
             "intrinsics": np.array(calibration_camera.intrinsics),
         }
+      if self._pose_enable:
+        observation_pose: np.ndarray
+        if isinstance(depth_frame, depth_camera.DepthFrame):
+          pose: Optional[core.Pose] = depth_frame.pose()
+          if isinstance(pose, core.Pose):
+            observation_pose = np.array(pose.as_list())
+          else:
+            raise pyreach.PyReachError(
+                f"DepthCamera {self.config_name} does not have a pose")
+        else:
+          raise pyreach.PyReachError(
+              f"DepthCamera {self.config_name} does not have an image"
+              "to extract a pose from")
+        observation["pose"] = observation_pose
 
     return observation, snapshot_reference, ()
 

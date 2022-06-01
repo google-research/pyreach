@@ -24,10 +24,10 @@ import pose_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class FrameContext(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     FRAME_REF_FIELD_NUMBER: builtins.int
     WORLD_POSE_FRAME_FIELD_NUMBER: builtins.int
     @property
@@ -44,8 +44,8 @@ class FrameContext(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        frame_ref: typing.Optional[object_ref_pb2.ObjectRef] = ...,
-        world_pose_frame: typing.Optional[pose_pb2.Pose3d] = ...,
+        frame_ref : typing.Optional[object_ref_pb2.ObjectRef] = ...,
+        world_pose_frame : typing.Optional[pose_pb2.Pose3d] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["frame_ref",b"frame_ref","world_pose_frame",b"world_pose_frame"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["frame_ref",b"frame_ref","world_pose_frame",b"world_pose_frame"]) -> None: ...
@@ -67,7 +67,7 @@ class FrameContextRelative(google.protobuf.message.Message):
     For some ID types, a handler will construct a new child ID from parent and
     child IDs.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RELATIVE_REF_FIELD_NUMBER: builtins.int
     PARENT_POSE_FRAME_FIELD_NUMBER: builtins.int
     @property
@@ -80,8 +80,8 @@ class FrameContextRelative(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        relative_ref: typing.Optional[object_ref_pb2.ObjectRef] = ...,
-        parent_pose_frame: typing.Optional[pose_pb2.Pose3d] = ...,
+        relative_ref : typing.Optional[object_ref_pb2.ObjectRef] = ...,
+        parent_pose_frame : typing.Optional[pose_pb2.Pose3d] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["parent_pose_frame",b"parent_pose_frame","relative_ref",b"relative_ref"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["parent_pose_frame",b"parent_pose_frame","relative_ref",b"relative_ref"]) -> None: ...

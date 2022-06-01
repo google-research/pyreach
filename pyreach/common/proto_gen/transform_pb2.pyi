@@ -23,7 +23,7 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Transform(google.protobuf.message.Message):
     """Transform represents homogenous transform between two coordinate systems
@@ -36,7 +36,7 @@ class Transform(google.protobuf.message.Message):
 
     This type can be used as both commands to and measurements.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     POSITION_FIELD_NUMBER: builtins.int
     QUATERNION_FIELD_NUMBER: builtins.int
     VELOCITY_FIELD_NUMBER: builtins.int
@@ -93,16 +93,16 @@ class Transform(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        position: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        quaternion: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        velocity: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        angular_velocity: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        acceleration: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        angular_acceleration: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        jerk: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        angular_jerk: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        force: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        torque: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        position : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        quaternion : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        velocity : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        angular_velocity : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        acceleration : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        angular_acceleration : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        jerk : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        angular_jerk : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        force : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        torque : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","angular_acceleration",b"angular_acceleration","angular_jerk",b"angular_jerk","angular_velocity",b"angular_velocity","force",b"force","jerk",b"jerk","position",b"position","quaternion",b"quaternion","torque",b"torque","velocity",b"velocity"]) -> None: ...
 global___Transform = Transform
@@ -123,24 +123,24 @@ class TransformMeta(google.protobuf.message.Message):
     represented. Rotation of frame of representation affects meaning of vector
     logged as it changes x, y, and z axis unit vector.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     FRAME_MEASURED_FIELD_NUMBER: builtins.int
     FRAME_REFERENCE_FIELD_NUMBER: builtins.int
     FRAME_REPRESENTATION_FIELD_NUMBER: builtins.int
-    frame_measured: typing.Text
+    frame_measured: typing.Text = ...
     """The frame being measured."""
 
-    frame_reference: typing.Text
+    frame_reference: typing.Text = ...
     """The frame of reference."""
 
-    frame_representation: typing.Text
+    frame_representation: typing.Text = ...
     """The frame that defines the cartesian basis."""
 
     def __init__(self,
         *,
-        frame_measured: typing.Optional[typing.Text] = ...,
-        frame_reference: typing.Optional[typing.Text] = ...,
-        frame_representation: typing.Optional[typing.Text] = ...,
+        frame_measured : typing.Optional[typing.Text] = ...,
+        frame_reference : typing.Optional[typing.Text] = ...,
+        frame_representation : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["frame_measured",b"frame_measured","frame_reference",b"frame_reference","frame_representation",b"frame_representation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["frame_measured",b"frame_measured","frame_reference",b"frame_reference","frame_representation",b"frame_representation"]) -> None: ...

@@ -24,7 +24,7 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Joints(google.protobuf.message.Message):
     """Joints abstracts information about any kinematics chain or multiple
@@ -38,7 +38,7 @@ class Joints(google.protobuf.message.Message):
 
     This type can be used as both commands to and states from robot.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     POSITIONS_FIELD_NUMBER: builtins.int
     VELOCITIES_FIELD_NUMBER: builtins.int
     ACCELERATIONS_FIELD_NUMBER: builtins.int
@@ -92,39 +92,39 @@ class Joints(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        positions: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        velocities: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        accelerations: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        jerks: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        force_torques: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        currents: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        temperature: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        kps: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        kds: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        positions : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        velocities : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        accelerations : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        jerks : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        force_torques : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        currents : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        temperature : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        kps : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        kds : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["accelerations",b"accelerations","currents",b"currents","force_torques",b"force_torques","jerks",b"jerks","kds",b"kds","kps",b"kps","positions",b"positions","temperature",b"temperature","velocities",b"velocities"]) -> None: ...
 global___Joints = Joints
 
 class JointsMetadata(google.protobuf.message.Message):
     """Metadata of Joints that does change or changes slowly."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class _JointType:
         ValueType = typing.NewType('ValueType', builtins.int)
         V: typing_extensions.TypeAlias = ValueType
-    class _JointTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[JointsMetadata._JointType.ValueType], builtins.type):
-        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-        UNKNOWN: JointsMetadata._JointType.ValueType  # 0
-        REVOLUTE: JointsMetadata._JointType.ValueType  # 1
-        PRISMATIC: JointsMetadata._JointType.ValueType  # 2
+    class _JointTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_JointType.ValueType], builtins.type):
+        DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        UNKNOWN: JointsMetadata.JointType.ValueType = ...  # 0
+        REVOLUTE: JointsMetadata.JointType.ValueType = ...  # 1
+        PRISMATIC: JointsMetadata.JointType.ValueType = ...  # 2
     class JointType(_JointType, metaclass=_JointTypeEnumTypeWrapper):
         """Type of joints. Only simple joint types are available. Complex joints, such
         as spherical joint, can be simulated by multiple simple joints.
         """
         pass
 
-    UNKNOWN: JointsMetadata.JointType.ValueType  # 0
-    REVOLUTE: JointsMetadata.JointType.ValueType  # 1
-    PRISMATIC: JointsMetadata.JointType.ValueType  # 2
+    UNKNOWN: JointsMetadata.JointType.ValueType = ...  # 0
+    REVOLUTE: JointsMetadata.JointType.ValueType = ...  # 1
+    PRISMATIC: JointsMetadata.JointType.ValueType = ...  # 2
 
     ROBOT_MODEL_NAME_FIELD_NUMBER: builtins.int
     NUM_DOF_FIELD_NUMBER: builtins.int
@@ -134,13 +134,13 @@ class JointsMetadata(google.protobuf.message.Message):
     MAX_LIMITS_FIELD_NUMBER: builtins.int
     GOAL_THRESHOLDS_FIELD_NUMBER: builtins.int
     HOME_JOINT_POSITIONS_FIELD_NUMBER: builtins.int
-    robot_model_name: typing.Text
+    robot_model_name: typing.Text = ...
     """Name of robot as string. In a single logging data repository, it is
     recommended to have the name uniquely map to a certain JointsMetadata.
     a robot model id string.
     """
 
-    num_dof: builtins.int
+    num_dof: builtins.int = ...
     """The number of joints/ degrees of freedom. The repeated fields below
     (including those in Joints messages) should be this size (or empty).
     """
@@ -176,14 +176,14 @@ class JointsMetadata(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        robot_model_name: typing.Optional[typing.Text] = ...,
-        num_dof: typing.Optional[builtins.int] = ...,
-        joint_types: typing.Optional[typing.Iterable[global___JointsMetadata.JointType.ValueType]] = ...,
-        joint_names: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        min_limits: typing.Optional[global___Joints] = ...,
-        max_limits: typing.Optional[global___Joints] = ...,
-        goal_thresholds: typing.Optional[global___Joints] = ...,
-        home_joint_positions: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        robot_model_name : typing.Optional[typing.Text] = ...,
+        num_dof : typing.Optional[builtins.int] = ...,
+        joint_types : typing.Optional[typing.Iterable[global___JointsMetadata.JointType.ValueType]] = ...,
+        joint_names : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        min_limits : typing.Optional[global___Joints] = ...,
+        max_limits : typing.Optional[global___Joints] = ...,
+        goal_thresholds : typing.Optional[global___Joints] = ...,
+        home_joint_positions : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["goal_thresholds",b"goal_thresholds","max_limits",b"max_limits","min_limits",b"min_limits","num_dof",b"num_dof","robot_model_name",b"robot_model_name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["goal_thresholds",b"goal_thresholds","home_joint_positions",b"home_joint_positions","joint_names",b"joint_names","joint_types",b"joint_types","max_limits",b"max_limits","min_limits",b"min_limits","num_dof",b"num_dof","robot_model_name",b"robot_model_name"]) -> None: ...

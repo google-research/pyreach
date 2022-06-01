@@ -80,7 +80,10 @@ class ColorFrameMock(color_camera.ColorFrame):
 
   def pose(self) -> Optional[core.Pose]:
     """Return the pose of the camera when the image is taken."""
-    raise NotImplementedError
+    translation: core.Translation = core.Translation(1.0, 2.0, 3.0)
+    orientation: core.Rotation = core.Rotation(core.AxisAngle())
+    mock_pose: core.Pose = core.Pose(translation, orientation)
+    return mock_pose
 
 
 class ColorCameraMock(color_camera.ColorCamera):

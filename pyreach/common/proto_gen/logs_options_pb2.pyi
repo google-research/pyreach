@@ -25,11 +25,11 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class ReachFieldOptions(google.protobuf.message.Message):
     """Proto field options for Reach logs protos. See logs.proto file for usage."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEPRECATED_JSON_NAMES_FIELD_NUMBER: builtins.int
     INHIBIT_GO_CODEGEN_FIELD_NUMBER: builtins.int
     INHIBIT_CSHARP_CODEGEN_FIELD_NUMBER: builtins.int
@@ -54,23 +54,23 @@ class ReachFieldOptions(google.protobuf.message.Message):
             Thus, we would define deprecated_json_names = ["eventlabels"].
         """
         pass
-    inhibit_go_codegen: builtins.bool
+    inhibit_go_codegen: builtins.bool = ...
     """Set to true when the Go generated code should not include this field.
     However, if the field is in DeviceData or CommandData, the field will
     still be included in the list of known device/command data types.
     """
 
-    inhibit_csharp_codegen: builtins.bool
+    inhibit_csharp_codegen: builtins.bool = ...
     """Set to true when the C# generated code should not include this field."""
 
-    inhibit_py_codegen: builtins.bool
+    inhibit_py_codegen: builtins.bool = ...
     """Set to true when the Python generated code should not include this field."""
 
     @property
     def cmd_data_types(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
         """A list of CommandData known data types associated with this field."""
         pass
-    go_name: typing.Text
+    go_name: typing.Text = ...
     """The field name to be used in Go.
 
     In general, the Go name automatically generated from the field's json name
@@ -85,7 +85,7 @@ class ReachFieldOptions(google.protobuf.message.Message):
       an error from the Go compiler.
     """
 
-    python_name: typing.Text
+    python_name: typing.Text = ...
     """The field name to be used in Python classes.
 
     In general, the attribute names are just privatized field names. However,
@@ -93,14 +93,14 @@ class ReachFieldOptions(google.protobuf.message.Message):
     Python reserved words and therefore, cannot and should not be redefined.
     """
 
-    legacy_go_pointer: builtins.bool
+    legacy_go_pointer: builtins.bool = ...
     """Normally in Go, message fields are implemented as pointers while
     primitive fields are not. Set this in order to override this behavior.
 
     Do NOT use this for any new fields.
     """
 
-    legacy_go_type: typing.Text
+    legacy_go_type: typing.Text = ...
     """The field type to be used in Go.
 
     Do NOT use this for any new fields. New fields should never have a
@@ -108,43 +108,37 @@ class ReachFieldOptions(google.protobuf.message.Message):
     TODO: deprecate.
     """
 
-    legacy_flatten: builtins.bool
+    legacy_flatten: builtins.bool = ...
     """Struct fields in Go are by default nested. Use this for legacy fields
     that need to be flattened.
     """
 
-    legacy_embed: builtins.bool
+    legacy_embed: builtins.bool = ...
     """Struct fields in Go are by default nested. Use this for legacy fields
     that need to be Go embedded.
     """
 
     def __init__(self,
         *,
-        deprecated_json_names: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        inhibit_go_codegen: typing.Optional[builtins.bool] = ...,
-        inhibit_csharp_codegen: typing.Optional[builtins.bool] = ...,
-        inhibit_py_codegen: typing.Optional[builtins.bool] = ...,
-        cmd_data_types: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        go_name: typing.Optional[typing.Text] = ...,
-        python_name: typing.Optional[typing.Text] = ...,
-        legacy_go_pointer: typing.Optional[builtins.bool] = ...,
-        legacy_go_type: typing.Optional[typing.Text] = ...,
-        legacy_flatten: typing.Optional[builtins.bool] = ...,
-        legacy_embed: typing.Optional[builtins.bool] = ...,
+        deprecated_json_names : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        inhibit_go_codegen : typing.Optional[builtins.bool] = ...,
+        inhibit_csharp_codegen : typing.Optional[builtins.bool] = ...,
+        inhibit_py_codegen : typing.Optional[builtins.bool] = ...,
+        cmd_data_types : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        go_name : typing.Optional[typing.Text] = ...,
+        python_name : typing.Optional[typing.Text] = ...,
+        legacy_go_pointer : typing.Optional[builtins.bool] = ...,
+        legacy_go_type : typing.Optional[typing.Text] = ...,
+        legacy_flatten : typing.Optional[builtins.bool] = ...,
+        legacy_embed : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["go_name",b"go_name","inhibit_csharp_codegen",b"inhibit_csharp_codegen","inhibit_go_codegen",b"inhibit_go_codegen","inhibit_py_codegen",b"inhibit_py_codegen","legacy_embed",b"legacy_embed","legacy_flatten",b"legacy_flatten","legacy_go_pointer",b"legacy_go_pointer","legacy_go_type",b"legacy_go_type","python_name",b"python_name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cmd_data_types",b"cmd_data_types","deprecated_json_names",b"deprecated_json_names","go_name",b"go_name","inhibit_csharp_codegen",b"inhibit_csharp_codegen","inhibit_go_codegen",b"inhibit_go_codegen","inhibit_py_codegen",b"inhibit_py_codegen","legacy_embed",b"legacy_embed","legacy_flatten",b"legacy_flatten","legacy_go_pointer",b"legacy_go_pointer","legacy_go_type",b"legacy_go_type","python_name",b"python_name"]) -> None: ...
 global___ReachFieldOptions = ReachFieldOptions
 
-REACH_OPTIONS_FIELD_NUMBER: builtins.int
-LEGACY_FLATTEN_FIELD_NUMBER: builtins.int
-LEGACY_EMBED_FIELD_NUMBER: builtins.int
-GO_TYPE_NAME_FIELD_NUMBER: builtins.int
-INHIBIT_CSHARP_CODEGEN_FIELD_NUMBER: builtins.int
-INHIBIT_CODEGEN_FIELD_NUMBER: builtins.int
-reach_options: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, global___ReachFieldOptions]
+reach_options: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.FieldOptions, global___ReachFieldOptions] = ...
 
-legacy_flatten: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool]
+legacy_flatten: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool] = ...
 """Set to true when all usages of this message are flattened.
 
 If there is even one usage where this message is not flattened -- and that
@@ -192,7 +186,7 @@ as nested by default for which no option is necessary. legacy_flatten can
 NEVER be set to true at the same time as legacy_embed.
 """
 
-legacy_embed: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool]
+legacy_embed: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool] = ...
 """Set to true when this message is to be embedded.
 
 Only one of {legacy_flatten, legacy_embed} may be chosen.
@@ -250,7 +244,7 @@ as nested by default for which no option is necessary. legacy_embed can
 NEVER be set to true at the same time as legacy_flatten.
 """
 
-go_type_name: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, typing.Text]
+go_type_name: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, typing.Text] = ...
 """The type name to be used in Go.
 
 In general, the Go type name automatically generated from the message's
@@ -264,7 +258,7 @@ Example:
   "Pose2D", then use go_type_name="Pose2D".
 """
 
-inhibit_csharp_codegen: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool]
+inhibit_csharp_codegen: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool] = ...
 """Set to true when all usages of this message are inhibited for C#. That is,
 all fields of this message are also marked as inhibit_csharp_codegen.
 
@@ -272,7 +266,7 @@ This is used generally for messages that a C# client will never see or
 emit.
 """
 
-inhibit_codegen: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool]
+inhibit_codegen: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[google.protobuf.descriptor_pb2.MessageOptions, builtins.bool] = ...
 """Set to true to unconditionally inhibit generation of this message, for
 example because the message is no longer used. We still want the message
 around because logs ingestion needs it.

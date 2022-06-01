@@ -26,14 +26,14 @@ import google.protobuf.timestamp_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class CommandData(google.protobuf.message.Message):
     """CommandData represents the commands received from clients.
     See the corresponding file in the Project Reach source code:
     project-reach/go/src/project-reach/pkg/rc/types.go
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     DATA_TYPE_FIELD_NUMBER: builtins.int
@@ -99,10 +99,10 @@ class CommandData(google.protobuf.message.Message):
     WEBRTC_AUDIO_REQUEST_FIELD_NUMBER: builtins.int
     SIM_ACTION_FIELD_NUMBER: builtins.int
     INFERENCE_REQUEST_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """The type of device to deliver this command to, such as photoneo."""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     """Which device the command is coming to. Usually, the deviceType is
     sufficient to infer what device is being used, but the name disambiguates
     cases where multiple devices of the same type are used in a robot system.
@@ -110,37 +110,37 @@ class CommandData(google.protobuf.message.Message):
     on the system.
     """
 
-    data_type: typing.Text
+    data_type: typing.Text = ...
     """The command data type such as frame-request or reach-script.
     Please, refer to go/reach-system for more examples.
     """
 
-    tag: typing.Text
+    tag: typing.Text = ...
     @property
     def ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """A Unix timestamp, in milliseconds."""
         pass
-    operator_uid: typing.Text
+    operator_uid: typing.Text = ...
     """Deprecated: now in SessionInfo."""
 
-    session_id: typing.Text
+    session_id: typing.Text = ...
     """Deprecated: now in SessionInfo."""
 
-    robot_name: typing.Text
+    robot_name: typing.Text = ...
     """Deprecated: now in SessionInfo."""
 
-    client_os: typing.Text
+    client_os: typing.Text = ...
     """Deprecated: now in SessionInfo."""
 
-    ui_version: typing.Text
+    ui_version: typing.Text = ...
     """Deprecated: now in SessionInfo."""
 
-    origin: typing.Text
-    origin_type: typing.Text
-    origin_transport_type: typing.Text
-    origin_client: typing.Text
-    origin_control: typing.Text
-    seq: builtins.int
+    origin: typing.Text = ...
+    origin_type: typing.Text = ...
+    origin_transport_type: typing.Text = ...
+    origin_client: typing.Text = ...
+    origin_control: typing.Text = ...
+    seq: builtins.int = ...
     @property
     def snapshot(self) -> global___Snapshot: ...
     @property
@@ -225,7 +225,7 @@ class CommandData(google.protobuf.message.Message):
     def disable_experiments(self) -> global___EmptyMessage: ...
     @property
     def experiment_flags(self) -> experiment_config_pb2.Flags: ...
-    script: typing.Text
+    script: typing.Text = ...
     """DO NOT ADD NEW FIELDS AFTER THE ABOVE ONEOF! Any new commands must go in
     the data_type_oneof above, which also means that:
     * the field name must be the same as the command's data type (with
@@ -239,21 +239,21 @@ class CommandData(google.protobuf.message.Message):
 
     @property
     def reach_script(self) -> global___ReachScript: ...
-    cmd: typing.Text
+    cmd: typing.Text = ...
     """Which command to execute: run-script, clear-stop."""
 
     @property
     def args(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
-    progress: builtins.float
-    message: typing.Text
-    error: typing.Text
-    detailed_error: typing.Text
-    intent: typing.Text
+    progress: builtins.float = ...
+    message: typing.Text = ...
+    error: typing.Text = ...
+    detailed_error: typing.Text = ...
+    intent: typing.Text = ...
     """Intent and success_type indicate the method of success detection."""
 
-    success_type: typing.Text
-    x: builtins.float
-    y: builtins.float
+    success_type: typing.Text = ...
+    x: builtins.float = ...
+    y: builtins.float = ...
     @property
     def exp(self) -> global___ExperimentalCommandData:
         """exp is the original experimental command data for one step actions."""
@@ -271,7 +271,7 @@ class CommandData(google.protobuf.message.Message):
         The total duration of the event.
         """
         pass
-    event_name: typing.Text
+    event_name: typing.Text = ...
     """The name of the event."""
 
     @property
@@ -280,10 +280,10 @@ class CommandData(google.protobuf.message.Message):
         pass
     @property
     def event_params(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___KeyValue]: ...
-    pick_id: typing.Text
+    pick_id: typing.Text = ...
     """pickID associates an attempt command/metric to a success."""
 
-    experiment_token: typing.Text
+    experiment_token: typing.Text = ...
     @property
     def history(self) -> global___History:
         """history passes the request to fetch settings config history.
@@ -291,7 +291,7 @@ class CommandData(google.protobuf.message.Message):
         Design doc: http://doc/18XXeGk_7EYvINLAfGhWMWgB2mzM8A4mCQiGHc9CiPP0
         """
         pass
-    text_cue: typing.Text
+    text_cue: typing.Text = ...
     """text_cue is used for audio mute and unmute requests.
 
     Design doc: http://doc/1Nue7074Rg-pehUOYSsvyo1hUk-0wCZH9R0pbrFl2TQ0
@@ -315,71 +315,71 @@ class CommandData(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
-        tag: typing.Optional[typing.Text] = ...,
-        ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        operator_uid: typing.Optional[typing.Text] = ...,
-        session_id: typing.Optional[typing.Text] = ...,
-        robot_name: typing.Optional[typing.Text] = ...,
-        client_os: typing.Optional[typing.Text] = ...,
-        ui_version: typing.Optional[typing.Text] = ...,
-        origin: typing.Optional[typing.Text] = ...,
-        origin_type: typing.Optional[typing.Text] = ...,
-        origin_transport_type: typing.Optional[typing.Text] = ...,
-        origin_client: typing.Optional[typing.Text] = ...,
-        origin_control: typing.Optional[typing.Text] = ...,
-        seq: typing.Optional[builtins.int] = ...,
-        snapshot: typing.Optional[global___Snapshot] = ...,
-        metadata: typing.Optional[global___Metadata] = ...,
-        key_value: typing.Optional[global___KeyValue] = ...,
-        key_value_request: typing.Optional[global___KeyValue] = ...,
-        session_info: typing.Optional[global___SessionInfo] = ...,
-        trigger: typing.Optional[global___EmptyMessage] = ...,
-        i_see_data: typing.Optional[global___EmptyMessage] = ...,
-        ping: typing.Optional[global___EmptyMessage] = ...,
-        client_session_end: typing.Optional[global___EmptyMessage] = ...,
-        connected_clients_request: typing.Optional[global___EmptyMessage] = ...,
-        start_shutdown: typing.Optional[global___EmptyMessage] = ...,
-        finish_shutdown: typing.Optional[global___EmptyMessage] = ...,
-        hangup: typing.Optional[global___EmptyMessage] = ...,
-        client_session_start: typing.Optional[global___ClientSessionStart] = ...,
-        client_annotation: typing.Optional[global___ClientAnnotation] = ...,
-        pipeline_description_request: typing.Optional[global___EmptyMessage] = ...,
-        machine_interfaces_request: typing.Optional[global___EmptyMessage] = ...,
-        text_instruction_request: typing.Optional[global___EmptyMessage] = ...,
-        stream_request: typing.Optional[global___StreamRequest] = ...,
-        controller_descriptions_request: typing.Optional[global___EmptyMessage] = ...,
-        user_label: typing.Optional[global___EmptyMessage] = ...,
-        enable_experiments: typing.Optional[global___EmptyMessage] = ...,
-        disable_experiments: typing.Optional[global___EmptyMessage] = ...,
-        experiment_flags: typing.Optional[experiment_config_pb2.Flags] = ...,
-        script: typing.Optional[typing.Text] = ...,
-        reach_script: typing.Optional[global___ReachScript] = ...,
-        cmd: typing.Optional[typing.Text] = ...,
-        args: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        progress: typing.Optional[builtins.float] = ...,
-        message: typing.Optional[typing.Text] = ...,
-        error: typing.Optional[typing.Text] = ...,
-        detailed_error: typing.Optional[typing.Text] = ...,
-        intent: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        exp: typing.Optional[global___ExperimentalCommandData] = ...,
-        exp_array: typing.Optional[typing.Iterable[global___ExperimentalCommandData]] = ...,
-        event_duration: typing.Optional[google.protobuf.duration_pb2.Duration] = ...,
-        event_name: typing.Optional[typing.Text] = ...,
-        event_labels: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        event_params: typing.Optional[typing.Iterable[global___KeyValue]] = ...,
-        pick_id: typing.Optional[typing.Text] = ...,
-        experiment_token: typing.Optional[typing.Text] = ...,
-        history: typing.Optional[global___History] = ...,
-        text_cue: typing.Optional[typing.Text] = ...,
-        webrtc_audio_request: typing.Optional[global___WebrtcAudioRequest] = ...,
-        sim_action: typing.Optional[global___SimAction] = ...,
-        inference_request: typing.Optional[global___InferenceRequest] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
+        tag : typing.Optional[typing.Text] = ...,
+        ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        operator_uid : typing.Optional[typing.Text] = ...,
+        session_id : typing.Optional[typing.Text] = ...,
+        robot_name : typing.Optional[typing.Text] = ...,
+        client_os : typing.Optional[typing.Text] = ...,
+        ui_version : typing.Optional[typing.Text] = ...,
+        origin : typing.Optional[typing.Text] = ...,
+        origin_type : typing.Optional[typing.Text] = ...,
+        origin_transport_type : typing.Optional[typing.Text] = ...,
+        origin_client : typing.Optional[typing.Text] = ...,
+        origin_control : typing.Optional[typing.Text] = ...,
+        seq : typing.Optional[builtins.int] = ...,
+        snapshot : typing.Optional[global___Snapshot] = ...,
+        metadata : typing.Optional[global___Metadata] = ...,
+        key_value : typing.Optional[global___KeyValue] = ...,
+        key_value_request : typing.Optional[global___KeyValue] = ...,
+        session_info : typing.Optional[global___SessionInfo] = ...,
+        trigger : typing.Optional[global___EmptyMessage] = ...,
+        i_see_data : typing.Optional[global___EmptyMessage] = ...,
+        ping : typing.Optional[global___EmptyMessage] = ...,
+        client_session_end : typing.Optional[global___EmptyMessage] = ...,
+        connected_clients_request : typing.Optional[global___EmptyMessage] = ...,
+        start_shutdown : typing.Optional[global___EmptyMessage] = ...,
+        finish_shutdown : typing.Optional[global___EmptyMessage] = ...,
+        hangup : typing.Optional[global___EmptyMessage] = ...,
+        client_session_start : typing.Optional[global___ClientSessionStart] = ...,
+        client_annotation : typing.Optional[global___ClientAnnotation] = ...,
+        pipeline_description_request : typing.Optional[global___EmptyMessage] = ...,
+        machine_interfaces_request : typing.Optional[global___EmptyMessage] = ...,
+        text_instruction_request : typing.Optional[global___EmptyMessage] = ...,
+        stream_request : typing.Optional[global___StreamRequest] = ...,
+        controller_descriptions_request : typing.Optional[global___EmptyMessage] = ...,
+        user_label : typing.Optional[global___EmptyMessage] = ...,
+        enable_experiments : typing.Optional[global___EmptyMessage] = ...,
+        disable_experiments : typing.Optional[global___EmptyMessage] = ...,
+        experiment_flags : typing.Optional[experiment_config_pb2.Flags] = ...,
+        script : typing.Optional[typing.Text] = ...,
+        reach_script : typing.Optional[global___ReachScript] = ...,
+        cmd : typing.Optional[typing.Text] = ...,
+        args : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        progress : typing.Optional[builtins.float] = ...,
+        message : typing.Optional[typing.Text] = ...,
+        error : typing.Optional[typing.Text] = ...,
+        detailed_error : typing.Optional[typing.Text] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        exp : typing.Optional[global___ExperimentalCommandData] = ...,
+        exp_array : typing.Optional[typing.Iterable[global___ExperimentalCommandData]] = ...,
+        event_duration : typing.Optional[google.protobuf.duration_pb2.Duration] = ...,
+        event_name : typing.Optional[typing.Text] = ...,
+        event_labels : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        event_params : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        pick_id : typing.Optional[typing.Text] = ...,
+        experiment_token : typing.Optional[typing.Text] = ...,
+        history : typing.Optional[global___History] = ...,
+        text_cue : typing.Optional[typing.Text] = ...,
+        webrtc_audio_request : typing.Optional[global___WebrtcAudioRequest] = ...,
+        sim_action : typing.Optional[global___SimAction] = ...,
+        inference_request : typing.Optional[global___InferenceRequest] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_name",b"event_name","exp",b"exp","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["args",b"args","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_labels",b"event_labels","event_name",b"event_name","event_params",b"event_params","exp",b"exp","exp_array",b"exp_array","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> None: ...
@@ -388,12 +388,12 @@ global___CommandData = CommandData
 
 class Alert(google.protobuf.message.Message):
     """Alert represents data from dataType == "alert"."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COMMAND_ABORTED_FIELD_NUMBER: builtins.int
-    command_aborted: builtins.bool
+    command_aborted: builtins.bool = ...
     def __init__(self,
         *,
-        command_aborted: typing.Optional[builtins.bool] = ...,
+        command_aborted : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["command_aborted",b"command_aborted"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["command_aborted",b"command_aborted"]) -> None: ...
@@ -403,7 +403,7 @@ class ClientSessionStart(google.protobuf.message.Message):
     """ClientSessionStart is the start of a client session.
     See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ACCEPT_DEPTH_ENCODING_FIELD_NUMBER: builtins.int
     @property
     def accept_depth_encoding(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
@@ -411,7 +411,7 @@ class ClientSessionStart(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        accept_depth_encoding: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        accept_depth_encoding : typing.Optional[typing.Iterable[typing.Text]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["accept_depth_encoding",b"accept_depth_encoding"]) -> None: ...
 global___ClientSessionStart = ClientSessionStart
@@ -422,7 +422,7 @@ class ClientAnnotation(google.protobuf.message.Message):
 
     See: https://project-reach.atlassian.net/browse/PIPE-2566
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ASSOCIATED_SERVER_TS_FIELD_NUMBER: builtins.int
     LOG_CHANNEL_ID_FIELD_NUMBER: builtins.int
     INTERVAL_START_FIELD_NUMBER: builtins.int
@@ -442,7 +442,7 @@ class ClientAnnotation(google.protobuf.message.Message):
         by the client emitting the log message.
         """
         pass
-    log_channel_id: typing.Text
+    log_channel_id: typing.Text = ...
     """The channel ID this log message is associated with. If empty, it is
     associated with the "command-data" channel.
     """
@@ -469,17 +469,17 @@ class ClientAnnotation(google.protobuf.message.Message):
     def data_segment_end(self) -> global___DataSegmentEnd: ...
     def __init__(self,
         *,
-        associated_server_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        log_channel_id: typing.Optional[typing.Text] = ...,
-        interval_start: typing.Optional[global___IntervalStart] = ...,
-        interval_end: typing.Optional[global___IntervalEnd] = ...,
-        text_annotation: typing.Optional[global___TextAnnotation] = ...,
-        snapshot_annotation: typing.Optional[global___SnapshotAnnotation] = ...,
-        point_measurement: typing.Optional[global___PointMeasurement] = ...,
-        long_horizon_instruction: typing.Optional[global___TextAnnotation] = ...,
-        short_horizon_instruction: typing.Optional[global___TextAnnotation] = ...,
-        data_segment_start: typing.Optional[global___DataSegmentStart] = ...,
-        data_segment_end: typing.Optional[global___DataSegmentEnd] = ...,
+        associated_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        log_channel_id : typing.Optional[typing.Text] = ...,
+        interval_start : typing.Optional[global___IntervalStart] = ...,
+        interval_end : typing.Optional[global___IntervalEnd] = ...,
+        text_annotation : typing.Optional[global___TextAnnotation] = ...,
+        snapshot_annotation : typing.Optional[global___SnapshotAnnotation] = ...,
+        point_measurement : typing.Optional[global___PointMeasurement] = ...,
+        long_horizon_instruction : typing.Optional[global___TextAnnotation] = ...,
+        short_horizon_instruction : typing.Optional[global___TextAnnotation] = ...,
+        data_segment_start : typing.Optional[global___DataSegmentStart] = ...,
+        data_segment_end : typing.Optional[global___DataSegmentEnd] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","data_segment_end",b"data_segment_end","data_segment_start",b"data_segment_start","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["associated_server_ts",b"associated_server_ts","data_segment_end",b"data_segment_end","data_segment_start",b"data_segment_start","interval_end",b"interval_end","interval_start",b"interval_start","log_channel_id",b"log_channel_id","log_type_oneof",b"log_type_oneof","long_horizon_instruction",b"long_horizon_instruction","point_measurement",b"point_measurement","short_horizon_instruction",b"short_horizon_instruction","snapshot_annotation",b"snapshot_annotation","text_annotation",b"text_annotation"]) -> None: ...
@@ -496,13 +496,13 @@ class DataSegmentStart(google.protobuf.message.Message):
     The associated_server_ts field is REQUIRED, and must be the same as the
     start_server_ts in the corresponding DataSegmentEnd message.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CONTENT_FIELD_NUMBER: builtins.int
     @property
     def content(self) -> global___DataSegmentContent: ...
     def __init__(self,
         *,
-        content: typing.Optional[global___DataSegmentContent] = ...,
+        content : typing.Optional[global___DataSegmentContent] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["content",b"content"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["content",b"content"]) -> None: ...
@@ -515,7 +515,7 @@ class DataSegmentEnd(google.protobuf.message.Message):
     used to ensure each start has an end, and may also be used to reference a
     segment uniquely.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CONTENT_FIELD_NUMBER: builtins.int
     START_SERVER_TS_FIELD_NUMBER: builtins.int
     @property
@@ -532,8 +532,8 @@ class DataSegmentEnd(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        content: typing.Optional[global___DataSegmentContent] = ...,
-        start_server_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        content : typing.Optional[global___DataSegmentContent] = ...,
+        start_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["content",b"content","start_server_ts",b"start_server_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["content",b"content","start_server_ts",b"start_server_ts"]) -> None: ...
@@ -546,36 +546,36 @@ class DataSegmentContent(google.protobuf.message.Message):
     used to ensure each start has an end, and may also be used to reference a
     segment uniquely.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SESSION_CHANNEL_ID_FIELD_NUMBER: builtins.int
     TASK_CODE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     AGENT_ID_FIELD_NUMBER: builtins.int
     UUID_FIELD_NUMBER: builtins.int
-    session_channel_id: typing.Text
+    session_channel_id: typing.Text = ...
     """The log type for the session created for this data segment. Required."""
 
-    task_code: typing.Text
+    task_code: typing.Text = ...
     """The task code this segment is included in. Required."""
 
-    name: typing.Text
+    name: typing.Text = ...
     """A name for the segment. Required."""
 
-    agent_id: typing.Text
+    agent_id: typing.Text = ...
     """The agent ID in control for this segment. Optional."""
 
-    uuid: typing.Text
+    uuid: typing.Text = ...
     """A UUID for the segment. Must be unique, and will match segment start
     to segment end, for data integrity. Required.
     """
 
     def __init__(self,
         *,
-        session_channel_id: typing.Optional[typing.Text] = ...,
-        task_code: typing.Optional[typing.Text] = ...,
-        name: typing.Optional[typing.Text] = ...,
-        agent_id: typing.Optional[typing.Text] = ...,
-        uuid: typing.Optional[typing.Text] = ...,
+        session_channel_id : typing.Optional[typing.Text] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        agent_id : typing.Optional[typing.Text] = ...,
+        uuid : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["agent_id",b"agent_id","name",b"name","session_channel_id",b"session_channel_id","task_code",b"task_code","uuid",b"uuid"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["agent_id",b"agent_id","name",b"name","session_channel_id",b"session_channel_id","task_code",b"task_code","uuid",b"uuid"]) -> None: ...
@@ -586,14 +586,14 @@ class IntervalStart(google.protobuf.message.Message):
 
     See: https://project-reach.atlassian.net/browse/PIPE-2566
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
-    name: typing.Text
+    name: typing.Text = ...
     """The name of the interval to start."""
 
     def __init__(self,
         *,
-        name: typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["name",b"name"]) -> None: ...
@@ -604,11 +604,11 @@ class IntervalEnd(google.protobuf.message.Message):
 
     See: https://project-reach.atlassian.net/browse/PIPE-2566
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     START_TS_FIELD_NUMBER: builtins.int
     END_TS_FIELD_NUMBER: builtins.int
-    name: typing.Text
+    name: typing.Text = ...
     """The name of the interval to end."""
 
     @property
@@ -621,9 +621,9 @@ class IntervalEnd(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        name: typing.Optional[typing.Text] = ...,
-        start_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        end_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        start_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        end_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["end_ts",b"end_ts","name",b"name","start_ts",b"start_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["end_ts",b"end_ts","name",b"name","start_ts",b"start_ts"]) -> None: ...
@@ -633,21 +633,21 @@ class TextAnnotation(google.protobuf.message.Message):
     """TextAnnotation is for client annotations consisting only of a text string
     with an optional category.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CATEGORY_FIELD_NUMBER: builtins.int
     TEXT_FIELD_NUMBER: builtins.int
-    category: typing.Text
+    category: typing.Text = ...
     """The category that the text applies to. This is custom to the client, and
     differentiates text generated for different purposes.
     """
 
-    text: typing.Text
+    text: typing.Text = ...
     """The text string for the annotation."""
 
     def __init__(self,
         *,
-        category: typing.Optional[typing.Text] = ...,
-        text: typing.Optional[typing.Text] = ...,
+        category : typing.Optional[typing.Text] = ...,
+        text : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["category",b"category","text",b"text"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["category",b"category","text",b"text"]) -> None: ...
@@ -659,14 +659,14 @@ class SnapshotAnnotation(google.protobuf.message.Message):
     See: http://doc/1yqLziHUugZYhx9RRMNB78aDCIYFCO7N40GyqdCXadyc
     And: http://doc/1Ed-sKPI3cvDGlmRRVm5OQjqqji4PYfmWppdOI5yx5xA
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(self,
         ) -> None: ...
 global___SnapshotAnnotation = SnapshotAnnotation
 
 class PointMeasurement(google.protobuf.message.Message):
     """PointMeasurement is a measurement at a single point in time."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TIMESTAMP_FIELD_NUMBER: builtins.int
     SPACE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
@@ -675,12 +675,12 @@ class PointMeasurement(google.protobuf.message.Message):
     def timestamp(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """The client timestamp at which the measurement was taken."""
         pass
-    space: typing.Text
+    space: typing.Text = ...
     """A space name for the measurement. Should be unique to a client so that
     it can be pulled out of logs easily.
     """
 
-    name: typing.Text
+    name: typing.Text = ...
     """A name within the space for the measurement."""
 
     @property
@@ -689,10 +689,10 @@ class PointMeasurement(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        timestamp: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        space: typing.Optional[typing.Text] = ...,
-        name: typing.Optional[typing.Text] = ...,
-        value: typing.Optional[global___Measurement] = ...,
+        timestamp : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        space : typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        value : typing.Optional[global___Measurement] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name","space",b"space","timestamp",b"timestamp","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["name",b"name","space",b"space","timestamp",b"timestamp","value",b"value"]) -> None: ...
@@ -700,12 +700,12 @@ global___PointMeasurement = PointMeasurement
 
 class Measurement(google.protobuf.message.Message):
     """Measurement is a value for a measurement, with units."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SECONDS_FIELD_NUMBER: builtins.int
-    seconds: builtins.float
+    seconds: builtins.float = ...
     def __init__(self,
         *,
-        seconds: typing.Optional[builtins.float] = ...,
+        seconds : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["measurement_type_oneof",b"measurement_type_oneof","seconds",b"seconds"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["measurement_type_oneof",b"measurement_type_oneof","seconds",b"seconds"]) -> None: ...
@@ -718,15 +718,15 @@ class WebrtcAudioRequest(google.protobuf.message.Message):
 
     Design doc: http://doc/1Nue7074Rg-pehUOYSsvyo1hUk-0wCZH9R0pbrFl2TQ0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SPEAKER_UNMUTE_FIELD_NUMBER: builtins.int
     MICROPHONE_UNMUTE_FIELD_NUMBER: builtins.int
-    speaker_unmute: builtins.bool
-    microphone_unmute: builtins.bool
+    speaker_unmute: builtins.bool = ...
+    microphone_unmute: builtins.bool = ...
     def __init__(self,
         *,
-        speaker_unmute: typing.Optional[builtins.bool] = ...,
-        microphone_unmute: typing.Optional[builtins.bool] = ...,
+        speaker_unmute : typing.Optional[builtins.bool] = ...,
+        microphone_unmute : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["microphone_unmute",b"microphone_unmute","speaker_unmute",b"speaker_unmute"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["microphone_unmute",b"microphone_unmute","speaker_unmute",b"speaker_unmute"]) -> None: ...
@@ -737,12 +737,12 @@ class WebrtcAudioResponse(google.protobuf.message.Message):
 
     Design doc: http://doc/1Nue7074Rg-pehUOYSsvyo1hUk-0wCZH9R0pbrFl2TQ0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SUCCESS_FIELD_NUMBER: builtins.int
-    success: builtins.bool
+    success: builtins.bool = ...
     def __init__(self,
         *,
-        success: typing.Optional[builtins.bool] = ...,
+        success : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["success",b"success"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["success",b"success"]) -> None: ...
@@ -754,29 +754,29 @@ class StreamRequest(google.protobuf.message.Message):
 
     Design doc: http://doc/1wE_2SknufUivraX8ZGMGputhwHgRhuiyO1w4T_VbAQ0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     DATA_TYPE_FIELD_NUMBER: builtins.int
     MAX_RATE_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """deviceType to stream"""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     """deviceName to stream"""
 
-    data_type: typing.Text
+    data_type: typing.Text = ...
     """dataType to stream"""
 
-    max_rate: builtins.float
+    max_rate: builtins.float = ...
     """maximum desired rate in Hz"""
 
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
-        max_rate: typing.Optional[builtins.float] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
+        max_rate : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","max_rate",b"max_rate"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","max_rate",b"max_rate"]) -> None: ...
@@ -789,7 +789,7 @@ class ExperimentalCommandData(google.protobuf.message.Message):
     See the corresponding file in the Project Reach source code:
     project-reach/go/src/project-reach/pkg/rc/types.go
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LABEL_FIELD_NUMBER: builtins.int
     DEPTH_TS_FIELD_NUMBER: builtins.int
     POSE_2D_FIELD_NUMBER: builtins.int
@@ -799,7 +799,7 @@ class ExperimentalCommandData(google.protobuf.message.Message):
     USER_TS_FIELD_NUMBER: builtins.int
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
-    label: typing.Text
+    label: typing.Text = ...
     """Label, usually the name of the action executed."""
 
     @property
@@ -828,21 +828,21 @@ class ExperimentalCommandData(google.protobuf.message.Message):
     def user_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """Timestamp of the depth image when action is queued."""
         pass
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """Possible in future that different exp data reference different cameras."""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     def __init__(self,
         *,
-        label: typing.Optional[typing.Text] = ...,
-        depth_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        pose_2d: typing.Optional[global___Pose2d] = ...,
-        position_3d: typing.Optional[global___Vec3d] = ...,
-        quaternion_3d: typing.Optional[global___Quaternion3d] = ...,
-        tags: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        user_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
+        label : typing.Optional[typing.Text] = ...,
+        depth_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        pose_2d : typing.Optional[global___Pose2d] = ...,
+        position_3d : typing.Optional[global___Vec3d] = ...,
+        quaternion_3d : typing.Optional[global___Quaternion3d] = ...,
+        tags : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        user_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["depth_ts",b"depth_ts","device_name",b"device_name","device_type",b"device_type","label",b"label","pose_2d",b"pose_2d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d","user_ts",b"user_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["depth_ts",b"depth_ts","device_name",b"device_name","device_type",b"device_type","label",b"label","pose_2d",b"pose_2d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d","tags",b"tags","user_ts",b"user_ts"]) -> None: ...
@@ -855,7 +855,7 @@ class ReachScriptCommand(google.protobuf.message.Message):
     undefined behavior. In general, it will result in one and only one of the
     commands being executed.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SET_RADIAL_SPEED_FIELD_NUMBER: builtins.int
     SET_BLEND_RADIUS_FIELD_NUMBER: builtins.int
     MOVE_J_PATH_FIELD_NUMBER: builtins.int
@@ -908,27 +908,27 @@ class ReachScriptCommand(google.protobuf.message.Message):
     def wait(self) -> global___WaitArgs:
         """Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU"""
         pass
-    controller_name: typing.Text
+    controller_name: typing.Text = ...
     """Design doc: http://doc/1MqijmwYXNFrDKwMowzn23TSohq8xAJE9jnJiRpyYmQQ"""
 
     def __init__(self,
         *,
-        set_radial_speed: typing.Optional[global___SetRadialSpeedArgs] = ...,
-        set_blend_radius: typing.Optional[global___SetBlendRadiusArgs] = ...,
-        move_j_path: typing.Optional[global___MoveJPathArgs] = ...,
-        move_l_path: typing.Optional[global___MoveLPathArgs] = ...,
-        stop_j: typing.Optional[global___StopJArgs] = ...,
-        set_digital_out: typing.Optional[global___SetDigitalOutArgs] = ...,
-        set_analog_out: typing.Optional[global___SetAnalogOutArgs] = ...,
-        set_tool_digital_out: typing.Optional[global___SetDigitalOutArgs] = ...,
-        sleep: typing.Optional[global___SleepArgs] = ...,
-        raw: typing.Optional[global___RawArgs] = ...,
-        acquire_image: typing.Optional[global___AcquireImageArgs] = ...,
-        set_output: typing.Optional[global___SetOutput] = ...,
-        sync: typing.Optional[global___SyncArgs] = ...,
-        move_pose_path: typing.Optional[global___MovePosePathArgs] = ...,
-        wait: typing.Optional[global___WaitArgs] = ...,
-        controller_name: typing.Optional[typing.Text] = ...,
+        set_radial_speed : typing.Optional[global___SetRadialSpeedArgs] = ...,
+        set_blend_radius : typing.Optional[global___SetBlendRadiusArgs] = ...,
+        move_j_path : typing.Optional[global___MoveJPathArgs] = ...,
+        move_l_path : typing.Optional[global___MoveLPathArgs] = ...,
+        stop_j : typing.Optional[global___StopJArgs] = ...,
+        set_digital_out : typing.Optional[global___SetDigitalOutArgs] = ...,
+        set_analog_out : typing.Optional[global___SetAnalogOutArgs] = ...,
+        set_tool_digital_out : typing.Optional[global___SetDigitalOutArgs] = ...,
+        sleep : typing.Optional[global___SleepArgs] = ...,
+        raw : typing.Optional[global___RawArgs] = ...,
+        acquire_image : typing.Optional[global___AcquireImageArgs] = ...,
+        set_output : typing.Optional[global___SetOutput] = ...,
+        sync : typing.Optional[global___SyncArgs] = ...,
+        move_pose_path : typing.Optional[global___MovePosePathArgs] = ...,
+        wait : typing.Optional[global___WaitArgs] = ...,
+        controller_name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acquire_image",b"acquire_image","controller_name",b"controller_name","move_j_path",b"move_j_path","move_l_path",b"move_l_path","move_pose_path",b"move_pose_path","raw",b"raw","set_analog_out",b"set_analog_out","set_blend_radius",b"set_blend_radius","set_digital_out",b"set_digital_out","set_output",b"set_output","set_radial_speed",b"set_radial_speed","set_tool_digital_out",b"set_tool_digital_out","sleep",b"sleep","stop_j",b"stop_j","sync",b"sync","wait",b"wait"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acquire_image",b"acquire_image","controller_name",b"controller_name","move_j_path",b"move_j_path","move_l_path",b"move_l_path","move_pose_path",b"move_pose_path","raw",b"raw","set_analog_out",b"set_analog_out","set_blend_radius",b"set_blend_radius","set_digital_out",b"set_digital_out","set_output",b"set_output","set_radial_speed",b"set_radial_speed","set_tool_digital_out",b"set_tool_digital_out","sleep",b"sleep","stop_j",b"stop_j","sync",b"sync","wait",b"wait"]) -> None: ...
@@ -940,14 +940,14 @@ class ReachScriptCalibrationRequirement(google.protobuf.message.Message):
     camera movement that crossed internal thresholds.
     Design doc: http://doc/1JMQFc3w7nYyD4quBD9tt8ilOjIOm6kJIv-Ssh6TiFxg
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ALLOW_UNCALIBRATED_FIELD_NUMBER: builtins.int
-    allow_uncalibrated: builtins.bool
+    allow_uncalibrated: builtins.bool = ...
     """States if the command should be allowed without good calibration."""
 
     def __init__(self,
         *,
-        allow_uncalibrated: typing.Optional[builtins.bool] = ...,
+        allow_uncalibrated : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["allow_uncalibrated",b"allow_uncalibrated"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["allow_uncalibrated",b"allow_uncalibrated"]) -> None: ...
@@ -955,26 +955,26 @@ global___ReachScriptCalibrationRequirement = ReachScriptCalibrationRequirement
 
 class ReachScript(google.protobuf.message.Message):
     """ReachScript is a reach-script command to a robot."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PREEMPTIVE_FIELD_NUMBER: builtins.int
     COMMANDS_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
     PREEMPTIVE_REASON_FIELD_NUMBER: builtins.int
     CALIBRATION_REQUIREMENT_FIELD_NUMBER: builtins.int
-    preemptive: builtins.bool
+    preemptive: builtins.bool = ...
     """If true, the command will stop any currently executing command and start
     executing this one.
     """
 
     @property
     def commands(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ReachScriptCommand]: ...
-    version: builtins.int
+    version: builtins.int = ...
     """The minimum version of ReachScript this program requires the server to
     implement. If the server cannot handle the given version, the program
     will be rejected.
     """
 
-    preemptive_reason: typing.Text
+    preemptive_reason: typing.Text = ...
     @property
     def calibration_requirement(self) -> global___ReachScriptCalibrationRequirement:
         """States if the command depends on calibration.
@@ -984,11 +984,11 @@ class ReachScript(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        preemptive: typing.Optional[builtins.bool] = ...,
-        commands: typing.Optional[typing.Iterable[global___ReachScriptCommand]] = ...,
-        version: typing.Optional[builtins.int] = ...,
-        preemptive_reason: typing.Optional[typing.Text] = ...,
-        calibration_requirement: typing.Optional[global___ReachScriptCalibrationRequirement] = ...,
+        preemptive : typing.Optional[builtins.bool] = ...,
+        commands : typing.Optional[typing.Iterable[global___ReachScriptCommand]] = ...,
+        version : typing.Optional[builtins.int] = ...,
+        preemptive_reason : typing.Optional[typing.Text] = ...,
+        calibration_requirement : typing.Optional[global___ReachScriptCalibrationRequirement] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["calibration_requirement",b"calibration_requirement","preemptive",b"preemptive","preemptive_reason",b"preemptive_reason","version",b"version"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["calibration_requirement",b"calibration_requirement","commands",b"commands","preemptive",b"preemptive","preemptive_reason",b"preemptive_reason","version",b"version"]) -> None: ...
@@ -998,15 +998,15 @@ class SetRadialSpeedArgs(google.protobuf.message.Message):
     """SetRadialSpeedArgs sets radial velocity and acceleration for following
     commands.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     VELOCITY_FIELD_NUMBER: builtins.int
     ACCELERATION_FIELD_NUMBER: builtins.int
-    velocity: builtins.float
-    acceleration: builtins.float
+    velocity: builtins.float = ...
+    acceleration: builtins.float = ...
     def __init__(self,
         *,
-        velocity: typing.Optional[builtins.float] = ...,
-        acceleration: typing.Optional[builtins.float] = ...,
+        velocity : typing.Optional[builtins.float] = ...,
+        acceleration : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","velocity",b"velocity"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","velocity",b"velocity"]) -> None: ...
@@ -1014,12 +1014,12 @@ global___SetRadialSpeedArgs = SetRadialSpeedArgs
 
 class SetBlendRadiusArgs(google.protobuf.message.Message):
     """SetBlendRadiusArgs sets blend radius for following commands."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RADIUS_FIELD_NUMBER: builtins.int
-    radius: builtins.float
+    radius: builtins.float = ...
     def __init__(self,
         *,
-        radius: typing.Optional[builtins.float] = ...,
+        radius : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["radius",b"radius"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["radius",b"radius"]) -> None: ...
@@ -1035,7 +1035,7 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
     acceleration is not present then the default acceleration (set via
     SetRadialSpeed) will be used (but it will be interpreted as rad/sec/sec).
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ROTATION_FIELD_NUMBER: builtins.int
     BLEND_RADIUS_FIELD_NUMBER: builtins.int
     VELOCITY_FIELD_NUMBER: builtins.int
@@ -1047,13 +1047,13 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
     SERVO_GAIN_FIELD_NUMBER: builtins.int
     @property
     def rotation(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    blend_radius: builtins.float
-    velocity: builtins.float
+    blend_radius: builtins.float = ...
+    velocity: builtins.float = ...
     """In going from the current joint position to this waypoint, this is the
     highest velocity across all joints.
     """
 
-    acceleration: builtins.float
+    acceleration: builtins.float = ...
     """In going from the current joint position to this waypoint, this is the
     highest acceleration across all joints.
     """
@@ -1064,12 +1064,12 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
         Design doc: http://doc/1tGrtRYPRId9X5P7kHOOHBF4__244ymJt9GBnlN7E_pw
         """
         pass
-    servo: builtins.bool
+    servo: builtins.bool = ...
     """If set, the move should be as rapid as the robot can go. It is generally
     expected that the movement distance is "small".
     """
 
-    servo_t_secs: builtins.float
+    servo_t_secs: builtins.float = ...
     """For UR only. Applies only if servo is true.
     If nonzero, this is the "t" parameter in the servoj command
     in the generated URScript. According to the URScript documentation
@@ -1084,7 +1084,7 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
     returned.
     """
 
-    servo_lookahead_time_secs: builtins.float
+    servo_lookahead_time_secs: builtins.float = ...
     """For UR only. Applies only if servo is true.
     If nonzero, this is the "lookahead_time" parameter in the
     servoj command in the generated URScript. According to the URScript
@@ -1100,7 +1100,7 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
     returned.
     """
 
-    servo_gain: builtins.float
+    servo_gain: builtins.float = ...
     """For UR only. Applies only if servo is true.
     If nonzero, this is the "gain" parameter in the
     servoj command in the generated URScript. According to the URScript
@@ -1118,15 +1118,15 @@ class MoveJWaypointArgs(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        rotation: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        blend_radius: typing.Optional[builtins.float] = ...,
-        velocity: typing.Optional[builtins.float] = ...,
-        acceleration: typing.Optional[builtins.float] = ...,
-        limits: typing.Optional[global___Limits] = ...,
-        servo: typing.Optional[builtins.bool] = ...,
-        servo_t_secs: typing.Optional[builtins.float] = ...,
-        servo_lookahead_time_secs: typing.Optional[builtins.float] = ...,
-        servo_gain: typing.Optional[builtins.float] = ...,
+        rotation : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        blend_radius : typing.Optional[builtins.float] = ...,
+        velocity : typing.Optional[builtins.float] = ...,
+        acceleration : typing.Optional[builtins.float] = ...,
+        limits : typing.Optional[global___Limits] = ...,
+        servo : typing.Optional[builtins.bool] = ...,
+        servo_t_secs : typing.Optional[builtins.float] = ...,
+        servo_lookahead_time_secs : typing.Optional[builtins.float] = ...,
+        servo_gain : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","servo",b"servo","servo_gain",b"servo_gain","servo_lookahead_time_secs",b"servo_lookahead_time_secs","servo_t_secs",b"servo_t_secs","velocity",b"velocity"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","rotation",b"rotation","servo",b"servo","servo_gain",b"servo_gain","servo_lookahead_time_secs",b"servo_lookahead_time_secs","servo_t_secs",b"servo_t_secs","velocity",b"velocity"]) -> None: ...
@@ -1136,7 +1136,7 @@ class Limits(google.protobuf.message.Message):
     """Limits for a MoveJWaypointArgs or MoveLWaypointArgs to early stop
     the movement.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     FORCE_FIELD_NUMBER: builtins.int
     TORQUE_FIELD_NUMBER: builtins.int
     SENSOR_FIELD_NUMBER: builtins.int
@@ -1148,9 +1148,9 @@ class Limits(google.protobuf.message.Message):
     def sensor(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SensorLimits]: ...
     def __init__(self,
         *,
-        force: typing.Optional[global___ForceLimits] = ...,
-        torque: typing.Optional[global___TorqueLimits] = ...,
-        sensor: typing.Optional[typing.Iterable[global___SensorLimits]] = ...,
+        force : typing.Optional[global___ForceLimits] = ...,
+        torque : typing.Optional[global___TorqueLimits] = ...,
+        sensor : typing.Optional[typing.Iterable[global___SensorLimits]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["force",b"force","torque",b"torque"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["force",b"force","sensor",b"sensor","torque",b"torque"]) -> None: ...
@@ -1158,7 +1158,7 @@ global___Limits = Limits
 
 class ForceLimits(google.protobuf.message.Message):
     """ForceLimits are force limits to use with Limits in waypoints."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MAXIMUM_FIELD_NUMBER: builtins.int
     MINIMUM_FIELD_NUMBER: builtins.int
     @property
@@ -1167,15 +1167,15 @@ class ForceLimits(google.protobuf.message.Message):
     def minimum(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     def __init__(self,
         *,
-        maximum: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        minimum: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        maximum : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        minimum : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["maximum",b"maximum","minimum",b"minimum"]) -> None: ...
 global___ForceLimits = ForceLimits
 
 class TorqueLimits(google.protobuf.message.Message):
     """TorqueLimits are torque limits to use with Limits in waypoints."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MAXIMUM_FIELD_NUMBER: builtins.int
     MINIMUM_FIELD_NUMBER: builtins.int
     @property
@@ -1184,22 +1184,22 @@ class TorqueLimits(google.protobuf.message.Message):
     def minimum(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     def __init__(self,
         *,
-        maximum: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        minimum: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        maximum : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        minimum : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["maximum",b"maximum","minimum",b"minimum"]) -> None: ...
 global___TorqueLimits = TorqueLimits
 
 class SensorLimits(google.protobuf.message.Message):
     """SensorLimits are sensor limits to use with Limits in waypoints."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
     MAXIMUM_FIELD_NUMBER: builtins.int
     MINIMUM_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
-    device_name: typing.Text
+    device_type: typing.Text = ...
+    device_name: typing.Text = ...
     @property
     def value(self) -> global___CapabilityState: ...
     @property
@@ -1208,11 +1208,11 @@ class SensorLimits(google.protobuf.message.Message):
     def minimum(self) -> global___CapabilityState: ...
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        value: typing.Optional[global___CapabilityState] = ...,
-        maximum: typing.Optional[global___CapabilityState] = ...,
-        minimum: typing.Optional[global___CapabilityState] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        value : typing.Optional[global___CapabilityState] = ...,
+        maximum : typing.Optional[global___CapabilityState] = ...,
+        minimum : typing.Optional[global___CapabilityState] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","maximum",b"maximum","minimum",b"minimum","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","maximum",b"maximum","minimum",b"minimum","value",b"value"]) -> None: ...
@@ -1220,13 +1220,13 @@ global___SensorLimits = SensorLimits
 
 class MoveJPathArgs(google.protobuf.message.Message):
     """MoveJPathArgs executes a path in joint-space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     WAYPOINTS_FIELD_NUMBER: builtins.int
     @property
     def waypoints(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MoveJWaypointArgs]: ...
     def __init__(self,
         *,
-        waypoints: typing.Optional[typing.Iterable[global___MoveJWaypointArgs]] = ...,
+        waypoints : typing.Optional[typing.Iterable[global___MoveJWaypointArgs]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["waypoints",b"waypoints"]) -> None: ...
 global___MoveJPathArgs = MoveJPathArgs
@@ -1241,7 +1241,7 @@ class MoveLWaypointArgs(google.protobuf.message.Message):
     m/sec). If theacceleration is not present then the default acceleration (set
     via SetRadialSpeed) will be used (but it will be interpreted as m/sec/sec).
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ROTATION_FIELD_NUMBER: builtins.int
     BLEND_RADIUS_FIELD_NUMBER: builtins.int
     VELOCITY_FIELD_NUMBER: builtins.int
@@ -1250,28 +1250,28 @@ class MoveLWaypointArgs(google.protobuf.message.Message):
     SERVO_FIELD_NUMBER: builtins.int
     @property
     def rotation(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    blend_radius: builtins.float
-    velocity: builtins.float
-    acceleration: builtins.float
+    blend_radius: builtins.float = ...
+    velocity: builtins.float = ...
+    acceleration: builtins.float = ...
     @property
     def limits(self) -> global___Limits:
         """Early termination limits for the move.
         Design doc: http://doc/1tGrtRYPRId9X5P7kHOOHBF4__244ymJt9GBnlN7E_pw
         """
         pass
-    servo: builtins.bool
+    servo: builtins.bool = ...
     """If set, the move should be as rapid as the robot can go. It is generally
     expected that the movement distance is "small".
     """
 
     def __init__(self,
         *,
-        rotation: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        blend_radius: typing.Optional[builtins.float] = ...,
-        velocity: typing.Optional[builtins.float] = ...,
-        acceleration: typing.Optional[builtins.float] = ...,
-        limits: typing.Optional[global___Limits] = ...,
-        servo: typing.Optional[builtins.bool] = ...,
+        rotation : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        blend_radius : typing.Optional[builtins.float] = ...,
+        velocity : typing.Optional[builtins.float] = ...,
+        acceleration : typing.Optional[builtins.float] = ...,
+        limits : typing.Optional[global___Limits] = ...,
+        servo : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","servo",b"servo","velocity",b"velocity"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","rotation",b"rotation","servo",b"servo","velocity",b"velocity"]) -> None: ...
@@ -1279,13 +1279,13 @@ global___MoveLWaypointArgs = MoveLWaypointArgs
 
 class MoveLPathArgs(google.protobuf.message.Message):
     """MoveLPathArgs executes a linear path in joint-space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     WAYPOINTS_FIELD_NUMBER: builtins.int
     @property
     def waypoints(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MoveLWaypointArgs]: ...
     def __init__(self,
         *,
-        waypoints: typing.Optional[typing.Iterable[global___MoveLWaypointArgs]] = ...,
+        waypoints : typing.Optional[typing.Iterable[global___MoveLWaypointArgs]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["waypoints",b"waypoints"]) -> None: ...
 global___MoveLPathArgs = MoveLPathArgs
@@ -1295,12 +1295,12 @@ class StopJArgs(google.protobuf.message.Message):
     specified, overrides the acceleration set in SetRadialSpeed for this command
     only.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DECELERATION_FIELD_NUMBER: builtins.int
-    deceleration: builtins.float
+    deceleration: builtins.float = ...
     def __init__(self,
         *,
-        deceleration: typing.Optional[builtins.float] = ...,
+        deceleration : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["deceleration",b"deceleration"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["deceleration",b"deceleration"]) -> None: ...
@@ -1310,15 +1310,15 @@ class SetDigitalOutArgs(google.protobuf.message.Message):
     """SetDigitalOutArgs sets a digital output. This is not a tool digital output,
     see SetToolDigitalOutArgs for that.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OUTPUT_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
-    output: builtins.int
-    value: builtins.bool
+    output: builtins.int = ...
+    value: builtins.bool = ...
     def __init__(self,
         *,
-        output: typing.Optional[builtins.int] = ...,
-        value: typing.Optional[builtins.bool] = ...,
+        output : typing.Optional[builtins.int] = ...,
+        value : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["output",b"output","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["output",b"output","value",b"value"]) -> None: ...
@@ -1328,15 +1328,15 @@ class SetAnalogOutArgs(google.protobuf.message.Message):
     """SetAnalogOutArgs sets an analog output. The value must be in the range
     [0, 1]. Values outside this range will result in undefined behavior.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OUTPUT_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
-    output: builtins.int
-    value: builtins.float
+    output: builtins.int = ...
+    value: builtins.float = ...
     def __init__(self,
         *,
-        output: typing.Optional[builtins.int] = ...,
-        value: typing.Optional[builtins.float] = ...,
+        output : typing.Optional[builtins.int] = ...,
+        value : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["output",b"output","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["output",b"output","value",b"value"]) -> None: ...
@@ -1347,12 +1347,12 @@ class SleepArgs(google.protobuf.message.Message):
     effective if the latency of the robot reporting that a command is complete
     is on the same order.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SECONDS_FIELD_NUMBER: builtins.int
-    seconds: builtins.float
+    seconds: builtins.float = ...
     def __init__(self,
         *,
-        seconds: typing.Optional[builtins.float] = ...,
+        seconds : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["seconds",b"seconds"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["seconds",b"seconds"]) -> None: ...
@@ -1363,12 +1363,12 @@ class RawArgs(google.protobuf.message.Message):
     necessary. If you find yourself using this often, then consider asking to add
     the command formally to Reach Script.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TEXT_FIELD_NUMBER: builtins.int
-    text: typing.Text
+    text: typing.Text = ...
     def __init__(self,
         *,
-        text: typing.Optional[typing.Text] = ...,
+        text : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["text",b"text"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["text",b"text"]) -> None: ...
@@ -1379,15 +1379,15 @@ class AcquireImageArgs(google.protobuf.message.Message):
     from the given device type and name at this point in program execution.
     The tag will be present in the response.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TAG_FIELD_NUMBER: builtins.int
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     MODE_FIELD_NUMBER: builtins.int
-    tag: typing.Text
-    device_type: typing.Text
-    device_name: typing.Text
-    mode: builtins.int
+    tag: typing.Text = ...
+    device_type: typing.Text = ...
+    device_name: typing.Text = ...
+    mode: builtins.int = ...
     """mode is:
     0: nonblocking
     1: block until exposure complete
@@ -1397,10 +1397,10 @@ class AcquireImageArgs(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        tag: typing.Optional[typing.Text] = ...,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        mode: typing.Optional[builtins.int] = ...,
+        tag : typing.Optional[typing.Text] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        mode : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","mode",b"mode","tag",b"tag"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","mode",b"mode","tag",b"tag"]) -> None: ...
@@ -1412,12 +1412,12 @@ class SyncArgs(google.protobuf.message.Message):
     a Sync statement. Times out and aborts after the given number of seconds.
     Design doc: http://doc/1iSZro_bz7s8Chx_SrI--RYYbQdBTgDrk3QVvR2ahhiw
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SECONDS_FIELD_NUMBER: builtins.int
-    seconds: builtins.float
+    seconds: builtins.float = ...
     def __init__(self,
         *,
-        seconds: typing.Optional[builtins.float] = ...,
+        seconds : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["seconds",b"seconds"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["seconds",b"seconds"]) -> None: ...
@@ -1428,7 +1428,7 @@ class DeviceData(google.protobuf.message.Message):
     environment.
     Next ID: 81
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     DATA_TYPE_FIELD_NUMBER: builtins.int
@@ -1505,10 +1505,10 @@ class DeviceData(google.protobuf.message.Message):
     REPORT_ERROR_FIELD_NUMBER: builtins.int
     HEALTH_FIELD_NUMBER: builtins.int
     CONTROLLER_DESCRIPTIONS_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """The type of device that generated the data, such as photoneo."""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     """Which sensor the data is coming from. Usually, the deviceType is
     sufficient to infer what sensor is being used, but the name disambiguates
     cases where multiple sensors of the same type are used in a robot system.
@@ -1516,24 +1516,24 @@ class DeviceData(google.protobuf.message.Message):
     expected on the system across all producers.
     """
 
-    data_type: typing.Text
+    data_type: typing.Text = ...
     """The type of data repo. Typically, this maps to a specific payload in
     data_type_oneof.
     """
 
-    hint: typing.Text
-    label: typing.Text
-    tag: typing.Text
+    hint: typing.Text = ...
+    label: typing.Text = ...
+    tag: typing.Text = ...
     @property
     def send_to_clients(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___SendToClient]:
         """SendToClients is a list of clients (and optionally tags) to send to.
         See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
         """
         pass
-    inhibit_frame_send: builtins.bool
+    inhibit_frame_send: builtins.bool = ...
     """Design doc: http://doc/1IftMWx82CkArLRyltjgOP7vu00ZCJ43KE_6QKNDKz4k"""
 
-    inhibit_frame_save: builtins.bool
+    inhibit_frame_save: builtins.bool = ...
     @property
     def ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """Timestamps for the device data."""
@@ -1546,7 +1546,7 @@ class DeviceData(google.protobuf.message.Message):
     def remote_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """Robot-side timestamp, when the message was sent over WebRTC."""
         pass
-    experiment_token: typing.Text
+    experiment_token: typing.Text = ...
     @property
     def event_params(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___KeyValue]:
         """Event parameters can be found primarily on metrics DeviceData."""
@@ -1557,7 +1557,7 @@ class DeviceData(google.protobuf.message.Message):
         Design doc: http://doc/12haFR2_olH2-1AuAy8BhI1jIG2S3AZZr75hpWHn_aq0
         """
         pass
-    seq: builtins.int
+    seq: builtins.int = ...
     """Sequence number of the DeviceData. Unique within a Reach serve run."""
 
     @property
@@ -1878,82 +1878,82 @@ class DeviceData(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
-        hint: typing.Optional[typing.Text] = ...,
-        label: typing.Optional[typing.Text] = ...,
-        tag: typing.Optional[typing.Text] = ...,
-        send_to_clients: typing.Optional[typing.Iterable[global___SendToClient]] = ...,
-        inhibit_frame_send: typing.Optional[builtins.bool] = ...,
-        inhibit_frame_save: typing.Optional[builtins.bool] = ...,
-        ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        local_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        remote_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        experiment_token: typing.Optional[typing.Text] = ...,
-        event_params: typing.Optional[typing.Iterable[global___KeyValue]] = ...,
-        message_last_timestamps: typing.Optional[typing.Iterable[global___MessageLastTimestamp]] = ...,
-        seq: typing.Optional[builtins.int] = ...,
-        color: typing.Optional[global___Color] = ...,
-        color_depth: typing.Optional[global___ColorDepth] = ...,
-        key_value: typing.Optional[global___KeyValue] = ...,
-        prediction: typing.Optional[global___Prediction] = ...,
-        ur_state: typing.Optional[global___UrState] = ...,
-        conveyor_state: typing.Optional[global___ConveyorState] = ...,
-        conveyor_state_update: typing.Optional[global___ConveyorState] = ...,
-        tool_state: typing.Optional[global___ToolState] = ...,
-        tool_state_update: typing.Optional[global___ToolState] = ...,
-        status: typing.Optional[global___Status] = ...,
-        user_label: typing.Optional[global___UserLabel] = ...,
-        session_info: typing.Optional[global___SessionInfo] = ...,
-        pick_label: typing.Optional[global___PickLabel] = ...,
-        place_label: typing.Optional[global___PlaceLabel] = ...,
-        level: typing.Optional[global___Level] = ...,
-        protective_stop_state: typing.Optional[global___ProtectiveStopState] = ...,
-        protective_stop_state_update: typing.Optional[global___ProtectiveStopState] = ...,
-        safeguard_stop_state: typing.Optional[global___SafeguardStopState] = ...,
-        safeguard_stop_state_update: typing.Optional[global___SafeguardStopState] = ...,
-        emergency_stop_state: typing.Optional[global___EmergencyStopState] = ...,
-        emergency_stop_state_update: typing.Optional[global___EmergencyStopState] = ...,
-        robot_power_state: typing.Optional[global___RobotPowerState] = ...,
-        robot_power_state_update: typing.Optional[global___RobotPowerState] = ...,
-        metric: typing.Optional[global___Metric] = ...,
-        reach_script_status: typing.Optional[global___Status] = ...,
-        cmd_status: typing.Optional[global___Status] = ...,
-        vacuum_pressure_state: typing.Optional[global___ToolState] = ...,
-        vacuum_pressure_update: typing.Optional[global___ToolState] = ...,
-        downlink_status: typing.Optional[global___Status] = ...,
-        sensor_state: typing.Optional[global___IOState] = ...,
-        sensor_state_update: typing.Optional[global___IOState] = ...,
-        output_state: typing.Optional[global___IOState] = ...,
-        output_state_update: typing.Optional[global___IOState] = ...,
-        health_check: typing.Optional[global___EmptyMessage] = ...,
-        history: typing.Optional[global___History] = ...,
-        audio_request_mute: typing.Optional[global___AudioRequest] = ...,
-        audio_request_unmute: typing.Optional[global___AudioRequest] = ...,
-        error: typing.Optional[global___Status] = ...,
-        webrtc_audio_response: typing.Optional[global___WebrtcAudioResponse] = ...,
-        metadata: typing.Optional[global___Metadata] = ...,
-        sim_state: typing.Optional[global___SimState] = ...,
-        device_status: typing.Optional[global___Status] = ...,
-        webrtc_audio_request: typing.Optional[global___WebrtcAudioRequest] = ...,
-        sim_instance_segmentation: typing.Optional[global___SimInstanceSegmentation] = ...,
-        exposure_complete: typing.Optional[global___Status] = ...,
-        start_shutdown: typing.Optional[global___EmptyMessage] = ...,
-        finish_shutdown: typing.Optional[global___EmptyMessage] = ...,
-        hangup: typing.Optional[global___EmptyMessage] = ...,
-        connected_clients: typing.Optional[global___ConnectedClients] = ...,
-        detection: typing.Optional[global___Detection] = ...,
-        robot_state: typing.Optional[global___RobotState] = ...,
-        alert: typing.Optional[global___Alert] = ...,
-        client_annotation: typing.Optional[global___ClientAnnotation] = ...,
-        pipeline_description: typing.Optional[global___PipelineDescription] = ...,
-        machine_interfaces: typing.Optional[global___MachineInterfaces] = ...,
-        machine_description: typing.Optional[global___MachineDescription] = ...,
-        text_instruction: typing.Optional[global___TextInstruction] = ...,
-        report_error: typing.Optional[global___ReportError] = ...,
-        health: typing.Optional[global___Health] = ...,
-        controller_descriptions: typing.Optional[global___ControllerDescriptions] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
+        hint : typing.Optional[typing.Text] = ...,
+        label : typing.Optional[typing.Text] = ...,
+        tag : typing.Optional[typing.Text] = ...,
+        send_to_clients : typing.Optional[typing.Iterable[global___SendToClient]] = ...,
+        inhibit_frame_send : typing.Optional[builtins.bool] = ...,
+        inhibit_frame_save : typing.Optional[builtins.bool] = ...,
+        ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        local_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        remote_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        experiment_token : typing.Optional[typing.Text] = ...,
+        event_params : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        message_last_timestamps : typing.Optional[typing.Iterable[global___MessageLastTimestamp]] = ...,
+        seq : typing.Optional[builtins.int] = ...,
+        color : typing.Optional[global___Color] = ...,
+        color_depth : typing.Optional[global___ColorDepth] = ...,
+        key_value : typing.Optional[global___KeyValue] = ...,
+        prediction : typing.Optional[global___Prediction] = ...,
+        ur_state : typing.Optional[global___UrState] = ...,
+        conveyor_state : typing.Optional[global___ConveyorState] = ...,
+        conveyor_state_update : typing.Optional[global___ConveyorState] = ...,
+        tool_state : typing.Optional[global___ToolState] = ...,
+        tool_state_update : typing.Optional[global___ToolState] = ...,
+        status : typing.Optional[global___Status] = ...,
+        user_label : typing.Optional[global___UserLabel] = ...,
+        session_info : typing.Optional[global___SessionInfo] = ...,
+        pick_label : typing.Optional[global___PickLabel] = ...,
+        place_label : typing.Optional[global___PlaceLabel] = ...,
+        level : typing.Optional[global___Level] = ...,
+        protective_stop_state : typing.Optional[global___ProtectiveStopState] = ...,
+        protective_stop_state_update : typing.Optional[global___ProtectiveStopState] = ...,
+        safeguard_stop_state : typing.Optional[global___SafeguardStopState] = ...,
+        safeguard_stop_state_update : typing.Optional[global___SafeguardStopState] = ...,
+        emergency_stop_state : typing.Optional[global___EmergencyStopState] = ...,
+        emergency_stop_state_update : typing.Optional[global___EmergencyStopState] = ...,
+        robot_power_state : typing.Optional[global___RobotPowerState] = ...,
+        robot_power_state_update : typing.Optional[global___RobotPowerState] = ...,
+        metric : typing.Optional[global___Metric] = ...,
+        reach_script_status : typing.Optional[global___Status] = ...,
+        cmd_status : typing.Optional[global___Status] = ...,
+        vacuum_pressure_state : typing.Optional[global___ToolState] = ...,
+        vacuum_pressure_update : typing.Optional[global___ToolState] = ...,
+        downlink_status : typing.Optional[global___Status] = ...,
+        sensor_state : typing.Optional[global___IOState] = ...,
+        sensor_state_update : typing.Optional[global___IOState] = ...,
+        output_state : typing.Optional[global___IOState] = ...,
+        output_state_update : typing.Optional[global___IOState] = ...,
+        health_check : typing.Optional[global___EmptyMessage] = ...,
+        history : typing.Optional[global___History] = ...,
+        audio_request_mute : typing.Optional[global___AudioRequest] = ...,
+        audio_request_unmute : typing.Optional[global___AudioRequest] = ...,
+        error : typing.Optional[global___Status] = ...,
+        webrtc_audio_response : typing.Optional[global___WebrtcAudioResponse] = ...,
+        metadata : typing.Optional[global___Metadata] = ...,
+        sim_state : typing.Optional[global___SimState] = ...,
+        device_status : typing.Optional[global___Status] = ...,
+        webrtc_audio_request : typing.Optional[global___WebrtcAudioRequest] = ...,
+        sim_instance_segmentation : typing.Optional[global___SimInstanceSegmentation] = ...,
+        exposure_complete : typing.Optional[global___Status] = ...,
+        start_shutdown : typing.Optional[global___EmptyMessage] = ...,
+        finish_shutdown : typing.Optional[global___EmptyMessage] = ...,
+        hangup : typing.Optional[global___EmptyMessage] = ...,
+        connected_clients : typing.Optional[global___ConnectedClients] = ...,
+        detection : typing.Optional[global___Detection] = ...,
+        robot_state : typing.Optional[global___RobotState] = ...,
+        alert : typing.Optional[global___Alert] = ...,
+        client_annotation : typing.Optional[global___ClientAnnotation] = ...,
+        pipeline_description : typing.Optional[global___PipelineDescription] = ...,
+        machine_interfaces : typing.Optional[global___MachineInterfaces] = ...,
+        machine_description : typing.Optional[global___MachineDescription] = ...,
+        text_instruction : typing.Optional[global___TextInstruction] = ...,
+        report_error : typing.Optional[global___ReportError] = ...,
+        health : typing.Optional[global___Health] = ...,
+        controller_descriptions : typing.Optional[global___ControllerDescriptions] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","event_params",b"event_params","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","message_last_timestamps",b"message_last_timestamps","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","send_to_clients",b"send_to_clients","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> None: ...
@@ -1964,24 +1964,24 @@ class TextLogData(google.protobuf.message.Message):
     """TextLogData represents text log messages
     Next ID: 4
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     FILE_NAME_FIELD_NUMBER: builtins.int
     LINE_NUMBER_FIELD_NUMBER: builtins.int
     TEXT_FIELD_NUMBER: builtins.int
-    file_name: typing.Text
+    file_name: typing.Text = ...
     """file name of source log file"""
 
-    line_number: builtins.int
+    line_number: builtins.int = ...
     """line number within the file of the first line of the text (1 based)"""
 
-    text: typing.Text
+    text: typing.Text = ...
     """actual text of the log message"""
 
     def __init__(self,
         *,
-        file_name: typing.Optional[typing.Text] = ...,
-        line_number: typing.Optional[builtins.int] = ...,
-        text: typing.Optional[typing.Text] = ...,
+        file_name : typing.Optional[typing.Text] = ...,
+        line_number : typing.Optional[builtins.int] = ...,
+        text : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["file_name",b"file_name","line_number",b"line_number","text",b"text"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["file_name",b"file_name","line_number",b"line_number","text",b"text"]) -> None: ...
@@ -1991,19 +1991,19 @@ class Health(google.protobuf.message.Message):
     """Health messages collect health metrics for Reach.
     Design doc: http://doc/1DfRSkqhAefTdGmKRIWDS27nWJHo20xQkm1LcXt4Ae0k
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTERVAL_LENGTH_MS_FIELD_NUMBER: builtins.int
     DISPLAY_NAME_FIELD_NUMBER: builtins.int
     HEART_BEATS_FIELD_NUMBER: builtins.int
-    interval_length_ms: builtins.int
-    display_name: typing.Text
+    interval_length_ms: builtins.int = ...
+    display_name: typing.Text = ...
     @property
     def heart_beats(self) -> global___HeartBeats: ...
     def __init__(self,
         *,
-        interval_length_ms: typing.Optional[builtins.int] = ...,
-        display_name: typing.Optional[typing.Text] = ...,
-        heart_beats: typing.Optional[global___HeartBeats] = ...,
+        interval_length_ms : typing.Optional[builtins.int] = ...,
+        display_name : typing.Optional[typing.Text] = ...,
+        heart_beats : typing.Optional[global___HeartBeats] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["display_name",b"display_name","heart_beats",b"heart_beats","interval_length_ms",b"interval_length_ms"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["display_name",b"display_name","heart_beats",b"heart_beats","interval_length_ms",b"interval_length_ms"]) -> None: ...
@@ -2014,7 +2014,7 @@ class HeartBeats(google.protobuf.message.Message):
     included in health messages.
     Design doc: http://doc/1DfRSkqhAefTdGmKRIWDS27nWJHo20xQkm1LcXt4Ae0k
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ANY_CAMERA_FIELD_NUMBER: builtins.int
     DEPTH_CAMERA_FIELD_NUMBER: builtins.int
     COLOR_CAMERA_FIELD_NUMBER: builtins.int
@@ -2050,17 +2050,17 @@ class HeartBeats(google.protobuf.message.Message):
     def teleop_generates_metric(self) -> global___HealthState: ...
     def __init__(self,
         *,
-        any_camera: typing.Optional[global___HealthState] = ...,
-        depth_camera: typing.Optional[global___HealthState] = ...,
-        color_camera: typing.Optional[global___HealthState] = ...,
-        not_estopped: typing.Optional[global___HealthState] = ...,
-        not_pstopped: typing.Optional[global___HealthState] = ...,
-        not_safeguardstopped: typing.Optional[global___HealthState] = ...,
-        joints: typing.Optional[global___HealthState] = ...,
-        movement: typing.Optional[global___HealthState] = ...,
-        client_connected: typing.Optional[global___HealthState] = ...,
-        no_reach_script_failure: typing.Optional[global___HealthState] = ...,
-        teleop_generates_metric: typing.Optional[global___HealthState] = ...,
+        any_camera : typing.Optional[global___HealthState] = ...,
+        depth_camera : typing.Optional[global___HealthState] = ...,
+        color_camera : typing.Optional[global___HealthState] = ...,
+        not_estopped : typing.Optional[global___HealthState] = ...,
+        not_pstopped : typing.Optional[global___HealthState] = ...,
+        not_safeguardstopped : typing.Optional[global___HealthState] = ...,
+        joints : typing.Optional[global___HealthState] = ...,
+        movement : typing.Optional[global___HealthState] = ...,
+        client_connected : typing.Optional[global___HealthState] = ...,
+        no_reach_script_failure : typing.Optional[global___HealthState] = ...,
+        teleop_generates_metric : typing.Optional[global___HealthState] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["any_camera",b"any_camera","client_connected",b"client_connected","color_camera",b"color_camera","depth_camera",b"depth_camera","joints",b"joints","movement",b"movement","no_reach_script_failure",b"no_reach_script_failure","not_estopped",b"not_estopped","not_pstopped",b"not_pstopped","not_safeguardstopped",b"not_safeguardstopped","teleop_generates_metric",b"teleop_generates_metric"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["any_camera",b"any_camera","client_connected",b"client_connected","color_camera",b"color_camera","depth_camera",b"depth_camera","joints",b"joints","movement",b"movement","no_reach_script_failure",b"no_reach_script_failure","not_estopped",b"not_estopped","not_pstopped",b"not_pstopped","not_safeguardstopped",b"not_safeguardstopped","teleop_generates_metric",b"teleop_generates_metric"]) -> None: ...
@@ -2071,15 +2071,15 @@ class HealthState(google.protobuf.message.Message):
     health heartbeats.
     Design doc: http://doc/1DfRSkqhAefTdGmKRIWDS27nWJHo20xQkm1LcXt4Ae0k
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OK_FIELD_NUMBER: builtins.int
     INFO_FIELD_NUMBER: builtins.int
-    ok: builtins.bool
-    info: typing.Text
+    ok: builtins.bool = ...
+    info: typing.Text = ...
     def __init__(self,
         *,
-        ok: typing.Optional[builtins.bool] = ...,
-        info: typing.Optional[typing.Text] = ...,
+        ok : typing.Optional[builtins.bool] = ...,
+        info : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["info",b"info","ok",b"ok"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["info",b"info","ok",b"ok"]) -> None: ...
@@ -2089,16 +2089,16 @@ class ReportError(google.protobuf.message.Message):
     """ReportError for "report-error" messages.
     Design doc: http://doc/1CXjKHYcfzRfiRWjdlhUmKG_rfgT2a_WmX2PxxmB9K14
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ERROR_FIELD_NUMBER: builtins.int
     TAGS_FIELD_NUMBER: builtins.int
-    error: typing.Text
+    error: typing.Text = ...
     @property
     def tags(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
     def __init__(self,
         *,
-        error: typing.Optional[typing.Text] = ...,
-        tags: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        error : typing.Optional[typing.Text] = ...,
+        tags : typing.Optional[typing.Iterable[typing.Text]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["error",b"error"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["error",b"error","tags",b"tags"]) -> None: ...
@@ -2109,13 +2109,13 @@ class ControllerDescriptions(google.protobuf.message.Message):
     a robot.
     Design doc: http://doc/1MqijmwYXNFrDKwMowzn23TSohq8xAJE9jnJiRpyYmQQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DESCRIPTIONS_FIELD_NUMBER: builtins.int
     @property
     def descriptions(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ControllerDescription]: ...
     def __init__(self,
         *,
-        descriptions: typing.Optional[typing.Iterable[global___ControllerDescription]] = ...,
+        descriptions : typing.Optional[typing.Iterable[global___ControllerDescription]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["descriptions",b"descriptions"]) -> None: ...
 global___ControllerDescriptions = ControllerDescriptions
@@ -2125,12 +2125,12 @@ class ControllerDescription(google.protobuf.message.Message):
     a robot.
     Design doc: http://doc/1MqijmwYXNFrDKwMowzn23TSohq8xAJE9jnJiRpyYmQQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
-    name: typing.Text
+    name: typing.Text = ...
     def __init__(self,
         *,
-        name: typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["name",b"name"]) -> None: ...
@@ -2140,19 +2140,19 @@ class SendToClient(google.protobuf.message.Message):
     """SendToClient is data about a client to which the message should be sent.
     See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     UID_FIELD_NUMBER: builtins.int
     TAG_FIELD_NUMBER: builtins.int
-    uid: typing.Text
+    uid: typing.Text = ...
     """UID is the UID of the client."""
 
-    tag: typing.Text
+    tag: typing.Text = ...
     """Tag is the tag of the message for the client."""
 
     def __init__(self,
         *,
-        uid: typing.Optional[typing.Text] = ...,
-        tag: typing.Optional[typing.Text] = ...,
+        uid : typing.Optional[typing.Text] = ...,
+        tag : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["tag",b"tag","uid",b"uid"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["tag",b"tag","uid",b"uid"]) -> None: ...
@@ -2163,30 +2163,30 @@ class History(google.protobuf.message.Message):
 
     Design doc: http://doc/18XXeGk_7EYvINLAfGhWMWgB2mzM8A4mCQiGHc9CiPP0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     KEY_FIELD_NUMBER: builtins.int
     VALUES_FIELD_NUMBER: builtins.int
     HISTORY_START_FIELD_NUMBER: builtins.int
     HISTORY_END_FIELD_NUMBER: builtins.int
-    key: typing.Text
+    key: typing.Text = ...
     """history document name"""
 
     @property
     def values(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
         """array of strings of JSON-encoded firestore documents"""
         pass
-    history_start: builtins.int
+    history_start: builtins.int = ...
     """index to start history paging"""
 
-    history_end: builtins.int
+    history_end: builtins.int = ...
     """index to end history paging"""
 
     def __init__(self,
         *,
-        key: typing.Optional[typing.Text] = ...,
-        values: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        history_start: typing.Optional[builtins.int] = ...,
-        history_end: typing.Optional[builtins.int] = ...,
+        key : typing.Optional[typing.Text] = ...,
+        values : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        history_start : typing.Optional[builtins.int] = ...,
+        history_end : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["history_end",b"history_end","history_start",b"history_start","key",b"key"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["history_end",b"history_end","history_start",b"history_start","key",b"key","values",b"values"]) -> None: ...
@@ -2197,12 +2197,12 @@ class AudioRequest(google.protobuf.message.Message):
 
     Design doc: http://doc/1Nue7074Rg-pehUOYSsvyo1hUk-0wCZH9R0pbrFl2TQ0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TEXT_CUE_FIELD_NUMBER: builtins.int
-    text_cue: typing.Text
+    text_cue: typing.Text = ...
     def __init__(self,
         *,
-        text_cue: typing.Optional[typing.Text] = ...,
+        text_cue : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["text_cue",b"text_cue"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["text_cue",b"text_cue"]) -> None: ...
@@ -2214,7 +2214,7 @@ class SimInstanceSegmentation(google.protobuf.message.Message):
 
     Design doc: http://doc/1aaXmuTMsU1WSqUUZ2BXsqLjcX1tCZI-gEO4LLDEeFdQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SIM_TS_FIELD_NUMBER: builtins.int
     IMAGE_PATH_FIELD_NUMBER: builtins.int
     RELATION_FIELD_NUMBER: builtins.int
@@ -2222,7 +2222,7 @@ class SimInstanceSegmentation(google.protobuf.message.Message):
     def sim_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """sim_ts is the internal SIM time if the SIM is sped up."""
         pass
-    image_path: typing.Text
+    image_path: typing.Text = ...
     """image_path is the relative path to the image saved by the SIM."""
 
     @property
@@ -2231,9 +2231,9 @@ class SimInstanceSegmentation(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        sim_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        image_path: typing.Optional[typing.Text] = ...,
-        relation: typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        sim_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        image_path : typing.Optional[typing.Text] = ...,
+        relation : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["image_path",b"image_path","sim_ts",b"sim_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["image_path",b"image_path","relation",b"relation","sim_ts",b"sim_ts"]) -> None: ...
@@ -2245,7 +2245,7 @@ class SimState(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SIM_TS_FIELD_NUMBER: builtins.int
     OBJECT_STATE_FIELD_NUMBER: builtins.int
     @property
@@ -2258,8 +2258,8 @@ class SimState(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        sim_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        object_state: typing.Optional[typing.Iterable[global___ObjectState]] = ...,
+        sim_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        object_state : typing.Optional[typing.Iterable[global___ObjectState]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["sim_ts",b"sim_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["object_state",b"object_state","sim_ts",b"sim_ts"]) -> None: ...
@@ -2270,15 +2270,15 @@ class ObjectState(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     OBJECT_NAME_FIELD_NUMBER: builtins.int
     POSE_XYZXYZW_FIELD_NUMBER: builtins.int
     LINEAR_VEL_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     """unique object identifier"""
 
-    object_name: typing.Text
+    object_name: typing.Text = ...
     """the name of the gameobject in the Unity scene"""
 
     @property
@@ -2291,10 +2291,10 @@ class ObjectState(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        object_name: typing.Optional[typing.Text] = ...,
-        pose_xyzxyzw: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        linear_vel: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        object_name : typing.Optional[typing.Text] = ...,
+        pose_xyzxyzw : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        linear_vel : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id","object_name",b"object_name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","linear_vel",b"linear_vel","object_name",b"object_name","pose_xyzxyzw",b"pose_xyzxyzw"]) -> None: ...
@@ -2305,7 +2305,7 @@ class SimAction(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     GET_ALL_OBJECT_POSES_FIELD_NUMBER: builtins.int
     SET_OBJECT_POSE_FIELD_NUMBER: builtins.int
     DELETE_OBJECT_FIELD_NUMBER: builtins.int
@@ -2326,12 +2326,12 @@ class SimAction(google.protobuf.message.Message):
     def get_segmented_image(self) -> global___GetSegmentedImage: ...
     def __init__(self,
         *,
-        get_all_object_poses: typing.Optional[global___GetAllObjectPoses] = ...,
-        set_object_pose: typing.Optional[global___SetObjectPose] = ...,
-        delete_object: typing.Optional[global___DeleteObject] = ...,
-        set_camera_intrinsics: typing.Optional[global___SetCameraIntrinsics] = ...,
-        add_object: typing.Optional[global___AddObject] = ...,
-        get_segmented_image: typing.Optional[global___GetSegmentedImage] = ...,
+        get_all_object_poses : typing.Optional[global___GetAllObjectPoses] = ...,
+        set_object_pose : typing.Optional[global___SetObjectPose] = ...,
+        delete_object : typing.Optional[global___DeleteObject] = ...,
+        set_camera_intrinsics : typing.Optional[global___SetCameraIntrinsics] = ...,
+        add_object : typing.Optional[global___AddObject] = ...,
+        get_segmented_image : typing.Optional[global___GetSegmentedImage] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["add_object",b"add_object","delete_object",b"delete_object","get_all_object_poses",b"get_all_object_poses","get_segmented_image",b"get_segmented_image","set_camera_intrinsics",b"set_camera_intrinsics","set_object_pose",b"set_object_pose"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["add_object",b"add_object","delete_object",b"delete_object","get_all_object_poses",b"get_all_object_poses","get_segmented_image",b"get_segmented_image","set_camera_intrinsics",b"set_camera_intrinsics","set_object_pose",b"set_object_pose"]) -> None: ...
@@ -2344,7 +2344,7 @@ class GetAllObjectPoses(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(self,
         ) -> None: ...
 global___GetAllObjectPoses = GetAllObjectPoses
@@ -2354,16 +2354,16 @@ class SetObjectPose(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     POSE_XYZXYZW_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     @property
     def pose_xyzxyzw(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        pose_xyzxyzw: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        pose_xyzxyzw : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","pose_xyzxyzw",b"pose_xyzxyzw"]) -> None: ...
@@ -2374,12 +2374,12 @@ class DeleteObject(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
+        id : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id"]) -> None: ...
@@ -2390,22 +2390,22 @@ class SetCameraIntrinsics(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     INTRINSICS_FIELD_NUMBER: builtins.int
     NEAR_CLIP_FIELD_NUMBER: builtins.int
     FAR_CLIP_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     @property
     def intrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    near_clip: builtins.float
-    far_clip: builtins.float
+    near_clip: builtins.float = ...
+    far_clip: builtins.float = ...
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        near_clip: typing.Optional[builtins.float] = ...,
-        far_clip: typing.Optional[builtins.float] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        near_clip : typing.Optional[builtins.float] = ...,
+        far_clip : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["far_clip",b"far_clip","id",b"id","near_clip",b"near_clip"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["far_clip",b"far_clip","id",b"id","intrinsics",b"intrinsics","near_clip",b"near_clip"]) -> None: ...
@@ -2416,19 +2416,19 @@ class AddObject(google.protobuf.message.Message):
 
     Design doc: http://doc/1x3Ib4R4xsmNvuS7K77vdac4mtjKrWNYYXYBcR9EE9oc
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     POSE_XYZXYZW_FIELD_NUMBER: builtins.int
-    id: typing.Text
-    type: typing.Text
+    id: typing.Text = ...
+    type: typing.Text = ...
     @property
     def pose_xyzxyzw(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        type: typing.Optional[typing.Text] = ...,
-        pose_xyzxyzw: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        pose_xyzxyzw : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","pose_xyzxyzw",b"pose_xyzxyzw","type",b"type"]) -> None: ...
@@ -2439,12 +2439,12 @@ class GetSegmentedImage(google.protobuf.message.Message):
 
     Design doc: http://doc/1aaXmuTMsU1WSqUUZ2BXsqLjcX1tCZI-gEO4LLDEeFdQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_KEY_FIELD_NUMBER: builtins.int
-    device_key: typing.Text
+    device_key: typing.Text = ...
     def __init__(self,
         *,
-        device_key: typing.Optional[typing.Text] = ...,
+        device_key : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["device_key",b"device_key"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["device_key",b"device_key"]) -> None: ...
@@ -2452,31 +2452,31 @@ global___GetSegmentedImage = GetSegmentedImage
 
 class Metadata(google.protobuf.message.Message):
     """Metadata will be used for any kind of metadata logging purposes."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COMMENT_FIELD_NUMBER: builtins.int
     BEGIN_FILE_FIELD_NUMBER: builtins.int
     END_FILE_FIELD_NUMBER: builtins.int
     REAL_TIME_LOGS_FIELD_NUMBER: builtins.int
-    comment: typing.Text
+    comment: typing.Text = ...
     """Comment can contain any metadata related information."""
 
-    begin_file: builtins.bool
+    begin_file: builtins.bool = ...
     """Refers to log files. Only existent if it's the first line of the file."""
 
-    end_file: builtins.bool
+    end_file: builtins.bool = ...
     """Refers to log files. Only existent if it's the last line of the file."""
 
-    real_time_logs: builtins.bool
+    real_time_logs: builtins.bool = ...
     """Reflects the command line argument value of “--real_time_logs”
     http://docs/document/d/1vXJwC7WV8bhQI8X1-_Og8-Xs8ra7HTc4oR-AK0Zimq4
     """
 
     def __init__(self,
         *,
-        comment: typing.Optional[typing.Text] = ...,
-        begin_file: typing.Optional[builtins.bool] = ...,
-        end_file: typing.Optional[builtins.bool] = ...,
-        real_time_logs: typing.Optional[builtins.bool] = ...,
+        comment : typing.Optional[typing.Text] = ...,
+        begin_file : typing.Optional[builtins.bool] = ...,
+        end_file : typing.Optional[builtins.bool] = ...,
+        real_time_logs : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["begin_file",b"begin_file","comment",b"comment","end_file",b"end_file","real_time_logs",b"real_time_logs"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["begin_file",b"begin_file","comment",b"comment","end_file",b"end_file","real_time_logs",b"real_time_logs"]) -> None: ...
@@ -2490,13 +2490,13 @@ class IOState(google.protobuf.message.Message):
 
     Design doc: http://doc/1VIF31BeSiBbukZzoxudZMQNaLGTFe_J6mSPAN4BRsUs
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     STATE_FIELD_NUMBER: builtins.int
     @property
     def state(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___CapabilityState]: ...
     def __init__(self,
         *,
-        state: typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
+        state : typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["state",b"state"]) -> None: ...
 global___IOState = IOState
@@ -2506,14 +2506,14 @@ class CapabilityState(google.protobuf.message.Message):
 
     Design doc: http://doc/1VIF31BeSiBbukZzoxudZMQNaLGTFe_J6mSPAN4BRsUs
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PIN_FIELD_NUMBER: builtins.int
     INT_VALUE_FIELD_NUMBER: builtins.int
     FLOAT_VALUE_FIELD_NUMBER: builtins.int
-    pin: typing.Text
+    pin: typing.Text = ...
     """The pin name within the capability (if any)."""
 
-    int_value: builtins.int
+    int_value: builtins.int = ...
     """The following should have been in a oneof, but were implemented
     incorrectly.
 
@@ -2521,14 +2521,14 @@ class CapabilityState(google.protobuf.message.Message):
     non-zero: activate, zero: deactivate
     """
 
-    float_value: builtins.float
+    float_value: builtins.float = ...
     """for analog outputs"""
 
     def __init__(self,
         *,
-        pin: typing.Optional[typing.Text] = ...,
-        int_value: typing.Optional[builtins.int] = ...,
-        float_value: typing.Optional[builtins.float] = ...,
+        pin : typing.Optional[typing.Text] = ...,
+        int_value : typing.Optional[builtins.int] = ...,
+        float_value : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["float_value",b"float_value","int_value",b"int_value","pin",b"pin"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["float_value",b"float_value","int_value",b"int_value","pin",b"pin"]) -> None: ...
@@ -2536,7 +2536,7 @@ global___CapabilityState = CapabilityState
 
 class CameraCalibration(google.protobuf.message.Message):
     """CameraCalibration represents the calibration of a camera."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTRINSICS_FIELD_NUMBER: builtins.int
     INTRINSICS_RESIDUAL_FIELD_NUMBER: builtins.int
     LENS_MODEL_FIELD_NUMBER: builtins.int
@@ -2551,23 +2551,23 @@ class CameraCalibration(google.protobuf.message.Message):
     def intrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Camera intrinsics values."""
         pass
-    intrinsics_residual: builtins.float
+    intrinsics_residual: builtins.float = ...
     """Residual value for intrinsics optimization"""
 
-    lens_model: typing.Text
+    lens_model: typing.Text = ...
     """Lens model for the camera (generally "pinhole")."""
 
-    calibrated_width: builtins.int
+    calibrated_width: builtins.int = ...
     """Calibrated width"""
 
-    calibrated_height: builtins.int
+    calibrated_height: builtins.int = ...
     """Calibrated height"""
 
     @property
     def extrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Camera pose, 6 numbers: x, y, z, rx, ry, rz."""
         pass
-    extrinsics_residual: builtins.float
+    extrinsics_residual: builtins.float = ...
     """Residual value for extrinsics optimization"""
 
     @property
@@ -2586,16 +2586,16 @@ class CameraCalibration(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        intrinsics_residual: typing.Optional[builtins.float] = ...,
-        lens_model: typing.Optional[typing.Text] = ...,
-        calibrated_width: typing.Optional[builtins.int] = ...,
-        calibrated_height: typing.Optional[builtins.int] = ...,
-        extrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        extrinsics_residual: typing.Optional[builtins.float] = ...,
-        distortion: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        distortion_depth: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        camera_t_origin: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        intrinsics_residual : typing.Optional[builtins.float] = ...,
+        lens_model : typing.Optional[typing.Text] = ...,
+        calibrated_width : typing.Optional[builtins.int] = ...,
+        calibrated_height : typing.Optional[builtins.int] = ...,
+        extrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        extrinsics_residual : typing.Optional[builtins.float] = ...,
+        distortion : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        distortion_depth : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        camera_t_origin : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","extrinsics_residual",b"extrinsics_residual","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","camera_t_origin",b"camera_t_origin","distortion",b"distortion","distortion_depth",b"distortion_depth","extrinsics",b"extrinsics","extrinsics_residual",b"extrinsics_residual","intrinsics",b"intrinsics","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> None: ...
@@ -2603,18 +2603,18 @@ global___CameraCalibration = CameraCalibration
 
 class Color(google.protobuf.message.Message):
     """Color represents data from dataType == "color"."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COLOR_FIELD_NUMBER: builtins.int
     COLOR_SSOT_KEY_FIELD_NUMBER: builtins.int
     COLOR_INTRINSICS_FIELD_NUMBER: builtins.int
     COLOR_DATA_FIELD_NUMBER: builtins.int
     CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
-    color: typing.Text
+    color: typing.Text = ...
     """A reference to a color image.
     In the JSON world, this is a path to the image file in the GCS bucket.
     """
 
-    color_ssot_key: typing.Text
+    color_ssot_key: typing.Text = ...
     """In the google3 robotics logs world, this is an SSOT key where the actual
     image payload is stored.
     """
@@ -2625,7 +2625,7 @@ class Color(google.protobuf.message.Message):
         Can be left blank or omitted, if intrinsics are unknown.
         """
         pass
-    color_data: builtins.bytes
+    color_data: builtins.bytes = ...
     """Color image data stored directly within the protobuf. If the field is
     non-empty, it contains the raw bytes of the file specified in the "color"
     field. If the "color_data" field is specified, then the "color" field must
@@ -2639,11 +2639,11 @@ class Color(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        color: typing.Optional[typing.Text] = ...,
-        color_ssot_key: typing.Optional[typing.Text] = ...,
-        color_intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        color_data: typing.Optional[builtins.bytes] = ...,
-        camera_calibration: typing.Optional[global___CameraCalibration] = ...,
+        color : typing.Optional[typing.Text] = ...,
+        color_ssot_key : typing.Optional[typing.Text] = ...,
+        color_intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        color_data : typing.Optional[builtins.bytes] = ...,
+        camera_calibration : typing.Optional[global___CameraCalibration] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key"]) -> None: ...
@@ -2651,7 +2651,7 @@ global___Color = Color
 
 class ColorDepth(google.protobuf.message.Message):
     """ColorDepth represents data from dataType == "color-depth"."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COLOR_FIELD_NUMBER: builtins.int
     COLOR_SSOT_KEY_FIELD_NUMBER: builtins.int
     COLOR_INTRINSICS_FIELD_NUMBER: builtins.int
@@ -2664,12 +2664,12 @@ class ColorDepth(google.protobuf.message.Message):
     COLOR_DATA_FIELD_NUMBER: builtins.int
     DEPTH_DATA_FIELD_NUMBER: builtins.int
     CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
-    color: typing.Text
+    color: typing.Text = ...
     """A reference to a color image.
     In the JSON world, this is a path to the image file in the GCS bucket.
     """
 
-    color_ssot_key: typing.Text
+    color_ssot_key: typing.Text = ...
     """In the google3 robotics logs world, this is an SSOT key where the actual
     image payload is stored.
     """
@@ -2680,12 +2680,12 @@ class ColorDepth(google.protobuf.message.Message):
         Can be left blank or omitted, if intrinsics are unknown.
         """
         pass
-    depth: typing.Text
+    depth: typing.Text = ...
     """A reference to a depth image.
     In the JSON world, this is a path to the image file in the GCS bucket.
     """
 
-    depth_ssot_key: typing.Text
+    depth_ssot_key: typing.Text = ...
     """In the google3 robotics logs world, this is an SSOT key where the actual
     image payload is stored.
     """
@@ -2696,12 +2696,12 @@ class ColorDepth(google.protobuf.message.Message):
         Can be left blank or omitted, if intrinsics are unknown.
         """
         pass
-    upload_depth: typing.Text
+    upload_depth: typing.Text = ...
     """UploadDepth is the depth data filename for upload
     See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
     """
 
-    uncompressed_depth: typing.Text
+    uncompressed_depth: typing.Text = ...
     """UncompressedDepth is the path to the uncompressed filename
     See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
     """
@@ -2713,7 +2713,7 @@ class ColorDepth(google.protobuf.message.Message):
         See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
         """
         pass
-    color_data: builtins.bytes
+    color_data: builtins.bytes = ...
     """Color image data stored directly within the protobuf. If the field is
     non-empty, it contains the raw bytes of the file specified in the "color"
     field. If the "color_data" field is specified, then the "color" field must
@@ -2721,7 +2721,7 @@ class ColorDepth(google.protobuf.message.Message):
     JPG) of the binary data in "color_data".
     """
 
-    depth_data: builtins.bytes
+    depth_data: builtins.bytes = ...
     """Depth image data stored directly within the protobuf. If the field is
     non-empty, it contains the raw bytes of the file specified in the "depth"
     field. If the "depth_data" field is specified, then the "depth" field must
@@ -2735,18 +2735,18 @@ class ColorDepth(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        color: typing.Optional[typing.Text] = ...,
-        color_ssot_key: typing.Optional[typing.Text] = ...,
-        color_intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        depth: typing.Optional[typing.Text] = ...,
-        depth_ssot_key: typing.Optional[typing.Text] = ...,
-        depth_intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        upload_depth: typing.Optional[typing.Text] = ...,
-        uncompressed_depth: typing.Optional[typing.Text] = ...,
-        compressed_depth: typing.Optional[typing.Iterable[global___CompressedDepth]] = ...,
-        color_data: typing.Optional[builtins.bytes] = ...,
-        depth_data: typing.Optional[builtins.bytes] = ...,
-        camera_calibration: typing.Optional[global___CameraCalibration] = ...,
+        color : typing.Optional[typing.Text] = ...,
+        color_ssot_key : typing.Optional[typing.Text] = ...,
+        color_intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        depth : typing.Optional[typing.Text] = ...,
+        depth_ssot_key : typing.Optional[typing.Text] = ...,
+        depth_intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        upload_depth : typing.Optional[typing.Text] = ...,
+        uncompressed_depth : typing.Optional[typing.Text] = ...,
+        compressed_depth : typing.Optional[typing.Iterable[global___CompressedDepth]] = ...,
+        color_data : typing.Optional[builtins.bytes] = ...,
+        depth_data : typing.Optional[builtins.bytes] = ...,
+        camera_calibration : typing.Optional[global___CameraCalibration] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","depth",b"depth","depth_data",b"depth_data","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","color",b"color","color_data",b"color_data","color_intrinsics",b"color_intrinsics","color_ssot_key",b"color_ssot_key","compressed_depth",b"compressed_depth","depth",b"depth","depth_data",b"depth_data","depth_intrinsics",b"depth_intrinsics","depth_ssot_key",b"depth_ssot_key","uncompressed_depth",b"uncompressed_depth","upload_depth",b"upload_depth"]) -> None: ...
@@ -2756,10 +2756,10 @@ class CompressedDepth(google.protobuf.message.Message):
     """CompressedDepth is a compressed depth file.
     See also: http://doc/1MAK5QRZ4PyV7rgMkha1M8rqrP00x-BV1SVOJUp_F2BQ
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEPTH_FIELD_NUMBER: builtins.int
     ENCODINGS_FIELD_NUMBER: builtins.int
-    depth: typing.Text
+    depth: typing.Text = ...
     """Depth is the depth file path."""
 
     @property
@@ -2768,8 +2768,8 @@ class CompressedDepth(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        depth: typing.Optional[typing.Text] = ...,
-        encodings: typing.Optional[typing.Iterable[typing.Text]] = ...,
+        depth : typing.Optional[typing.Text] = ...,
+        encodings : typing.Optional[typing.Iterable[typing.Text]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["depth",b"depth"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["depth",b"depth","encodings",b"encodings"]) -> None: ...
@@ -2777,26 +2777,26 @@ global___CompressedDepth = CompressedDepth
 
 class KeyValue(google.protobuf.message.Message):
     """KeyValueData is the message for generic key-value data."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     KEY_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
     INT_VALUE_FIELD_NUMBER: builtins.int
     FLOAT_VALUE_FIELD_NUMBER: builtins.int
-    key: typing.Text
-    value: typing.Text
+    key: typing.Text = ...
+    value: typing.Text = ...
     """The following should have been in a oneof, but were implemented
     incorrectly.
 
     """
 
-    int_value: builtins.int
-    float_value: builtins.float
+    int_value: builtins.int = ...
+    float_value: builtins.float = ...
     def __init__(self,
         *,
-        key: typing.Optional[typing.Text] = ...,
-        value: typing.Optional[typing.Text] = ...,
-        int_value: typing.Optional[builtins.int] = ...,
-        float_value: typing.Optional[builtins.float] = ...,
+        key : typing.Optional[typing.Text] = ...,
+        value : typing.Optional[typing.Text] = ...,
+        int_value : typing.Optional[builtins.int] = ...,
+        float_value : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["float_value",b"float_value","int_value",b"int_value","key",b"key","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["float_value",b"float_value","int_value",b"int_value","key",b"key","value",b"value"]) -> None: ...
@@ -2808,25 +2808,25 @@ class MessageLastTimestamp(google.protobuf.message.Message):
     retrieve that last value of the message.
     Design doc: http://doc/12haFR2_olH2-1AuAy8BhI1jIG2S3AZZr75hpWHn_aq0
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     DATA_TYPE_FIELD_NUMBER: builtins.int
     KEY_FIELD_NUMBER: builtins.int
     LAST_TS_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
-    device_name: typing.Text
-    data_type: typing.Text
-    key: typing.Text
+    device_type: typing.Text = ...
+    device_name: typing.Text = ...
+    data_type: typing.Text = ...
+    key: typing.Text = ...
     @property
     def last_ts(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
-        key: typing.Optional[typing.Text] = ...,
-        last_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
+        key : typing.Optional[typing.Text] = ...,
+        last_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","key",b"key","last_ts",b"last_ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","key",b"key","last_ts",b"last_ts"]) -> None: ...
@@ -2834,7 +2834,7 @@ global___MessageLastTimestamp = MessageLastTimestamp
 
 class InferenceRequest(google.protobuf.message.Message):
     """InferenceRequest stores a request for inference from an oracle."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PREDICTION_TYPE_FIELD_NUMBER: builtins.int
     REQUEST_TYPE_FIELD_NUMBER: builtins.int
     TASK_CODE_FIELD_NUMBER: builtins.int
@@ -2842,45 +2842,45 @@ class InferenceRequest(google.protobuf.message.Message):
     LABEL_FIELD_NUMBER: builtins.int
     ROBOT_ID_FIELD_NUMBER: builtins.int
     SUCCESS_TYPE_FIELD_NUMBER: builtins.int
-    prediction_type: typing.Text
+    prediction_type: typing.Text = ...
     """The prediction type to execute. This is approximatly mapped to a model
     type (although one model may handle multiple request types).
     Oneof ["ModelPick", "ModelPickAndPlace"].
     """
 
-    request_type: typing.Text
+    request_type: typing.Text = ...
     """request_type: "sparse" will send a single inference result and wait for
     another. In the future we will support "continuous" requests will send
     inference results continuously following the initial request, until "stop"
     is sent. Oneof ["sparse"], future support: ["continuous", “stop”].
     """
 
-    task_code: typing.Text
+    task_code: typing.Text = ...
     """task_code: e.g. TC-101."""
 
-    intent: typing.Text
+    intent: typing.Text = ...
     """intent: supported values: ["pick"]."""
 
-    label: typing.Text
+    label: typing.Text = ...
     """label: e.g. SingulateRightBin."""
 
-    robot_id: typing.Text
+    robot_id: typing.Text = ...
     """robot_id: e.g. reach07."""
 
-    success_type: typing.Text
+    success_type: typing.Text = ...
     """Success type metadata for success-detection requests (populated by
     reach-serve using firestore data).
     """
 
     def __init__(self,
         *,
-        prediction_type: typing.Optional[typing.Text] = ...,
-        request_type: typing.Optional[typing.Text] = ...,
-        task_code: typing.Optional[typing.Text] = ...,
-        intent: typing.Optional[typing.Text] = ...,
-        label: typing.Optional[typing.Text] = ...,
-        robot_id: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
+        prediction_type : typing.Optional[typing.Text] = ...,
+        request_type : typing.Optional[typing.Text] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        label : typing.Optional[typing.Text] = ...,
+        robot_id : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["intent",b"intent","label",b"label","prediction_type",b"prediction_type","request_type",b"request_type","robot_id",b"robot_id","success_type",b"success_type","task_code",b"task_code"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["intent",b"intent","label",b"label","prediction_type",b"prediction_type","request_type",b"request_type","robot_id",b"robot_id","success_type",b"success_type","task_code",b"task_code"]) -> None: ...
@@ -2888,7 +2888,7 @@ global___InferenceRequest = InferenceRequest
 
 class Prediction(google.protobuf.message.Message):
     """Prediction is an output from an oracle in response to an inference-request."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COLOR_FIELD_NUMBER: builtins.int
     COLOR_SSOT_KEY_FIELD_NUMBER: builtins.int
     PICK_POINTS_FIELD_NUMBER: builtins.int
@@ -2903,12 +2903,12 @@ class Prediction(google.protobuf.message.Message):
     ERROR_FIELD_NUMBER: builtins.int
     COLOR_DATA_FIELD_NUMBER: builtins.int
     KEY_VALUE_FIELD_NUMBER: builtins.int
-    color: typing.Text
+    color: typing.Text = ...
     """A reference to data for a heat map or other visualization of a prediction.
     In the JSON world, this is a path to the image file in the GCS bucket.
     """
 
-    color_ssot_key: typing.Text
+    color_ssot_key: typing.Text = ...
     """In the google3 robotics logs world, this is an SSOT key where the actual
     image payload is stored.
     """
@@ -2945,10 +2945,10 @@ class Prediction(google.protobuf.message.Message):
     def depth_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """depth_ts is the depth frame timestamp used as input to the model."""
         pass
-    error: typing.Text
+    error: typing.Text = ...
     """Present if prediction request is invalid. e.g. unsupported prediction_type."""
 
-    color_data: builtins.bytes
+    color_data: builtins.bytes = ...
     """Color image data stored directly within the protobuf. If the field is
     non-empty, it contains the raw bytes of the file specified in the "color"
     field. If the "color_data" field is specified, then the "color" field must
@@ -2960,20 +2960,20 @@ class Prediction(google.protobuf.message.Message):
     def key_value(self) -> global___KeyValue: ...
     def __init__(self,
         *,
-        color: typing.Optional[typing.Text] = ...,
-        color_ssot_key: typing.Optional[typing.Text] = ...,
-        pick_points: typing.Optional[typing.Iterable[global___PickPoint]] = ...,
-        position_3d: typing.Optional[typing.Iterable[global___Vec3d]] = ...,
-        quaternion_3d: typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
-        place_position_3d: typing.Optional[typing.Iterable[global___Vec3d]] = ...,
-        place_quaternion_3d: typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
-        confidence: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        inference_request: typing.Optional[global___InferenceRequest] = ...,
-        color_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        depth_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        error: typing.Optional[typing.Text] = ...,
-        color_data: typing.Optional[builtins.bytes] = ...,
-        key_value: typing.Optional[global___KeyValue] = ...,
+        color : typing.Optional[typing.Text] = ...,
+        color_ssot_key : typing.Optional[typing.Text] = ...,
+        pick_points : typing.Optional[typing.Iterable[global___PickPoint]] = ...,
+        position_3d : typing.Optional[typing.Iterable[global___Vec3d]] = ...,
+        quaternion_3d : typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
+        place_position_3d : typing.Optional[typing.Iterable[global___Vec3d]] = ...,
+        place_quaternion_3d : typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
+        confidence : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        inference_request : typing.Optional[global___InferenceRequest] = ...,
+        color_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        depth_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        error : typing.Optional[typing.Text] = ...,
+        color_data : typing.Optional[builtins.bytes] = ...,
+        key_value : typing.Optional[global___KeyValue] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request","key_value",b"key_value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["color",b"color","color_data",b"color_data","color_ssot_key",b"color_ssot_key","color_ts",b"color_ts","confidence",b"confidence","depth_ts",b"depth_ts","error",b"error","inference_request",b"inference_request","key_value",b"key_value","pick_points",b"pick_points","place_position_3d",b"place_position_3d","place_quaternion_3d",b"place_quaternion_3d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d"]) -> None: ...
@@ -2981,15 +2981,15 @@ global___Prediction = Prediction
 
 class PickPoint(google.protobuf.message.Message):
     """PickPoint is the message for a point that can contain any number of values."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y"]) -> None: ...
@@ -2997,12 +2997,12 @@ global___PickPoint = PickPoint
 
 class Level(google.protobuf.message.Message):
     """Level refers to scale level readings."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LEVEL_FIELD_NUMBER: builtins.int
-    level: builtins.float
+    level: builtins.float = ...
     def __init__(self,
         *,
-        level: typing.Optional[builtins.float] = ...,
+        level : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["level",b"level"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["level",b"level"]) -> None: ...
@@ -3010,13 +3010,14 @@ global___Level = Level
 
 class UrState(google.protobuf.message.Message):
     """UrState is the message for the state of a robot, dataType == "ur-state".
-    Next ID: 40
+    Next ID: 41
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     POSE_FIELD_NUMBER: builtins.int
     TIP_T_BASE_FIELD_NUMBER: builtins.int
     TIP_ADJUST_T_BASE_FIELD_NUMBER: builtins.int
     BASE_T_ORIGIN_FIELD_NUMBER: builtins.int
+    URDF_FILE_FIELD_NUMBER: builtins.int
     JOINTS_FIELD_NUMBER: builtins.int
     FORCE_FIELD_NUMBER: builtins.int
     TORQUE_FIELD_NUMBER: builtins.int
@@ -3070,6 +3071,9 @@ class UrState(google.protobuf.message.Message):
     def base_t_origin(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """base_t_origin is the offset of the robot base from the origin."""
         pass
+    urdf_file: typing.Text = ...
+    """urdf_file is the filename for the URDF (e.g. ur5e.urdf)."""
+
     @property
     def joints(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Joints positions in radians."""
@@ -3086,19 +3090,19 @@ class UrState(google.protobuf.message.Message):
         robot-specific.
         """
         pass
-    robot_dexterity: builtins.float
-    is_robot_power_on: builtins.bool
+    robot_dexterity: builtins.float = ...
+    is_robot_power_on: builtins.bool = ...
     """Is the robot turned on."""
 
-    is_emergency_stopped: builtins.bool
+    is_emergency_stopped: builtins.bool = ...
     """Now in RobotStopState"""
 
-    is_protective_stopped: builtins.bool
+    is_protective_stopped: builtins.bool = ...
     """Now in RobotStopState"""
 
     @property
     def robot_stop_state(self) -> global___RobotStopState: ...
-    is_program_running: builtins.bool
+    is_program_running: builtins.bool = ...
     @property
     def digital_in(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.bool]:
         """Digital inputs."""
@@ -3123,23 +3127,23 @@ class UrState(google.protobuf.message.Message):
     def tool_analog_in(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def tool_analog_out(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    board_temp_c: builtins.float
-    robot_voltage_v: builtins.float
-    robot_current_a: builtins.float
-    board_io_current_a: builtins.float
-    tool_temp_c: builtins.float
-    tool_voltage_v: builtins.float
-    tool_current_a: builtins.float
+    board_temp_c: builtins.float = ...
+    robot_voltage_v: builtins.float = ...
+    robot_current_a: builtins.float = ...
+    board_io_current_a: builtins.float = ...
+    tool_temp_c: builtins.float = ...
+    tool_voltage_v: builtins.float = ...
+    tool_current_a: builtins.float = ...
     @property
     def joint_voltages_v(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def joint_currents_a(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def joint_temps_c(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    robot_mode: typing.Text
+    robot_mode: typing.Text = ...
     """One of {"", "remote", "local"}"""
 
-    program_counter: builtins.int
+    program_counter: builtins.int = ...
     """ProgramCounter is the number of executed programs.
     It only gets incremented after a program finished running.
     """
@@ -3160,54 +3164,55 @@ class UrState(google.protobuf.message.Message):
     def integer_bank(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___IntegerBank]:
         """I/O states for integer pins."""
         pass
-    last_terminated_program: typing.Text
+    last_terminated_program: typing.Text = ...
     """Tag of last terminated (aborted or done) program.
     See: http://doc/1ds5yVAwLOBhde8F7RzrzKNtW12TjUuzdBMe9LbsmFGo
     """
 
     def __init__(self,
         *,
-        pose: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tip_t_base: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tip_adjust_t_base: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        base_t_origin: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joints: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        force: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        torque: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        robot_dexterity: typing.Optional[builtins.float] = ...,
-        is_robot_power_on: typing.Optional[builtins.bool] = ...,
-        is_emergency_stopped: typing.Optional[builtins.bool] = ...,
-        is_protective_stopped: typing.Optional[builtins.bool] = ...,
-        robot_stop_state: typing.Optional[global___RobotStopState] = ...,
-        is_program_running: typing.Optional[builtins.bool] = ...,
-        digital_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        sensor_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        digital_out: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        analog_in: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        analog_out: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tool_digital_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        tool_digital_out: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        tool_analog_in: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tool_analog_out: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        board_temp_c: typing.Optional[builtins.float] = ...,
-        robot_voltage_v: typing.Optional[builtins.float] = ...,
-        robot_current_a: typing.Optional[builtins.float] = ...,
-        board_io_current_a: typing.Optional[builtins.float] = ...,
-        tool_temp_c: typing.Optional[builtins.float] = ...,
-        tool_voltage_v: typing.Optional[builtins.float] = ...,
-        tool_current_a: typing.Optional[builtins.float] = ...,
-        joint_voltages_v: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joint_currents_a: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joint_temps_c: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        robot_mode: typing.Optional[typing.Text] = ...,
-        program_counter: typing.Optional[builtins.int] = ...,
-        digital_bank: typing.Optional[typing.Iterable[global___DigitalBank]] = ...,
-        analog_bank: typing.Optional[typing.Iterable[global___AnalogBank]] = ...,
-        integer_bank: typing.Optional[typing.Iterable[global___IntegerBank]] = ...,
-        last_terminated_program: typing.Optional[typing.Text] = ...,
+        pose : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tip_t_base : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tip_adjust_t_base : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        base_t_origin : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        urdf_file : typing.Optional[typing.Text] = ...,
+        joints : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        force : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        torque : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        robot_dexterity : typing.Optional[builtins.float] = ...,
+        is_robot_power_on : typing.Optional[builtins.bool] = ...,
+        is_emergency_stopped : typing.Optional[builtins.bool] = ...,
+        is_protective_stopped : typing.Optional[builtins.bool] = ...,
+        robot_stop_state : typing.Optional[global___RobotStopState] = ...,
+        is_program_running : typing.Optional[builtins.bool] = ...,
+        digital_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        sensor_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        digital_out : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        analog_in : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        analog_out : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tool_digital_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        tool_digital_out : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        tool_analog_in : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tool_analog_out : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        board_temp_c : typing.Optional[builtins.float] = ...,
+        robot_voltage_v : typing.Optional[builtins.float] = ...,
+        robot_current_a : typing.Optional[builtins.float] = ...,
+        board_io_current_a : typing.Optional[builtins.float] = ...,
+        tool_temp_c : typing.Optional[builtins.float] = ...,
+        tool_voltage_v : typing.Optional[builtins.float] = ...,
+        tool_current_a : typing.Optional[builtins.float] = ...,
+        joint_voltages_v : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        joint_currents_a : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        joint_temps_c : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        robot_mode : typing.Optional[typing.Text] = ...,
+        program_counter : typing.Optional[builtins.int] = ...,
+        digital_bank : typing.Optional[typing.Iterable[global___DigitalBank]] = ...,
+        analog_bank : typing.Optional[typing.Iterable[global___AnalogBank]] = ...,
+        integer_bank : typing.Optional[typing.Iterable[global___IntegerBank]] = ...,
+        last_terminated_program : typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","last_terminated_program",b"last_terminated_program","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","tool_current_a",b"tool_current_a","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["analog_bank",b"analog_bank","analog_in",b"analog_in","analog_out",b"analog_out","base_t_origin",b"base_t_origin","board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","digital_bank",b"digital_bank","digital_in",b"digital_in","digital_out",b"digital_out","force",b"force","integer_bank",b"integer_bank","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","joint_currents_a",b"joint_currents_a","joint_temps_c",b"joint_temps_c","joint_voltages_v",b"joint_voltages_v","joints",b"joints","last_terminated_program",b"last_terminated_program","pose",b"pose","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","sensor_in",b"sensor_in","tip_adjust_t_base",b"tip_adjust_t_base","tip_t_base",b"tip_t_base","tool_analog_in",b"tool_analog_in","tool_analog_out",b"tool_analog_out","tool_current_a",b"tool_current_a","tool_digital_in",b"tool_digital_in","tool_digital_out",b"tool_digital_out","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","torque",b"torque"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","last_terminated_program",b"last_terminated_program","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","tool_current_a",b"tool_current_a","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","urdf_file",b"urdf_file"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["analog_bank",b"analog_bank","analog_in",b"analog_in","analog_out",b"analog_out","base_t_origin",b"base_t_origin","board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","digital_bank",b"digital_bank","digital_in",b"digital_in","digital_out",b"digital_out","force",b"force","integer_bank",b"integer_bank","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","joint_currents_a",b"joint_currents_a","joint_temps_c",b"joint_temps_c","joint_voltages_v",b"joint_voltages_v","joints",b"joints","last_terminated_program",b"last_terminated_program","pose",b"pose","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","sensor_in",b"sensor_in","tip_adjust_t_base",b"tip_adjust_t_base","tip_t_base",b"tip_t_base","tool_analog_in",b"tool_analog_in","tool_analog_out",b"tool_analog_out","tool_current_a",b"tool_current_a","tool_digital_in",b"tool_digital_in","tool_digital_out",b"tool_digital_out","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","torque",b"torque","urdf_file",b"urdf_file"]) -> None: ...
 global___UrState = UrState
 
 class RobotStopState(google.protobuf.message.Message):
@@ -3215,24 +3220,24 @@ class RobotStopState(google.protobuf.message.Message):
     Fields are present in robot-state messages and *-stop-state/
     *-stop-state-update messages.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_EMERGENCY_STOPPED_FIELD_NUMBER: builtins.int
     IS_PROTECTIVE_STOPPED_FIELD_NUMBER: builtins.int
     IS_SAFEGUARD_STOPPED_FIELD_NUMBER: builtins.int
     IS_REDUCED_MODE_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
-    is_emergency_stopped: builtins.bool
-    is_protective_stopped: builtins.bool
-    is_safeguard_stopped: builtins.bool
-    is_reduced_mode: builtins.bool
-    safety_message: typing.Text
+    is_emergency_stopped: builtins.bool = ...
+    is_protective_stopped: builtins.bool = ...
+    is_safeguard_stopped: builtins.bool = ...
+    is_reduced_mode: builtins.bool = ...
+    safety_message: typing.Text = ...
     def __init__(self,
         *,
-        is_emergency_stopped: typing.Optional[builtins.bool] = ...,
-        is_protective_stopped: typing.Optional[builtins.bool] = ...,
-        is_safeguard_stopped: typing.Optional[builtins.bool] = ...,
-        is_reduced_mode: typing.Optional[builtins.bool] = ...,
-        safety_message: typing.Optional[typing.Text] = ...,
+        is_emergency_stopped : typing.Optional[builtins.bool] = ...,
+        is_protective_stopped : typing.Optional[builtins.bool] = ...,
+        is_safeguard_stopped : typing.Optional[builtins.bool] = ...,
+        is_reduced_mode : typing.Optional[builtins.bool] = ...,
+        safety_message : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_emergency_stopped",b"is_emergency_stopped","is_protective_stopped",b"is_protective_stopped","is_reduced_mode",b"is_reduced_mode","is_safeguard_stopped",b"is_safeguard_stopped","safety_message",b"safety_message"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_emergency_stopped",b"is_emergency_stopped","is_protective_stopped",b"is_protective_stopped","is_reduced_mode",b"is_reduced_mode","is_safeguard_stopped",b"is_safeguard_stopped","safety_message",b"safety_message"]) -> None: ...
@@ -3241,13 +3246,14 @@ global___RobotStopState = RobotStopState
 class RobotState(google.protobuf.message.Message):
     """RobotState is the message for the state of a robot,
     dataType == "robot-state".
-    Next ID: 40
+    Next ID: 41
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     POSE_FIELD_NUMBER: builtins.int
     TIP_T_BASE_FIELD_NUMBER: builtins.int
     TIP_ADJUST_T_BASE_FIELD_NUMBER: builtins.int
     BASE_T_ORIGIN_FIELD_NUMBER: builtins.int
+    URDF_FILE_FIELD_NUMBER: builtins.int
     JOINTS_FIELD_NUMBER: builtins.int
     FORCE_FIELD_NUMBER: builtins.int
     TORQUE_FIELD_NUMBER: builtins.int
@@ -3301,6 +3307,9 @@ class RobotState(google.protobuf.message.Message):
     def base_t_origin(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """base_t_origin is the offset of the robot base from the origin."""
         pass
+    urdf_file: typing.Text = ...
+    """urdf_file is the filename for the URDF (e.g. ur5e.urdf)."""
+
     @property
     def joints(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Joints positions in radians."""
@@ -3317,19 +3326,19 @@ class RobotState(google.protobuf.message.Message):
         robot-specific.
         """
         pass
-    robot_dexterity: builtins.float
-    is_robot_power_on: builtins.bool
+    robot_dexterity: builtins.float = ...
+    is_robot_power_on: builtins.bool = ...
     """Is the robot turned on."""
 
-    is_emergency_stopped: builtins.bool
+    is_emergency_stopped: builtins.bool = ...
     """Now in RobotStopState"""
 
-    is_protective_stopped: builtins.bool
+    is_protective_stopped: builtins.bool = ...
     """Now in RobotStopState"""
 
     @property
     def robot_stop_state(self) -> global___RobotStopState: ...
-    is_program_running: builtins.bool
+    is_program_running: builtins.bool = ...
     @property
     def digital_in(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.bool]:
         """Digital inputs."""
@@ -3354,23 +3363,23 @@ class RobotState(google.protobuf.message.Message):
     def tool_analog_in(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def tool_analog_out(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    board_temp_c: builtins.float
-    robot_voltage_v: builtins.float
-    robot_current_a: builtins.float
-    board_io_current_a: builtins.float
-    tool_temp_c: builtins.float
-    tool_voltage_v: builtins.float
-    tool_current_a: builtins.float
+    board_temp_c: builtins.float = ...
+    robot_voltage_v: builtins.float = ...
+    robot_current_a: builtins.float = ...
+    board_io_current_a: builtins.float = ...
+    tool_temp_c: builtins.float = ...
+    tool_voltage_v: builtins.float = ...
+    tool_current_a: builtins.float = ...
     @property
     def joint_voltages_v(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def joint_currents_a(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def joint_temps_c(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    robot_mode: typing.Text
+    robot_mode: typing.Text = ...
     """One of {"", "remote", "local"}"""
 
-    program_counter: builtins.int
+    program_counter: builtins.int = ...
     """ProgramCounter is the number of executed programs.
     It only gets incremented after a program finished running.
     """
@@ -3391,70 +3400,71 @@ class RobotState(google.protobuf.message.Message):
     def integer_bank(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___IntegerBank]:
         """I/O states for integer pins."""
         pass
-    last_terminated_program: typing.Text
+    last_terminated_program: typing.Text = ...
     """Tag of last terminated (aborted or done) program.
     See: http://doc/1ds5yVAwLOBhde8F7RzrzKNtW12TjUuzdBMe9LbsmFGo
     """
 
     def __init__(self,
         *,
-        pose: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tip_t_base: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tip_adjust_t_base: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        base_t_origin: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joints: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        force: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        torque: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        robot_dexterity: typing.Optional[builtins.float] = ...,
-        is_robot_power_on: typing.Optional[builtins.bool] = ...,
-        is_emergency_stopped: typing.Optional[builtins.bool] = ...,
-        is_protective_stopped: typing.Optional[builtins.bool] = ...,
-        robot_stop_state: typing.Optional[global___RobotStopState] = ...,
-        is_program_running: typing.Optional[builtins.bool] = ...,
-        digital_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        sensor_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        digital_out: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        analog_in: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        analog_out: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tool_digital_in: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        tool_digital_out: typing.Optional[typing.Iterable[builtins.bool]] = ...,
-        tool_analog_in: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        tool_analog_out: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        board_temp_c: typing.Optional[builtins.float] = ...,
-        robot_voltage_v: typing.Optional[builtins.float] = ...,
-        robot_current_a: typing.Optional[builtins.float] = ...,
-        board_io_current_a: typing.Optional[builtins.float] = ...,
-        tool_temp_c: typing.Optional[builtins.float] = ...,
-        tool_voltage_v: typing.Optional[builtins.float] = ...,
-        tool_current_a: typing.Optional[builtins.float] = ...,
-        joint_voltages_v: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joint_currents_a: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        joint_temps_c: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        robot_mode: typing.Optional[typing.Text] = ...,
-        program_counter: typing.Optional[builtins.int] = ...,
-        digital_bank: typing.Optional[typing.Iterable[global___DigitalBank]] = ...,
-        analog_bank: typing.Optional[typing.Iterable[global___AnalogBank]] = ...,
-        integer_bank: typing.Optional[typing.Iterable[global___IntegerBank]] = ...,
-        last_terminated_program: typing.Optional[typing.Text] = ...,
+        pose : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tip_t_base : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tip_adjust_t_base : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        base_t_origin : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        urdf_file : typing.Optional[typing.Text] = ...,
+        joints : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        force : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        torque : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        robot_dexterity : typing.Optional[builtins.float] = ...,
+        is_robot_power_on : typing.Optional[builtins.bool] = ...,
+        is_emergency_stopped : typing.Optional[builtins.bool] = ...,
+        is_protective_stopped : typing.Optional[builtins.bool] = ...,
+        robot_stop_state : typing.Optional[global___RobotStopState] = ...,
+        is_program_running : typing.Optional[builtins.bool] = ...,
+        digital_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        sensor_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        digital_out : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        analog_in : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        analog_out : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tool_digital_in : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        tool_digital_out : typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        tool_analog_in : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tool_analog_out : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        board_temp_c : typing.Optional[builtins.float] = ...,
+        robot_voltage_v : typing.Optional[builtins.float] = ...,
+        robot_current_a : typing.Optional[builtins.float] = ...,
+        board_io_current_a : typing.Optional[builtins.float] = ...,
+        tool_temp_c : typing.Optional[builtins.float] = ...,
+        tool_voltage_v : typing.Optional[builtins.float] = ...,
+        tool_current_a : typing.Optional[builtins.float] = ...,
+        joint_voltages_v : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        joint_currents_a : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        joint_temps_c : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        robot_mode : typing.Optional[typing.Text] = ...,
+        program_counter : typing.Optional[builtins.int] = ...,
+        digital_bank : typing.Optional[typing.Iterable[global___DigitalBank]] = ...,
+        analog_bank : typing.Optional[typing.Iterable[global___AnalogBank]] = ...,
+        integer_bank : typing.Optional[typing.Iterable[global___IntegerBank]] = ...,
+        last_terminated_program : typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","last_terminated_program",b"last_terminated_program","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","tool_current_a",b"tool_current_a","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["analog_bank",b"analog_bank","analog_in",b"analog_in","analog_out",b"analog_out","base_t_origin",b"base_t_origin","board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","digital_bank",b"digital_bank","digital_in",b"digital_in","digital_out",b"digital_out","force",b"force","integer_bank",b"integer_bank","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","joint_currents_a",b"joint_currents_a","joint_temps_c",b"joint_temps_c","joint_voltages_v",b"joint_voltages_v","joints",b"joints","last_terminated_program",b"last_terminated_program","pose",b"pose","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","sensor_in",b"sensor_in","tip_adjust_t_base",b"tip_adjust_t_base","tip_t_base",b"tip_t_base","tool_analog_in",b"tool_analog_in","tool_analog_out",b"tool_analog_out","tool_current_a",b"tool_current_a","tool_digital_in",b"tool_digital_in","tool_digital_out",b"tool_digital_out","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","torque",b"torque"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","last_terminated_program",b"last_terminated_program","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","tool_current_a",b"tool_current_a","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","urdf_file",b"urdf_file"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["analog_bank",b"analog_bank","analog_in",b"analog_in","analog_out",b"analog_out","base_t_origin",b"base_t_origin","board_io_current_a",b"board_io_current_a","board_temp_c",b"board_temp_c","digital_bank",b"digital_bank","digital_in",b"digital_in","digital_out",b"digital_out","force",b"force","integer_bank",b"integer_bank","is_emergency_stopped",b"is_emergency_stopped","is_program_running",b"is_program_running","is_protective_stopped",b"is_protective_stopped","is_robot_power_on",b"is_robot_power_on","joint_currents_a",b"joint_currents_a","joint_temps_c",b"joint_temps_c","joint_voltages_v",b"joint_voltages_v","joints",b"joints","last_terminated_program",b"last_terminated_program","pose",b"pose","program_counter",b"program_counter","robot_current_a",b"robot_current_a","robot_dexterity",b"robot_dexterity","robot_mode",b"robot_mode","robot_stop_state",b"robot_stop_state","robot_voltage_v",b"robot_voltage_v","sensor_in",b"sensor_in","tip_adjust_t_base",b"tip_adjust_t_base","tip_t_base",b"tip_t_base","tool_analog_in",b"tool_analog_in","tool_analog_out",b"tool_analog_out","tool_current_a",b"tool_current_a","tool_digital_in",b"tool_digital_in","tool_digital_out",b"tool_digital_out","tool_temp_c",b"tool_temp_c","tool_voltage_v",b"tool_voltage_v","torque",b"torque","urdf_file",b"urdf_file"]) -> None: ...
 global___RobotState = RobotState
 
 class DigitalBank(google.protobuf.message.Message):
     """DigitalBank represents the raw state of one or more contiguous digital pins."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SPACE_FIELD_NUMBER: builtins.int
     OUTPUT_FIELD_NUMBER: builtins.int
     START_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
-    space: typing.Text
+    space: typing.Text = ...
     """The pin space, e.g. "controller", "tool", "user", "group" """
 
-    output: builtins.bool
+    output: builtins.bool = ...
     """True for outputs, false for inputs"""
 
-    start: builtins.int
+    start: builtins.int = ...
     """The pin number of the first element in state."""
 
     @property
@@ -3463,10 +3473,10 @@ class DigitalBank(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        space: typing.Optional[typing.Text] = ...,
-        output: typing.Optional[builtins.bool] = ...,
-        start: typing.Optional[builtins.int] = ...,
-        state: typing.Optional[typing.Iterable[builtins.bool]] = ...,
+        space : typing.Optional[typing.Text] = ...,
+        output : typing.Optional[builtins.bool] = ...,
+        start : typing.Optional[builtins.int] = ...,
+        state : typing.Optional[typing.Iterable[builtins.bool]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start","state",b"state"]) -> None: ...
@@ -3474,18 +3484,18 @@ global___DigitalBank = DigitalBank
 
 class AnalogBank(google.protobuf.message.Message):
     """AnalogBank represents the raw state of one or more contiguous analog pins."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SPACE_FIELD_NUMBER: builtins.int
     OUTPUT_FIELD_NUMBER: builtins.int
     START_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
-    space: typing.Text
+    space: typing.Text = ...
     """The pin space, e.g. "controller", "tool", "user", "group" """
 
-    output: builtins.bool
+    output: builtins.bool = ...
     """True for outputs, false for inputs"""
 
-    start: builtins.int
+    start: builtins.int = ...
     """The pin number of the first element in state."""
 
     @property
@@ -3494,10 +3504,10 @@ class AnalogBank(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        space: typing.Optional[typing.Text] = ...,
-        output: typing.Optional[builtins.bool] = ...,
-        start: typing.Optional[builtins.int] = ...,
-        state: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        space : typing.Optional[typing.Text] = ...,
+        output : typing.Optional[builtins.bool] = ...,
+        start : typing.Optional[builtins.int] = ...,
+        state : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start","state",b"state"]) -> None: ...
@@ -3505,18 +3515,18 @@ global___AnalogBank = AnalogBank
 
 class IntegerBank(google.protobuf.message.Message):
     """IntegerBank represents the raw state of one or more contiguous integer pins."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SPACE_FIELD_NUMBER: builtins.int
     OUTPUT_FIELD_NUMBER: builtins.int
     START_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
-    space: typing.Text
+    space: typing.Text = ...
     """The pin space, e.g. "controller", "tool", "user", "group" """
 
-    output: builtins.bool
+    output: builtins.bool = ...
     """True for outputs, false for inputs"""
 
-    start: builtins.int
+    start: builtins.int = ...
     """The pin number of the first element in state."""
 
     @property
@@ -3525,10 +3535,10 @@ class IntegerBank(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        space: typing.Optional[typing.Text] = ...,
-        output: typing.Optional[builtins.bool] = ...,
-        start: typing.Optional[builtins.int] = ...,
-        state: typing.Optional[typing.Iterable[builtins.int]] = ...,
+        space : typing.Optional[typing.Text] = ...,
+        output : typing.Optional[builtins.bool] = ...,
+        start : typing.Optional[builtins.int] = ...,
+        state : typing.Optional[typing.Iterable[builtins.int]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["output",b"output","space",b"space","start",b"start","state",b"state"]) -> None: ...
@@ -3538,16 +3548,16 @@ class ConveyorState(google.protobuf.message.Message):
     """ConveyorState represents data from dataType == "conveyor-state" or
     "conveyor-state-update".
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_OBJECT_DETECTED_FIELD_NUMBER: builtins.int
-    is_object_detected: builtins.bool
+    is_object_detected: builtins.bool = ...
     """Whether there is an object detected. If true, implies that a recent pick
     was successful.
     """
 
     def __init__(self,
         *,
-        is_object_detected: typing.Optional[builtins.bool] = ...,
+        is_object_detected : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_object_detected",b"is_object_detected"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_object_detected",b"is_object_detected"]) -> None: ...
@@ -3557,15 +3567,15 @@ class ToolState(google.protobuf.message.Message):
     """ToolState represents data from dataType == "tool-state" or
     "tool-state-update".
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     VACUUM_LEVEL_PA_FIELD_NUMBER: builtins.int
     ON_FIELD_NUMBER: builtins.int
-    vacuum_level_pa: builtins.float
-    on: builtins.bool
+    vacuum_level_pa: builtins.float = ...
+    on: builtins.bool = ...
     def __init__(self,
         *,
-        vacuum_level_pa: typing.Optional[builtins.float] = ...,
-        on: typing.Optional[builtins.bool] = ...,
+        vacuum_level_pa : typing.Optional[builtins.float] = ...,
+        on : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["on",b"on","vacuum_level_pa",b"vacuum_level_pa"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["on",b"on","vacuum_level_pa",b"vacuum_level_pa"]) -> None: ...
@@ -3573,29 +3583,29 @@ global___ToolState = ToolState
 
 class Status(google.protobuf.message.Message):
     """Status is a ScriptEngine or cmd-status or downlink-status status."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     STATUS_FIELD_NUMBER: builtins.int
     SCRIPT_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     PROGRESS_FIELD_NUMBER: builtins.int
     MESSAGE_FIELD_NUMBER: builtins.int
     CODE_FIELD_NUMBER: builtins.int
-    status: typing.Text
-    script: typing.Text
+    status: typing.Text = ...
+    script: typing.Text = ...
     """script is the name of the script/cmd/downlink that the status refers to."""
 
-    error: typing.Text
-    progress: builtins.float
-    message: typing.Text
-    code: builtins.int
+    error: typing.Text = ...
+    progress: builtins.float = ...
+    message: typing.Text = ...
+    code: builtins.int = ...
     def __init__(self,
         *,
-        status: typing.Optional[typing.Text] = ...,
-        script: typing.Optional[typing.Text] = ...,
-        error: typing.Optional[typing.Text] = ...,
-        progress: typing.Optional[builtins.float] = ...,
-        message: typing.Optional[typing.Text] = ...,
-        code: typing.Optional[builtins.int] = ...,
+        status : typing.Optional[typing.Text] = ...,
+        script : typing.Optional[typing.Text] = ...,
+        error : typing.Optional[typing.Text] = ...,
+        progress : typing.Optional[builtins.float] = ...,
+        message : typing.Optional[typing.Text] = ...,
+        code : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["code",b"code","error",b"error","message",b"message","progress",b"progress","script",b"script","status",b"status"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["code",b"code","error",b"error","message",b"message","progress",b"progress","script",b"script","status",b"status"]) -> None: ...
@@ -3603,18 +3613,18 @@ global___Status = Status
 
 class Position(google.protobuf.message.Message):
     """Position stores a 3-dimensional position."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
-    z: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
+    z: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        z: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        z : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> None: ...
@@ -3622,21 +3632,21 @@ global___Position = Position
 
 class Rotation(google.protobuf.message.Message):
     """Rotation stores a 3-dimensional rotation in a quaternion."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
     W_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
-    z: builtins.float
-    w: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
+    z: builtins.float = ...
+    w: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        z: typing.Optional[builtins.float] = ...,
-        w: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        z : typing.Optional[builtins.float] = ...,
+        w : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> None: ...
@@ -3644,25 +3654,25 @@ global___Rotation = Rotation
 
 class Scale(google.protobuf.message.Message):
     """Scale stores a 3-dimensional scaling factor."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
-    z: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
+    z: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        z: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        z : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> None: ...
 global___Scale = Scale
 
 class UserLabel(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ORACLE_TS_FIELD_NUMBER: builtins.int
     EXP_FIELD_NUMBER: builtins.int
     ORIGIN_FIELD_NUMBER: builtins.int
@@ -3676,26 +3686,26 @@ class UserLabel(google.protobuf.message.Message):
     def oracle_ts(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
     @property
     def exp(self) -> global___ExperimentalCommandData: ...
-    origin: typing.Text
-    origin_type: typing.Text
+    origin: typing.Text = ...
+    origin_type: typing.Text = ...
     @property
     def position(self) -> global___Position: ...
     @property
     def rotation(self) -> global___Rotation: ...
-    user_label: typing.Text
-    x: builtins.int
-    y: builtins.int
+    user_label: typing.Text = ...
+    x: builtins.int = ...
+    y: builtins.int = ...
     def __init__(self,
         *,
-        oracle_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        exp: typing.Optional[global___ExperimentalCommandData] = ...,
-        origin: typing.Optional[typing.Text] = ...,
-        origin_type: typing.Optional[typing.Text] = ...,
-        position: typing.Optional[global___Position] = ...,
-        rotation: typing.Optional[global___Rotation] = ...,
-        user_label: typing.Optional[typing.Text] = ...,
-        x: typing.Optional[builtins.int] = ...,
-        y: typing.Optional[builtins.int] = ...,
+        oracle_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        exp : typing.Optional[global___ExperimentalCommandData] = ...,
+        origin : typing.Optional[typing.Text] = ...,
+        origin_type : typing.Optional[typing.Text] = ...,
+        position : typing.Optional[global___Position] = ...,
+        rotation : typing.Optional[global___Rotation] = ...,
+        user_label : typing.Optional[typing.Text] = ...,
+        x : typing.Optional[builtins.int] = ...,
+        y : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["exp",b"exp","oracle_ts",b"oracle_ts","origin",b"origin","origin_type",b"origin_type","position",b"position","rotation",b"rotation","user_label",b"user_label","x",b"x","y",b"y"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["exp",b"exp","oracle_ts",b"oracle_ts","origin",b"origin","origin_type",b"origin_type","position",b"position","rotation",b"rotation","user_label",b"user_label","x",b"x","y",b"y"]) -> None: ...
@@ -3703,15 +3713,15 @@ global___UserLabel = UserLabel
 
 class Pose2d(google.protobuf.message.Message):
     """Pose2d contains an X,Y coordinate pair."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y"]) -> None: ...
@@ -3719,18 +3729,18 @@ global___Pose2d = Pose2d
 
 class Vec3d(google.protobuf.message.Message):
     """Vec3d contains an X,Y,Z coordinate triplet."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
-    x: builtins.float
-    y: builtins.float
-    z: builtins.float
+    x: builtins.float = ...
+    y: builtins.float = ...
+    z: builtins.float = ...
     def __init__(self,
         *,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        z: typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        z : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["x",b"x","y",b"y","z",b"z"]) -> None: ...
@@ -3738,21 +3748,21 @@ global___Vec3d = Vec3d
 
 class Quaternion3d(google.protobuf.message.Message):
     """Quaternion repesents a three-dimensional rotation in a quaternion."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     W_FIELD_NUMBER: builtins.int
     X_FIELD_NUMBER: builtins.int
     Y_FIELD_NUMBER: builtins.int
     Z_FIELD_NUMBER: builtins.int
-    w: builtins.float
-    x: builtins.float
-    y: builtins.float
-    z: builtins.float
+    w: builtins.float = ...
+    x: builtins.float = ...
+    y: builtins.float = ...
+    z: builtins.float = ...
     def __init__(self,
         *,
-        w: typing.Optional[builtins.float] = ...,
-        x: typing.Optional[builtins.float] = ...,
-        y: typing.Optional[builtins.float] = ...,
-        z: typing.Optional[builtins.float] = ...,
+        w : typing.Optional[builtins.float] = ...,
+        x : typing.Optional[builtins.float] = ...,
+        y : typing.Optional[builtins.float] = ...,
+        z : typing.Optional[builtins.float] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["w",b"w","x",b"x","y",b"y","z",b"z"]) -> None: ...
@@ -3762,22 +3772,22 @@ class DeviceDataRef(google.protobuf.message.Message):
     """DeviceDataRef contains fields that associate a pick label with a depth image.
     See the requirements at go/reach-ml-logging-requirements
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TS_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     SEQ_FIELD_NUMBER: builtins.int
     @property
     def ts(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
-    device_name: typing.Text
-    device_type: typing.Text
-    seq: builtins.int
+    device_name: typing.Text = ...
+    device_type: typing.Text = ...
+    seq: builtins.int = ...
     def __init__(self,
         *,
-        ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        device_type: typing.Optional[typing.Text] = ...,
-        seq: typing.Optional[builtins.int] = ...,
+        ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        seq : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","seq",b"seq","ts",b"ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["device_name",b"device_name","device_type",b"device_type","seq",b"seq","ts",b"ts"]) -> None: ...
@@ -3788,12 +3798,12 @@ class PlaceLabel(google.protobuf.message.Message):
     Added to support future ML needs for pick and place tasks.
     See the requirements at go/reach-ml-logging-requirements
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LABEL_FIELD_NUMBER: builtins.int
     POSE_2D_FIELD_NUMBER: builtins.int
     POSITION_3D_FIELD_NUMBER: builtins.int
     QUATERNION_3D_FIELD_NUMBER: builtins.int
-    label: typing.Text
+    label: typing.Text = ...
     @property
     def pose_2d(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Pose2d]: ...
     @property
@@ -3802,10 +3812,10 @@ class PlaceLabel(google.protobuf.message.Message):
     def quaternion_3d(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Quaternion3d]: ...
     def __init__(self,
         *,
-        label: typing.Optional[typing.Text] = ...,
-        pose_2d: typing.Optional[typing.Iterable[global___Pose2d]] = ...,
-        position_3d: typing.Optional[typing.Iterable[global___Vec3d]] = ...,
-        quaternion_3d: typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
+        label : typing.Optional[typing.Text] = ...,
+        pose_2d : typing.Optional[typing.Iterable[global___Pose2d]] = ...,
+        position_3d : typing.Optional[typing.Iterable[global___Vec3d]] = ...,
+        quaternion_3d : typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["label",b"label"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["label",b"label","pose_2d",b"pose_2d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d"]) -> None: ...
@@ -3815,7 +3825,7 @@ class PickLabel(google.protobuf.message.Message):
     """PickLabel contains fields associated with a pick.
     See the requirements at go/reach-ml-logging-requirements
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LABEL_FIELD_NUMBER: builtins.int
     DEPTH_TS_FIELD_NUMBER: builtins.int
     DEVICE_DATA_REF_FIELD_NUMBER: builtins.int
@@ -3828,7 +3838,7 @@ class PickLabel(google.protobuf.message.Message):
     TAGS_FIELD_NUMBER: builtins.int
     INTENT_FIELD_NUMBER: builtins.int
     SUCCESS_TYPE_FIELD_NUMBER: builtins.int
-    label: typing.Text
+    label: typing.Text = ...
     @property
     def depth_ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """The field depth_ts will be deprecated. Please use device_data_ref instead."""
@@ -3851,28 +3861,28 @@ class PickLabel(google.protobuf.message.Message):
     def position_3d(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Vec3d]: ...
     @property
     def quaternion_3d(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___Quaternion3d]: ...
-    task_code: typing.Text
-    pick_id: typing.Text
+    task_code: typing.Text = ...
+    pick_id: typing.Text = ...
     @property
     def tags(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
-    intent: typing.Text
-    success_type: typing.Text
+    intent: typing.Text = ...
+    success_type: typing.Text = ...
     """https://project-reach.atlassian.net/projects/PIPE/issues/PIPE-1648"""
 
     def __init__(self,
         *,
-        label: typing.Optional[typing.Text] = ...,
-        depth_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        device_data_ref: typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
-        user_data_ref: typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
-        pose_2d: typing.Optional[typing.Iterable[global___Pose2d]] = ...,
-        position_3d: typing.Optional[typing.Iterable[global___Vec3d]] = ...,
-        quaternion_3d: typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
-        task_code: typing.Optional[typing.Text] = ...,
-        pick_id: typing.Optional[typing.Text] = ...,
-        tags: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        intent: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
+        label : typing.Optional[typing.Text] = ...,
+        depth_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        device_data_ref : typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
+        user_data_ref : typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
+        pose_2d : typing.Optional[typing.Iterable[global___Pose2d]] = ...,
+        position_3d : typing.Optional[typing.Iterable[global___Vec3d]] = ...,
+        quaternion_3d : typing.Optional[typing.Iterable[global___Quaternion3d]] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
+        pick_id : typing.Optional[typing.Text] = ...,
+        tags : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["depth_ts",b"depth_ts","intent",b"intent","label",b"label","pick_id",b"pick_id","success_type",b"success_type","task_code",b"task_code"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["depth_ts",b"depth_ts","device_data_ref",b"device_data_ref","intent",b"intent","label",b"label","pick_id",b"pick_id","pose_2d",b"pose_2d","position_3d",b"position_3d","quaternion_3d",b"quaternion_3d","success_type",b"success_type","tags",b"tags","task_code",b"task_code","user_data_ref",b"user_data_ref"]) -> None: ...
@@ -3882,7 +3892,7 @@ class SessionInfo(google.protobuf.message.Message):
     """SessionInfo is written to the device data log to store information about the
     session for analytics.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OPERATOR_UID_FIELD_NUMBER: builtins.int
     OPERATOR_TYPE_FIELD_NUMBER: builtins.int
     SESSION_ID_FIELD_NUMBER: builtins.int
@@ -3900,49 +3910,49 @@ class SessionInfo(google.protobuf.message.Message):
     CLIENT_SESSION_UID_FIELD_NUMBER: builtins.int
     WORKCELL_SETUP_VERSION_FIELD_NUMBER: builtins.int
     CONSTRAINTS_VERSION_FIELD_NUMBER: builtins.int
-    operator_uid: typing.Text
-    operator_type: typing.Text
-    session_id: typing.Text
+    operator_uid: typing.Text = ...
+    operator_type: typing.Text = ...
+    session_id: typing.Text = ...
     @property
     def start_time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
-    robot_name: typing.Text
-    client_os: typing.Text
-    ui_version: typing.Text
-    calibration_version: typing.Text
+    robot_name: typing.Text = ...
+    client_os: typing.Text = ...
+    ui_version: typing.Text = ...
+    calibration_version: typing.Text = ...
     @property
     def accept_depth_encoding(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]: ...
-    relay: typing.Text
-    actionsets_version: typing.Text
+    relay: typing.Text = ...
+    actionsets_version: typing.Text = ...
     """ActionsetsVersion is the version of action sets being used in the
     current session.
     See http://docs/18XXeGk_7EYvINLAfGhWMWgB2mzM8A4mCQiGHc9CiPP0
     """
 
-    safety_version: typing.Text
+    safety_version: typing.Text = ...
     """SafetyVersion is the version of safety planes being used in the
     current session.
     See http://docs/18XXeGk_7EYvINLAfGhWMWgB2mzM8A4mCQiGHc9CiPP0
     """
 
-    workcell_io_version: typing.Text
+    workcell_io_version: typing.Text = ...
     """WorkcellIOVersion is the version of workcell I/O configuration being used
     in the current session.
     See http://docs/18XXeGk_7EYvINLAfGhWMWgB2mzM8A4mCQiGHc9CiPP0
     """
 
-    transport: typing.Text
+    transport: typing.Text = ...
     """Transport is the name of the transport used to transmit the session.
     Currently, "webrtc" is the only accepted value.
     See http://doc/1-xKMhZY0Gy3oF944iwFZN8sm_uvUZ4ahDrXqIJ5Jyg8
     """
 
-    client_session_uid: typing.Text
-    workcell_setup_version: typing.Text
+    client_session_uid: typing.Text = ...
+    workcell_setup_version: typing.Text = ...
     """WorkcellSetupVersion is the version of the workcell setup configuration.
     http://doc/1r28HK7E4KF3BZ7qRze__hxHy4sp6W8-3zKopNYQJB0U
     """
 
-    constraints_version: typing.Text
+    constraints_version: typing.Text = ...
     """ConstraintsVersion is the version of constraints being used in the
     current session.
     See http://doc/1kk33RxaT6KYEB-mTNVeyZgfnPqBsYkcAdNUAW7PYjkI
@@ -3950,23 +3960,23 @@ class SessionInfo(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        operator_uid: typing.Optional[typing.Text] = ...,
-        operator_type: typing.Optional[typing.Text] = ...,
-        session_id: typing.Optional[typing.Text] = ...,
-        start_time: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        robot_name: typing.Optional[typing.Text] = ...,
-        client_os: typing.Optional[typing.Text] = ...,
-        ui_version: typing.Optional[typing.Text] = ...,
-        calibration_version: typing.Optional[typing.Text] = ...,
-        accept_depth_encoding: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        relay: typing.Optional[typing.Text] = ...,
-        actionsets_version: typing.Optional[typing.Text] = ...,
-        safety_version: typing.Optional[typing.Text] = ...,
-        workcell_io_version: typing.Optional[typing.Text] = ...,
-        transport: typing.Optional[typing.Text] = ...,
-        client_session_uid: typing.Optional[typing.Text] = ...,
-        workcell_setup_version: typing.Optional[typing.Text] = ...,
-        constraints_version: typing.Optional[typing.Text] = ...,
+        operator_uid : typing.Optional[typing.Text] = ...,
+        operator_type : typing.Optional[typing.Text] = ...,
+        session_id : typing.Optional[typing.Text] = ...,
+        start_time : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        robot_name : typing.Optional[typing.Text] = ...,
+        client_os : typing.Optional[typing.Text] = ...,
+        ui_version : typing.Optional[typing.Text] = ...,
+        calibration_version : typing.Optional[typing.Text] = ...,
+        accept_depth_encoding : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        relay : typing.Optional[typing.Text] = ...,
+        actionsets_version : typing.Optional[typing.Text] = ...,
+        safety_version : typing.Optional[typing.Text] = ...,
+        workcell_io_version : typing.Optional[typing.Text] = ...,
+        transport : typing.Optional[typing.Text] = ...,
+        client_session_uid : typing.Optional[typing.Text] = ...,
+        workcell_setup_version : typing.Optional[typing.Text] = ...,
+        constraints_version : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["accept_depth_encoding",b"accept_depth_encoding","actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> None: ...
@@ -3974,15 +3984,15 @@ global___SessionInfo = SessionInfo
 
 class ProtectiveStopState(google.protobuf.message.Message):
     """ProtectiveStopState represents the robot's protective stop state."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_PROTECTIVE_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
-    is_protective_stopped: builtins.bool
-    safety_message: typing.Text
+    is_protective_stopped: builtins.bool = ...
+    safety_message: typing.Text = ...
     def __init__(self,
         *,
-        is_protective_stopped: typing.Optional[builtins.bool] = ...,
-        safety_message: typing.Optional[typing.Text] = ...,
+        is_protective_stopped : typing.Optional[builtins.bool] = ...,
+        safety_message : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_protective_stopped",b"is_protective_stopped","safety_message",b"safety_message"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_protective_stopped",b"is_protective_stopped","safety_message",b"safety_message"]) -> None: ...
@@ -3990,15 +4000,15 @@ global___ProtectiveStopState = ProtectiveStopState
 
 class SafeguardStopState(google.protobuf.message.Message):
     """SafeguardStopState represents the robot's safeguard stop state."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_SAFEGUARD_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
-    is_safeguard_stopped: builtins.bool
-    safety_message: typing.Text
+    is_safeguard_stopped: builtins.bool = ...
+    safety_message: typing.Text = ...
     def __init__(self,
         *,
-        is_safeguard_stopped: typing.Optional[builtins.bool] = ...,
-        safety_message: typing.Optional[typing.Text] = ...,
+        is_safeguard_stopped : typing.Optional[builtins.bool] = ...,
+        safety_message : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_safeguard_stopped",b"is_safeguard_stopped","safety_message",b"safety_message"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_safeguard_stopped",b"is_safeguard_stopped","safety_message",b"safety_message"]) -> None: ...
@@ -4006,15 +4016,15 @@ global___SafeguardStopState = SafeguardStopState
 
 class EmergencyStopState(google.protobuf.message.Message):
     """EmergencyStopState represents the robot's emergency stop state."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_EMERGENCY_STOPPED_FIELD_NUMBER: builtins.int
     SAFETY_MESSAGE_FIELD_NUMBER: builtins.int
-    is_emergency_stopped: builtins.bool
-    safety_message: typing.Text
+    is_emergency_stopped: builtins.bool = ...
+    safety_message: typing.Text = ...
     def __init__(self,
         *,
-        is_emergency_stopped: typing.Optional[builtins.bool] = ...,
-        safety_message: typing.Optional[typing.Text] = ...,
+        is_emergency_stopped : typing.Optional[builtins.bool] = ...,
+        safety_message : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_emergency_stopped",b"is_emergency_stopped","safety_message",b"safety_message"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_emergency_stopped",b"is_emergency_stopped","safety_message",b"safety_message"]) -> None: ...
@@ -4022,12 +4032,12 @@ global___EmergencyStopState = EmergencyStopState
 
 class RobotPowerState(google.protobuf.message.Message):
     """RobotPowerState represents a robot's power state."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_ROBOT_POWER_ON_FIELD_NUMBER: builtins.int
-    is_robot_power_on: builtins.bool
+    is_robot_power_on: builtins.bool = ...
     def __init__(self,
         *,
-        is_robot_power_on: typing.Optional[builtins.bool] = ...,
+        is_robot_power_on : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_robot_power_on",b"is_robot_power_on"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["is_robot_power_on",b"is_robot_power_on"]) -> None: ...
@@ -4037,7 +4047,7 @@ class Metric(google.protobuf.message.Message):
     """Metric is a metric value for internal metrics tracking. Values are always of
     type KeyValue. Labels are always of type array of KeyValue.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     VALUE_FIELD_NUMBER: builtins.int
     LABELS_FIELD_NUMBER: builtins.int
     @property
@@ -4046,8 +4056,8 @@ class Metric(google.protobuf.message.Message):
     def labels(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___KeyValue]: ...
     def __init__(self,
         *,
-        value: typing.Optional[global___KeyValue] = ...,
-        labels: typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        value : typing.Optional[global___KeyValue] = ...,
+        labels : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["labels",b"labels","value",b"value"]) -> None: ...
@@ -4057,30 +4067,30 @@ class EmptyMessage(google.protobuf.message.Message):
     """EmptyMessage is used for definiting data types which only use
     top-level fields, such as ts, deviceName, etc.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     def __init__(self,
         ) -> None: ...
 global___EmptyMessage = EmptyMessage
 
 class SetOutput(google.protobuf.message.Message):
     """SetOutput allows setting output based on workcell I/O config reference."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TYPE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     ARGS_FIELD_NUMBER: builtins.int
-    type: typing.Text
+    type: typing.Text = ...
     """The device type specified in the workcell I/O config that
     corresponds to the capability.
     """
 
-    name: typing.Text
+    name: typing.Text = ...
     @property
     def args(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___CapabilityState]: ...
     def __init__(self,
         *,
-        type: typing.Optional[typing.Text] = ...,
-        name: typing.Optional[typing.Text] = ...,
-        args: typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        args : typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["args",b"args","name",b"name","type",b"type"]) -> None: ...
@@ -4091,32 +4101,32 @@ class ConnectedClients(google.protobuf.message.Message):
 
     Design doc: http://doc/1BCXmYMaPB_j0CKO_ef_z6kT9xv1WtUjd9AplySKpKww
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CLIENTS_FIELD_NUMBER: builtins.int
     @property
     def clients(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___ConnectedClient]: ...
     def __init__(self,
         *,
-        clients: typing.Optional[typing.Iterable[global___ConnectedClient]] = ...,
+        clients : typing.Optional[typing.Iterable[global___ConnectedClient]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["clients",b"clients"]) -> None: ...
 global___ConnectedClients = ConnectedClients
 
 class ConnectedClient(google.protobuf.message.Message):
     """ConnectedClient is a connected client for the session manager."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     UID_FIELD_NUMBER: builtins.int
     IS_CURRENT_FIELD_NUMBER: builtins.int
     CONTROL_SESSION_ACTIVE_FIELD_NUMBER: builtins.int
-    uid: typing.Text
-    is_current: builtins.bool
+    uid: typing.Text = ...
+    is_current: builtins.bool = ...
     """is_current is set to true by the ClientManager for the current client. The
     client manager modifies the device-data as it passes through. The
     is_current field should never be true in the logs. The client-side code
     can use this value to get the client's UID.
     """
 
-    control_session_active: builtins.bool
+    control_session_active: builtins.bool = ...
     """control_session_active is set to true by the SessionManager for clients
     that are currently in a control session. The client-side code can use this
     value to determine if it has a control session, or if another client has
@@ -4125,9 +4135,9 @@ class ConnectedClient(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        uid: typing.Optional[typing.Text] = ...,
-        is_current: typing.Optional[builtins.bool] = ...,
-        control_session_active: typing.Optional[builtins.bool] = ...,
+        uid : typing.Optional[typing.Text] = ...,
+        is_current : typing.Optional[builtins.bool] = ...,
+        control_session_active : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["control_session_active",b"control_session_active","is_current",b"is_current","uid",b"uid"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["control_session_active",b"control_session_active","is_current",b"is_current","uid",b"uid"]) -> None: ...
@@ -4137,7 +4147,7 @@ class Detection(google.protobuf.message.Message):
     """Detection denotes deviceType == "object-detector", dataType == "detection".
     Design doc: http://doc/19Yag1qwXznzcdc9Wl6_4AWCNNMehZq8VMBHQBjVYXAo
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SOURCE_FIELD_NUMBER: builtins.int
     DETECTIONS_FIELD_NUMBER: builtins.int
     CAMERA_SHIFT_FIELD_NUMBER: builtins.int
@@ -4157,9 +4167,9 @@ class Detection(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        source: typing.Optional[global___SourceImage] = ...,
-        detections: typing.Optional[typing.Iterable[global___DetectionEntry]] = ...,
-        camera_shift: typing.Optional[global___CameraShiftDetection] = ...,
+        source : typing.Optional[global___SourceImage] = ...,
+        detections : typing.Optional[typing.Iterable[global___DetectionEntry]] = ...,
+        camera_shift : typing.Optional[global___CameraShiftDetection] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["camera_shift",b"camera_shift","source",b"source"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["camera_shift",b"camera_shift","detections",b"detections","source",b"source"]) -> None: ...
@@ -4170,7 +4180,7 @@ class SourceImage(google.protobuf.message.Message):
     It does not differentiate between color and depth image data, but
     assumes that rgbd image would be aligned - and annotations apply to either.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TS_FIELD_NUMBER: builtins.int
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
@@ -4179,21 +4189,21 @@ class SourceImage(google.protobuf.message.Message):
     def ts(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """Timestamp for original message."""
         pass
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """Device type for original message."""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     """Device name for original message."""
 
-    data_type: typing.Text
+    data_type: typing.Text = ...
     """Data type for original message."""
 
     def __init__(self,
         *,
-        ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
+        ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","ts",b"ts"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","ts",b"ts"]) -> None: ...
@@ -4203,10 +4213,10 @@ class DetectionAprilGroupAprilTag(google.protobuf.message.Message):
     """DetectionAprilGroupAprilTag contains information on a single April Tag
     that constitutes an AprilGroup.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     CORNERS_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     """Id of the AprilTag. Should exactly match DetectionEntry.id for the
     corresponding tag's detection.
     """
@@ -4217,8 +4227,8 @@ class DetectionAprilGroupAprilTag(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        corners: typing.Optional[typing.Iterable[builtins.float]] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        corners : typing.Optional[typing.Iterable[builtins.float]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["corners",b"corners","id",b"id"]) -> None: ...
@@ -4226,7 +4236,7 @@ global___DetectionAprilGroupAprilTag = DetectionAprilGroupAprilTag
 
 class DetectionAprilGroupInfo(google.protobuf.message.Message):
     """DetectionAprilGroupInfo has additional info when type == "AprilGroup"."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     APRIL_TAGS_FIELD_NUMBER: builtins.int
     @property
     def april_tags(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___DetectionAprilGroupAprilTag]:
@@ -4234,24 +4244,24 @@ class DetectionAprilGroupInfo(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        april_tags: typing.Optional[typing.Iterable[global___DetectionAprilGroupAprilTag]] = ...,
+        april_tags : typing.Optional[typing.Iterable[global___DetectionAprilGroupAprilTag]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["april_tags",b"april_tags"]) -> None: ...
 global___DetectionAprilGroupInfo = DetectionAprilGroupInfo
 
 class DetectionEntry(google.protobuf.message.Message):
     """DetectionEntry contains properties of a single detected object."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     CORNERS_FIELD_NUMBER: builtins.int
     EXTRINSICS_FIELD_NUMBER: builtins.int
     INTRINSICS_FIELD_NUMBER: builtins.int
     APRIL_GROUP_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     """An unique id of the object being detected."""
 
-    type: typing.Text
+    type: typing.Text = ...
     """A categorization of the type of object detected, e.g. "AprilTag"."""
 
     @property
@@ -4276,12 +4286,12 @@ class DetectionEntry(google.protobuf.message.Message):
     def april_group(self) -> global___DetectionAprilGroupInfo: ...
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        type: typing.Optional[typing.Text] = ...,
-        corners: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        extrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        intrinsics: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        april_group: typing.Optional[global___DetectionAprilGroupInfo] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        corners : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        extrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        april_group : typing.Optional[global___DetectionAprilGroupInfo] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["april_group",b"april_group","id",b"id","type",b"type","type_specific_info",b"type_specific_info"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["april_group",b"april_group","corners",b"corners","extrinsics",b"extrinsics","id",b"id","intrinsics",b"intrinsics","type",b"type","type_specific_info",b"type_specific_info"]) -> None: ...
@@ -4293,19 +4303,19 @@ class DetectionKey(google.protobuf.message.Message):
     CameraShiftDetection message to identify the tags that resulted in a movement
     detection.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     """An unique id of the object being detected."""
 
-    type: typing.Text
+    type: typing.Text = ...
     """A categorization of the type of object detected, e.g. "AprilTag"."""
 
     def __init__(self,
         *,
-        id: typing.Optional[typing.Text] = ...,
-        type: typing.Optional[typing.Text] = ...,
+        id : typing.Optional[typing.Text] = ...,
+        type : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","type",b"type"]) -> None: ...
@@ -4315,7 +4325,7 @@ class ShiftPerDetection(google.protobuf.message.Message):
     """ShiftPerDetection encodes any inference of camera shift attached to a
     detected object.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DETECTION_KEY_FIELD_NUMBER: builtins.int
     SHIFT_TYPE_FIELD_NUMBER: builtins.int
     SHIFT_AMOUNT_FIELD_NUMBER: builtins.int
@@ -4324,26 +4334,26 @@ class ShiftPerDetection(google.protobuf.message.Message):
     def detection_key(self) -> global___DetectionKey:
         """Refers to an object if it led to a camera shift detection."""
         pass
-    shift_type: typing.Text
+    shift_type: typing.Text = ...
     """Type of camera shift detector. E.g. "initial" meaning a tag shifted from
     previously seen location, or "calibration" meaning it shifted from
     calibrated pose.
     """
 
-    shift_amount: builtins.float
+    shift_amount: builtins.float = ...
     """Degree of camera shift detected. The unit is pixels. The implementation
     is allowed to vary by detectors. Valid only if is_object_detected == true.
     """
 
-    is_object_detected: builtins.bool
+    is_object_detected: builtins.bool = ...
     """If false, this object was expected but not detected."""
 
     def __init__(self,
         *,
-        detection_key: typing.Optional[global___DetectionKey] = ...,
-        shift_type: typing.Optional[typing.Text] = ...,
-        shift_amount: typing.Optional[builtins.float] = ...,
-        is_object_detected: typing.Optional[builtins.bool] = ...,
+        detection_key : typing.Optional[global___DetectionKey] = ...,
+        shift_type : typing.Optional[typing.Text] = ...,
+        shift_amount : typing.Optional[builtins.float] = ...,
+        is_object_detected : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["detection_key",b"detection_key","is_object_detected",b"is_object_detected","shift_amount",b"shift_amount","shift_type",b"shift_type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["detection_key",b"detection_key","is_object_detected",b"is_object_detected","shift_amount",b"shift_amount","shift_type",b"shift_type"]) -> None: ...
@@ -4353,11 +4363,11 @@ class CameraShiftDetection(google.protobuf.message.Message):
     """CameraShiftDetection is a submessage of Detection, that encodes existence
     and degree of any detected shift of the camera itself.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MAX_SHIFT_FIELD_NUMBER: builtins.int
     MAX_SHIFT_OBJECT_FIELD_NUMBER: builtins.int
     SHIFTS_PER_DETECTION_FIELD_NUMBER: builtins.int
-    max_shift: builtins.float
+    max_shift: builtins.float = ...
     """Amount of the maximum shift observed on any static id in pixels."""
 
     @property
@@ -4370,9 +4380,9 @@ class CameraShiftDetection(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        max_shift: typing.Optional[builtins.float] = ...,
-        max_shift_object: typing.Optional[global___DetectionKey] = ...,
-        shifts_per_detection: typing.Optional[typing.Iterable[global___ShiftPerDetection]] = ...,
+        max_shift : typing.Optional[builtins.float] = ...,
+        max_shift_object : typing.Optional[global___DetectionKey] = ...,
+        shifts_per_detection : typing.Optional[typing.Iterable[global___ShiftPerDetection]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["max_shift",b"max_shift","max_shift_object",b"max_shift_object"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["max_shift",b"max_shift","max_shift_object",b"max_shift_object","shifts_per_detection",b"shifts_per_detection"]) -> None: ...
@@ -4380,20 +4390,20 @@ global___CameraShiftDetection = CameraShiftDetection
 
 class MovePosePathArgs(google.protobuf.message.Message):
     """MovePosePathArgs executes a path in Cartesian space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     WAYPOINTS_FIELD_NUMBER: builtins.int
     @property
     def waypoints(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MovePoseWaypointArgs]: ...
     def __init__(self,
         *,
-        waypoints: typing.Optional[typing.Iterable[global___MovePoseWaypointArgs]] = ...,
+        waypoints : typing.Optional[typing.Iterable[global___MovePoseWaypointArgs]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["waypoints",b"waypoints"]) -> None: ...
 global___MovePosePathArgs = MovePosePathArgs
 
 class MovePoseWaypointArgs(google.protobuf.message.Message):
     """MovePoseWaypointArgs moves to a position in cartesion-space."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TRANSLATION_FIELD_NUMBER: builtins.int
     ROTATION_FIELD_NUMBER: builtins.int
     LINEAR_FIELD_NUMBER: builtins.int
@@ -4409,22 +4419,22 @@ class MovePoseWaypointArgs(google.protobuf.message.Message):
     def rotation(self) -> global___Vec3d:
         """ru, rv, rw as Rodrigues axis-angle, in radians"""
         pass
-    linear: builtins.bool
+    linear: builtins.bool = ...
     """Whether the move is linear. It is in joint-space otherwise."""
 
-    blend_radius: builtins.float
+    blend_radius: builtins.float = ...
     """The blend radius is measured in meters.
     If the blend radius is not present, then the default blend radius
     (set via SetBlendRadius) will be used.
     """
 
-    velocity: builtins.float
+    velocity: builtins.float = ...
     """The velocity is measured in m/sec if linear, rad/sec if not.
     If the velocity is not present then the default velocity (set via
     SetRadialSpeed) will be used (but it will be interpreted as rad/sec).
     """
 
-    acceleration: builtins.float
+    acceleration: builtins.float = ...
     """The acceleration is measured in m/sec/sec if linear, rad/sec/sec if not.
     If the acceleration is not present then the default acceleration (set via
     SetRadialSpeed) will be used (but it will be interpreted as rad/sec/sec).
@@ -4436,13 +4446,13 @@ class MovePoseWaypointArgs(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        translation: typing.Optional[global___Vec3d] = ...,
-        rotation: typing.Optional[global___Vec3d] = ...,
-        linear: typing.Optional[builtins.bool] = ...,
-        blend_radius: typing.Optional[builtins.float] = ...,
-        velocity: typing.Optional[builtins.float] = ...,
-        acceleration: typing.Optional[builtins.float] = ...,
-        limits: typing.Optional[global___Limits] = ...,
+        translation : typing.Optional[global___Vec3d] = ...,
+        rotation : typing.Optional[global___Vec3d] = ...,
+        linear : typing.Optional[builtins.bool] = ...,
+        blend_radius : typing.Optional[builtins.float] = ...,
+        velocity : typing.Optional[builtins.float] = ...,
+        acceleration : typing.Optional[builtins.float] = ...,
+        limits : typing.Optional[global___Limits] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","translation",b"translation","velocity",b"velocity"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","translation",b"translation","velocity",b"velocity"]) -> None: ...
@@ -4452,11 +4462,11 @@ class WaitArgs(google.protobuf.message.Message):
     """WaitArgs are the arguments to the Wait ReachScript command.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TIMEOUT_SECONDS_FIELD_NUMBER: builtins.int
     TIMEOUT_ACTION_FIELD_NUMBER: builtins.int
     EXPR_FIELD_NUMBER: builtins.int
-    timeout_seconds: builtins.float
+    timeout_seconds: builtins.float = ...
     """The timeout in seconds. Zero means evaluating the expression
     and immediately deciding whether to perform the timeout_action.
     """
@@ -4471,9 +4481,9 @@ class WaitArgs(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        timeout_seconds: typing.Optional[builtins.float] = ...,
-        timeout_action: typing.Optional[global___WaitTimeoutAction] = ...,
-        expr: typing.Optional[global___ReachScriptBooleanExpression] = ...,
+        timeout_seconds : typing.Optional[builtins.float] = ...,
+        timeout_action : typing.Optional[global___WaitTimeoutAction] = ...,
+        expr : typing.Optional[global___ReachScriptBooleanExpression] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["expr",b"expr","timeout_action",b"timeout_action","timeout_seconds",b"timeout_seconds"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["expr",b"expr","timeout_action",b"timeout_action","timeout_seconds",b"timeout_seconds"]) -> None: ...
@@ -4484,10 +4494,10 @@ class WaitTimeoutAction(google.protobuf.message.Message):
     times out.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TYPE_FIELD_NUMBER: builtins.int
     ABORT_MESSAGE_FIELD_NUMBER: builtins.int
-    type: typing.Text
+    type: typing.Text = ...
     """type is one of:
       * abort: Sends an aborted status with error "stopped"
         for the command, and clears the queue.
@@ -4498,13 +4508,13 @@ class WaitTimeoutAction(google.protobuf.message.Message):
     Any other string shall result in command rejection.
     """
 
-    abort_message: typing.Text
+    abort_message: typing.Text = ...
     """Message field of resulting status if aborted."""
 
     def __init__(self,
         *,
-        type: typing.Optional[typing.Text] = ...,
-        abort_message: typing.Optional[typing.Text] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        abort_message : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["abort_message",b"abort_message","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["abort_message",b"abort_message","type",b"type"]) -> None: ...
@@ -4517,11 +4527,11 @@ class ReachScriptBooleanExpression(google.protobuf.message.Message):
     the first arg may be present, and it must evaluate to a boolean.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OP_FIELD_NUMBER: builtins.int
     ARG1_FIELD_NUMBER: builtins.int
     ARG2_FIELD_NUMBER: builtins.int
-    op: typing.Text
+    op: typing.Text = ...
     """The operator to apply to the args. Must be one of:
       * eq
       * not
@@ -4544,9 +4554,9 @@ class ReachScriptBooleanExpression(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        op: typing.Optional[typing.Text] = ...,
-        arg1: typing.Optional[global___ReachScriptExpression] = ...,
-        arg2: typing.Optional[global___ReachScriptExpression] = ...,
+        op : typing.Optional[typing.Text] = ...,
+        arg1 : typing.Optional[global___ReachScriptExpression] = ...,
+        arg2 : typing.Optional[global___ReachScriptExpression] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["arg1",b"arg1","arg2",b"arg2","op",b"op"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["arg1",b"arg1","arg2",b"arg2","op",b"op"]) -> None: ...
@@ -4557,7 +4567,7 @@ class ReachScriptExpression(google.protobuf.message.Message):
     or constant used in a ReachScript command.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     BOOL_EXPR_FIELD_NUMBER: builtins.int
     VAR_EXPR_FIELD_NUMBER: builtins.int
     CONST_EXPR_FIELD_NUMBER: builtins.int
@@ -4575,9 +4585,9 @@ class ReachScriptExpression(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        bool_expr: typing.Optional[global___ReachScriptBooleanExpression] = ...,
-        var_expr: typing.Optional[global___ReachScriptVar] = ...,
-        const_expr: typing.Optional[global___ReachScriptConst] = ...,
+        bool_expr : typing.Optional[global___ReachScriptBooleanExpression] = ...,
+        var_expr : typing.Optional[global___ReachScriptVar] = ...,
+        const_expr : typing.Optional[global___ReachScriptConst] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["arg_oneof",b"arg_oneof","bool_expr",b"bool_expr","const_expr",b"const_expr","var_expr",b"var_expr"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["arg_oneof",b"arg_oneof","bool_expr",b"bool_expr","const_expr",b"const_expr","var_expr",b"var_expr"]) -> None: ...
@@ -4589,7 +4599,7 @@ class ReachScriptVar(google.protobuf.message.Message):
     ReachScriptExpression.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CAPABILITY_FIELD_NUMBER: builtins.int
     @property
     def capability(self) -> global___ReachScriptCapability:
@@ -4599,7 +4609,7 @@ class ReachScriptVar(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        capability: typing.Optional[global___ReachScriptCapability] = ...,
+        capability : typing.Optional[global___ReachScriptCapability] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["capability",b"capability","var_oneof",b"var_oneof"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["capability",b"capability","var_oneof",b"var_oneof"]) -> None: ...
@@ -4611,18 +4621,18 @@ class ReachScriptConst(google.protobuf.message.Message):
     ReachScriptExpression.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CAPABILITY_FIELD_NUMBER: builtins.int
     BOOL_VALUE_FIELD_NUMBER: builtins.int
     @property
     def capability(self) -> global___ReachScriptCapability:
         """The value of all pins in a capability."""
         pass
-    bool_value: builtins.bool
+    bool_value: builtins.bool = ...
     def __init__(self,
         *,
-        capability: typing.Optional[global___ReachScriptCapability] = ...,
-        bool_value: typing.Optional[builtins.bool] = ...,
+        capability : typing.Optional[global___ReachScriptCapability] = ...,
+        bool_value : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["bool_value",b"bool_value","capability",b"capability","var_oneof",b"var_oneof"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["bool_value",b"bool_value","capability",b"capability","var_oneof",b"var_oneof"]) -> None: ...
@@ -4635,14 +4645,14 @@ class ReachScriptCapability(google.protobuf.message.Message):
     command.
     Design doc: http://doc/1wBUG0jGNBRb8C9E1QzaFirj8kbosVp7yYDdy_EEz2cU
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TYPE_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     STATE_FIELD_NUMBER: builtins.int
-    type: typing.Text
+    type: typing.Text = ...
     """The type of the capability from the workcell I/O config."""
 
-    name: typing.Text
+    name: typing.Text = ...
     """The name of the capability from the workcell I/O config."""
 
     @property
@@ -4651,9 +4661,9 @@ class ReachScriptCapability(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        type: typing.Optional[typing.Text] = ...,
-        name: typing.Optional[typing.Text] = ...,
-        state: typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        name : typing.Optional[typing.Text] = ...,
+        state : typing.Optional[typing.Iterable[global___CapabilityState]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["name",b"name","state",b"state","type",b"type"]) -> None: ...
@@ -4667,7 +4677,7 @@ class MachineInterface(google.protobuf.message.Message):
     MachineInterface describes a type of data (specified by device type, device
     name, request type, and key) that is provided by a machine.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     TYPE_FIELD_NUMBER: builtins.int
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
@@ -4675,39 +4685,39 @@ class MachineInterface(google.protobuf.message.Message):
     KEYS_FIELD_NUMBER: builtins.int
     REPLACES_FIELD_NUMBER: builtins.int
     STOP_PROPAGATION_FIELD_NUMBER: builtins.int
-    type: typing.Text
+    type: typing.Text = ...
     """The type of interface."""
 
-    device_type: typing.Text
+    device_type: typing.Text = ...
     """The device_type of the interface."""
 
-    device_name: typing.Text
+    device_name: typing.Text = ...
     """The device_name of the interface."""
 
-    data_type: typing.Text
+    data_type: typing.Text = ...
     """The data_type of the interface."""
 
     @property
     def keys(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
         """The keys of the interface."""
         pass
-    replaces: builtins.bool
+    replaces: builtins.bool = ...
     """If the interface replaces another."""
 
-    stop_propagation: builtins.bool
+    stop_propagation: builtins.bool = ...
     """If the interface stops propagation, blocking access to the interface
     upwards in the pipeline.
     """
 
     def __init__(self,
         *,
-        type: typing.Optional[typing.Text] = ...,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        data_type: typing.Optional[typing.Text] = ...,
-        keys: typing.Optional[typing.Iterable[typing.Text]] = ...,
-        replaces: typing.Optional[builtins.bool] = ...,
-        stop_propagation: typing.Optional[builtins.bool] = ...,
+        type : typing.Optional[typing.Text] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        data_type : typing.Optional[typing.Text] = ...,
+        keys : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        replaces : typing.Optional[builtins.bool] = ...,
+        stop_propagation : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","replaces",b"replaces","stop_propagation",b"stop_propagation","type",b"type"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["data_type",b"data_type","device_name",b"device_name","device_type",b"device_type","keys",b"keys","replaces",b"replaces","stop_propagation",b"stop_propagation","type",b"type"]) -> None: ...
@@ -4715,20 +4725,20 @@ global___MachineInterface = MachineInterface
 
 class MachineDescription(google.protobuf.message.Message):
     """MachineDescription is the description of a state machine in the pipeline."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTERFACES_FIELD_NUMBER: builtins.int
     NAME_FIELD_NUMBER: builtins.int
     @property
     def interfaces(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MachineInterface]:
         """The interfaces provided by the machine."""
         pass
-    name: typing.Text
+    name: typing.Text = ...
     """The name of the machine."""
 
     def __init__(self,
         *,
-        interfaces: typing.Optional[typing.Iterable[global___MachineInterface]] = ...,
-        name: typing.Optional[typing.Text] = ...,
+        interfaces : typing.Optional[typing.Iterable[global___MachineInterface]] = ...,
+        name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["name",b"name"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["interfaces",b"interfaces","name",b"name"]) -> None: ...
@@ -4736,7 +4746,7 @@ global___MachineDescription = MachineDescription
 
 class PipelineDescription(google.protobuf.message.Message):
     """PipelineDescription is the description of state machines in the pipeline."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DESCRIPTIONS_FIELD_NUMBER: builtins.int
     @property
     def descriptions(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MachineDescription]:
@@ -4744,14 +4754,14 @@ class PipelineDescription(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        descriptions: typing.Optional[typing.Iterable[global___MachineDescription]] = ...,
+        descriptions : typing.Optional[typing.Iterable[global___MachineDescription]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["descriptions",b"descriptions"]) -> None: ...
 global___PipelineDescription = PipelineDescription
 
 class MachineInterfaces(google.protobuf.message.Message):
     """MachineInterfaces is a list of machine interfaces."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTERFACES_FIELD_NUMBER: builtins.int
     @property
     def interfaces(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___MachineInterface]:
@@ -4759,40 +4769,40 @@ class MachineInterfaces(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        interfaces: typing.Optional[typing.Iterable[global___MachineInterface]] = ...,
+        interfaces : typing.Optional[typing.Iterable[global___MachineInterface]] = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["interfaces",b"interfaces"]) -> None: ...
 global___MachineInterfaces = MachineInterfaces
 
 class TextInstruction(google.protobuf.message.Message):
     """TextInstruction is the description of an instruction for a task."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     INTENT_FIELD_NUMBER: builtins.int
     SUCCESS_TYPE_FIELD_NUMBER: builtins.int
     SUCCESS_DETECTION_FIELD_NUMBER: builtins.int
     INSTRUCTION_FIELD_NUMBER: builtins.int
     UID_FIELD_NUMBER: builtins.int
     SUPERTASK_ID_FIELD_NUMBER: builtins.int
-    intent: typing.Text
+    intent: typing.Text = ...
     """The intent of the instruction."""
 
-    success_type: typing.Text
+    success_type: typing.Text = ...
     """The success type of the instruction aka what makes this particular
     instruction successful.
     """
 
-    success_detection: typing.Text
+    success_detection: typing.Text = ...
     """The success detection the system may use to define success,
     if one is available.
     """
 
-    instruction: typing.Text
+    instruction: typing.Text = ...
     """The natural language instruction to be presented to the user."""
 
-    uid: typing.Text
+    uid: typing.Text = ...
     """UID is a UUID for the instruction."""
 
-    supertask_id: typing.Text
+    supertask_id: typing.Text = ...
     """ID that identifies the list of instructions that this instruction is a
     part of. Used when it is important to identify that an instruction is part
     of a specific group of instructions.
@@ -4801,12 +4811,12 @@ class TextInstruction(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        intent: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
-        success_detection: typing.Optional[typing.Text] = ...,
-        instruction: typing.Optional[typing.Text] = ...,
-        uid: typing.Optional[typing.Text] = ...,
-        supertask_id: typing.Optional[typing.Text] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
+        success_detection : typing.Optional[typing.Text] = ...,
+        instruction : typing.Optional[typing.Text] = ...,
+        uid : typing.Optional[typing.Text] = ...,
+        supertask_id : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["instruction",b"instruction","intent",b"intent","success_detection",b"success_detection","success_type",b"success_type","supertask_id",b"supertask_id","uid",b"uid"]) -> None: ...
@@ -4816,7 +4826,7 @@ class Snapshot(google.protobuf.message.Message):
     """Snapshot is the client's view of the robot state at a given moment.
     Design doc: http://doc/1Ed-sKPI3cvDGlmRRVm5OQjqqji4PYfmWppdOI5yx5xA
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SOURCE_FIELD_NUMBER: builtins.int
     DEVICE_DATA_REFS_FIELD_NUMBER: builtins.int
     RESPONSES_FIELD_NUMBER: builtins.int
@@ -4828,7 +4838,7 @@ class Snapshot(google.protobuf.message.Message):
     GYM_REWARD_FIELD_NUMBER: builtins.int
     GYM_DONE_FIELD_NUMBER: builtins.int
     GYM_ACTIONS_FIELD_NUMBER: builtins.int
-    source: typing.Text
+    source: typing.Text = ...
     """The application source that generates this snapshot, such as PyReach."""
 
     @property
@@ -4847,28 +4857,28 @@ class Snapshot(google.protobuf.message.Message):
         The calculated server time for this snapshot.
         """
         pass
-    gym_env_id: typing.Text
+    gym_env_id: typing.Text = ...
     """The gym environment id."""
 
-    gym_run_id: typing.Text
+    gym_run_id: typing.Text = ...
     """The gym run id."""
 
-    gym_episode: builtins.int
+    gym_episode: builtins.int = ...
     """The Gym episode number starting with 1 for the first episode.  Each time
     Each time env.reset() is called, the episode number is incremented.
     """
 
-    gym_step: builtins.int
+    gym_step: builtins.int = ...
     """The Gym step number for the current episode starting with 0 for the first
     step.
     """
 
-    gym_reward: builtins.float
+    gym_reward: builtins.float = ...
     """The reward returned from the call to env.step().  If env.reset() is called,
     0.0 is returned.
     """
 
-    gym_done: builtins.bool
+    gym_done: builtins.bool = ...
     """The boolean flag returned from the call to env.step().  If env.reset() is
     called, done is set to False.
     """
@@ -4879,17 +4889,17 @@ class Snapshot(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        source: typing.Optional[typing.Text] = ...,
-        device_data_refs: typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
-        responses: typing.Optional[typing.Iterable[global___SnapshotResponse]] = ...,
-        gym_server_ts: typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
-        gym_env_id: typing.Optional[typing.Text] = ...,
-        gym_run_id: typing.Optional[typing.Text] = ...,
-        gym_episode: typing.Optional[builtins.int] = ...,
-        gym_step: typing.Optional[builtins.int] = ...,
-        gym_reward: typing.Optional[builtins.float] = ...,
-        gym_done: typing.Optional[builtins.bool] = ...,
-        gym_actions: typing.Optional[typing.Iterable[global___GymAction]] = ...,
+        source : typing.Optional[typing.Text] = ...,
+        device_data_refs : typing.Optional[typing.Iterable[global___DeviceDataRef]] = ...,
+        responses : typing.Optional[typing.Iterable[global___SnapshotResponse]] = ...,
+        gym_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
+        gym_env_id : typing.Optional[typing.Text] = ...,
+        gym_run_id : typing.Optional[typing.Text] = ...,
+        gym_episode : typing.Optional[builtins.int] = ...,
+        gym_step : typing.Optional[builtins.int] = ...,
+        gym_reward : typing.Optional[builtins.float] = ...,
+        gym_done : typing.Optional[builtins.bool] = ...,
+        gym_actions : typing.Optional[typing.Iterable[global___GymAction]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","source",b"source"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["device_data_refs",b"device_data_refs","gym_actions",b"gym_actions","gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","responses",b"responses","source",b"source"]) -> None: ...
@@ -4897,7 +4907,7 @@ global___Snapshot = Snapshot
 
 class SnapshotResponse(google.protobuf.message.Message):
     """SnapshotResponse stores response data in a snapshot."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_DATA_REF_FIELD_NUMBER: builtins.int
     CID_FIELD_NUMBER: builtins.int
     STATUS_FIELD_NUMBER: builtins.int
@@ -4905,18 +4915,18 @@ class SnapshotResponse(google.protobuf.message.Message):
     GYM_CONFIG_NAME_FIELD_NUMBER: builtins.int
     @property
     def device_data_ref(self) -> global___DeviceDataRef: ...
-    cid: builtins.int
+    cid: builtins.int = ...
     @property
     def status(self) -> global___Status: ...
-    gym_element_type: typing.Text
-    gym_config_name: typing.Text
+    gym_element_type: typing.Text = ...
+    gym_config_name: typing.Text = ...
     def __init__(self,
         *,
-        device_data_ref: typing.Optional[global___DeviceDataRef] = ...,
-        cid: typing.Optional[builtins.int] = ...,
-        status: typing.Optional[global___Status] = ...,
-        gym_element_type: typing.Optional[typing.Text] = ...,
-        gym_config_name: typing.Optional[typing.Text] = ...,
+        device_data_ref : typing.Optional[global___DeviceDataRef] = ...,
+        cid : typing.Optional[builtins.int] = ...,
+        status : typing.Optional[global___Status] = ...,
+        gym_element_type : typing.Optional[typing.Text] = ...,
+        gym_config_name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["cid",b"cid","device_data_ref",b"device_data_ref","gym_config_name",b"gym_config_name","gym_element_type",b"gym_element_type","status",b"status"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["cid",b"cid","device_data_ref",b"device_data_ref","gym_config_name",b"gym_config_name","gym_element_type",b"gym_element_type","status",b"status"]) -> None: ...
@@ -4924,7 +4934,7 @@ global___SnapshotResponse = SnapshotResponse
 
 class GymAction(google.protobuf.message.Message):
     """GymAction stores the original action from PyReach gym."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
     DEVICE_NAME_FIELD_NUMBER: builtins.int
     SYNCHRONOUS_FIELD_NUMBER: builtins.int
@@ -4932,9 +4942,9 @@ class GymAction(google.protobuf.message.Message):
     VACUUM_ACTION_PARAMS_FIELD_NUMBER: builtins.int
     LOGGER_ACTION_PARAMS_FIELD_NUMBER: builtins.int
     CLIENT_ANNOTATION_ACTION_PARAMS_FIELD_NUMBER: builtins.int
-    device_type: typing.Text
-    device_name: typing.Text
-    synchronous: builtins.bool
+    device_type: typing.Text = ...
+    device_name: typing.Text = ...
+    synchronous: builtins.bool = ...
     @property
     def arm_action_params(self) -> global___ArmActionParams: ...
     @property
@@ -4945,13 +4955,13 @@ class GymAction(google.protobuf.message.Message):
     def client_annotation_action_params(self) -> global___ClientAnnotationActionParams: ...
     def __init__(self,
         *,
-        device_type: typing.Optional[typing.Text] = ...,
-        device_name: typing.Optional[typing.Text] = ...,
-        synchronous: typing.Optional[builtins.bool] = ...,
-        arm_action_params: typing.Optional[global___ArmActionParams] = ...,
-        vacuum_action_params: typing.Optional[global___VacuumActionParams] = ...,
-        logger_action_params: typing.Optional[global___LoggerActionParams] = ...,
-        client_annotation_action_params: typing.Optional[global___ClientAnnotationActionParams] = ...,
+        device_type : typing.Optional[typing.Text] = ...,
+        device_name : typing.Optional[typing.Text] = ...,
+        synchronous : typing.Optional[builtins.bool] = ...,
+        arm_action_params : typing.Optional[global___ArmActionParams] = ...,
+        vacuum_action_params : typing.Optional[global___VacuumActionParams] = ...,
+        logger_action_params : typing.Optional[global___LoggerActionParams] = ...,
+        client_annotation_action_params : typing.Optional[global___ClientAnnotationActionParams] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["arm_action_params",b"arm_action_params","client_annotation_action_params",b"client_annotation_action_params","device_name",b"device_name","device_type",b"device_type","logger_action_params",b"logger_action_params","params",b"params","synchronous",b"synchronous","vacuum_action_params",b"vacuum_action_params"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["arm_action_params",b"arm_action_params","client_annotation_action_params",b"client_annotation_action_params","device_name",b"device_name","device_type",b"device_type","logger_action_params",b"logger_action_params","params",b"params","synchronous",b"synchronous","vacuum_action_params",b"vacuum_action_params"]) -> None: ...
@@ -4960,7 +4970,7 @@ global___GymAction = GymAction
 
 class ArmActionParams(google.protobuf.message.Message):
     """ArmActionParams stores the original arm action."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     COMMAND_FIELD_NUMBER: builtins.int
     CID_FIELD_NUMBER: builtins.int
     JOINT_ANGLES_FIELD_NUMBER: builtins.int
@@ -4982,52 +4992,52 @@ class ArmActionParams(google.protobuf.message.Message):
     SERVO_GAIN_FIELD_NUMBER: builtins.int
     ALLOW_UNCALIBRATED_FIELD_NUMBER: builtins.int
     CONTROLLER_NAME_FIELD_NUMBER: builtins.int
-    command: builtins.int
-    cid: builtins.int
+    command: builtins.int = ...
+    cid: builtins.int = ...
     @property
     def joint_angles(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
     @property
     def pose(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]: ...
-    reach_action: builtins.int
-    use_linear: builtins.bool
-    velocity: builtins.float
-    acceleration: builtins.float
-    timeout_sec: builtins.float
-    action_name: typing.Text
-    use_unity_ik: builtins.bool
-    intent: typing.Text
-    success_type: typing.Text
-    pick_id: typing.Text
-    apply_tip_adjust_transform: builtins.bool
-    servo: builtins.bool
-    servo_t_secs: builtins.float
-    servo_lookahead_time_secs: builtins.float
-    servo_gain: builtins.float
-    allow_uncalibrated: builtins.bool
-    controller_name: typing.Text
+    reach_action: builtins.int = ...
+    use_linear: builtins.bool = ...
+    velocity: builtins.float = ...
+    acceleration: builtins.float = ...
+    timeout_sec: builtins.float = ...
+    action_name: typing.Text = ...
+    use_unity_ik: builtins.bool = ...
+    intent: typing.Text = ...
+    success_type: typing.Text = ...
+    pick_id: typing.Text = ...
+    apply_tip_adjust_transform: builtins.bool = ...
+    servo: builtins.bool = ...
+    servo_t_secs: builtins.float = ...
+    servo_lookahead_time_secs: builtins.float = ...
+    servo_gain: builtins.float = ...
+    allow_uncalibrated: builtins.bool = ...
+    controller_name: typing.Text = ...
     def __init__(self,
         *,
-        command: typing.Optional[builtins.int] = ...,
-        cid: typing.Optional[builtins.int] = ...,
-        joint_angles: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        pose: typing.Optional[typing.Iterable[builtins.float]] = ...,
-        reach_action: typing.Optional[builtins.int] = ...,
-        use_linear: typing.Optional[builtins.bool] = ...,
-        velocity: typing.Optional[builtins.float] = ...,
-        acceleration: typing.Optional[builtins.float] = ...,
-        timeout_sec: typing.Optional[builtins.float] = ...,
-        action_name: typing.Optional[typing.Text] = ...,
-        use_unity_ik: typing.Optional[builtins.bool] = ...,
-        intent: typing.Optional[typing.Text] = ...,
-        success_type: typing.Optional[typing.Text] = ...,
-        pick_id: typing.Optional[typing.Text] = ...,
-        apply_tip_adjust_transform: typing.Optional[builtins.bool] = ...,
-        servo: typing.Optional[builtins.bool] = ...,
-        servo_t_secs: typing.Optional[builtins.float] = ...,
-        servo_lookahead_time_secs: typing.Optional[builtins.float] = ...,
-        servo_gain: typing.Optional[builtins.float] = ...,
-        allow_uncalibrated: typing.Optional[builtins.bool] = ...,
-        controller_name: typing.Optional[typing.Text] = ...,
+        command : typing.Optional[builtins.int] = ...,
+        cid : typing.Optional[builtins.int] = ...,
+        joint_angles : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        pose : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        reach_action : typing.Optional[builtins.int] = ...,
+        use_linear : typing.Optional[builtins.bool] = ...,
+        velocity : typing.Optional[builtins.float] = ...,
+        acceleration : typing.Optional[builtins.float] = ...,
+        timeout_sec : typing.Optional[builtins.float] = ...,
+        action_name : typing.Optional[typing.Text] = ...,
+        use_unity_ik : typing.Optional[builtins.bool] = ...,
+        intent : typing.Optional[typing.Text] = ...,
+        success_type : typing.Optional[typing.Text] = ...,
+        pick_id : typing.Optional[typing.Text] = ...,
+        apply_tip_adjust_transform : typing.Optional[builtins.bool] = ...,
+        servo : typing.Optional[builtins.bool] = ...,
+        servo_t_secs : typing.Optional[builtins.float] = ...,
+        servo_lookahead_time_secs : typing.Optional[builtins.float] = ...,
+        servo_gain : typing.Optional[builtins.float] = ...,
+        allow_uncalibrated : typing.Optional[builtins.bool] = ...,
+        controller_name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","action_name",b"action_name","allow_uncalibrated",b"allow_uncalibrated","apply_tip_adjust_transform",b"apply_tip_adjust_transform","cid",b"cid","command",b"command","controller_name",b"controller_name","intent",b"intent","pick_id",b"pick_id","reach_action",b"reach_action","servo",b"servo","servo_gain",b"servo_gain","servo_lookahead_time_secs",b"servo_lookahead_time_secs","servo_t_secs",b"servo_t_secs","success_type",b"success_type","timeout_sec",b"timeout_sec","use_linear",b"use_linear","use_unity_ik",b"use_unity_ik","velocity",b"velocity"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","action_name",b"action_name","allow_uncalibrated",b"allow_uncalibrated","apply_tip_adjust_transform",b"apply_tip_adjust_transform","cid",b"cid","command",b"command","controller_name",b"controller_name","intent",b"intent","joint_angles",b"joint_angles","pick_id",b"pick_id","pose",b"pose","reach_action",b"reach_action","servo",b"servo","servo_gain",b"servo_gain","servo_lookahead_time_secs",b"servo_lookahead_time_secs","servo_t_secs",b"servo_t_secs","success_type",b"success_type","timeout_sec",b"timeout_sec","use_linear",b"use_linear","use_unity_ik",b"use_unity_ik","velocity",b"velocity"]) -> None: ...
@@ -5035,12 +5045,12 @@ global___ArmActionParams = ArmActionParams
 
 class VacuumActionParams(google.protobuf.message.Message):
     """VacuumActionParams stores the original vacuum action."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     STATE_FIELD_NUMBER: builtins.int
-    state: builtins.int
+    state: builtins.int = ...
     def __init__(self,
         *,
-        state: typing.Optional[builtins.int] = ...,
+        state : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["state",b"state"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["state",b"state"]) -> None: ...
@@ -5048,18 +5058,18 @@ global___VacuumActionParams = VacuumActionParams
 
 class LoggerActionParams(google.protobuf.message.Message):
     """LoggerActionParams stores the logger action params."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     IS_START_FIELD_NUMBER: builtins.int
     EVENT_PARAMS_FIELD_NUMBER: builtins.int
-    is_start: builtins.bool
+    is_start: builtins.bool = ...
     """True if start, else end"""
 
     @property
     def event_params(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___KeyValue]: ...
     def __init__(self,
         *,
-        is_start: typing.Optional[builtins.bool] = ...,
-        event_params: typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        is_start : typing.Optional[builtins.bool] = ...,
+        event_params : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["is_start",b"is_start"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["event_params",b"event_params","is_start",b"is_start"]) -> None: ...
@@ -5067,13 +5077,13 @@ global___LoggerActionParams = LoggerActionParams
 
 class ClientAnnotationActionParams(google.protobuf.message.Message):
     """ClientAnnotationActionParams stores the client annotation action params."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ANNOTATION_FIELD_NUMBER: builtins.int
     @property
     def annotation(self) -> global___ClientAnnotation: ...
     def __init__(self,
         *,
-        annotation: typing.Optional[global___ClientAnnotation] = ...,
+        annotation : typing.Optional[global___ClientAnnotation] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["annotation",b"annotation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["annotation",b"annotation"]) -> None: ...

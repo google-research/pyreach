@@ -29,6 +29,8 @@ class ReachColorCamera(reach_element.ReachElement):
       used by the remote robot host (e.g. "uvc", ...)
     shape: The shape (dx, dy) of the color image.  The ndarray shape is extended
       to (dx, dy, 3).  The pixel values are unit8.
+    frame_rate: Sets the frame rate for the color camera measure in Hz.  If
+      negative, the default frame rate of 10Hz is used.  (Default=-1.0).
     force_fit: If True, any mis-configured cameras are simply cropped to shape.
     is_synchronous: If True, the next Gym observation will synchronize all
       observations element that have this flag set otherwise the next
@@ -42,8 +44,10 @@ class ReachColorCamera(reach_element.ReachElement):
       "fisheye".
     link_name: When calibration is enabled, this should specify the URDF link
       name to use for getting the camera pose.
-    initial_stream_request_period: The initial seconds per frame requested.
-      Defaults to 1 second per frame.
+    initial_stream_request_period: The initial seconds per frame reuested.
+      This was never actually implemented.  Use frame_rate instead.
+    pose_enable: When True, the camera pose is returned for each image
+      observation under the `pose` key; otherwise, no camera pose is returned.
   """
   shape: Tuple[int, int]
   force_fit: bool = False
@@ -51,4 +55,6 @@ class ReachColorCamera(reach_element.ReachElement):
   calibration_enable: bool = False
   lens_model: Optional[str] = None
   link_name: Optional[str] = None
-  initial_stream_request_period: float = 1.0
+  initial_stream_request_period: float = 1.0  # Deprecated, use frame_rate!
+  frame_rate: float = -1.0
+  pose_enable: bool = False

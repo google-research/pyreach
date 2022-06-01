@@ -411,6 +411,10 @@ The color camera observation space return the following:
 *   `"ts"`: The timestamp is returned as a scalar `numpy.ndarray` of type
     `float` and a shape of `()` (i.e. a tuple of length 0.)
 
+*   `"frame_rate"`: The frame rate is returned as a scalar `numpy.ndarray` of
+    type `float` and a shape of `()` (i.e. a tuple of length 0.) This contains
+    the current frame rate for the color camera.
+
 If calibration is enabled, the observation has an additional key called
 calibration `callibration` with the following items in its dictionary.
 
@@ -461,8 +465,16 @@ The depth camera observation has the following observation space:
 *   `color`: The color image is returned as a `numpy.ndarray` of `uint8`'s of
     shape `(W, H, 3)`. The pixels are in red, green blue order.
 
+*   `"color_frame_rate"`: The frame rate is returned as a scalar `numpy.ndarray`
+    of type `float` and a shape of `()` (i.e. a tuple of length 0.) This
+    contains the current frame rate for the color images.
+
 *   `depth`: The depth image is returned as a `numpy.ndarray` of `uint16`'s of
     shape `(W, H)`.
+
+*   `"depth_frame_rate"`: The frame rate is returned as a scalar `numpy.ndarray`
+    of type `float` and a shape of `()` (i.e. a tuple of length 0.) This
+    contains the current frame rate for the depth images.
 
 *   `"ts"`: The timestamp is returned as a scalar `numpy.ndarray` of type
     `float` and a shape of `()` (i.e. a tuple of length 0.)
@@ -1168,6 +1180,9 @@ following arguments:
     dy) The ndarray shape is extended to (dx, dy, 3). The pixel values are
     `uint8` in red, green, blue order.
 
+*   `frame_rate`: (Optional: default = -1.0) If positive, the frame rate for
+    color is set. If negative, the default frame rate of 10Hz is used.
+
 *   `force_fit`: (Optional, default = `False`) If `True`, any mis-configured
     cameras are simply cropped to specified `shape`. If `False`, a
     `PyReachError`is raised for an image shape mismatch detected.
@@ -1187,6 +1202,10 @@ following arguments:
     consistency check to ensure that it matches the lens model returned from
     calibration. If they do not match, there is almost certainly some sort of
     configuration error that needs to be resolved.
+
+*   `pose_enable`: (Optional, default = `False`). When True, the camera pose
+    relative to the workcell origin is returned in the observation under the
+    `pose` key.
 
 #### Depth Camera Configuration
 
@@ -1208,6 +1227,18 @@ following arguments:
     `numpy.ndarray`shape is same as the depth camera shape (i.e. (dx, dy, 3).)
     The pixel values are `numpy.uint8`.
 
+*   `color_frame_rate`: (Optional: default = -1.0) If positive, the frame rate
+    (measured in Hz) for color frames is set. If negative, the default frame
+    rate of 10Hz is used. If the actually depth camera does not support
+    different frame rates for the color/depth images, the maximum of
+    `color_frame_rate` and `depth_frame_rate` is used.
+
+*   `depth_frame_rate`: (Optional: default = -1.0) If positive, the frame rate
+    (measured in Hz) for color frames is set. If negative, the default frame
+    rate of 10Hz is used. If the actually depth camera does not support
+    different frame rates for the color/depth images, the maximum of
+    `color_frame_rate` and `depth_frame_rate` is used.
+
 *   `force_fit`: (Optional, default = `False`) If `True`, any misconfigured
     cameras are simply cropped to specified `shape`. If `False`, a
     `PyReachError`is raised for an image shape mismatch detected.
@@ -1227,6 +1258,10 @@ following arguments:
     consistency check to ensure that it matches the lens model returned from
     calibration. If they do not match, there is almost certainly some sort of
     configuration error that needs to be resolved.
+
+*   `pose_enable`: (Optional, default = `False`). When True, the camera pose
+    relative to the workcell origin is returned in the observation under the
+    `pose` key.
 
 #### Force Torque Sensor Configuration
 

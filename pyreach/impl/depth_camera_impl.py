@@ -11,10 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation for the PyReach DepthCamera interface."""
 import logging  # type: ignore
-from typing import Callable, Optional, Tuple, cast
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 
@@ -32,10 +31,10 @@ from pyreach.impl import utils
 class DepthFrameImpl(depth_camera.DepthFrame):
   """Implementation of a DepthFrame."""
 
-  def __init__(self, time: float, sequence: int,
-               device_type: str, device_name: str,
-               color_data: np.ndarray, depth_data: np.ndarray,
-               calibration: Optional[cal.Calibration]) -> None:
+  def __init__(self, time: float, sequence: int, device_type: str,
+               device_name: str, color_data: np.ndarray, depth_data: np.ndarray,
+               calibration: Optional[cal.Calibration],
+               pose: Optional[core.Pose]) -> None:
     """Construct a DepthFrameImpl."""
     self._time: float = time
     self._sequence: int = sequence
@@ -44,6 +43,7 @@ class DepthFrameImpl(depth_camera.DepthFrame):
     self._color_data: np.ndarray = color_data
     self._depth_data: np.ndarray = depth_data
     self._calibration: Optional[cal.Calibration] = calibration
+    self._pose: Optional[core.Pose] = pose
 
   @property
   def time(self) -> float:
@@ -82,25 +82,7 @@ class DepthFrameImpl(depth_camera.DepthFrame):
 
   def pose(self) -> Optional[core.Pose]:
     """Return the pose of the camera when the image is taken."""
-    if self.calibration is None:
-      return None
-    c = self.calibration
-    device = c.get_device(self.device_type, self.device_name)
-    if device is None:
-      return None
-    if not isinstance(device, cal.CalibrationCamera):
-      return None
-    device = cast(cal.CalibrationCamera, device)
-
-    if len(device.extrinsics) != 6:
-      logging.warning("Camera extrinisics not a 6-element list.")
-      return None
-    parent_id = device.tool_mount
-    if parent_id is None:
-      return core.Pose.from_list(list(device.extrinsics))
-
-    logging.warning("Camera had a parent ID. Currently unsupported.")
-    return None
+    return self._pose
 
   def get_point_normal(
       self, x: int,
@@ -246,10 +228,12 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
       logging.warning("depth message missing file at %d ms time delta, file %s",
                       delta, msg.depth)
       return None
+    pose: Optional[core.Pose] = None
+    if msg.camera_calibration and msg.camera_calibration.camera_t_origin:
+      pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
     return DepthFrameImpl(
-        utils.time_at_timestamp(msg.ts), msg.seq,
-        msg.device_type, msg.device_name,
-        color, depth, calibration)
+        utils.time_at_timestamp(msg.ts), msg.seq, msg.device_type,
+        msg.device_name, color, depth, calibration, pose)
 
   def device_type(self) -> str:
     """Return the type of device."""
@@ -374,20 +358,7 @@ class DepthCameraImpl(depth_camera.DepthCamera):
   @property
   def pose(self) -> Optional[core.Pose]:
     """Return the latest pose of the camera."""
-    c = self._device.get_calibration()
-    if c is None:
-      return None
-    device = c.get_device(self._device.device_type(),
-                          self._device.device_name())
-    if device is None:
-      return None
-    if not isinstance(device, cal.CalibrationCamera):
-      return None
-    if len(device.extrinsics) != 6:
-      logging.warning("Camera extrinisics not a 6-element list.")
-      return None
-    parent_id = device.tool_mount
-    if parent_id is None:
-      return core.Pose.from_list(list(device.extrinsics))
-    logging.warning("Camera had a parent ID. Currently unsupported.")
+    current_image = self.image()
+    if current_image:
+      return current_image.pose()
     return None

@@ -458,7 +458,11 @@ class GymColorCameraEnv(reach_env.ReachEnv):
                 is_synchronous=is_synchronous,
                 calibration_enable=True,
                 lens_model="fisheye",
-                link_name="color_camera_link_name")
+                link_name="color_camera_link_name",
+                frame_rate=10.0,
+                initial_stream_request_period=123.456,  # Deprecated: ignored
+                pose_enable=True,
+            )
     }
 
     mock_host: host.Host = host_mock.HostMock(pyreach_config)
@@ -530,6 +534,7 @@ class TestGymColorCameraEnv(unittest.TestCase):
       observation_match: Dict[str, Any] = {
           "colorcamera": {
               "color": np.zeros(shape=(3, 5, 3), dtype=np.uint8),
+              "frame_rate": np.array(10.0),
               "ts": gyms_core.Timestamp.new(1.0),
               "calibration": {
                   "distortion":
@@ -540,7 +545,8 @@ class TestGymColorCameraEnv(unittest.TestCase):
                       np.array([21.0, 22.0, 23.0, 24.0, 25.0, 26.0]),
                   "intrinsics":
                       np.array([31.0, 32.0, 33.0, 34.0]),
-              }
+              },
+              "pose": np.array([1.0, 2.0, 3.0, 0.0, 0.0, 0.0]),
           }
       }
       assert space_match(observation_space, observation_match, ("observation",))
@@ -668,11 +674,16 @@ class GymDepthCameraEnv(reach_env.ReachEnv):
             reach_env.ReachDepthCamera(
                 reach_name="DepthCamera",
                 shape=(3, 5),
+                color_frame_rate=10.0,
+                depth_frame_rate=5.0,
                 is_synchronous=is_synchronous,
                 color_enabled=color_enabled,
                 calibration_enable=True,
                 lens_model="fisheye",
-                link_name="depth_camera_link_name")
+                link_name="depth_camera_link_name",
+                pose_enable=True,
+                initial_stream_request_period=123.456  # Deprecated: ignored
+            )
     }
 
     mock_host: host.Host = host_mock.HostMock(pyreach_config)
@@ -768,7 +779,9 @@ class TestGymDepthCameraEnv(unittest.TestCase):
       assert isinstance(observation_space, gym.spaces.Space)
       observation_match: Dict[str, Any] = {
           "depthcamera": {
+              "color_frame_rate": np.array(10.0),
               "depth": np.zeros(shape=(3, 5), dtype=np.uint16),
+              "depth_frame_rate": np.array(5.0),
               "ts": gyms_core.Timestamp.new(1.0),
               "calibration": {
                   "distortion":
@@ -779,8 +792,9 @@ class TestGymDepthCameraEnv(unittest.TestCase):
                       np.array([21.0, 22.0, 23.0, 24.0, 25.0, 26.0]),
                   "intrinsics":
                       np.array([31.0, 32.0, 33.0, 34.0]),
-              }
-          }
+              },
+              "pose": np.array([1.0, 2.0, 3.0, 0.0, 0.0, 0.0]),
+          },
       }
       if color_enabled:
         observation_match["depthcamera"]["color"] = np.array([[

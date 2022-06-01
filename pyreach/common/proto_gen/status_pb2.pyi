@@ -22,24 +22,24 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class StatusProto(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CODE_FIELD_NUMBER: builtins.int
     SPACE_FIELD_NUMBER: builtins.int
     MESSAGE_FIELD_NUMBER: builtins.int
     CANONICAL_CODE_FIELD_NUMBER: builtins.int
-    code: builtins.int
-    space: typing.Text
-    message: typing.Text
-    canonical_code: builtins.int
+    code: builtins.int = ...
+    space: typing.Text = ...
+    message: typing.Text = ...
+    canonical_code: builtins.int = ...
     def __init__(self,
         *,
-        code: typing.Optional[builtins.int] = ...,
-        space: typing.Optional[typing.Text] = ...,
-        message: typing.Optional[typing.Text] = ...,
-        canonical_code: typing.Optional[builtins.int] = ...,
+        code : typing.Optional[builtins.int] = ...,
+        space : typing.Optional[typing.Text] = ...,
+        message : typing.Optional[typing.Text] = ...,
+        canonical_code : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["canonical_code",b"canonical_code","code",b"code","message",b"message","space",b"space"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["canonical_code",b"canonical_code","code",b"code","message",b"message","space",b"space"]) -> None: ...

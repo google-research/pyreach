@@ -24,16 +24,16 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class LogContentProto(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     HEADER_FIELD_NUMBER: builtins.int
     PAYLOAD_FIELD_NUMBER: builtins.int
     INTERNAL_TIMESTAMP_NSEC_FIELD_NUMBER: builtins.int
     INTERNAL_SESSION_TIME_NSEC_FIELD_NUMBER: builtins.int
-    id: typing.Text
+    id: typing.Text = ...
     """An identifier for the header and payload type contained in this log."""
 
     @property
@@ -44,34 +44,34 @@ class LogContentProto(google.protobuf.message.Message):
     def payload(self) -> google.protobuf.any_pb2.Any:
         """The actual log content."""
         pass
-    internal_timestamp_nsec: builtins.int
+    internal_timestamp_nsec: builtins.int = ...
     """TODO: Create an internal message for the following internal
     members if we need to add more.
     The timestamp for internal usage. Should not be written or read by users.
     """
 
-    internal_session_time_nsec: builtins.int
+    internal_session_time_nsec: builtins.int = ...
     """Session time for internal usage.  Should not be written or read by users."""
 
     def __init__(self,
         *,
-        id: typing.Text = ...,
-        header: typing.Optional[google.protobuf.any_pb2.Any] = ...,
-        payload: typing.Optional[google.protobuf.any_pb2.Any] = ...,
-        internal_timestamp_nsec: builtins.int = ...,
-        internal_session_time_nsec: builtins.int = ...,
+        id : typing.Text = ...,
+        header : typing.Optional[google.protobuf.any_pb2.Any] = ...,
+        payload : typing.Optional[google.protobuf.any_pb2.Any] = ...,
+        internal_timestamp_nsec : builtins.int = ...,
+        internal_session_time_nsec : builtins.int = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["header",b"header","payload",b"payload"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["header",b"header","id",b"id","internal_session_time_nsec",b"internal_session_time_nsec","internal_timestamp_nsec",b"internal_timestamp_nsec","payload",b"payload"]) -> None: ...
 global___LogContentProto = LogContentProto
 
 class LogContentBatchProto(google.protobuf.message.Message):
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LOG_CONTENT_FIELD_NUMBER: builtins.int
     ID_FIELD_NUMBER: builtins.int
     @property
     def log_content(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___LogContentProto]: ...
-    id: typing.Text
+    id: typing.Text = ...
     """Log ID for batched log contents.  All log contents have to match
     this id.  If the id in a log content is different
     from this id, the log is ignored or an exception is thrown.
@@ -79,8 +79,8 @@ class LogContentBatchProto(google.protobuf.message.Message):
 
     def __init__(self,
         *,
-        log_content: typing.Optional[typing.Iterable[global___LogContentProto]] = ...,
-        id: typing.Text = ...,
+        log_content : typing.Optional[typing.Iterable[global___LogContentProto]] = ...,
+        id : typing.Text = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","log_content",b"log_content"]) -> None: ...
 global___LogContentBatchProto = LogContentBatchProto

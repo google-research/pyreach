@@ -1,8 +1,9 @@
 """Instruction generator for 2d board data collection."""
 
 import itertools
-
+import logging
 from typing import List, Tuple
+
 import numpy as np
 
 # The real blocks are defined in go/which-8
@@ -59,7 +60,7 @@ class InstructionGeneratorBlock8():
               f'the {colors[2]} blocks in the {locations[2]}, '
               f'and the {colors[3]} blocks in the {locations[3]}.')
       if len(inst) > 256:  # 256 is max length.
-        raise ValueError(f'Instruction greater than max length: {inst}')
+        logging.info('Instruction greater than max length: %s', inst)
       all_inst.append(inst)
     return all_inst
 
@@ -146,7 +147,7 @@ class InstructionGeneratorBlock8():
           zip(ordering, outer_edge_locations)):
         inst += f'{idx}) {block_i} to {loc_i}, \n'
       if len(inst) > 256:  # 256 is max instruction length.
-        raise ValueError(f'Instruction greater than max length: {inst}')
+        logging.info('Instruction greater than max length: %s', inst)
       all_inst.append(inst)
     return all_inst
 

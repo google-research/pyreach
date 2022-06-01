@@ -550,20 +550,22 @@ class Benchmark2DCollectEnv(reach_env.ReachEnv):
 
     pyreach_config: Dict[str, reach_env.ReachElement] = {
         "arm":
-            reach_env.ReachArm("", low_joint_angles, high_joint_angles,
-                               response_queue_length=1, is_synchronous=False,
-                               ik_lib=pyreach_arm.IKLibType.IKPYBULLET),
+            reach_env.ReachArm(
+                "",
+                low_joint_angles,
+                high_joint_angles,
+                response_queue_length=1,
+                is_synchronous=False,
+                ik_lib=pyreach_arm.IKLibType.IKPYBULLET),
         "color_camera":  # realsense
-            reach_env.ReachColorCamera("", shape=(360, 640),
-                                       initial_stream_request_period=0.03),
+            reach_env.ReachColorCamera("", shape=(360, 640), frame_rate=30.0),
         "server":
             reach_env.ReachServer("Server"),
         "task":
             reach_env.ReachTask("Task"),
         "annotation":
-            reach_env.ReachAnnotation("",
-                                      is_synchronous=False,
-                                      maximum_size=1024),
+            reach_env.ReachAnnotation(
+                "", is_synchronous=False, maximum_size=1024),
     }
     super().__init__(
         pyreach_config=pyreach_config, task_params=task_params, **kwargs)

@@ -24,14 +24,14 @@ import object_id_pb2
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class ObjectRef(google.protobuf.message.Message):
     """Unique identifier for an object."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class Id(google.protobuf.message.Message):
         """Id for the ObjectRef."""
-        DESCRIPTOR: google.protobuf.descriptor.Descriptor
+        DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         DATA_FIELD_NUMBER: builtins.int
         STR_ID_FIELD_NUMBER: builtins.int
         INT_ID_FIELD_NUMBER: builtins.int
@@ -44,13 +44,13 @@ class ObjectRef(google.protobuf.message.Message):
             Another is a string in an internal tool format.
             """
             pass
-        str_id: typing.Text
+        str_id: typing.Text = ...
         """Common ID types."""
 
-        int_id: builtins.int
+        int_id: builtins.int = ...
         @property
         def object_id(self) -> object_id_pb2.ObjectId: ...
-        key: typing.Text
+        key: typing.Text = ...
         """This optional key is used to select a handler for the ID.
         For example, the key "path" indicates that the ID is a string field with
         path semantics.
@@ -58,11 +58,11 @@ class ObjectRef(google.protobuf.message.Message):
 
         def __init__(self,
             *,
-            data: typing.Optional[google.protobuf.any_pb2.Any] = ...,
-            str_id: typing.Text = ...,
-            int_id: builtins.int = ...,
-            object_id: typing.Optional[object_id_pb2.ObjectId] = ...,
-            key: typing.Text = ...,
+            data : typing.Optional[google.protobuf.any_pb2.Any] = ...,
+            str_id : typing.Text = ...,
+            int_id : builtins.int = ...,
+            object_id : typing.Optional[object_id_pb2.ObjectId] = ...,
+            key : typing.Text = ...,
             ) -> None: ...
         def HasField(self, field_name: typing_extensions.Literal["data",b"data","id_type",b"id_type","int_id",b"int_id","object_id",b"object_id","str_id",b"str_id"]) -> builtins.bool: ...
         def ClearField(self, field_name: typing_extensions.Literal["data",b"data","id_type",b"id_type","int_id",b"int_id","key",b"key","object_id",b"object_id","str_id",b"str_id"]) -> None: ...
@@ -71,10 +71,10 @@ class ObjectRef(google.protobuf.message.Message):
     PATH_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     ID_FIELD_NUMBER: builtins.int
-    path: typing.Text
+    path: typing.Text = ...
     """Fully specified name of an object, e.g. "/bldg/room102/s102A/desk/drawer0"."""
 
-    type: object_id_pb2.ObjectId.ObjectType.ValueType
+    type: object_id_pb2.ObjectId.ObjectType.ValueType = ...
     """Type of the referent (e.g. LINK) for this reference."""
 
     @property
@@ -83,9 +83,9 @@ class ObjectRef(google.protobuf.message.Message):
         pass
     def __init__(self,
         *,
-        path: typing.Text = ...,
-        type: object_id_pb2.ObjectId.ObjectType.ValueType = ...,
-        id: typing.Optional[global___ObjectRef.Id] = ...,
+        path : typing.Text = ...,
+        type : object_id_pb2.ObjectId.ObjectType.ValueType = ...,
+        id : typing.Optional[global___ObjectRef.Id] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["id",b"id"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["id",b"id","path",b"path","type",b"type"]) -> None: ...

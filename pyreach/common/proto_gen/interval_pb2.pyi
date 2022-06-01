@@ -21,49 +21,49 @@ import google.protobuf.descriptor
 import google.protobuf.message
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class Intervald(google.protobuf.message.Message):
     """A closed interval of double precision values [min, max]."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MIN_FIELD_NUMBER: builtins.int
     MAX_FIELD_NUMBER: builtins.int
-    min: builtins.float
-    max: builtins.float
+    min: builtins.float = ...
+    max: builtins.float = ...
     def __init__(self,
         *,
-        min: builtins.float = ...,
-        max: builtins.float = ...,
+        min : builtins.float = ...,
+        max : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["max",b"max","min",b"min"]) -> None: ...
 global___Intervald = Intervald
 
 class Intervalf(google.protobuf.message.Message):
     """A closed interval of single precision values [min, max]."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MIN_FIELD_NUMBER: builtins.int
     MAX_FIELD_NUMBER: builtins.int
-    min: builtins.float
-    max: builtins.float
+    min: builtins.float = ...
+    max: builtins.float = ...
     def __init__(self,
         *,
-        min: builtins.float = ...,
-        max: builtins.float = ...,
+        min : builtins.float = ...,
+        max : builtins.float = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["max",b"max","min",b"min"]) -> None: ...
 global___Intervalf = Intervalf
 
 class Intervali(google.protobuf.message.Message):
     """A closed interval of integer values [min, max]."""
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     MIN_FIELD_NUMBER: builtins.int
     MAX_FIELD_NUMBER: builtins.int
-    min: builtins.int
-    max: builtins.int
+    min: builtins.int = ...
+    max: builtins.int = ...
     def __init__(self,
         *,
-        min: builtins.int = ...,
-        max: builtins.int = ...,
+        min : builtins.int = ...,
+        max : builtins.int = ...,
         ) -> None: ...
     def ClearField(self, field_name: typing_extensions.Literal["max",b"max","min",b"min"]) -> None: ...
 global___Intervali = Intervali

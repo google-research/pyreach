@@ -72,7 +72,7 @@ class SpacemouseDriver:
   pipe as serialized CartesianDeltaPositionAction. Otherwise, actions are
   printed to stdout as JSON.
   """
-  _spacemouse_id: int = 0
+  _spacemouse_device_id: Optional[int] = 0
   _coarse_translation_scale: float = 0.0
   _fine_translation_scale: float = 0.0
   _coarse_rotation_scale: float = 0.0
@@ -87,7 +87,7 @@ class SpacemouseDriver:
 
   def __init__(self,
                pipe: Optional[mpc.Connection] = None,
-               spacemouse_id: int = 0,
+               spacemouse_id: Optional[int] = None,
                two_dof_mode: bool = False,
                scale_up: float = 4,
                use_gripper: bool = False,
@@ -155,7 +155,8 @@ class SpacemouseDriver:
       A CartesianDeltaPositionAction corresponding to the spacemouse event, or
       None if there was no event.
     """
-    if event is None or event.device != self._spacemouse_device_id:
+    if event is None or (self._spacemouse_device_id is not None and
+                         event.device != self._spacemouse_device_id):
       return None
 
     if isinstance(event, spacemouse_lib.RSpnavMotionEvent):

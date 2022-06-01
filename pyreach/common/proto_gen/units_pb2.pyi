@@ -23,28 +23,28 @@ import google.protobuf.message
 import typing
 import typing_extensions
 
-DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
+DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class _UnitType:
     ValueType = typing.NewType('ValueType', builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 class _UnitTypeEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_UnitType.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    UNSPECIFIED_UNIT: _UnitType.ValueType  # 0
-    TIME_UNIT: _UnitType.ValueType  # 65536
-    ANGLE_UNIT: _UnitType.ValueType  # 131072
-    LENGTH_UNIT: _UnitType.ValueType  # 196608
-    ANGULAR_VELOCITY_UNIT: _UnitType.ValueType  # 262144
-    VELOCITY_UNIT: _UnitType.ValueType  # 327680
-    ANGULAR_ACCELERATION_UNIT: _UnitType.ValueType  # 393216
-    ACCELERATION_UNIT: _UnitType.ValueType  # 458752
-    ANGULAR_JERK_UNIT: _UnitType.ValueType  # 524288
-    JERK_UNIT: _UnitType.ValueType  # 589824
-    TORQUE_UNIT: _UnitType.ValueType  # 1048576
-    FORCE_UNIT: _UnitType.ValueType  # 1114112
-    CURRENT_UNIT: _UnitType.ValueType  # 1179648
-    INT_TIME_TICK_UNIT: _UnitType.ValueType  # 1245184
-    TEMPERATURE_UNIT: _UnitType.ValueType  # 1310720
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    UNSPECIFIED_UNIT: UnitType.ValueType = ...  # 0
+    TIME_UNIT: UnitType.ValueType = ...  # 65536
+    ANGLE_UNIT: UnitType.ValueType = ...  # 131072
+    LENGTH_UNIT: UnitType.ValueType = ...  # 196608
+    ANGULAR_VELOCITY_UNIT: UnitType.ValueType = ...  # 262144
+    VELOCITY_UNIT: UnitType.ValueType = ...  # 327680
+    ANGULAR_ACCELERATION_UNIT: UnitType.ValueType = ...  # 393216
+    ACCELERATION_UNIT: UnitType.ValueType = ...  # 458752
+    ANGULAR_JERK_UNIT: UnitType.ValueType = ...  # 524288
+    JERK_UNIT: UnitType.ValueType = ...  # 589824
+    TORQUE_UNIT: UnitType.ValueType = ...  # 1048576
+    FORCE_UNIT: UnitType.ValueType = ...  # 1114112
+    CURRENT_UNIT: UnitType.ValueType = ...  # 1179648
+    INT_TIME_TICK_UNIT: UnitType.ValueType = ...  # 1245184
+    TEMPERATURE_UNIT: UnitType.ValueType = ...  # 1310720
 class UnitType(_UnitType, metaclass=_UnitTypeEnumTypeWrapper):
     """List of canonical units that are used in canonical data types and their APIs.
 
@@ -55,21 +55,21 @@ class UnitType(_UnitType, metaclass=_UnitTypeEnumTypeWrapper):
     """
     pass
 
-UNSPECIFIED_UNIT: UnitType.ValueType  # 0
-TIME_UNIT: UnitType.ValueType  # 65536
-ANGLE_UNIT: UnitType.ValueType  # 131072
-LENGTH_UNIT: UnitType.ValueType  # 196608
-ANGULAR_VELOCITY_UNIT: UnitType.ValueType  # 262144
-VELOCITY_UNIT: UnitType.ValueType  # 327680
-ANGULAR_ACCELERATION_UNIT: UnitType.ValueType  # 393216
-ACCELERATION_UNIT: UnitType.ValueType  # 458752
-ANGULAR_JERK_UNIT: UnitType.ValueType  # 524288
-JERK_UNIT: UnitType.ValueType  # 589824
-TORQUE_UNIT: UnitType.ValueType  # 1048576
-FORCE_UNIT: UnitType.ValueType  # 1114112
-CURRENT_UNIT: UnitType.ValueType  # 1179648
-INT_TIME_TICK_UNIT: UnitType.ValueType  # 1245184
-TEMPERATURE_UNIT: UnitType.ValueType  # 1310720
+UNSPECIFIED_UNIT: UnitType.ValueType = ...  # 0
+TIME_UNIT: UnitType.ValueType = ...  # 65536
+ANGLE_UNIT: UnitType.ValueType = ...  # 131072
+LENGTH_UNIT: UnitType.ValueType = ...  # 196608
+ANGULAR_VELOCITY_UNIT: UnitType.ValueType = ...  # 262144
+VELOCITY_UNIT: UnitType.ValueType = ...  # 327680
+ANGULAR_ACCELERATION_UNIT: UnitType.ValueType = ...  # 393216
+ACCELERATION_UNIT: UnitType.ValueType = ...  # 458752
+ANGULAR_JERK_UNIT: UnitType.ValueType = ...  # 524288
+JERK_UNIT: UnitType.ValueType = ...  # 589824
+TORQUE_UNIT: UnitType.ValueType = ...  # 1048576
+FORCE_UNIT: UnitType.ValueType = ...  # 1114112
+CURRENT_UNIT: UnitType.ValueType = ...  # 1179648
+INT_TIME_TICK_UNIT: UnitType.ValueType = ...  # 1245184
+TEMPERATURE_UNIT: UnitType.ValueType = ...  # 1310720
 global___UnitType = UnitType
 
 
@@ -77,66 +77,66 @@ class _Unit:
     ValueType = typing.NewType('ValueType', builtins.int)
     V: typing_extensions.TypeAlias = ValueType
 class _UnitEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_Unit.ValueType], builtins.type):
-    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor
-    UNSPECIFIED: _Unit.ValueType  # 0
-    UNITLESS: _Unit.ValueType  # 1
-    SECONDS: _Unit.ValueType  # 65536
+    DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    UNSPECIFIED: Unit.ValueType = ...  # 0
+    UNITLESS: Unit.ValueType = ...  # 1
+    SECONDS: Unit.ValueType = ...  # 65536
     """Time units. It is for real value time measurement only, such as time
     between two events, etc. It should not be used as a timestamp key.
     """
 
-    MILLISECONDS: _Unit.ValueType  # 65537
-    MICROSECONDS: _Unit.ValueType  # 65538
-    NANOSECONDS: _Unit.ValueType  # 65539
-    MINUTES: _Unit.ValueType  # 65540
-    HOURS: _Unit.ValueType  # 65541
-    RADIANS: _Unit.ValueType  # 131072
+    MILLISECONDS: Unit.ValueType = ...  # 65537
+    MICROSECONDS: Unit.ValueType = ...  # 65538
+    NANOSECONDS: Unit.ValueType = ...  # 65539
+    MINUTES: Unit.ValueType = ...  # 65540
+    HOURS: Unit.ValueType = ...  # 65541
+    RADIANS: Unit.ValueType = ...  # 131072
     """Angle units"""
 
-    DEGREES: _Unit.ValueType  # 131073
-    METERS: _Unit.ValueType  # 196608
+    DEGREES: Unit.ValueType = ...  # 131073
+    METERS: Unit.ValueType = ...  # 196608
     """Length units."""
 
-    MILLIMETERS: _Unit.ValueType  # 196609
-    INCHES: _Unit.ValueType  # 196610
-    RADIANS_PER_SEC: _Unit.ValueType  # 262144
+    MILLIMETERS: Unit.ValueType = ...  # 196609
+    INCHES: Unit.ValueType = ...  # 196610
+    RADIANS_PER_SEC: Unit.ValueType = ...  # 262144
     """Angular velocity units."""
 
-    DEGREES_PER_SEC: _Unit.ValueType  # 262145
-    METERS_PER_SEC: _Unit.ValueType  # 327680
+    DEGREES_PER_SEC: Unit.ValueType = ...  # 262145
+    METERS_PER_SEC: Unit.ValueType = ...  # 327680
     """Velocity units."""
 
-    KILOMETERS_PER_HOUR: _Unit.ValueType  # 327681
-    RADIANS_PER_SEC2: _Unit.ValueType  # 393216
+    KILOMETERS_PER_HOUR: Unit.ValueType = ...  # 327681
+    RADIANS_PER_SEC2: Unit.ValueType = ...  # 393216
     """Angular acceleration units."""
 
-    DEGREES_PER_SEC2: _Unit.ValueType  # 393217
-    METERS_PER_SEC2: _Unit.ValueType  # 458752
+    DEGREES_PER_SEC2: Unit.ValueType = ...  # 393217
+    METERS_PER_SEC2: Unit.ValueType = ...  # 458752
     """Acceleration units."""
 
-    EARTH_AVERAGE_G: _Unit.ValueType  # 458753
-    RADIANS_PER_SEC3: _Unit.ValueType  # 524288
+    EARTH_AVERAGE_G: Unit.ValueType = ...  # 458753
+    RADIANS_PER_SEC3: Unit.ValueType = ...  # 524288
     """Angular jerk units."""
 
-    DEGREES_PER_SEC3: _Unit.ValueType  # 524289
-    METERS_PER_SEC3: _Unit.ValueType  # 589824
+    DEGREES_PER_SEC3: Unit.ValueType = ...  # 524289
+    METERS_PER_SEC3: Unit.ValueType = ...  # 589824
     """Jerk units."""
 
-    MILLIMETER_PER_SEC3: _Unit.ValueType  # 589825
-    NEWTON_METERS: _Unit.ValueType  # 1048576
+    MILLIMETER_PER_SEC3: Unit.ValueType = ...  # 589825
+    NEWTON_METERS: Unit.ValueType = ...  # 1048576
     """Torque units."""
 
-    FOOT_POUNDS: _Unit.ValueType  # 1048577
-    OUNCE_INCHES: _Unit.ValueType  # 1048578
-    NEWTONS: _Unit.ValueType  # 1114112
+    FOOT_POUNDS: Unit.ValueType = ...  # 1048577
+    OUNCE_INCHES: Unit.ValueType = ...  # 1048578
+    NEWTONS: Unit.ValueType = ...  # 1114112
     """Force units."""
 
-    KILOGRAM_FORCE: _Unit.ValueType  # 1114113
-    AMPERES: _Unit.ValueType  # 1179648
+    KILOGRAM_FORCE: Unit.ValueType = ...  # 1114113
+    AMPERES: Unit.ValueType = ...  # 1179648
     """Current units."""
 
-    MILLIAMPERES: _Unit.ValueType  # 1179649
-    INT_TIME_TICK: _Unit.ValueType  # 1245184
+    MILLIAMPERES: Unit.ValueType = ...  # 1179649
+    INT_TIME_TICK: Unit.ValueType = ...  # 1245184
     """Time ticks units in int64. This is the unit for timestamp, etc that
     can be used as keys. Use regular time units above if time is a real value
     measurement. Unit conversion is not available to regular time units since
@@ -144,11 +144,11 @@ class _UnitEnumTypeWrapper(google.protobuf.internal.enum_type_wrapper._EnumTypeW
     time drift, etc.
     """
 
-    CELSIUS: _Unit.ValueType  # 1310720
+    CELSIUS: Unit.ValueType = ...  # 1310720
     """Temperature units."""
 
-    FAHRENHEIT: _Unit.ValueType  # 1310721
-    KELVIN: _Unit.ValueType  # 1310722
+    FAHRENHEIT: Unit.ValueType = ...  # 1310721
+    KELVIN: Unit.ValueType = ...  # 1310722
 class Unit(_Unit, metaclass=_UnitEnumTypeWrapper):
     """Definition of units. Values of unit are defined as values of unit type + N
     (N >= 0). For each type, conversion to default unit of the same unit type
@@ -157,65 +157,65 @@ class Unit(_Unit, metaclass=_UnitEnumTypeWrapper):
     """
     pass
 
-UNSPECIFIED: Unit.ValueType  # 0
-UNITLESS: Unit.ValueType  # 1
-SECONDS: Unit.ValueType  # 65536
+UNSPECIFIED: Unit.ValueType = ...  # 0
+UNITLESS: Unit.ValueType = ...  # 1
+SECONDS: Unit.ValueType = ...  # 65536
 """Time units. It is for real value time measurement only, such as time
 between two events, etc. It should not be used as a timestamp key.
 """
 
-MILLISECONDS: Unit.ValueType  # 65537
-MICROSECONDS: Unit.ValueType  # 65538
-NANOSECONDS: Unit.ValueType  # 65539
-MINUTES: Unit.ValueType  # 65540
-HOURS: Unit.ValueType  # 65541
-RADIANS: Unit.ValueType  # 131072
+MILLISECONDS: Unit.ValueType = ...  # 65537
+MICROSECONDS: Unit.ValueType = ...  # 65538
+NANOSECONDS: Unit.ValueType = ...  # 65539
+MINUTES: Unit.ValueType = ...  # 65540
+HOURS: Unit.ValueType = ...  # 65541
+RADIANS: Unit.ValueType = ...  # 131072
 """Angle units"""
 
-DEGREES: Unit.ValueType  # 131073
-METERS: Unit.ValueType  # 196608
+DEGREES: Unit.ValueType = ...  # 131073
+METERS: Unit.ValueType = ...  # 196608
 """Length units."""
 
-MILLIMETERS: Unit.ValueType  # 196609
-INCHES: Unit.ValueType  # 196610
-RADIANS_PER_SEC: Unit.ValueType  # 262144
+MILLIMETERS: Unit.ValueType = ...  # 196609
+INCHES: Unit.ValueType = ...  # 196610
+RADIANS_PER_SEC: Unit.ValueType = ...  # 262144
 """Angular velocity units."""
 
-DEGREES_PER_SEC: Unit.ValueType  # 262145
-METERS_PER_SEC: Unit.ValueType  # 327680
+DEGREES_PER_SEC: Unit.ValueType = ...  # 262145
+METERS_PER_SEC: Unit.ValueType = ...  # 327680
 """Velocity units."""
 
-KILOMETERS_PER_HOUR: Unit.ValueType  # 327681
-RADIANS_PER_SEC2: Unit.ValueType  # 393216
+KILOMETERS_PER_HOUR: Unit.ValueType = ...  # 327681
+RADIANS_PER_SEC2: Unit.ValueType = ...  # 393216
 """Angular acceleration units."""
 
-DEGREES_PER_SEC2: Unit.ValueType  # 393217
-METERS_PER_SEC2: Unit.ValueType  # 458752
+DEGREES_PER_SEC2: Unit.ValueType = ...  # 393217
+METERS_PER_SEC2: Unit.ValueType = ...  # 458752
 """Acceleration units."""
 
-EARTH_AVERAGE_G: Unit.ValueType  # 458753
-RADIANS_PER_SEC3: Unit.ValueType  # 524288
+EARTH_AVERAGE_G: Unit.ValueType = ...  # 458753
+RADIANS_PER_SEC3: Unit.ValueType = ...  # 524288
 """Angular jerk units."""
 
-DEGREES_PER_SEC3: Unit.ValueType  # 524289
-METERS_PER_SEC3: Unit.ValueType  # 589824
+DEGREES_PER_SEC3: Unit.ValueType = ...  # 524289
+METERS_PER_SEC3: Unit.ValueType = ...  # 589824
 """Jerk units."""
 
-MILLIMETER_PER_SEC3: Unit.ValueType  # 589825
-NEWTON_METERS: Unit.ValueType  # 1048576
+MILLIMETER_PER_SEC3: Unit.ValueType = ...  # 589825
+NEWTON_METERS: Unit.ValueType = ...  # 1048576
 """Torque units."""
 
-FOOT_POUNDS: Unit.ValueType  # 1048577
-OUNCE_INCHES: Unit.ValueType  # 1048578
-NEWTONS: Unit.ValueType  # 1114112
+FOOT_POUNDS: Unit.ValueType = ...  # 1048577
+OUNCE_INCHES: Unit.ValueType = ...  # 1048578
+NEWTONS: Unit.ValueType = ...  # 1114112
 """Force units."""
 
-KILOGRAM_FORCE: Unit.ValueType  # 1114113
-AMPERES: Unit.ValueType  # 1179648
+KILOGRAM_FORCE: Unit.ValueType = ...  # 1114113
+AMPERES: Unit.ValueType = ...  # 1179648
 """Current units."""
 
-MILLIAMPERES: Unit.ValueType  # 1179649
-INT_TIME_TICK: Unit.ValueType  # 1245184
+MILLIAMPERES: Unit.ValueType = ...  # 1179649
+INT_TIME_TICK: Unit.ValueType = ...  # 1245184
 """Time ticks units in int64. This is the unit for timestamp, etc that
 can be used as keys. Use regular time units above if time is a real value
 measurement. Unit conversion is not available to regular time units since
@@ -223,11 +223,11 @@ unit conversion does not cover definition of time domain nor correct for
 time drift, etc.
 """
 
-CELSIUS: Unit.ValueType  # 1310720
+CELSIUS: Unit.ValueType = ...  # 1310720
 """Temperature units."""
 
-FAHRENHEIT: Unit.ValueType  # 1310721
-KELVIN: Unit.ValueType  # 1310722
+FAHRENHEIT: Unit.ValueType = ...  # 1310721
+KELVIN: Unit.ValueType = ...  # 1310722
 global___Unit = Unit
 
 
@@ -235,22 +235,22 @@ class DomainTimestamp(google.protobuf.message.Message):
     """Timestamp with explicit domain, allow tagging objects with multiple
     timestamps under different, probably all drifted clock domains.
     """
-    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CLOCK_DOMAIN_FIELD_NUMBER: builtins.int
     UNIT_FIELD_NUMBER: builtins.int
     VALUE_FIELD_NUMBER: builtins.int
-    clock_domain: typing.Text
+    clock_domain: typing.Text = ...
     """A robot / project specific clock domain, like "camera/acquisition" for
     acquisition time on camera clock.
     """
 
-    unit: global___Unit.ValueType
-    value: builtins.int
+    unit: global___Unit.ValueType = ...
+    value: builtins.int = ...
     def __init__(self,
         *,
-        clock_domain: typing.Optional[typing.Text] = ...,
-        unit: typing.Optional[global___Unit.ValueType] = ...,
-        value: typing.Optional[builtins.int] = ...,
+        clock_domain : typing.Optional[typing.Text] = ...,
+        unit : typing.Optional[global___Unit.ValueType] = ...,
+        value : typing.Optional[builtins.int] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["clock_domain",b"clock_domain","unit",b"unit","value",b"value"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["clock_domain",b"clock_domain","unit",b"unit","value",b"value"]) -> None: ...
