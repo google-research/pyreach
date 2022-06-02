@@ -23,11 +23,42 @@ import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import google.protobuf.timestamp_pb2
+import robot_info_pb2
 import status_pb2
 import typing
 import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
+
+class RegisterRobotClientRequest(google.protobuf.message.Message):
+    """Messages used for RPCs to RobotController::RegisterClient/UnregisterClient."""
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    CLIENT_ID_FIELD_NUMBER: builtins.int
+    client_id: typing.Text = ...
+    def __init__(self,
+        *,
+        client_id : typing.Optional[typing.Text] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["client_id",b"client_id"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["client_id",b"client_id"]) -> None: ...
+global___RegisterRobotClientRequest = RegisterRobotClientRequest
+
+class RegisterRobotClientResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    STATUS_FIELD_NUMBER: builtins.int
+    ROBOT_INFO_FIELD_NUMBER: builtins.int
+    @property
+    def status(self) -> status_pb2.StatusProto: ...
+    @property
+    def robot_info(self) -> robot_info_pb2.RobotInfo: ...
+    def __init__(self,
+        *,
+        status : typing.Optional[status_pb2.StatusProto] = ...,
+        robot_info : typing.Optional[robot_info_pb2.RobotInfo] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["robot_info",b"robot_info","status",b"status"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["robot_info",b"robot_info","status",b"status"]) -> None: ...
+global___RegisterRobotClientResponse = RegisterRobotClientResponse
 
 class ControlEntity(google.protobuf.message.Message):
     """Metadata to identify an entity in the robot controller. Entities correspond

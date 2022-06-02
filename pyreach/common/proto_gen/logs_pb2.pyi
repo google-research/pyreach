@@ -3910,6 +3910,7 @@ class SessionInfo(google.protobuf.message.Message):
     CLIENT_SESSION_UID_FIELD_NUMBER: builtins.int
     WORKCELL_SETUP_VERSION_FIELD_NUMBER: builtins.int
     CONSTRAINTS_VERSION_FIELD_NUMBER: builtins.int
+    ROBOTICS_UI_VERSION_FIELD_NUMBER: builtins.int
     operator_uid: typing.Text = ...
     operator_type: typing.Text = ...
     session_id: typing.Text = ...
@@ -3958,6 +3959,9 @@ class SessionInfo(google.protobuf.message.Message):
     See http://doc/1kk33RxaT6KYEB-mTNVeyZgfnPqBsYkcAdNUAW7PYjkI
     """
 
+    robotics_ui_version: typing.Text = ...
+    """RoboticsUIVersion is the version of the robotics UI data stored."""
+
     def __init__(self,
         *,
         operator_uid : typing.Optional[typing.Text] = ...,
@@ -3977,9 +3981,10 @@ class SessionInfo(google.protobuf.message.Message):
         client_session_uid : typing.Optional[typing.Text] = ...,
         workcell_setup_version : typing.Optional[typing.Text] = ...,
         constraints_version : typing.Optional[typing.Text] = ...,
+        robotics_ui_version : typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["accept_depth_encoding",b"accept_depth_encoding","actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","robotics_ui_version",b"robotics_ui_version","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["accept_depth_encoding",b"accept_depth_encoding","actionsets_version",b"actionsets_version","calibration_version",b"calibration_version","client_os",b"client_os","client_session_uid",b"client_session_uid","constraints_version",b"constraints_version","operator_type",b"operator_type","operator_uid",b"operator_uid","relay",b"relay","robot_name",b"robot_name","robotics_ui_version",b"robotics_ui_version","safety_version",b"safety_version","session_id",b"session_id","start_time",b"start_time","transport",b"transport","ui_version",b"ui_version","workcell_io_version",b"workcell_io_version","workcell_setup_version",b"workcell_setup_version"]) -> None: ...
 global___SessionInfo = SessionInfo
 
 class ProtectiveStopState(google.protobuf.message.Message):
