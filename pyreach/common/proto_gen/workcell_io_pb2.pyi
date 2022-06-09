@@ -94,6 +94,9 @@ global___IOType = IOType
 
 
 class IOConfig(google.protobuf.message.Message):
+    """option go_package = ".;workcell";
+
+    """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CAPABILITY_FIELD_NUMBER: builtins.int
     IO_SPACE_FIELD_NUMBER: builtins.int

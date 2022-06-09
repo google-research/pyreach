@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Gym environment for the UR Integration Test Workcell."""
 
 import time
@@ -54,7 +53,8 @@ class IntegrationTestUREnv(reach_env.ReachEnv):
                 tuple(self.MAX_JOINT_ANGLES.tolist()),
                 is_synchronous=is_synchronous,
                 response_queue_length=response_queue_length,
-                ik_lib=arm.IKLibType.IKFAST),
+                ik_lib=arm.IKLibType.IKFAST,
+                exception_if_error=True),
         "camera":
             reach_env.ReachColorCamera("realsense", (360, 640)),
         "depth_camera":

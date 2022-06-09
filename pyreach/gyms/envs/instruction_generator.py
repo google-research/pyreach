@@ -22,9 +22,10 @@ COLORS = ['red', 'blue', 'green', 'yellow']
 class InstructionGeneratorBlock8():
   """Instruction generator for 8 block tasks."""
 
-  def __init__(self, seed: int = 0):
+  def __init__(self, seed: int = 0, verbose: bool = False) -> None:
     self._fn_rng = np.random.RandomState(seed)
     self._inst_rng = np.random.RandomState(seed)
+    self._verbose = verbose
 
   def generate_instruction(self) -> str:
     """Gets random from each 'instruction class'."""
@@ -59,7 +60,7 @@ class InstructionGeneratorBlock8():
               f'the {colors[1]} blocks in the {locations[1]}, '
               f'the {colors[2]} blocks in the {locations[2]}, '
               f'and the {colors[3]} blocks in the {locations[3]}.')
-      if len(inst) > 256:  # 256 is max length.
+      if len(inst) > 256 and self._verbose:  # 256 is max length.
         logging.info('Instruction greater than max length: %s', inst)
       all_inst.append(inst)
     return all_inst
@@ -146,7 +147,7 @@ class InstructionGeneratorBlock8():
       for idx, (block_i, loc_i) in enumerate(
           zip(ordering, outer_edge_locations)):
         inst += f'{idx}) {block_i} to {loc_i}, \n'
-      if len(inst) > 256:  # 256 is max instruction length.
+      if len(inst) > 256 and self._verbose:  # 256 is max instruction length.
         logging.info('Instruction greater than max length: %s', inst)
       all_inst.append(inst)
     return all_inst

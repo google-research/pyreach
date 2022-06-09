@@ -21,6 +21,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 
 import numpy as np
 
+from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 from pyreach import arm
 from pyreach import calibration
 from pyreach import constraints
@@ -37,7 +38,6 @@ from pyreach.impl import digital_output_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 
 
 class IKLib:

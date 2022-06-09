@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Reach arm element used for configuration."""
 
 import dataclasses
@@ -88,37 +87,37 @@ class ReachArm(reach_element.ReachElement):
   will contain images after arm has stopped moving.
 
   Attributes:
-    reach_name: The Reach name of the arm.
-    low_joint_angles : The minimum values for the joint angles in radians. Use
-      an empty list if no low limits are specified.
+    reach_name: The Reach name of the arm. low_joint_angles : The minimum values
+      for the joint angles in radians. Use an empty list if no low limits are
+      specified.
     high_joint_angles: The maximum values for the joint angles in radians. Use
       an empty list if no high limits are specified.
     apply_tip_adjust_transform: If True and a tip adjustment transform is
       available, apply the transform for each arm movement operation.
-    is_synchronous: If True, the arm is always moved synchronously; otherwise
-      it is typically moved asynchronously.  (For further details see above.)
-    response_queue_length: When positive, the PyReach Gym returns the last N
-      arm status values for asynchronous moves.
+    is_synchronous: If True, the arm is always moved synchronously; otherwise it
+      is typically moved asynchronously.  (For further details see above.)
+    response_queue_length: When positive, the PyReach Gym returns the last N arm
+      status values for asynchronous moves.
     ik_lib: Whether to use IKFast, IK PyBullet, or None for inverse kinematics.
       This defaults to the IKFast library.
-    controllers: A list of the controller names to allow for arm control.
-      In the Gym, the controller is specified by a number that indexes into
-      this list.  The empty string means "no controller".  This list must
-      not empty.  By convention, the first entry is the empty string.
-      If not specified, the list defaults to `("",)`
-    e_stop_mode: Specifies the Gym behavior when an emergency stop occurs.
-      0 specifies that a `PyreachError` will be raised. 1 specifies that a
-      the Gym will cause the step method to return with the Done flag set.
-      2 specifies that the arm status will indicate an E-stop condition.
-      (Default: 0)
-    p_stop_mode:  Specifies the Gym behavior when an protective stop occurs.
-      0 specifies that a `PyreachError` will be raised. 1 specifies that a
-      the Gym will cause the step method to return with the Done flag set.
-      2 specifies that the arm status will indicate a P-stop condition.
-      (Default: 0)
+    controllers: A list of the controller names to allow for arm control. In the
+      Gym, the controller is specified by a number that indexes into this list.
+      The empty string means "no controller".  This list must not empty.  By
+      convention, the first entry is the empty string. If not specified, the
+      list defaults to `("",)`
+    e_stop_mode: Specifies the Gym behavior when an emergency stop occurs. 0
+      specifies that a `PyreachError` will be raised. 1 specifies that a the Gym
+      will cause the step method to return with the Done flag set. 2 specifies
+      that the arm status will indicate an E-stop condition. (Default: 0)
+    p_stop_mode:  Specifies the Gym behavior when an protective stop occurs. 0
+      specifies that a `PyreachError` will be raised. 1 specifies that a the Gym
+      will cause the step method to return with the Done flag set. 2 specifies
+      that the arm status will indicate a P-stop condition. (Default: 0)
     synchronous_pose_error: Specifies the maximum allowable distance between
-      requested pose position and actual pose position. Set to negative
-      value to disable check.  (Default: -1.00.)
+      requested pose position and actual pose position. Set to negative value to
+      disable check.  (Default: -1.00.)
+    exception_if_error: Causes the gym to throw an exception if a command fails
+      to execute.  (Default: false)
     debug_flags: Specifies flags for internal debugging.  (Default: "")
   """
   low_joint_angles: Tuple[float, ...] = ()
@@ -132,6 +131,7 @@ class ReachArm(reach_element.ReachElement):
   p_stop_mode: int = ReachStopMode.STOP_ERROR
   no_power_mode: int = ReachStopMode.STOP_ERROR
   synchronous_pose_error: Optional[float] = None
+  exception_if_error: bool = False
   # Used for unit testing only:
   test_states: Optional[List[pyreach_arm.ArmState]] = None
   # Used for development testing only:

@@ -73,6 +73,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
     p_stop_mode: int = arm_config.p_stop_mode
     no_power_mode: int = arm_config.no_power_mode
     synchronous_pose_error: Optional[float] = arm_config.synchronous_pose_error
+    exception_if_error: bool = arm_config.exception_if_error
 
     # For unit testing only.
     test_states: Optional[List[pyreach_arm.ArmState]] = arm_config.test_states
@@ -176,10 +177,10 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._high_joint_angles: Tuple[float, ...] = high_joint_angles
     self._ik_lib: Optional[pyreach_arm.IKLibType] = ik_lib
     self._low_joint_angles: Tuple[float, ...] = low_joint_angles
-    self._joints: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    self._pose: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    self._tip_pose: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    self._tip_transform: np.ndarray = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    self._joints: np.ndarray = np.zeros(6)
+    self._pose: np.ndarray = np.zeros(6)
+    self._tip_pose: np.ndarray = np.zeros(6)
+    self._tip_transform: np.ndarray = np.zeros(6)
     self._pyreach_status: Optional[pyreach.PyReachStatus] = None
     self._response_queue_length: int = response_queue_length
     self._apply_tip_adjust_transform: bool = apply_tip_adjust_transform
@@ -188,11 +189,11 @@ class ReachDeviceArm(reach_device.ReachDevice):
     self._p_stop_mode: int = p_stop_mode
     self._no_power_mode: int = no_power_mode
     self._synchronous_pose_error: Optional[float] = synchronous_pose_error
+    self._exception_if_error: bool = exception_if_error
     # For internal debugging only.
     self._debug_flags: str = debug_flags
-    self._debug_last_action_command: int = 0
-    self._debug_last_action_pose: np.ndarray = np.array(
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    self._last_action_command: int = 0
+    self._last_action_pose: np.ndarray = np.zeros(6)
 
   def __str__(self) -> str:
     """Return string representation of Arm."""
@@ -324,6 +325,12 @@ class ReachDeviceArm(reach_device.ReachDevice):
                 0, "arm", self.config_name,
                 lib_snapshot.SnapshotReference(0.0, 0)))
       else:
+        if pyreach_status.is_error() and pyreach_status.error != "interrupted":
+          logging.warning("Arm error: %s", str(pyreach_status))
+          if self._exception_if_error:
+            raise core.PyReachError("Arm error: " + str(pyreach_status))
+        if self._exception_if_error and self._arm_state_capturer.get_is_error():
+          raise core.PyReachError("Arm error in async command")
         # Get last cached value ArmState, which should be good enough to figure
         # out if either E-Stop or P-Stop has occurred.
         # Snapshot this?
@@ -390,51 +397,52 @@ class ReachDeviceArm(reach_device.ReachDevice):
           self._joints = np.array(joints)
         elif self._last_command != 0:
           logging.info("++++++++++++++++ Invalid joint angles: %s", joints)
-        self._pose = np.array(
-            pyreach.Pose.as_list(arm_state.pose), dtype=np.float_)
 
-        tip_adjust_t_tcp: Optional[core.Pose] = arm_state.tip_adjust_t_tcp
-        if tip_adjust_t_tcp is None:
-          tip_adjust_t_tcp = core.Pose(
-              core.Translation(0.0, 0.0, 0.0),
-              core.AxisAngle.from_tuple((0.0, 0.0, 0.0)))
-        tip_adjust_t_base: Optional[core.Pose] = arm_state.tip_adjust_t_base
-        if tip_adjust_t_base is None:
-          tip_adjust_t_base = arm_state.pose
+        pose: core.Pose = arm_state.pose
+        self._pose = np.array(pose.as_tuple(), dtype=np.float_)
 
-        # Internal debugging:
-        pose_error: Optional[float] = self._synchronous_pose_error
-        if (isinstance(pose_error, float) and pose_error >= 0.0 and
-            self._debug_last_action_command in (2, 4, 5)):
-          action_pose: np.ndarray = self._debug_last_action_pose
+        tip_pose: Optional[core.Pose] = arm_state.tip_adjust_t_tcp
+        if tip_pose is None:
+          tip_pose = core.Pose.from_tuple((0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        self._tip_pose = np.array(tip_pose.as_tuple(), dtype=np.float_)
+
+        tip_adjust: Optional[core.Pose] = arm_state.tip_adjust_t_base
+        if tip_adjust is None:
+          tip_adjust = core.Pose.from_tuple((0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        self._tip_adjust = np.array(tip_adjust.as_tuple(), dtype=np.float_)
+
+        maximum_pose_error: Optional[float] = self._synchronous_pose_error
+        last_action_command: int = self._last_action_command
+        if (isinstance(maximum_pose_error, float) and
+            maximum_pose_error >= 0.0 and last_action_command in (2, 4, 5)):
+          last_action_pose: np.ndarray = self._last_action_pose
           desired_pose: np.ndarray
-          if self._debug_last_action_command == 2:
+          if last_action_command == 2:
             if self._apply_tip_adjust_transform:
               desired_pose = self._tip_pose
             else:
               desired_pose = self._pose
-          elif self._debug_last_action_command == 4:
+          elif last_action_command == 4:
             desired_pose = self._pose
-          elif self._debug_last_action_command == 5:
+          elif last_action_command == 5:
             desired_pose = self._tip_pose
+
           if not np.allclose(
               desired_pose,
-              action_pose,
-              rtol=pose_error,
-              atol=pose_error,
-          ):
+              last_action_pose,
+              rtol=maximum_pose_error,
+              atol=maximum_pose_error):
+            pose_error: np.ndarray = last_action_pose[:3] - desired_pose[:3]
+            pose_error_magnitude: float = np.linalg.norm(pose_error)
+
             raise pyreach.PyReachError(
                 "Pose out of tolerance: "
-                f"command={self._debug_last_action_command}, "
-                f"action_pose={action_pose}, "
-                f"desired_pose={desired_pose}, "
-                f"tip_pose={self._tip_pose}, "
-                f"pose={self._pose}")
-
-        self._tip_pose = np.array(
-            pyreach.Pose.as_list(tip_adjust_t_base), dtype=np.float_)
-        self._tip_adjust = np.array(
-            pyreach.Pose.as_list(tip_adjust_t_tcp), dtype=np.float_)
+                f"last_action_command={last_action_command} "
+                f"last_action_pose={last_action_pose[:3]} "
+                f"tip_pose={self._tip_pose[:3]}, "
+                f"pose={self._pose[:3]} "
+                f"desired_pose={desired_pose[:3]} "
+                f"pose_error_magnitude={pose_error_magnitude:.5f}")
 
         observation = {
             "ts": gyms_core.Timestamp.new(ts),
@@ -643,7 +651,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
       finished_callback: Optional[reach_device.FinishedCallback]
 
       # Internal debugging:
-      self._debug_last_action_command = command
+      self._last_action_command = command
 
       if command == 0:
         # Do nothing
@@ -733,7 +741,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
               finished_callback=finished_callback)
         return cmd_tuple
 
-      self._debug_last_action_pose = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+      self._last_action_pose = np.zeros(6)
       if command in (2, 4, 5):
         # Move using pose.
         if "pose" not in action_dict:
@@ -748,7 +756,7 @@ class ReachDeviceArm(reach_device.ReachDevice):
           tip_adjust = False
         elif command == 5:
           tip_adjust = True
-        self._debug_last_action_pose = pose
+        self._last_action_pose = pose
 
         cmd_tuple = (lib_snapshot.SnapshotGymArmAction(
             device_type="robot",
@@ -897,6 +905,12 @@ class _ArmStateCapturer(object):
     self._lock = threading.Lock()
     self._counter: int = 0
     self._storage: Dict[int, _ArmResponse] = {}
+    self._have_error: bool = False
+
+  def get_is_error(self) -> bool:
+    """Get if a status has had an error."""
+    with self._lock:
+      return self._have_error
 
   def start(self, action_id: int) -> int:
     """Starts a new arm state."""
@@ -913,6 +927,10 @@ class _ArmStateCapturer(object):
 
   def callback(self, count: int, status: pyreach.PyReachStatus) -> None:
     """A progress callback for an ArmState."""
+    have_error = False
+    if status.is_error() and status.error != "interrupted":
+      logging.warning("Arm command error: %s", str(status))
+      have_error = True
     with self._lock:
       if count in self._storage:
         arm_response: _ArmResponse = self._storage[count]
@@ -921,6 +939,7 @@ class _ArmStateCapturer(object):
         done: bool = arm_response.done
         arm_response = _ArmResponse(timestamp, count, action_id, done, status)
         self._storage[count] = arm_response
+        self._have_error = self._have_error or have_error
 
   def finished_callback(self, count: int) -> None:
     """Finished callback for an ArmState."""

@@ -214,6 +214,7 @@ class CommandMetadata(google.protobuf.message.Message):
     SOURCE_FIELD_NUMBER: builtins.int
     TARGET_FIELD_NUMBER: builtins.int
     PROCESSING_RESULT_FIELD_NUMBER: builtins.int
+    ORIGINAL_TIME_FIELD_NUMBER: builtins.int
     blocking: builtins.bool = ...
     """These fields affect the way a command is processed by the robot client.
 
@@ -233,9 +234,8 @@ class CommandMetadata(google.protobuf.message.Message):
 
     These fields affect the way a command is processed by a control module.
     If the plugins used do not check and use these fields, they are ignored.
-    They are set and/or propagated by the framework.
-    If a new field is added here, it should probably be copied by
-    RobotCommandHelper::CopyCommandMetadata().
+    If a new field is added here, it should probably also be copied by
+    utils::CopyCommandExecutionMetadata().
 
     Whether the command has been updated since the last control cycle.
     This field is automatically set to false each time a new control cycle
@@ -273,6 +273,13 @@ class CommandMetadata(google.protobuf.message.Message):
     UpdateState). This field is only used with echoed input commands.
     """
 
+    @property
+    def original_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
+        """In echoed commands, LogEntry.id.timestamp is the time the message was
+        output in the state batch. Therefore the command's original timestamp
+        (ie, when the payload was originally generated) is copied to this field.
+        """
+        pass
     def __init__(self,
         *,
         blocking : typing.Optional[builtins.bool] = ...,
@@ -283,9 +290,10 @@ class CommandMetadata(google.protobuf.message.Message):
         source : typing.Optional[global___ControlEntity] = ...,
         target : typing.Optional[global___ControlEntity] = ...,
         processing_result : typing.Optional[global___ControlModuleCommandProcessing.Result.ValueType] = ...,
+        original_time : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["blocking",b"blocking","min_time",b"min_time","processing_result",b"processing_result","source",b"source","target",b"target","timeout",b"timeout","type",b"type","updated",b"updated"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["blocking",b"blocking","min_time",b"min_time","processing_result",b"processing_result","source",b"source","target",b"target","timeout",b"timeout","type",b"type","updated",b"updated"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["blocking",b"blocking","min_time",b"min_time","original_time",b"original_time","processing_result",b"processing_result","source",b"source","target",b"target","timeout",b"timeout","type",b"type","updated",b"updated"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["blocking",b"blocking","min_time",b"min_time","original_time",b"original_time","processing_result",b"processing_result","source",b"source","target",b"target","timeout",b"timeout","type",b"type","updated",b"updated"]) -> None: ...
 global___CommandMetadata = CommandMetadata
 
 class SystemCommand(google.protobuf.message.Message):
@@ -331,6 +339,17 @@ class SystemCommand(google.protobuf.message.Message):
         client too. In most cases, the implementation is the same as STOP_MOTION.
         """
 
+        RELEASE_CONTROL_AUTHORITY: SystemCommand.Type.ValueType = ...  # 7
+        """Release the commanded part(s) from being under the control authority of
+        the command's source. This will fail if the command's source does not
+        hold that authority. Control modules and device adapters will never see
+        this command directly and do not need to handle it; instead they will see
+        a STOP_MOTION command. There is no command to take control authority
+        because authority is automatically taken for the source of any command if
+        it is available (ie, not held by another entity); a command to take
+        authority would be exactly equivalent to STOP_MOTION.
+        """
+
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         """Type of the command."""
         pass
@@ -368,6 +387,17 @@ class SystemCommand(google.protobuf.message.Message):
     damage, in response to a failure or error. This is usually generated
     internally in the controller, although it can be sent directly from the
     client too. In most cases, the implementation is the same as STOP_MOTION.
+    """
+
+    RELEASE_CONTROL_AUTHORITY: SystemCommand.Type.ValueType = ...  # 7
+    """Release the commanded part(s) from being under the control authority of
+    the command's source. This will fail if the command's source does not
+    hold that authority. Control modules and device adapters will never see
+    this command directly and do not need to handle it; instead they will see
+    a STOP_MOTION command. There is no command to take control authority
+    because authority is automatically taken for the source of any command if
+    it is available (ie, not held by another entity); a command to take
+    authority would be exactly equivalent to STOP_MOTION.
     """
 
 
@@ -514,9 +544,11 @@ class SystemState(google.protobuf.message.Message):
 
     @property
     def active_command_id(self) -> global___RobotCommandId:
-        """The id of the active command, which comes from id.seq sent from the client.
-        A command is considered active until another command is received from the
-        client, so a command can simultaneously be active and terminated.
+        """The id of the active command, which comes from the meta.command.source and
+        id.seq of the command sent from the client. The source sub-field of this
+        message is also the current control authority. A command is considered
+        active until another command is received from the client, so a command can
+        simultaneously be active and terminated.
         """
         pass
     control_step_time_sec: builtins.float = ...

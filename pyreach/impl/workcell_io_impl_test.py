@@ -15,9 +15,9 @@
 from typing import Optional
 import unittest
 
+from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 from pyreach.impl import device_base
 from pyreach.impl import workcell_io_impl
-from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 
 WORKCELL_IO_JSON = (
     '{"Proto":'
