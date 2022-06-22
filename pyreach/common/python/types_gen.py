@@ -1708,6 +1708,10 @@ class CommandData:
   experiment_flags: Optional['Flags']
   # ==============================
 
+  # === Fields for dataType delegated-clients-request:
+  # (no fields)
+  # ==============================
+
   # The text of the script to run, if the command is run-script.
   script: str
 
@@ -2194,6 +2198,9 @@ class CommandData:
     if self.data_type == 'experiment-flags':
       if self.experiment_flags:
         proto.experiment_flags.CopyFrom(self.experiment_flags.to_proto())
+    if self.data_type == 'delegated-clients-request':
+      proto_delegated_clients_request = logs_pb2.EmptyMessage()
+      proto.delegated_clients_request.CopyFrom(proto_delegated_clients_request)
     if self.script:
       proto.script = self.script
     if self.data_type == 'reach-script' or self.data_type == 'run-script' or self.data_type == 'ur-command':
@@ -2577,6 +2584,8 @@ class CommandData:
       pass  # skip empty message
     if proto.HasField('experiment_flags'):
       obj.experiment_flags = Flags.from_proto(proto.experiment_flags)
+    if proto.HasField('delegated_clients_request'):
+      pass  # skip empty message
     if proto.HasField('script'):
       obj.script = proto.script
     if proto.HasField('reach_script'):
@@ -3270,6 +3279,81 @@ class DataSegmentStart:
     obj = DataSegmentStart()
     if proto.HasField('content'):
       obj.content = DataSegmentContent.from_proto(proto.content)
+    return obj
+
+
+class DelegatedClients:
+  """Representation of proto message DelegatedClients.
+
+   DelegatedClients denotes deviceType == "delegated-client-manager", dataType
+   == "delegated-clients".
+
+  """
+  # List of all client state-machines deviceNames in the pipeline, for example:
+  # ["client1", ..., "clientN"].
+  clients: List[str]
+
+  # deviceName of the active client, example: "client3"
+  active_client: str
+
+  def __init__(self, active_client: str = '', clients: Optional[List[str]] = None) -> None:
+    self.active_client = active_client
+    if clients is None:
+      self.clients = []
+    else:
+      self.clients = clients
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.active_client:
+      assert isinstance(self.active_client, str), 'Wrong type for attribute: active_client. Expected: str. Got: ' + str(type(self.active_client)) + '.'
+      json_data['activeClient'] = self.active_client
+
+    if self.clients:
+      assert isinstance(self.clients, list), 'Wrong type for attribute: clients. Expected: list. Got: ' + str(type(self.clients)) + '.'
+      json_data['clients'] = self.clients
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.DelegatedClients':
+    """Convert DelegatedClients to proto."""
+    proto = logs_pb2.DelegatedClients()
+    proto.clients.extend(self.clients)
+    if self.active_client:
+      proto.active_client = self.active_client
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'DelegatedClients':
+    """Convert JSON to type object."""
+    obj = DelegatedClients()
+    json_list: List[Any]
+
+    if 'activeClient' in json_data:
+      assert isinstance(json_data['activeClient'], str), 'Wrong type for attribute: activeClient. Expected: str. Got: ' + str(type(json_data['activeClient'])) + '.'
+      obj.active_client = json_data['activeClient']
+
+    if 'clients' in json_data:
+      assert isinstance(json_data['clients'], list), 'Wrong type for attribute: clients. Expected: list. Got: ' + str(type(json_data['clients'])) + '.'
+      json_list = []
+      for j in json_data['clients']:
+        json_list.append(j)
+      obj.clients = json_list
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.DelegatedClients) -> Optional['DelegatedClients']:
+    """Convert DelegatedClients proto to type object."""
+    if not proto:
+      return None
+    obj = DelegatedClients()
+    for obj_clients in proto.clients:
+      obj.clients.append(obj_clients)
+    if proto.HasField('active_client'):
+      obj.active_client = proto.active_client
     return obj
 
 
@@ -4296,7 +4380,12 @@ class DeviceData:
   controller_descriptions: Optional['ControllerDescriptions']
   # ==============================
 
-  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', camera_calibration: Optional['CameraCalibration'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, robotics_ui_version: str = '', safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', urdf_file: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
+  # === Fields for dataType delegated-clients:
+
+  delegated_clients: Optional['DelegatedClients']
+  # ==============================
+
+  def __init__(self, accept_depth_encoding: Optional[List[str]] = None, actionsets_version: str = '', analog_bank: Optional[List['AnalogBank']] = None, analog_in: Optional[List[float]] = None, analog_out: Optional[List[float]] = None, audio_request_mute: Optional['AudioRequest'] = None, audio_request_unmute: Optional['AudioRequest'] = None, base_t_origin: Optional[List[float]] = None, board_io_current_a: float = 0.0, board_temp_c: float = 0.0, calibration_version: str = '', camera_calibration: Optional['CameraCalibration'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_os: str = '', client_session_uid: str = '', code: int = 0, color: str = '', color_intrinsics: Optional[List[float]] = None, color_ts: int = 0, compressed_depth: Optional[List['CompressedDepth']] = None, confidence: Optional[List[float]] = None, connected_clients: Optional['ConnectedClients'] = None, constraints_version: str = '', controller_descriptions: Optional['ControllerDescriptions'] = None, data_type: str = '', delegated_clients: Optional['DelegatedClients'] = None, depth: str = '', depth_intrinsics: Optional[List[float]] = None, depth_ts: int = 0, detection: Optional['Detection'] = None, device_name: str = '', device_type: str = '', digital_bank: Optional[List['DigitalBank']] = None, digital_in: Optional[List[bool]] = None, digital_out: Optional[List[bool]] = None, error: str = '', event_params: Optional[List['KeyValue']] = None, experiment_token: str = '', float_value: float = 0.0, force: Optional[List[float]] = None, health: Optional['Health'] = None, hint: str = '', history: Optional['History'] = None, inhibit_frame_save: bool = False, inhibit_frame_send: bool = False, int_value: int = 0, integer_bank: Optional[List['IntegerBank']] = None, intent: str = '', is_emergency_stopped: bool = False, is_object_detected: bool = False, is_program_running: bool = False, is_protective_stopped: bool = False, is_reduced_mode: bool = False, is_robot_power_on: bool = False, is_safeguard_stopped: bool = False, joint_currents_a: Optional[List[float]] = None, joint_temps_c: Optional[List[float]] = None, joint_voltages_v: Optional[List[float]] = None, joints: Optional[List[float]] = None, key: str = '', label: str = '', labels: Optional[List['KeyValue']] = None, last_terminated_program: str = '', level: float = 0.0, local_ts: int = 0, machine_description: Optional['MachineDescription'] = None, machine_interfaces: Optional['MachineInterfaces'] = None, message: str = '', message_last_timestamps: Optional[List['MessageLastTimestamp']] = None, metadata: Optional['Metadata'] = None, metric_value: Optional['KeyValue'] = None, on: bool = False, operator_type: str = '', operator_uid: str = '', pick_label: Optional['PickLabel'] = None, pick_points: Optional[List['PickPoint']] = None, pipeline_description: Optional['PipelineDescription'] = None, place_label: Optional['PlaceLabel'] = None, place_position_3d: Optional[List['Vec3d']] = None, place_quaternion_3d: Optional[List['Quaternion3d']] = None, pose: Optional[List[float]] = None, position_3d: Optional[List['Vec3d']] = None, prediction_type: str = '', program_counter: int = 0, progress: float = 0.0, quaternion_3d: Optional[List['Quaternion3d']] = None, relay: str = '', remote_ts: int = 0, report_error: Optional['ReportError'] = None, request_type: str = '', robot_current_a: float = 0.0, robot_dexterity: float = 0.0, robot_id: str = '', robot_mode: str = '', robot_name: str = '', robot_power_state: Optional['RobotPowerState'] = None, robot_power_state_update: Optional['RobotPowerState'] = None, robot_voltage_v: float = 0.0, robotics_ui_version: str = '', safety_message: str = '', safety_version: str = '', script: str = '', send_to_clients: Optional[List['SendToClient']] = None, sensor_in: Optional[List[bool]] = None, seq: int = 0, session_id: str = '', sim_instance_segmentation: Optional['SimInstanceSegmentation'] = None, sim_state: Optional['SimState'] = None, start_time: int = 0, state: Optional[List['CapabilityState']] = None, status: str = '', success_type: str = '', tag: str = '', task_code: str = '', text_instruction: Optional['TextInstruction'] = None, tip_adjust_t_base: Optional[List[float]] = None, tip_t_base: Optional[List[float]] = None, tool_analog_in: Optional[List[float]] = None, tool_analog_out: Optional[List[float]] = None, tool_current_a: float = 0.0, tool_digital_in: Optional[List[bool]] = None, tool_digital_out: Optional[List[bool]] = None, tool_temp_c: float = 0.0, tool_voltage_v: float = 0.0, torque: Optional[List[float]] = None, transport: str = '', ts: int = 0, ui_version: str = '', uncompressed_depth: str = '', upload_depth: str = '', urdf_file: str = '', vacuum_level_pa: float = 0.0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, webrtc_audio_response: Optional['WebrtcAudioResponse'] = None, workcell_io_version: str = '', workcell_setup_version: str = '') -> None:
     if accept_depth_encoding is None:
       self.accept_depth_encoding = []
     else:
@@ -4346,6 +4435,7 @@ class DeviceData:
     self.constraints_version = constraints_version
     self.controller_descriptions = controller_descriptions
     self.data_type = data_type
+    self.delegated_clients = delegated_clients
     self.depth = depth
     if depth_intrinsics is None:
       self.depth_intrinsics = []
@@ -4655,6 +4745,10 @@ class DeviceData:
     if self.data_type:
       assert isinstance(self.data_type, str), 'Wrong type for attribute: data_type. Expected: str. Got: ' + str(type(self.data_type)) + '.'
       json_data['dataType'] = self.data_type
+
+    if self.delegated_clients:
+      assert self.delegated_clients.__class__.__name__ == 'DelegatedClients', 'Wrong type for attribute: delegated_clients. Expected: DelegatedClients. Got: ' + str(type(self.delegated_clients)) + '.'
+      json_data['delegatedClients'] = self.delegated_clients.to_json()
 
     if self.depth:
       assert isinstance(self.depth, str), 'Wrong type for attribute: depth. Expected: str. Got: ' + str(type(self.depth)) + '.'
@@ -5712,6 +5806,9 @@ class DeviceData:
     if self.data_type == 'controller-descriptions':
       if self.controller_descriptions:
         proto.controller_descriptions.CopyFrom(self.controller_descriptions.to_proto())
+    if self.data_type == 'delegated-clients':
+      if self.delegated_clients:
+        proto.delegated_clients.CopyFrom(self.delegated_clients.to_proto())
     return proto
 
   @staticmethod
@@ -5843,6 +5940,10 @@ class DeviceData:
     if 'dataType' in json_data:
       assert isinstance(json_data['dataType'], str), 'Wrong type for attribute: dataType. Expected: str. Got: ' + str(type(json_data['dataType'])) + '.'
       obj.data_type = json_data['dataType']
+
+    if 'delegatedClients' in json_data:
+      assert isinstance(json_data['delegatedClients'], dict), 'Wrong type for attribute: delegatedClients. Expected: dict. Got: ' + str(type(json_data['delegatedClients'])) + '.'
+      obj.delegated_clients = DelegatedClients.from_json(json_data['delegatedClients'])
 
     if 'depth' in json_data:
       assert isinstance(json_data['depth'], str), 'Wrong type for attribute: depth. Expected: str. Got: ' + str(type(json_data['depth'])) + '.'
@@ -6917,6 +7018,8 @@ class DeviceData:
       obj.health = Health.from_proto(proto.health)
     if proto.HasField('controller_descriptions'):
       obj.controller_descriptions = ControllerDescriptions.from_proto(proto.controller_descriptions)
+    if proto.HasField('delegated_clients'):
+      obj.delegated_clients = DelegatedClients.from_proto(proto.delegated_clients)
     return obj
 
 
@@ -9784,12 +9887,20 @@ class MovePoseWaypointArgs:
   # Early termination limits for the move.
   limits: Optional['Limits']
 
-  def __init__(self, acceleration: float = 0.0, blend_radius: float = 0.0, limits: Optional['Limits'] = None, linear: bool = False, rotation: Optional['Vec3d'] = None, translation: Optional['Vec3d'] = None, velocity: float = 0.0) -> None:
+  # If set, the move should be considered continuous. Robot will move at
+  # the speed that would arrive at the desitination after one second.
+  # The next command must be received before the previous command completes.
+  # If for whatever reason, the next command does not arrive, the robot
+  # will stop after one second.
+  servo: bool
+
+  def __init__(self, acceleration: float = 0.0, blend_radius: float = 0.0, limits: Optional['Limits'] = None, linear: bool = False, rotation: Optional['Vec3d'] = None, servo: bool = False, translation: Optional['Vec3d'] = None, velocity: float = 0.0) -> None:
     self.acceleration = acceleration
     self.blend_radius = blend_radius
     self.limits = limits
     self.linear = linear
     self.rotation = rotation
+    self.servo = servo
     self.translation = translation
     self.velocity = velocity
 
@@ -9816,6 +9927,10 @@ class MovePoseWaypointArgs:
     if self.rotation:
       assert self.rotation.__class__.__name__ == 'Vec3d', 'Wrong type for attribute: rotation. Expected: Vec3d. Got: ' + str(type(self.rotation)) + '.'
       json_data['rotation'] = self.rotation.to_json()
+
+    if self.servo:
+      assert isinstance(self.servo, bool), 'Wrong type for attribute: servo. Expected: bool. Got: ' + str(type(self.servo)) + '.'
+      json_data['servo'] = self.servo
 
     if self.translation:
       assert self.translation.__class__.__name__ == 'Vec3d', 'Wrong type for attribute: translation. Expected: Vec3d. Got: ' + str(type(self.translation)) + '.'
@@ -9844,6 +9959,8 @@ class MovePoseWaypointArgs:
       proto.acceleration = self.acceleration
     if self.limits:
       proto.limits.CopyFrom(self.limits.to_proto())
+    if self.servo:
+      proto.servo = self.servo
     return proto
 
   @staticmethod
@@ -9870,6 +9987,10 @@ class MovePoseWaypointArgs:
     if 'rotation' in json_data:
       assert isinstance(json_data['rotation'], dict), 'Wrong type for attribute: rotation. Expected: dict. Got: ' + str(type(json_data['rotation'])) + '.'
       obj.rotation = Vec3d.from_json(json_data['rotation'])
+
+    if 'servo' in json_data:
+      assert isinstance(json_data['servo'], bool), 'Wrong type for attribute: servo. Expected: bool. Got: ' + str(type(json_data['servo'])) + '.'
+      obj.servo = json_data['servo']
 
     if 'translation' in json_data:
       assert isinstance(json_data['translation'], dict), 'Wrong type for attribute: translation. Expected: dict. Got: ' + str(type(json_data['translation'])) + '.'
@@ -9901,6 +10022,8 @@ class MovePoseWaypointArgs:
       obj.acceleration = proto.acceleration
     if proto.HasField('limits'):
       obj.limits = Limits.from_proto(proto.limits)
+    if proto.HasField('servo'):
+      obj.servo = proto.servo
     return obj
 
 
@@ -14111,6 +14234,9 @@ class Snapshot:
   # The gym run id.
   gym_run_id: str
 
+  # The gym_agent_id stores the gym agent ID.
+  gym_agent_id: str
+
   # The Gym episode number starting with 1 for the first episode.  Each time
   # Each time env.reset() is called, the episode number is incremented.
   gym_episode: int
@@ -14130,7 +14256,7 @@ class Snapshot:
   # Actions.
   gym_actions: List['GymAction']
 
-  def __init__(self, device_data_refs: Optional[List['DeviceDataRef']] = None, gym_actions: Optional[List['GymAction']] = None, gym_done: bool = False, gym_env_id: str = '', gym_episode: int = 0, gym_reward: float = 0.0, gym_run_id: str = '', gym_server_ts: int = 0, gym_step: int = 0, responses: Optional[List['SnapshotResponse']] = None, source: str = '') -> None:
+  def __init__(self, device_data_refs: Optional[List['DeviceDataRef']] = None, gym_actions: Optional[List['GymAction']] = None, gym_agent_id: str = '', gym_done: bool = False, gym_env_id: str = '', gym_episode: int = 0, gym_reward: float = 0.0, gym_run_id: str = '', gym_server_ts: int = 0, gym_step: int = 0, responses: Optional[List['SnapshotResponse']] = None, source: str = '') -> None:
     if device_data_refs is None:
       self.device_data_refs = []
     else:
@@ -14139,6 +14265,7 @@ class Snapshot:
       self.gym_actions = []
     else:
       self.gym_actions = gym_actions
+    self.gym_agent_id = gym_agent_id
     self.gym_done = gym_done
     self.gym_env_id = gym_env_id
     self.gym_episode = gym_episode
@@ -14170,6 +14297,10 @@ class Snapshot:
       for item in self.gym_actions:
         obj_list.append(item.to_json())
       json_data['gymActions'] = obj_list
+
+    if self.gym_agent_id:
+      assert isinstance(self.gym_agent_id, str), 'Wrong type for attribute: gym_agent_id. Expected: str. Got: ' + str(type(self.gym_agent_id)) + '.'
+      json_data['gymAgentID'] = self.gym_agent_id
 
     if self.gym_done:
       assert isinstance(self.gym_done, bool), 'Wrong type for attribute: gym_done. Expected: bool. Got: ' + str(type(self.gym_done)) + '.'
@@ -14226,6 +14357,8 @@ class Snapshot:
       proto.gym_env_id = self.gym_env_id
     if self.gym_run_id:
       proto.gym_run_id = self.gym_run_id
+    if self.gym_agent_id:
+      proto.gym_agent_id = self.gym_agent_id
     if self.gym_episode:
       proto.gym_episode = self.gym_episode
     if self.gym_step:
@@ -14256,6 +14389,10 @@ class Snapshot:
       for j in json_data['gymActions']:
         json_list.append(GymAction.from_json(j))
       obj.gym_actions = json_list
+
+    if 'gymAgentID' in json_data:
+      assert isinstance(json_data['gymAgentID'], str), 'Wrong type for attribute: gymAgentID. Expected: str. Got: ' + str(type(json_data['gymAgentID'])) + '.'
+      obj.gym_agent_id = json_data['gymAgentID']
 
     if 'gymDone' in json_data:
       assert isinstance(json_data['gymDone'], bool), 'Wrong type for attribute: gymDone. Expected: bool. Got: ' + str(type(json_data['gymDone'])) + '.'
@@ -14316,6 +14453,8 @@ class Snapshot:
       obj.gym_env_id = proto.gym_env_id
     if proto.HasField('gym_run_id'):
       obj.gym_run_id = proto.gym_run_id
+    if proto.HasField('gym_agent_id'):
+      obj.gym_agent_id = proto.gym_agent_id
     if proto.HasField('gym_episode'):
       obj.gym_episode = proto.gym_episode
     if proto.HasField('gym_step'):

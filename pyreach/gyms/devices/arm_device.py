@@ -401,12 +401,12 @@ class ReachDeviceArm(reach_device.ReachDevice):
         pose: core.Pose = arm_state.pose
         self._pose = np.array(pose.as_tuple(), dtype=np.float_)
 
-        tip_pose: Optional[core.Pose] = arm_state.tip_adjust_t_tcp
+        tip_pose: Optional[core.Pose] = arm_state.tip_adjust_t_base
         if tip_pose is None:
           tip_pose = core.Pose.from_tuple((0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         self._tip_pose = np.array(tip_pose.as_tuple(), dtype=np.float_)
 
-        tip_adjust: Optional[core.Pose] = arm_state.tip_adjust_t_base
+        tip_adjust: Optional[core.Pose] = arm_state.tip_adjust_t_flange
         if tip_adjust is None:
           tip_adjust = core.Pose.from_tuple((0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         self._tip_adjust = np.array(tip_adjust.as_tuple(), dtype=np.float_)
@@ -427,22 +427,18 @@ class ReachDeviceArm(reach_device.ReachDevice):
           elif last_action_command == 5:
             desired_pose = self._tip_pose
 
-          if not np.allclose(
-              desired_pose,
-              last_action_pose,
-              rtol=maximum_pose_error,
-              atol=maximum_pose_error):
-            pose_error: np.ndarray = last_action_pose[:3] - desired_pose[:3]
-            pose_error_magnitude: float = np.linalg.norm(pose_error)
-
+          pose_error: np.ndarray = last_action_pose[:3] - desired_pose[:3]
+          pose_error_magnitude: float = np.linalg.norm(pose_error)
+          if pose_error_magnitude > maximum_pose_error:
             raise pyreach.PyReachError(
                 "Pose out of tolerance: "
                 f"last_action_command={last_action_command} "
                 f"last_action_pose={last_action_pose[:3]} "
                 f"tip_pose={self._tip_pose[:3]}, "
-                f"pose={self._pose[:3]} "
+                f"flange_pose={self._pose[:3]} "
                 f"desired_pose={desired_pose[:3]} "
-                f"pose_error_magnitude={pose_error_magnitude:.5f}")
+                f"pose_error_magnitude={pose_error_magnitude:.5f} "
+                f"maximum_pose_error={maximum_pose_error:.5f}")
 
         observation = {
             "ts": gyms_core.Timestamp.new(ts),
@@ -468,6 +464,8 @@ class ReachDeviceArm(reach_device.ReachDevice):
     """Synchronously update the arm state."""
     if self._arm:
       _ = self._arm.fetch_state()
+      _ = self._arm.wait_constraints()
+      _ = host.config.wait_calibration()
 
   def _get_response_queue(
       self

@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Mock Interface for interacting with a single robot arm."""
 
 from typing import List, Optional, Callable, Tuple, Union
@@ -444,3 +443,14 @@ class ArmMock(arm.Arm):
 
     """
     raise NotImplementedError
+
+  def wait_constraints(self, timeout: Optional[float] = None) -> bool:
+    """Wait for the arm constraints to load.
+
+    Args:
+      timeout: the optional maximum time to wait for loading.
+
+    Returns:
+      True if the constraints loaded, otherwise false.
+    """
+    return True

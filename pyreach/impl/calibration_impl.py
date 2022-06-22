@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Calibration implementation."""
 import json
 import logging
@@ -26,6 +25,7 @@ class CalDevice(device_base.DeviceBase):
   """Calibration device that loads and caches the latest Calibration."""
 
   _calibration: Optional[calibration.Calibration]
+  _calibration_loaded: threading.Event
   _calibration_lock: threading.Lock
 
   def __init__(self) -> None:
@@ -33,6 +33,24 @@ class CalDevice(device_base.DeviceBase):
     super().__init__()
     self._calibration = None
     self._calibration_lock = threading.Lock()
+    self._calibration_loaded = threading.Event()
+
+  def on_close(self) -> None:
+    """Invoke when the device is closing at shutdown."""
+    self._calibration_loaded.set()
+
+  def wait_calibration(
+      self, timeout: Optional[float]) -> Optional[calibration.Calibration]:
+    """Waits for the calibration to load and returns the calibration.
+
+    Args:
+      timeout: the optional timeout to wait for the calibration to load.
+
+    Returns:
+      The calibration, if it loaded.
+    """
+    self._calibration_loaded.wait(timeout)
+    return self.get()
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
     """Return the key used to load a calibration from the settings engine."""
@@ -59,6 +77,11 @@ class CalDevice(device_base.DeviceBase):
       return None
     if key.key != "calibration.json":
       return None
+    self._on_calibration_value(value)
+    self._calibration_loaded.set()
+
+  def _on_calibration_value(self, value: str) -> None:
+    """Process JSON for a calibration key-value."""
     if not value:
       with self._calibration_lock:
         self._calibration = None

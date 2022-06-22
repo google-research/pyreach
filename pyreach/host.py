@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Host is the entry point to the PyReach API.
 
 A Host object is responsible for connecting to a Reach host, initializing
@@ -22,7 +21,7 @@ from typing import Any, Callable, Optional, TypeVar
 
 from pyreach import actionsets
 from pyreach import arm
-from pyreach import calibration
+from pyreach import calibration as calibration_module
 from pyreach import client_annotation
 from pyreach import color_camera
 from pyreach import constraints
@@ -58,8 +57,22 @@ class Config(object):
   """Configuration group."""
 
   @property
-  def calibration(self) -> Optional[calibration.Calibration]:
+  def calibration(self) -> Optional[calibration_module.Calibration]:
     """Return the Calibration."""
+    raise NotImplementedError
+
+  def wait_calibration(
+      self,
+      timeout: Optional[float] = None
+  ) -> Optional[calibration_module.Calibration]:
+    """Wait for the calibration to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for calibration.
+
+    Returns:
+      The calibration or none if it was not loaded.
+    """
     raise NotImplementedError
 
   @property
@@ -67,9 +80,35 @@ class Config(object):
     """Return the Constraints."""
     raise NotImplementedError
 
+  def wait_constraint(
+      self,
+      timeout: Optional[float] = None) -> Optional[constraints.Constraints]:
+    """Wait for the constraints to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for constraint.
+
+    Returns:
+      The constraint or none if it was not loaded.
+    """
+    raise NotImplementedError
+
   @property
   def actionset(self) -> Optional[actionsets.Actions]:
     """Return the Actonset."""
+    raise NotImplementedError
+
+  def wait_actionset(self,
+                     timeout: Optional[float] = None
+                    ) -> Optional[actionsets.Actions]:
+    """Wait for the Actonset to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for Actonset.
+
+    Returns:
+      The Actonset or none if it was not loaded.
+    """
     raise NotImplementedError
 
 

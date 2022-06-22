@@ -135,3 +135,14 @@ class Constraints(object):
       The reference poses as tuple of tuple of poses.
     """
     raise NotImplementedError
+
+  def wait_constraints(self, timeout: Optional[float]) -> bool:
+    """Wait for the arm constraints to load.
+
+    Args:
+      timeout: the optional maximum time to wait for loading.
+
+    Returns:
+      True if the constraints loaded, otherwise false.
+    """
+    raise NotImplementedError

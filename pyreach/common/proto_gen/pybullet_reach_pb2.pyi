@@ -27,7 +27,9 @@ import typing_extensions
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
 class SimCommand(google.protobuf.message.Message):
-    """SimCommand is the top level command sent to a sim adapter.
+    """option go_package = ".;common_pybullet_reach";
+
+    SimCommand is the top level command sent to a sim adapter.
     Examples of serialized JSON are:
       {"id":"1","world":{"type":"RESET"}}
       {"id":"1","arm":{"type":"TO","target_joint_angles":[0,0,0,0,0,0]}}

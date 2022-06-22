@@ -16,6 +16,7 @@
 import json
 import logging  # type: ignore
 import math
+import threading
 from typing import Any, Dict, List, Optional, Set, Sequence, Tuple, Union
 
 import numpy as np
@@ -744,6 +745,8 @@ class ConstraintsDevice(device_base.DeviceBase):
   """Represents a Constraints Device."""
 
   _robot_name: Optional[str]
+  _constraints_lock: threading.Lock
+  _constraints_loaded: threading.Event
   _constraints: Optional[ConstraintsImpl]
   _cached_workcell: Optional[str]
   _cached_robot: Optional[str]
@@ -756,9 +759,28 @@ class ConstraintsDevice(device_base.DeviceBase):
     """
     super().__init__()
     self._robot_name = robot_name
+    self._constraints_lock = threading.Lock()
+    self._constraints_loaded = threading.Event()
     self._constraints = None
     self._cached_workcell = None
     self._cached_robot = None
+
+  def on_close(self) -> None:
+    """Invoke when the device is closing at shutdown."""
+    self._constraints_loaded.set()
+
+  def wait_constraints(self,
+                       timeout: Optional[float]) -> Optional[ConstraintsImpl]:
+    """Waits for the constraints to load and returns the constraints.
+
+    Args:
+      timeout: the optional timeout to wait for the constraints to load.
+
+    Returns:
+      The constraints, if it loaded.
+    """
+    self._constraints_loaded.wait(timeout)
+    return self.get()
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
     """Return the key values.
@@ -817,10 +839,29 @@ class ConstraintsDevice(device_base.DeviceBase):
       Return the constraints if available or None otherwise.
 
     """
-    return self._constraints
+    with self._constraints_lock:
+      return self._constraints
 
   def on_set_key_value(self, key: device_base.KeyValueKey, value: str) -> None:
     """Invoke after a new key-value is just set.
+
+    Args:
+      key: The KeyValueKey to use.
+      value: The value to set it to.
+    """
+    if (key.device_type == "settings-engine" and not key.device_name and
+        key.key == "workcell_constraints.json") or (
+            self._robot_name is not None and key.device_type == "robot" and
+            key.device_name == self._robot_name and
+            key.key == "robot_constraints.json"):
+      with self._constraints_lock:
+        self._on_constraints(key, value)
+        if self._cached_workcell is not None and (
+            self._robot_name is None or self._cached_robot is not None):
+          self._constraints_loaded.set()
+
+  def _on_constraints(self, key: device_base.KeyValueKey, value: str) -> None:
+    """Invoke after a new key-value is set that is relevant for constraints.
 
     Args:
       key: The KeyValueKey to use.

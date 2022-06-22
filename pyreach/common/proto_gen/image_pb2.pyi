@@ -80,6 +80,9 @@ class EncodedImage(google.protobuf.message.Message):
         DEPTH_16U_RVL: EncodedImage.Type.ValueType = ...  # 8
         """Lossless RVL compression with U16 depth image."""
 
+        PGM_DEPTHU16: EncodedImage.Type.ValueType = ...  # 9
+        """16-bit PGM for depth-data, used in reach."""
+
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         pass
 
@@ -120,6 +123,9 @@ class EncodedImage(google.protobuf.message.Message):
 
     DEPTH_16U_RVL: EncodedImage.Type.ValueType = ...  # 8
     """Lossless RVL compression with U16 depth image."""
+
+    PGM_DEPTHU16: EncodedImage.Type.ValueType = ...  # 9
+    """16-bit PGM for depth-data, used in reach."""
 
 
     class PixelType(google.protobuf.message.Message):

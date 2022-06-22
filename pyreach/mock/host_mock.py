@@ -17,7 +17,7 @@ from typing import Any, Dict, Optional
 
 from pyreach import actionsets
 from pyreach import arm
-from pyreach import calibration
+from pyreach import calibration as calibration_module
 from pyreach import client_annotation
 from pyreach import color_camera
 from pyreach import constraints
@@ -52,12 +52,12 @@ class ConfigMock(host.Config):
   def __init__(
       self,
       actionset: Optional[actionsets.Actions] = None,
-      cal: Optional[calibration.Calibration] = None,
+      cal: Optional[calibration_module.Calibration] = None,
       constraint: Optional[constraints.Constraints] = None,
   ) -> None:
     super().__init__()
     self._actionset: Optional[actionsets.Actions] = actionset
-    self._calibration: Optional[calibration.Calibration] = cal
+    self._calibration: Optional[calibration_module.Calibration] = cal
     self._constraint: Optional[constraints.Constraints] = constraint
 
   @property
@@ -65,15 +65,55 @@ class ConfigMock(host.Config):
     """Return the Actionset."""
     return self._actionset
 
+  def wait_actionset(self,
+                     timeout: Optional[float] = None
+                    ) -> Optional[actionsets.Actions]:
+    """Wait for the Actonset to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for Actonset.
+
+    Returns:
+      The Actonset or none if it was not loaded.
+    """
+    return self.actionset
+
   @property
-  def calibration(self) -> Optional[calibration.Calibration]:
+  def calibration(self) -> Optional[calibration_module.Calibration]:
     """Return the Calibration."""
     return self._calibration
+
+  def wait_calibration(
+      self,
+      timeout: Optional[float] = None
+  ) -> Optional[calibration_module.Calibration]:
+    """Wait for the calibration to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for calibration.
+
+    Returns:
+      The calibration or none if it was not loaded.
+    """
+    return self.calibration
 
   @property
   def constraint(self) -> Optional[constraints.Constraints]:
     """Return the Constraints."""
     return self._constraint
+
+  def wait_constraint(
+      self,
+      timeout: Optional[float] = None) -> Optional[constraints.Constraints]:
+    """Wait for the constraints to load, and return if it is loaded.
+
+    Args:
+      timeout: optional maximum timeout to wait for constraint.
+
+    Returns:
+      The constraint or none if it was not loaded.
+    """
+    return self.constraint
 
 
 class HostMock(host.Host):

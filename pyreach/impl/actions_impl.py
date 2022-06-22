@@ -316,8 +316,8 @@ class ActionStep:
                set_capability: bool, set_capability_name: str,
                set_capability_type: str, set_capability_value: bool,
                set_capability_io_type: str, randomized_offset: bool,
-               randomized_offset_radius_cm: float,
-               acquire_image_tag: str, acquire_image_mode: int) -> None:
+               randomized_offset_radius_cm: float, acquire_image_tag: str,
+               acquire_image_mode: int) -> None:
     """Construct an ActionStep.
 
     Args:
@@ -928,12 +928,30 @@ class ActionDevice(device_base.DeviceBase):
 
   _actions: Optional[ActionsImpl]
   _actions_lock: threading.Lock
+  _actions_loaded: threading.Event
 
   def __init__(self) -> None:
     """Construct an ActionDevice."""
     super().__init__()
     self._actions = None
     self._actions_lock = threading.Lock()
+    self._actions_loaded = threading.Event()
+
+  def on_close(self) -> None:
+    """Invoke when the device is closing at shutdown."""
+    self._actions_loaded.set()
+
+  def wait_actions(self, timeout: Optional[float]) -> Optional[ActionsImpl]:
+    """Waits for the actions to load and returns the actions.
+
+    Args:
+      timeout: the optional timeout to wait for the actions to load.
+
+    Returns:
+      The actions, if it loaded.
+    """
+    self._actions_loaded.wait(timeout)
+    return self.get_actions()
 
   def get_key_values(self) -> Set[device_base.KeyValueKey]:
     """Construct keys for action sets."""
@@ -958,15 +976,18 @@ class ActionDevice(device_base.DeviceBase):
     if not value:
       with self._actions_lock:
         self._actions = None
+        self._actions_loaded.set()
       return
     try:
       data = json.loads(value)
     except json.decoder.JSONDecodeError as decode_error:
       logging.warning("failed to parse actionsets.json %s", decode_error)
+      self._actions_loaded.set()
       return
     if not isinstance(data.get("actions"), str):
       logging.warning("failed to parse actionsets.json - "
                       "does not contain 'actions' key")
+      self._actions_loaded.set()
       return
     try:
       json_data = json.loads(data["actions"])
@@ -974,11 +995,14 @@ class ActionDevice(device_base.DeviceBase):
       logging.warning(
           "failed to parse actionsets.json 'actions' "
           "content: %s", decode_error)
+      self._actions_loaded.set()
       return
     if json_data is None:
+      self._actions_loaded.set()
       return None
     if not isinstance(json_data, list):
       logging.warning("actionsets data was not a list")
+      self._actions_loaded.set()
       return None
     actions: List[Action] = []
     for action in json_data:
@@ -995,6 +1019,7 @@ class ActionDevice(device_base.DeviceBase):
           actions.append(action_object)
     with self._actions_lock:
       self._actions = ActionsImpl(actions)
+      self._actions_loaded.set()
 
   def get_wrapper(self) -> Tuple["ActionDevice", "ActionsetsWrapper"]:
     """Get a wrapper for the device that should be shown to the user."""

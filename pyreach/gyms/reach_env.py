@@ -502,6 +502,7 @@ class ReachEnv(gym.Env):  # type: ignore
           gym_run_id=self._run_id,
           gym_episode=self._episode,
           gym_step=self._step,
+          gym_agent_id=self.task_params.get("agent_id", None),
           gym_reward=reward,
           gym_done=done,
           gym_actions=tuple(action_list))
@@ -575,6 +576,7 @@ class ReachEnv(gym.Env):  # type: ignore
           gym_run_id=self._run_id,
           gym_episode=self._episode,
           gym_step=self._step,
+          gym_agent_id=self.task_params.get("agent_id", None),
           gym_reward=0.0,
           gym_done=False,
           gym_actions=tuple(action_list))

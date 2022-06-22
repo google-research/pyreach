@@ -46,6 +46,7 @@ class TestPlaybackMock(unittest.TestCase):
     snapshots_table: Dict[str, snapshot.Snapshot] = {}
     snapshots: List[snapshot.Snapshot] = []
     env_id: str = "Env"
+    agent_id: str = "AgentID"
     for run_id in ("Run0", "Run1", "Run2"):
       episode: int
       for episode in range(3):
@@ -57,7 +58,7 @@ class TestPlaybackMock(unittest.TestCase):
           key: str = f"{run_id}.{episode}.{step}"
           snap_shot: snapshot.Snapshot = snapshot.Snapshot(
               source, device_data_refs, responses, server_time, env_id, run_id,
-              episode, step, reward, done, actions)
+              episode, agent_id, step, reward, done, actions)
           snapshots.append(snap_shot)
           snapshots_table[key] = snap_shot
           server_time += 1.0

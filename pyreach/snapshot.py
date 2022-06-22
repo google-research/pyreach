@@ -14,7 +14,7 @@
 """Interface for generating snapshots for client state logging."""
 
 import dataclasses
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from pyreach.common.proto_gen import logs_pb2
 from pyreach.core import PyReachStatus
@@ -157,6 +157,7 @@ class Snapshot:
     gym_env_id: The gym environment ID.
     gym_run_id: The gym run ID.
     gym_episode: The gym episode number starting with 1 for the first episode.
+    gym_agent_id: The agent ID of the gym.
     gym_step: The gym step number for the current episode starting with 0.
     gym_reward: The reward returned by the gym step.
     gym_done: True if the gym is complete.
@@ -169,6 +170,7 @@ class Snapshot:
   gym_env_id: str
   gym_run_id: str
   gym_episode: int
+  gym_agent_id: Optional[str]
   gym_step: int
   gym_reward: float
   gym_done: bool

@@ -74,6 +74,7 @@ class CommandData(google.protobuf.message.Message):
     ENABLE_EXPERIMENTS_FIELD_NUMBER: builtins.int
     DISABLE_EXPERIMENTS_FIELD_NUMBER: builtins.int
     EXPERIMENT_FLAGS_FIELD_NUMBER: builtins.int
+    DELEGATED_CLIENTS_REQUEST_FIELD_NUMBER: builtins.int
     SCRIPT_FIELD_NUMBER: builtins.int
     REACH_SCRIPT_FIELD_NUMBER: builtins.int
     CMD_FIELD_NUMBER: builtins.int
@@ -225,6 +226,8 @@ class CommandData(google.protobuf.message.Message):
     def disable_experiments(self) -> global___EmptyMessage: ...
     @property
     def experiment_flags(self) -> experiment_config_pb2.Flags: ...
+    @property
+    def delegated_clients_request(self) -> global___EmptyMessage: ...
     script: typing.Text = ...
     """DO NOT ADD NEW FIELDS AFTER THE ABOVE ONEOF! Any new commands must go in
     the data_type_oneof above, which also means that:
@@ -355,6 +358,7 @@ class CommandData(google.protobuf.message.Message):
         enable_experiments : typing.Optional[global___EmptyMessage] = ...,
         disable_experiments : typing.Optional[global___EmptyMessage] = ...,
         experiment_flags : typing.Optional[experiment_config_pb2.Flags] = ...,
+        delegated_clients_request : typing.Optional[global___EmptyMessage] = ...,
         script : typing.Optional[typing.Text] = ...,
         reach_script : typing.Optional[global___ReachScript] = ...,
         cmd : typing.Optional[typing.Text] = ...,
@@ -381,9 +385,9 @@ class CommandData(google.protobuf.message.Message):
         sim_action : typing.Optional[global___SimAction] = ...,
         inference_request : typing.Optional[global___InferenceRequest] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_name",b"event_name","exp",b"exp","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["args",b"args","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_labels",b"event_labels","event_name",b"event_name","event_params",b"event_params","exp",b"exp","exp_array",b"exp_array","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data_type_oneof",b"data_type_oneof"]) -> typing.Optional[typing_extensions.Literal["metadata","key_value","key_value_request","session_info","trigger","i_see_data","ping","client_session_end","connected_clients_request","start_shutdown","finish_shutdown","hangup","client_session_start","client_annotation","pipeline_description_request","machine_interfaces_request","text_instruction_request","stream_request","controller_descriptions_request","user_label","enable_experiments","disable_experiments","experiment_flags"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_name",b"event_name","exp",b"exp","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["args",b"args","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_labels",b"event_labels","event_name",b"event_name","event_params",b"event_params","exp",b"exp","exp_array",b"exp_array","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data_type_oneof",b"data_type_oneof"]) -> typing.Optional[typing_extensions.Literal["metadata","key_value","key_value_request","session_info","trigger","i_see_data","ping","client_session_end","connected_clients_request","start_shutdown","finish_shutdown","hangup","client_session_start","client_annotation","pipeline_description_request","machine_interfaces_request","text_instruction_request","stream_request","controller_descriptions_request","user_label","enable_experiments","disable_experiments","experiment_flags","delegated_clients_request"]]: ...
 global___CommandData = CommandData
 
 class Alert(google.protobuf.message.Message):
@@ -1426,7 +1430,7 @@ global___SyncArgs = SyncArgs
 class DeviceData(google.protobuf.message.Message):
     """DeviceData represents sensor data on the robot and in the Reach
     environment.
-    Next ID: 81
+    Next ID: 82
     """
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DEVICE_TYPE_FIELD_NUMBER: builtins.int
@@ -1505,6 +1509,7 @@ class DeviceData(google.protobuf.message.Message):
     REPORT_ERROR_FIELD_NUMBER: builtins.int
     HEALTH_FIELD_NUMBER: builtins.int
     CONTROLLER_DESCRIPTIONS_FIELD_NUMBER: builtins.int
+    DELEGATED_CLIENTS_FIELD_NUMBER: builtins.int
     device_type: typing.Text = ...
     """The type of device that generated the data, such as photoneo."""
 
@@ -1876,6 +1881,10 @@ class DeviceData(google.protobuf.message.Message):
     def controller_descriptions(self) -> global___ControllerDescriptions:
         """Design doc: http://doc/1MqijmwYXNFrDKwMowzn23TSohq8xAJE9jnJiRpyYmQQ"""
         pass
+    @property
+    def delegated_clients(self) -> global___DelegatedClients:
+        """Design doc: http://doc/1sW5hNOYTUOuyqdWDvscc6LRM_L4M2KFEorPftZhTJNI"""
+        pass
     def __init__(self,
         *,
         device_type : typing.Optional[typing.Text] = ...,
@@ -1954,10 +1963,11 @@ class DeviceData(google.protobuf.message.Message):
         report_error : typing.Optional[global___ReportError] = ...,
         health : typing.Optional[global___Health] = ...,
         controller_descriptions : typing.Optional[global___ControllerDescriptions] = ...,
+        delegated_clients : typing.Optional[global___DelegatedClients] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","event_params",b"event_params","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","message_last_timestamps",b"message_last_timestamps","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","send_to_clients",b"send_to_clients","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["data_type_oneof",b"data_type_oneof"]) -> typing.Optional[typing_extensions.Literal["color","color_depth","key_value","prediction","ur_state","conveyor_state","conveyor_state_update","tool_state","tool_state_update","status","user_label","session_info","pick_label","place_label","level","protective_stop_state","protective_stop_state_update","safeguard_stop_state","safeguard_stop_state_update","emergency_stop_state","emergency_stop_state_update","robot_power_state","robot_power_state_update","metric","reach_script_status","cmd_status","vacuum_pressure_state","vacuum_pressure_update","downlink_status","sensor_state","sensor_state_update","output_state","output_state_update","health_check","history","audio_request_mute","audio_request_unmute","error","webrtc_audio_response","metadata","sim_state","device_status","webrtc_audio_request","sim_instance_segmentation","exposure_complete","start_shutdown","finish_shutdown","hangup","connected_clients","detection","robot_state","alert","client_annotation","pipeline_description","machine_interfaces","machine_description","text_instruction","report_error","health","controller_descriptions"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients",b"delegated_clients","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["alert",b"alert","audio_request_mute",b"audio_request_mute","audio_request_unmute",b"audio_request_unmute","client_annotation",b"client_annotation","cmd_status",b"cmd_status","color",b"color","color_depth",b"color_depth","connected_clients",b"connected_clients","controller_descriptions",b"controller_descriptions","conveyor_state",b"conveyor_state","conveyor_state_update",b"conveyor_state_update","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients",b"delegated_clients","detection",b"detection","device_name",b"device_name","device_status",b"device_status","device_type",b"device_type","downlink_status",b"downlink_status","emergency_stop_state",b"emergency_stop_state","emergency_stop_state_update",b"emergency_stop_state_update","error",b"error","event_params",b"event_params","experiment_token",b"experiment_token","exposure_complete",b"exposure_complete","finish_shutdown",b"finish_shutdown","hangup",b"hangup","health",b"health","health_check",b"health_check","hint",b"hint","history",b"history","inhibit_frame_save",b"inhibit_frame_save","inhibit_frame_send",b"inhibit_frame_send","key_value",b"key_value","label",b"label","level",b"level","local_ts",b"local_ts","machine_description",b"machine_description","machine_interfaces",b"machine_interfaces","message_last_timestamps",b"message_last_timestamps","metadata",b"metadata","metric",b"metric","output_state",b"output_state","output_state_update",b"output_state_update","pick_label",b"pick_label","pipeline_description",b"pipeline_description","place_label",b"place_label","prediction",b"prediction","protective_stop_state",b"protective_stop_state","protective_stop_state_update",b"protective_stop_state_update","reach_script_status",b"reach_script_status","remote_ts",b"remote_ts","report_error",b"report_error","robot_power_state",b"robot_power_state","robot_power_state_update",b"robot_power_state_update","robot_state",b"robot_state","safeguard_stop_state",b"safeguard_stop_state","safeguard_stop_state_update",b"safeguard_stop_state_update","send_to_clients",b"send_to_clients","sensor_state",b"sensor_state","sensor_state_update",b"sensor_state_update","seq",b"seq","session_info",b"session_info","sim_instance_segmentation",b"sim_instance_segmentation","sim_state",b"sim_state","start_shutdown",b"start_shutdown","status",b"status","tag",b"tag","text_instruction",b"text_instruction","tool_state",b"tool_state","tool_state_update",b"tool_state_update","ts",b"ts","ur_state",b"ur_state","user_label",b"user_label","vacuum_pressure_state",b"vacuum_pressure_state","vacuum_pressure_update",b"vacuum_pressure_update","webrtc_audio_request",b"webrtc_audio_request","webrtc_audio_response",b"webrtc_audio_response"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["data_type_oneof",b"data_type_oneof"]) -> typing.Optional[typing_extensions.Literal["color","color_depth","key_value","prediction","ur_state","conveyor_state","conveyor_state_update","tool_state","tool_state_update","status","user_label","session_info","pick_label","place_label","level","protective_stop_state","protective_stop_state_update","safeguard_stop_state","safeguard_stop_state_update","emergency_stop_state","emergency_stop_state_update","robot_power_state","robot_power_state_update","metric","reach_script_status","cmd_status","vacuum_pressure_state","vacuum_pressure_update","downlink_status","sensor_state","sensor_state_update","output_state","output_state_update","health_check","history","audio_request_mute","audio_request_unmute","error","webrtc_audio_response","metadata","sim_state","device_status","webrtc_audio_request","sim_instance_segmentation","exposure_complete","start_shutdown","finish_shutdown","hangup","connected_clients","detection","robot_state","alert","client_annotation","pipeline_description","machine_interfaces","machine_description","text_instruction","report_error","health","controller_descriptions","delegated_clients"]]: ...
 global___DeviceData = DeviceData
 
 class TextLogData(google.protobuf.message.Message):
@@ -4416,6 +4426,7 @@ class MovePoseWaypointArgs(google.protobuf.message.Message):
     VELOCITY_FIELD_NUMBER: builtins.int
     ACCELERATION_FIELD_NUMBER: builtins.int
     LIMITS_FIELD_NUMBER: builtins.int
+    SERVO_FIELD_NUMBER: builtins.int
     @property
     def translation(self) -> global___Vec3d:
         """u, v, w in meters"""
@@ -4449,6 +4460,14 @@ class MovePoseWaypointArgs(google.protobuf.message.Message):
     def limits(self) -> global___Limits:
         """Early termination limits for the move."""
         pass
+    servo: builtins.bool = ...
+    """If set, the move should be considered continuous. Robot will move at
+    the speed that would arrive at the desitination after one second.
+    The next command must be received before the previous command completes.
+    If for whatever reason, the next command does not arrive, the robot
+    will stop after one second.
+    """
+
     def __init__(self,
         *,
         translation : typing.Optional[global___Vec3d] = ...,
@@ -4458,9 +4477,10 @@ class MovePoseWaypointArgs(google.protobuf.message.Message):
         velocity : typing.Optional[builtins.float] = ...,
         acceleration : typing.Optional[builtins.float] = ...,
         limits : typing.Optional[global___Limits] = ...,
+        servo : typing.Optional[builtins.bool] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","translation",b"translation","velocity",b"velocity"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","translation",b"translation","velocity",b"velocity"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","servo",b"servo","translation",b"translation","velocity",b"velocity"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["acceleration",b"acceleration","blend_radius",b"blend_radius","limits",b"limits","linear",b"linear","rotation",b"rotation","servo",b"servo","translation",b"translation","velocity",b"velocity"]) -> None: ...
 global___MovePoseWaypointArgs = MovePoseWaypointArgs
 
 class WaitArgs(google.protobuf.message.Message):
@@ -4838,6 +4858,7 @@ class Snapshot(google.protobuf.message.Message):
     GYM_SERVER_TS_FIELD_NUMBER: builtins.int
     GYM_ENV_ID_FIELD_NUMBER: builtins.int
     GYM_RUN_ID_FIELD_NUMBER: builtins.int
+    GYM_AGENT_ID_FIELD_NUMBER: builtins.int
     GYM_EPISODE_FIELD_NUMBER: builtins.int
     GYM_STEP_FIELD_NUMBER: builtins.int
     GYM_REWARD_FIELD_NUMBER: builtins.int
@@ -4867,6 +4888,9 @@ class Snapshot(google.protobuf.message.Message):
 
     gym_run_id: typing.Text = ...
     """The gym run id."""
+
+    gym_agent_id: typing.Text = ...
+    """The gym_agent_id stores the gym agent ID."""
 
     gym_episode: builtins.int = ...
     """The Gym episode number starting with 1 for the first episode.  Each time
@@ -4900,14 +4924,15 @@ class Snapshot(google.protobuf.message.Message):
         gym_server_ts : typing.Optional[google.protobuf.timestamp_pb2.Timestamp] = ...,
         gym_env_id : typing.Optional[typing.Text] = ...,
         gym_run_id : typing.Optional[typing.Text] = ...,
+        gym_agent_id : typing.Optional[typing.Text] = ...,
         gym_episode : typing.Optional[builtins.int] = ...,
         gym_step : typing.Optional[builtins.int] = ...,
         gym_reward : typing.Optional[builtins.float] = ...,
         gym_done : typing.Optional[builtins.bool] = ...,
         gym_actions : typing.Optional[typing.Iterable[global___GymAction]] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","source",b"source"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["device_data_refs",b"device_data_refs","gym_actions",b"gym_actions","gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","responses",b"responses","source",b"source"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["gym_agent_id",b"gym_agent_id","gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","source",b"source"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["device_data_refs",b"device_data_refs","gym_actions",b"gym_actions","gym_agent_id",b"gym_agent_id","gym_done",b"gym_done","gym_env_id",b"gym_env_id","gym_episode",b"gym_episode","gym_reward",b"gym_reward","gym_run_id",b"gym_run_id","gym_server_ts",b"gym_server_ts","gym_step",b"gym_step","responses",b"responses","source",b"source"]) -> None: ...
 global___Snapshot = Snapshot
 
 class SnapshotResponse(google.protobuf.message.Message):
@@ -5093,3 +5118,30 @@ class ClientAnnotationActionParams(google.protobuf.message.Message):
     def HasField(self, field_name: typing_extensions.Literal["annotation",b"annotation"]) -> builtins.bool: ...
     def ClearField(self, field_name: typing_extensions.Literal["annotation",b"annotation"]) -> None: ...
 global___ClientAnnotationActionParams = ClientAnnotationActionParams
+
+class DelegatedClients(google.protobuf.message.Message):
+    """DelegatedClients denotes deviceType == "delegated-client-manager", dataType
+    == "delegated-clients".
+
+    Design doc: http://doc/1sW5hNOYTUOuyqdWDvscc6LRM_L4M2KFEorPftZhTJNI
+    """
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    CLIENTS_FIELD_NUMBER: builtins.int
+    ACTIVE_CLIENT_FIELD_NUMBER: builtins.int
+    @property
+    def clients(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """List of all client state-machines deviceNames in the pipeline, for example:
+        ["client1", ..., "clientN"].
+        """
+        pass
+    active_client: typing.Text = ...
+    """deviceName of the active client, example: "client3" """
+
+    def __init__(self,
+        *,
+        clients : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        active_client : typing.Optional[typing.Text] = ...,
+        ) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["active_client",b"active_client"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["active_client",b"active_client","clients",b"clients"]) -> None: ...
+global___DelegatedClients = DelegatedClients

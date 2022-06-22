@@ -296,7 +296,7 @@ class ReachDeviceOracle(reach_device.ReachDevice):
 
   def synchronize(self, host: pyreach.Host) -> None:
     """Synchronously update the oracle state."""
-    pass
+    _ = host.config.wait_actionset()
 
   def start_observation(self, host: pyreach.Host) -> bool:
     """Start a synchronous observation."""

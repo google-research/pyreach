@@ -1321,8 +1321,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       self._supported_controllers = tuple(descs)
     if (self._device_name == msg.device_name and msg.device_type == "robot" and
         msg.data_type == "robot-state"):
-      return self._arm_state_from_message(self._arm_type, msg,
-                                          self._update_data_cache())
+      return self._arm_state_from_message(self._arm_type, msg)
     return None
 
   @property
@@ -1374,6 +1373,17 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if pose is None:
       return None
     return core.Pose.from_list(pose)
+
+  def wait_constraints(self, timeout: Optional[float]) -> bool:
+    """Wait for the arm constraints to load.
+
+    Args:
+      timeout: the optional maximum time to wait for loading.
+
+    Returns:
+      True if the constraints loaded, otherwise false.
+    """
+    return self._constraints_device.wait_constraints(timeout) is not None
 
   def _update_ikhints(self) -> Dict[int, List[float]]:
     # Needs to be called in the ik lib lock.
@@ -1545,15 +1555,13 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     return (self, tuple(self._internal_devices), ArmImpl(self))
 
   @classmethod
-  def _arm_state_from_message(
-      cls, arm_type: arm.ArmType, msg: types_gen.DeviceData,
-      data_cache: Optional[_ArmDataCache]) -> "arm.ArmState":
+  def _arm_state_from_message(cls, arm_type: arm.ArmType,
+                              msg: types_gen.DeviceData) -> "arm.ArmState":
     """Return the State from a device data message.
 
     Args:
       arm_type: The type of the arm.
       msg: The device data to decode.
-      data_cache: The arm data cache.
 
     Returns:
       The Arm state.
@@ -1594,13 +1602,13 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
     adjust_pose: Optional[core.Pose] = None
     tip_adjust_transform: Optional[core.Pose] = None
-    if data_cache and data_cache.tip_adjust_transform is not None:
-      adjusted_pose = transform_util.multiply_pose(
-          np.array(pose, dtype=np.float64),
-          data_cache.tip_adjust_transform).tolist()
-      adjust_pose = core.Pose.from_list(adjusted_pose)
+    if msg.tip_adjust_t_base:
+      adjust_pose = core.Pose.from_list(msg.tip_adjust_t_base)
       tip_adjust_transform = core.Pose.from_list(
-          data_cache.tip_adjust_transform.tolist())
+          transform_util.multiply_pose(
+              transform_util.inverse_pose(
+                  np.array(pose, dtype=np.float64)),
+              np.array(msg.tip_adjust_t_base, dtype=np.float64)).tolist())
     pose_t = core.Pose.from_list(pose)
     return arm.ArmState(
         utils.time_at_timestamp(msg.ts), msg.seq,
@@ -2562,3 +2570,14 @@ class ArmImpl(arm.Arm):
     """
 
     return self._device.fk(joints, apply_tip_adjust_transform)
+
+  def wait_constraints(self, timeout: Optional[float] = None) -> bool:
+    """Wait for the arm constraints to load.
+
+    Args:
+      timeout: the optional maximum time to wait for loading.
+
+    Returns:
+      True if the constraints loaded, otherwise false.
+    """
+    return self._device.wait_constraints(timeout)

@@ -752,26 +752,26 @@ class TestPyreachArmImpl(unittest.TestCase):
     self.assertEqual(state.pose.orientation.axis_angle.rx, 0.1186541477907012)
     self.assertEqual(state.pose.orientation.axis_angle.ry, -3.075739605978813)
     self.assertEqual(state.pose.orientation.axis_angle.rz, -0.01666054968029903)
-    self.assertEqual(state.tcp_t_base.position.x, 0.1961122234076476)
-    self.assertEqual(state.tcp_t_base.position.y, -0.7146550885497088)
-    self.assertEqual(state.tcp_t_base.position.z, 0.1642837633972083)
-    self.assertEqual(state.tcp_t_base.orientation.axis_angle.rx,
+    self.assertEqual(state.flange_t_base.position.x, 0.1961122234076476)
+    self.assertEqual(state.flange_t_base.position.y, -0.7146550885497088)
+    self.assertEqual(state.flange_t_base.position.z, 0.1642837633972083)
+    self.assertEqual(state.flange_t_base.orientation.axis_angle.rx,
                      0.1186541477907012)
-    self.assertEqual(state.tcp_t_base.orientation.axis_angle.ry,
+    self.assertEqual(state.flange_t_base.orientation.axis_angle.ry,
                      -3.075739605978813)
-    self.assertEqual(state.tcp_t_base.orientation.axis_angle.rz,
+    self.assertEqual(state.flange_t_base.orientation.axis_angle.rz,
                      -0.01666054968029903)
     self.assertEqual(
         state.force,
         (-6.514813773909755, 5.273554158068752, -3.661764071560078,
          -0.1562602891054569, -0.2400126816079334, 0.1363557378946311))
     self.assertFalse(state.is_protective_stopped)
-    tip_adjust = state.tip_adjust_t_tcp
+    tip_adjust = state.tip_adjust_t_flange
     self.assertIsNotNone(tip_adjust)
     assert tip_adjust
     self.assertEqual(tip_adjust.as_tuple(),
-                     (0.004453485238087255, -0.055702600244064024,
-                      0.1626512213476071, 0.0, 0.0, 0.0))
+                     (0.004453485238087224, -0.055702600244063705,
+                      0.1626512213476074, 0.0, 0.0, 0.0))
     pose_with_tip_adjust = state.tip_adjust_t_base
     self.assertIsNotNone(pose_with_tip_adjust)
     assert pose_with_tip_adjust
@@ -834,6 +834,11 @@ class TestArm(test_utils.TestResponder):
               pose=[
                   0.1961122234076476, -0.7146550885497088, 0.1642837633972083,
                   0.1186541477907012, -3.075739605978813, -0.01666054968029903
+              ],
+              tip_adjust_t_base=[
+                  0.18556403170793967, -0.7691736787189849,
+                  0.0015124760385194225, 0.11865414779070117,
+                  -3.075739605978814, -0.0166605496802987
               ],
               joints=[
                   1.665570735931396, -0.7995384496501465, 1.341465298329489,
