@@ -1852,7 +1852,7 @@ def get_calibration_json() -> str:
                       -0.8842314046672364, 1.677998065948486, 0.2429585456848145
                   ]
               },
-              "extrinsics": [0, 0, 0, 0, 0, 0],
+              "extrinsics": [0.1, 0, 0, 0, 0, 0],
               "extrinsicsResidual": 2.547426978391909,
               "urdf": "ur5e.urdf"
           }

@@ -116,6 +116,11 @@ class ArmState:
     tip_adjust_t_flange: Adjust transform for the tooltip.
     tip_adjust_t_base: Pose with the tip adjust applied relative to the base of
       the arm.
+    base_t_origin: Pose of the base of the robot relative to the workcell world
+      origin.
+    flange_t_origin: Pose of robot flange relative to the workcell world origin.
+    tip_adjust_t_origin: Pose with the tip adjust applied relative to the
+      workcell world origin.
   """
 
   time: float = 0.0
@@ -140,6 +145,9 @@ class ArmState:
   robot_mode: RobotMode = RobotMode.DEFAULT
   tip_adjust_t_flange: Optional[core.Pose] = None
   tip_adjust_t_base: Optional[core.Pose] = None
+  base_t_origin: Optional[core.Pose] = None
+  flange_t_origin: Optional[core.Pose] = None
+  tip_adjust_t_origin: Optional[core.Pose] = None
 
 
 class Arm(object):
@@ -356,6 +364,7 @@ class Arm(object):
               servo_gain: float = 0.0,
               preemptive: bool = False,
               controller_name: str = "",
+              pose_in_world_coordinates: bool = False,
               timeout: Optional[float] = None) -> core.PyReachStatus:
     """Move the arm to a target pose synchronously.
 
@@ -379,6 +388,8 @@ class Arm(object):
         only).
       preemptive: True to preempt existing scripts.
       controller_name: The name of the controller to send the command to.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
       timeout: The amount time to wait before giving up. (Default: no timeout)
 
     Returns:
@@ -404,6 +415,7 @@ class Arm(object):
       servo_gain: float = 0.0,
       preemptive: bool = False,
       controller_name: str = "",
+      pose_in_world_coordinates: bool = False,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -429,6 +441,8 @@ class Arm(object):
         only).
       preemptive: True to preempt existing scripts.
       controller_name: The name of the controller to send the command to.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
       timeout: The amount time to wait before giving up. (Default: no timeout)
       callback: An optional callback routine call upon completion.
       finished_callback: An optional callback when done.
@@ -563,7 +577,8 @@ class Arm(object):
 
   def fk(self,
          joints: Union[Tuple[float, ...], List[float], np.ndarray],
-         apply_tip_adjust_transform: bool = False) -> Optional[core.Pose]:
+         apply_tip_adjust_transform: bool = False,
+         pose_in_world_coordinates: bool = False) -> Optional[core.Pose]:
     """Uses forward kinematics to get the pose from the joint angles.
 
     Args:
@@ -571,6 +586,8 @@ class Arm(object):
       apply_tip_adjust_transform: If True, will use the data in the calibration
         file for the robot to change the returned pose from the end of the arm
         to the tip of the end-effector.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
 
     Returns:
       The pose for the end of the arm, or if apply_tip_adjust_transform was

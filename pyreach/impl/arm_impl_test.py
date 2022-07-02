@@ -20,7 +20,6 @@ from pyreach import core
 from pyreach.common.python import types_gen
 from pyreach.impl import actions_impl
 from pyreach.impl import arm_impl
-from pyreach.impl import calibration_impl as cal
 from pyreach.impl import device_base
 from pyreach.impl import test_data
 from pyreach.impl import test_utils
@@ -33,11 +32,6 @@ class TestPyreachArmImpl(unittest.TestCase):
   def _init_arm(
       self, urdf_file: str, expect_ik_search: List[np.ndarray]
   ) -> Tuple[device_base.DeviceBase, arm_impl.ArmImpl]:
-    calibration_device = cal.CalDevice()
-    key = device_base.KeyValueKey(
-        device_type="settings-engine", device_name="", key="calibration.json")
-    calibration_device.on_set_key_value(key, test_data.get_calibration_json())
-    calibration_device.close()
     actionsets_device = actions_impl.ActionDevice()
     key = device_base.KeyValueKey(
         device_type="settings-engine", device_name="", key="actionsets.json")
@@ -50,8 +44,8 @@ class TestPyreachArmImpl(unittest.TestCase):
     workcell_io_device.close()
     iklib = TestIKFast(urdf_file, expect_ik_search)  # type: ignore
     rdev, extra_devs, dev = arm_impl.ArmDevice(
-        arm_impl.ArmTypeImpl.from_urdf_file(urdf_file), calibration_device,
-        actionsets_device, workcell_io_device.get(), "", iklib, False,
+        arm_impl.ArmTypeImpl.from_urdf_file(urdf_file), actionsets_device,
+        workcell_io_device.get(), "", iklib, False,
         arm.IKLibType.IKFAST).get_wrapper()
     dev._enable_randomization = False
     for extra_dev in extra_devs:
@@ -86,6 +80,18 @@ class TestPyreachArmImpl(unittest.TestCase):
 
   def test_to_pose(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [
+        np.array([
+            1.6540831333902932, -0.65556380727104, 1.394939944111822,
+            -2.296503262239259, 4.649417918706931, 0.006600704600401741
+        ]),
+        np.array([
+            1.6540831333902932, -0.65556380727104, 1.394939944111822,
+            -2.296503262239259, 4.649417918706931, 0.006600704600401741
+        ]),
+        np.array([
+            1.6763853648318705, -0.9809819685779639, 1.5026367936800202,
+            -2.0773793705696866, 4.649738410960897, 0.02894469760442231
+        ]),
         np.array([
             1.6540831333902932, -0.65556380727104, 1.394939944111822,
             -2.296503262239259, 4.649417918706931, 0.006600704600401741
@@ -231,8 +237,146 @@ class TestPyreachArmImpl(unittest.TestCase):
                   ]))
       ])
 
+      # Test to_pose without adjust, world
+      status = dev.to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          acceleration=4.0,
+          velocity=1.0,
+          pose_in_world_coordinates=True)
+      self.assertEqual(status.status, "done")
+      self.assertEqual(status.error, "")
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-4",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_j_path=types_gen.MoveJPathArgs(waypoints=[
+                              types_gen.MoveJWaypointArgs(
+                                  acceleration=4.0,
+                                  rotation=[
+                                      1.6540831333902932, -0.65556380727104,
+                                      1.394939944111822, -2.296503262239259,
+                                      4.649417918706931, 0.006600704600401741
+                                  ],
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
+      # Test to_pose without adjust, linear, world
+      status = dev.to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          use_linear=True,
+          acceleration=4.0,
+          velocity=1.0,
+          pose_in_world_coordinates=True)
+      self.assertEqual(status.status, "done")
+      self.assertEqual(status.error, "")
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-5",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_l_path=types_gen.MoveLPathArgs(waypoints=[
+                              types_gen.MoveLWaypointArgs(
+                                  acceleration=4.0,
+                                  rotation=[
+                                      1.6540831333902932, -0.65556380727104,
+                                      1.394939944111822, -2.296503262239259,
+                                      4.649417918706931, 0.006600704600401741
+                                  ],
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
+      # Test to_pose without adjust, world
+      status = dev.to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          acceleration=3.0,
+          velocity=2.0,
+          apply_tip_adjust_transform=True,
+          pose_in_world_coordinates=True)
+      self.assertEqual(status.status, "done")
+      self.assertEqual(status.error, "")
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-6",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_j_path=types_gen.MoveJPathArgs(waypoints=[
+                              types_gen.MoveJWaypointArgs(
+                                  acceleration=3.0,
+                                  rotation=[
+                                      1.6763853648318705, -0.9809819685779639,
+                                      1.5026367936800202, -2.0773793705696866,
+                                      4.649738410960897, 0.02894469760442231
+                                  ],
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
+
   def test_async_to_pose(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [
+        np.array([
+            1.6540831333902932, -0.65556380727104, 1.394939944111822,
+            -2.296503262239259, 4.649417918706931, 0.006600704600401741
+        ]),
+        np.array([
+            1.6540831333902932, -0.65556380727104, 1.394939944111822,
+            -2.296503262239259, 4.649417918706931, 0.006600704600401741
+        ]),
+        np.array([
+            1.6763853648318705, -0.9809819685779639, 1.5026367936800202,
+            -2.0773793705696866, 4.649738410960897, 0.02894469760442231
+        ]),
         np.array([
             1.6540831333902932, -0.65556380727104, 1.394939944111822,
             -2.296503262239259, 4.649417918706931, 0.006600704600401741
@@ -384,6 +528,190 @@ class TestPyreachArmImpl(unittest.TestCase):
                           ]))
                   ]))
       ])
+
+      # Test to_pose without adjust, world
+      capturer = thread_util.CallbackCapturer()
+      dev.async_to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          acceleration=4.0,
+          velocity=1.0,
+          pose_in_world_coordinates=True,
+          callback=capturer.callback,
+          finished_callback=capturer.finished_callback)
+      self._validate_async_response(capturer.wait())
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-4",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_j_path=types_gen.MoveJPathArgs(waypoints=[
+                              types_gen.MoveJWaypointArgs(
+                                  acceleration=4.0,
+                                  rotation=[
+                                      1.6540831333902932, -0.65556380727104,
+                                      1.394939944111822, -2.296503262239259,
+                                      4.649417918706931, 0.006600704600401741
+                                  ],
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
+      # Test to_pose without adjust, linear, world
+      capturer = thread_util.CallbackCapturer()
+      dev.async_to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          use_linear=True,
+          acceleration=4.0,
+          velocity=1.0,
+          pose_in_world_coordinates=True,
+          callback=capturer.callback,
+          finished_callback=capturer.finished_callback)
+      self._validate_async_response(capturer.wait())
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-5",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_l_path=types_gen.MoveLPathArgs(waypoints=[
+                              types_gen.MoveLWaypointArgs(
+                                  acceleration=4.0,
+                                  rotation=[
+                                      1.6540831333902932, -0.65556380727104,
+                                      1.394939944111822, -2.296503262239259,
+                                      4.649417918706931, 0.006600704600401741
+                                  ],
+                                  velocity=1.0)
+                          ]))
+                  ]))
+      ])
+      # Test to_pose without adjust, world
+      capturer = thread_util.CallbackCapturer()
+      dev.async_to_pose(
+          core.Pose(
+              core.Translation(0.2875917, -0.71203265, 0.0567831),
+              core.AxisAngle(0.11865415, -3.07573961, -0.01666055)),
+          intent="test-intent",
+          pick_id="test-pick-id",
+          success_type="test-success-type",
+          acceleration=3.0,
+          velocity=2.0,
+          pose_in_world_coordinates=True,
+          apply_tip_adjust_transform=True,
+          callback=capturer.callback,
+          finished_callback=capturer.finished_callback)
+      self._validate_async_response(capturer.wait())
+      test_device.expect_command_data([
+          types_gen.CommandData(
+              data_type="reach-script",
+              device_type="robot",
+              intent="test-intent",
+              pick_id="test-pick-id",
+              success_type="test-success-type",
+              tag="tag-6",
+              reach_script=types_gen.ReachScript(
+                  preemptive=False,
+                  preemptive_reason="",
+                  version=0,
+                  calibration_requirement=types_gen
+                  .ReachScriptCalibrationRequirement(allow_uncalibrated=False),
+                  commands=[
+                      types_gen.ReachScriptCommand(
+                          move_j_path=types_gen.MoveJPathArgs(waypoints=[
+                              types_gen.MoveJWaypointArgs(
+                                  acceleration=3.0,
+                                  rotation=[
+                                      1.6763853648318705, -0.9809819685779639,
+                                      1.5026367936800202, -2.0773793705696866,
+                                      4.649738410960897, 0.02894469760442231
+                                  ],
+                                  velocity=2.0)
+                          ]))
+                  ]))
+      ])
+
+  def test_fk(self) -> None:
+    rdev, dev = self._init_arm("ur5e.urdf", [])
+    with test_utils.TestDevice(rdev) as test_device:
+      test_device.set_responder(TestArm(""))
+      state = dev.fetch_state()
+      test_device.expect_command_data([
+          types_gen.CommandData(device_type="robot", data_type="frame-request")
+      ])
+      self.assertIsNotNone(state)
+      if state is None:
+        return
+      # fk without adjust, not world
+      pose = dev.fk([1.6540831333902932, -0.65556380727104,
+                     1.394939944111822, -2.296503262239259,
+                     4.649417918706931, 0.006600704600401741], False, False)
+      self.assertIsNotNone(pose)
+      assert pose
+      assert np.allclose(np.array(pose.as_list(), dtype=np.float64),
+                         np.array([0.1875917, -0.71203265, 0.0567831,
+                                   0.11865415, -3.07573961, -0.01666055],
+                                  dtype=np.float64)), str(pose.as_tuple())
+      # fk without adjust, world
+      pose = dev.fk([1.6540831333902932, -0.65556380727104,
+                     1.394939944111822, -2.296503262239259,
+                     4.649417918706931, 0.006600704600401741], False, True)
+      self.assertIsNotNone(pose)
+      assert pose
+      assert np.allclose(np.array(pose.as_list(), dtype=np.float64),
+                         np.array([0.2875917, -0.71203265, 0.0567831,
+                                   0.11865415, -3.07573961, -0.01666055],
+                                  dtype=np.float64)), str(pose.as_tuple())
+      # fk with adjust, not world
+      pose = dev.fk([1.6763853648318705, -0.9809819685779639,
+                     1.5026367936800202, -2.0773793705696866,
+                     4.649738410960897, 0.02894469760442231], True, False)
+      self.assertIsNotNone(pose)
+      assert pose
+      assert np.allclose(np.array(pose.as_list(), dtype=np.float64),
+                         np.array([0.1875917, -0.71203265, 0.0567831,
+                                   0.11865415, -3.07573961, -0.01666055],
+                                  dtype=np.float64)), str(pose.as_tuple())
+      # fk with adjust, world
+      pose = dev.fk([1.6763853648318705, -0.9809819685779639,
+                     1.5026367936800202, -2.0773793705696866,
+                     4.649738410960897, 0.02894469760442231], True, True)
+      self.assertIsNotNone(pose)
+      assert pose
+      assert np.allclose(np.array(pose.as_list(), dtype=np.float64),
+                         np.array([0.2875917, -0.71203265, 0.0567831,
+                                   0.11865415, -3.07573961, -0.01666055],
+                                  dtype=np.float64)), str(pose.as_tuple())
 
   def test_to_joints(self) -> None:
     rdev, dev = self._init_arm("ur5e.urdf", [])
@@ -779,6 +1107,24 @@ class TestPyreachArmImpl(unittest.TestCase):
         pose_with_tip_adjust.as_tuple(),
         (0.18556403170793967, -0.7691736787189849, 0.0015124760385194225,
          0.11865414779070117, -3.075739605978814, -0.0166605496802987))
+    base_t_origin = state.base_t_origin
+    self.assertIsNotNone(base_t_origin)
+    assert base_t_origin
+    self.assertEqual(base_t_origin.as_tuple(), (0.1, 0.0, 0.0, 0.0, 0.0, 0.0))
+    pose = state.flange_t_origin
+    self.assertIsNotNone(pose)
+    assert pose
+    self.assertEqual(
+        pose.as_tuple(),
+        (0.29611222340764765, -0.7146550885497088, 0.1642837633972083,
+         0.11865414779070117, -3.075739605978814, -0.0166605496802987))
+    pose_with_tip_adjust = state.tip_adjust_t_origin
+    self.assertIsNotNone(pose_with_tip_adjust)
+    assert pose_with_tip_adjust
+    self.assertEqual(
+        pose_with_tip_adjust.as_tuple(),
+        (0.28556403170793965, -0.7691736787189849, 0.0015124760385194225,
+         0.11865414779070127, -3.0757396059788134, -0.01666054968029826))
 
 
 class TestArm(test_utils.TestResponder):
@@ -840,6 +1186,7 @@ class TestArm(test_utils.TestResponder):
                   0.0015124760385194225, 0.11865414779070117,
                   -3.075739605978814, -0.0166605496802987
               ],
+              base_t_origin=[0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
               joints=[
                   1.665570735931396, -0.7995384496501465, 1.341465298329489,
                   -2.12082638363027, 4.660228729248047, 0.01271963119506836

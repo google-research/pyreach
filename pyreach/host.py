@@ -33,6 +33,7 @@ from pyreach import logger
 from pyreach import metrics
 from pyreach import oracle
 from pyreach import playback
+from pyreach import run_script
 from pyreach import sim
 from pyreach import text_instruction
 from pyreach import vacuum
@@ -291,6 +292,11 @@ class Host(object):
   @property
   def sim(self) -> Optional[sim.Sim]:
     """Access sim object."""
+    raise NotImplementedError
+
+  @property
+  def run_script(self) -> Optional[run_script.RunScript]:
+    """Get the RunScript object."""
     raise NotImplementedError
 
   def get_ping_time(self) -> Optional[float]:

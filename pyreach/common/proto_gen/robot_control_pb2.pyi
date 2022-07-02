@@ -178,11 +178,20 @@ class CommandMetadata(google.protobuf.message.Message):
         CLIENT: CommandMetadata.Type.ValueType = ...  # 1
         """Command output from a robot client to the backend."""
 
-        VIRTUAL: CommandMetadata.Type.ValueType = ...  # 2
-        """Command output from a virtual part to another part."""
-
         ECHOED_INPUT: CommandMetadata.Type.ValueType = ...  # 3
-        """Input command for a control module which has already"""
+        """TODO: Consider renaming to CLIENT_OUTPUT.
+        Input command for a control module which has already
+        """
+
+        ECHOED_OUTPUT: CommandMetadata.Type.ValueType = ...  # 4
+        """been executed, echoed in the state for logging.
+        Command output from a virtual part to other parts,
+        """
+
+        SPLIT_OUTPUT: CommandMetadata.Type.ValueType = ...  # 5
+        """before it has been split up, echoed in the state.
+        Command output from a virtual part to other parts,
+        """
 
     class Type(_Type, metaclass=_TypeEnumTypeWrapper):
         """*** Backend Framework fields ***
@@ -199,11 +208,20 @@ class CommandMetadata(google.protobuf.message.Message):
     CLIENT: CommandMetadata.Type.ValueType = ...  # 1
     """Command output from a robot client to the backend."""
 
-    VIRTUAL: CommandMetadata.Type.ValueType = ...  # 2
-    """Command output from a virtual part to another part."""
-
     ECHOED_INPUT: CommandMetadata.Type.ValueType = ...  # 3
-    """Input command for a control module which has already"""
+    """TODO: Consider renaming to CLIENT_OUTPUT.
+    Input command for a control module which has already
+    """
+
+    ECHOED_OUTPUT: CommandMetadata.Type.ValueType = ...  # 4
+    """been executed, echoed in the state for logging.
+    Command output from a virtual part to other parts,
+    """
+
+    SPLIT_OUTPUT: CommandMetadata.Type.ValueType = ...  # 5
+    """before it has been split up, echoed in the state.
+    Command output from a virtual part to other parts,
+    """
 
 
     BLOCKING_FIELD_NUMBER: builtins.int
@@ -266,18 +284,20 @@ class CommandMetadata(google.protobuf.message.Message):
         """
         pass
     processing_result: global___ControlModuleCommandProcessing.Result.ValueType = ...
-    """The result of ControlModule::ProcessCommand executing with this input
-    command. While ProcessCommand is executing, this field contains the
-    processing result for the *previous* control cycle. It is automatically
-    updated immediately after ProcessCommand completes (ie, before
-    UpdateState). This field is only used with echoed input commands.
+    """If type = ECHOED_INPUT, this is the result of ControlModule::ProcessCommand
+    executing with this input command. While ProcessCommand is executing, this
+    field contains the processing result for the *previous* control cycle. It
+    is automatically updated immediately after ProcessCommand completes (ie,
+    before UpdateState). If type = ECHOED_OUTPUT, this is whether the command
+    was successfully output to subordinate parts. Not used for other types.
     """
 
     @property
     def original_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
-        """In echoed commands, LogEntry.id.timestamp is the time the message was
+        """If type = ECHOED_*, LogEntry.id.timestamp is the time the message was
         output in the state batch. Therefore the command's original timestamp
         (ie, when the payload was originally generated) is copied to this field.
+        Not used for other command types.
         """
         pass
     def __init__(self,

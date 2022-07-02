@@ -49,6 +49,7 @@ from pyreach.impl import metrics_impl
 from pyreach.impl import oracle_impl
 from pyreach.impl import playback_impl
 from pyreach.impl import reach_host
+from pyreach.impl import run_script_impl
 from pyreach.impl import sim_impl
 from pyreach.impl import text_instruction_impl
 from pyreach.impl import utils
@@ -184,6 +185,7 @@ class HostImpl(pyreach.Host):
   _text_instructions: pyreach.TextInstructions
   _arm_devices: List[arm_impl.ArmDevice]
   _sim: Optional[pyreach.Sim]
+  _run_script: Optional[pyreach.RunScript]
 
   def __init__(
       self,
@@ -475,7 +477,6 @@ class HostImpl(pyreach.Host):
         arms[arm_interface.device_name] = add_arm_device(
             arm_impl.ArmDevice(
                 arm_type,
-                self._config._calibration,
                 self._config._actionsets,
                 workcell_io_config,
                 arm_interface.device_name,
@@ -519,6 +520,19 @@ class HostImpl(pyreach.Host):
             i.interface_type == machine_interfaces.InterfaceType.RUN_SCRIPT and
             ("script-console-reply" in i.keys or "sim reset" in i.keys)):
           self._sim = add_device(sim_impl.SimDevice().get_wrapper())
+          break
+    # Add run-script
+    self._run_script = None
+    if interfaces is not None:
+      delegated_client_interfaces = interfaces.get_machine_interfaces_with_type(
+          "delegated-client")
+      for i in delegated_client_interfaces:
+        if (i.device_type == "delegated-client" and
+            i.device_name == "run-script" and
+            i.interface_type == machine_interfaces.InterfaceType.RUN_SCRIPT and
+            not i.data_type and "run-script" in i.keys and "cancel" in i.keys):
+          self._run_script = add_device(
+              run_script_impl.RunScriptDevice().get_wrapper())
           break
     # Create host
     self._host = reach_host.ReachHost(
@@ -841,6 +855,11 @@ class HostImpl(pyreach.Host):
   def sim(self) -> Optional[pyreach.Sim]:
     """Access sim object."""
     return self._sim
+
+  @property
+  def run_script(self) -> Optional[pyreach.RunScript]:
+    """Get the RunScript object."""
+    return self._run_script
 
   def get_ping_time(self) -> Optional[float]:
     """Return the latest ping time.

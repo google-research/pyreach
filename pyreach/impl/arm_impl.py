@@ -13,17 +13,15 @@
 # limitations under the License.
 """Implementation of the PyReach Arm interface."""
 
-import dataclasses
 import enum
 import logging  # type: ignore
 import threading
-from typing import Callable, Dict, List, Optional, Tuple, Union, cast
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
 from pyreach.common.proto_gen import workcell_io_pb2 as workcell_io
 from pyreach import arm
-from pyreach import calibration
 from pyreach import constraints
 from pyreach import core
 from pyreach import digital_output
@@ -31,7 +29,6 @@ from pyreach import internal
 from pyreach.common.base import transform_util
 from pyreach.common.python import types_gen
 from pyreach.impl import actions_impl
-from pyreach.impl import calibration_impl
 from pyreach.impl import constraints_impl
 from pyreach.impl import device_base
 from pyreach.impl import digital_output_impl
@@ -170,14 +167,6 @@ class IKLibPyBullet(IKLib):
   def require_ikhints(self) -> bool:
     """Return if IKHints are required for this IK library."""
     return False
-
-
-@dataclasses.dataclass(frozen=True)
-class _ArmDataCache:
-  """Cache for arm calibration and tool tip related information."""
-  calbration: calibration.Calibration
-  arm_origin: Optional[np.ndarray]
-  tip_adjust_transform: Optional[np.ndarray]
 
 
 class ActionVacuumState(enum.Enum):
@@ -448,6 +437,7 @@ class _MovePose(_Command):
   _servo_time_seconds: float
   _servo_lookahead_time_seconds: float
   _servo_gain: float
+  _pose_in_world_coordinates: bool
 
   def __init__(self,
                controller_name: str,
@@ -461,7 +451,8 @@ class _MovePose(_Command):
                apply_tip_adjust_transform: bool = False,
                servo_time_seconds: float = 0.0,
                servo_lookahead_time_seconds: float = 0.0,
-               servo_gain: float = 0.0) -> None:
+               servo_gain: float = 0.0,
+               pose_in_world_coordinates: bool = False) -> None:
     """Construct the MovePose object.
 
     Args:
@@ -481,6 +472,8 @@ class _MovePose(_Command):
         (servo + UR only).
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
     """
     super().__init__(controller_name)
     self._translation = translation
@@ -494,6 +487,7 @@ class _MovePose(_Command):
     self._servo_time_seconds = servo_time_seconds
     self._servo_lookahead_time_seconds = servo_lookahead_time_seconds
     self._servo_gain = servo_gain
+    self._pose_in_world_coordinates = pose_in_world_coordinates
 
   def to_reach_script(
       self, arm_type: arm.ArmType, support_vacuum: bool, support_blowoff: bool,
@@ -520,6 +514,11 @@ class _MovePose(_Command):
         self._translation.x, self._translation.y, self._translation.z,
         self._rotation.x, self._rotation.y, self._rotation.z
     ])
+    if self._pose_in_world_coordinates:
+      if arm_origin is None:
+        raise core.PyReachError("arm origin was not loaded")
+      pose = transform_util.multiply_pose(
+          transform_util.inverse_pose(arm_origin), pose)
     if self._apply_tip_adjust_transform:
       if tip_adjust_transform is not None:
         if self._use_unity_ik:
@@ -565,7 +564,7 @@ class _MovePose(_Command):
               tip_adjust_transform)
           pose = transform_util.multiply_pose(pose, tip_adjust_transform)
       else:
-        raise core.PyReachError("Calibration was not loaded")
+        raise core.PyReachError("tip adjust transform was not loaded")
     if ik_lib is not None:
       if ik_lib.require_ikhints() and not ik_hints:
         raise core.PyReachError("IKhints have not been loaded")
@@ -1154,19 +1153,15 @@ class ArmDevice(requester.Requester[arm.ArmState]):
   _internal_devices: List[device_base.DeviceBase]
   _digital_outputs: core.ImmutableDictionary[core.ImmutableDictionary[
       digital_output.DigitalOutput]]
-  _calibration: calibration_impl.CalDevice
   _actions: Optional[actions_impl.ActionDevice]
   _support_vacuum: bool
   _support_blowoff: bool
   _supported_controllers: Optional[Tuple[arm.ArmControllerDescription, ...]]
   _timers: internal.Timers
-  _data_cache: Optional[_ArmDataCache]
-  _data_cache_lock: threading.Lock
 
   def __init__(
       self,
       arm_type: arm.ArmType,
-      calibration_device: calibration_impl.CalDevice,
       actions: Optional[actions_impl.ActionDevice] = None,
       workcell_io_config: Optional[workcell_io.IOConfig] = None,
       device_name: str = "",
@@ -1177,7 +1172,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
     Args:
       arm_type: The arm type.
-      calibration_device: The Calibration device.
       actions: The Action device.
       workcell_io_config: The workcell IO config.
       device_name: The name of the device.
@@ -1197,14 +1191,11 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       self.set_ik_lib(self._ik_lib_type)
     self._constraints_device = constraints_impl.ConstraintsDevice(device_name)
     self._internal_devices = [self._constraints_device]
-    self._calibration = calibration_device
     self._actions = actions
     self._support_vacuum = False
     self._support_blowoff = False
     self._supported_controllers = None if support_controllers else ()
     self._timers = internal.Timers(set())
-    self._data_cache = None
-    self._data_cache_lock = threading.Lock()
     self._digital_outputs = core.ImmutableDictionary({})
     if workcell_io_config is None:
       return
@@ -1274,10 +1265,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     """Return the action device."""
     return self._actions
 
-  def calibration(self) -> calibration_impl.CalDevice:
-    """Return the calibration device."""
-    return self._calibration
-
   def support_vacuum(self) -> bool:
     """Return if vacuum is supported."""
     return self._support_vacuum
@@ -1331,7 +1318,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
 
   def fk(self,
          joints: Union[Tuple[float, ...], List[float], np.ndarray],
-         apply_tip_adjust_transform: bool = False) -> Optional[core.Pose]:
+         apply_tip_adjust_transform: bool = False,
+         pose_in_world_coordinates: bool = False) -> Optional[core.Pose]:
     """Uses forward kinematics to get the pose from the joint angles.
 
     Args:
@@ -1339,6 +1327,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       apply_tip_adjust_transform: If True, will use the data in the calibration
         file for the robot to change the returned pose from the end of the arm
         to the tip of the end-effector.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
 
     Returns:
       The pose for the end of the arm, or if apply_tip_adjust_transform was
@@ -1361,14 +1351,27 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     if pose is None:
       return None
 
-    if not apply_tip_adjust_transform:
+    if not apply_tip_adjust_transform and not pose_in_world_coordinates:
       return core.Pose.from_list(pose)
 
-    data_cache = self._update_data_cache()
-    if data_cache and data_cache.tip_adjust_transform is not None:
+    state = self.get_cached()
+    if state is None:
+      return None
+
+    if apply_tip_adjust_transform:
+      if state.tip_adjust_t_flange is None:
+        return None
       pose = transform_util.multiply_pose(
           np.array(pose, dtype=np.float64),
-          data_cache.tip_adjust_transform).tolist()
+          np.array(state.tip_adjust_t_flange.as_list(),
+                   dtype=np.float64)).tolist()
+
+    if pose_in_world_coordinates:
+      if state.base_t_origin is None:
+        return None
+      pose = transform_util.multiply_pose(
+          np.array(state.base_t_origin.as_list(), dtype=np.float64),
+          np.array(pose, dtype=np.float64)).tolist()
 
     if pose is None:
       return None
@@ -1408,53 +1411,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       return self._constraints_ik_hints
     return {}
 
-  def _update_data_cache(self) -> Optional[_ArmDataCache]:
-    with self._data_cache_lock:
-      calib = self._calibration.get()
-      if not calib:
-        self._data_cache = None
-        return None
-      if self._data_cache and self._data_cache.calbration == calib:
-        return self._data_cache
-
-      tip_dev = None
-      tip_transform = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-      tip_adjust_transform = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-      arm_origin = None
-      for dev in calib.get_all_devices():
-        if (dev.device_type == "object" and dev.sub_type == "tip" and
-            dev.tool_mount in {"robot", "ur"} and
-            isinstance(dev, calibration.CalibrationObject)):
-          if (tip_dev and tip_dev.device_name.find("tip0") == 0 and
-              dev.device_name.find("tip0") != 0):
-            continue
-          tip_dev = cast(calibration.CalibrationObject, dev)
-          if tip_dev.extrinsics:
-            tip_transform = np.array(tip_dev.extrinsics, dtype=np.float64)
-
-      if tip_dev:
-        tip_adjust_transform = tip_transform
-        for dev in calib.get_all_devices():
-          if (dev.device_type == "object" and dev.sub_type == "tip" and
-              dev.tool_mount == ("object-" + tip_dev.device_name) and
-              isinstance(dev, calibration.CalibrationObject)):
-            tip_adjust_dev = cast(calibration.CalibrationObject, dev)
-            if tip_adjust_dev.extrinsics:
-              tip_adjust_transform = transform_util.multiply_pose(
-                  tip_adjust_transform,
-                  np.array(tip_adjust_dev.extrinsics, dtype=np.float64))
-
-      arm_calibration_dev = calib.get_device("robot", self.device_name)
-      if arm_calibration_dev is None:
-        arm_calibration_dev = calib.get_device("ur", self.device_name)
-      if isinstance(arm_calibration_dev, calibration.CalibrationRobot):
-        arm_calibration = cast(calibration.CalibrationRobot,
-                               arm_calibration_dev)
-        arm_origin = np.array(arm_calibration.extrinsics, dtype=np.float64)
-
-      self._data_cache = _ArmDataCache(calib, arm_origin, tip_adjust_transform)
-      return self._data_cache
-
   def run_command(self,
                   run_async: bool,
                   commands: _Commands,
@@ -1485,8 +1441,6 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     Returns:
       Status of the command.
     """
-    data_cache = self._update_data_cache()
-
     tag = utils.generate_tag()
     try:
       state = self.get_cached()
@@ -1499,8 +1453,10 @@ class ArmDevice(requester.Requester[arm.ArmState]):
             self._arm_type, self._support_vacuum,
             self._support_blowoff, allow_uncalibrated, preemptive, self._ik_lib,
             self._update_ikhints(), state,
-            data_cache.arm_origin if data_cache else None,
-            data_cache.tip_adjust_transform if data_cache else None)
+            np.array(state.base_t_origin.as_list(), dtype=np.float64)
+            if state.base_t_origin else None,
+            np.array(state.tip_adjust_t_flange.as_list(), dtype=np.float64)
+            if state.tip_adjust_t_flange else None)
     except core.PyReachError as e:
       status = core.PyReachStatus(
           utils.timestamp_now(),
@@ -1606,9 +1562,22 @@ class ArmDevice(requester.Requester[arm.ArmState]):
       adjust_pose = core.Pose.from_list(msg.tip_adjust_t_base)
       tip_adjust_transform = core.Pose.from_list(
           transform_util.multiply_pose(
-              transform_util.inverse_pose(
-                  np.array(pose, dtype=np.float64)),
+              transform_util.inverse_pose(np.array(pose, dtype=np.float64)),
               np.array(msg.tip_adjust_t_base, dtype=np.float64)).tolist())
+    base_origin: Optional[core.Pose] = None
+    pose_origin: Optional[core.Pose] = None
+    adjust_pose_origin: Optional[core.Pose] = None
+    if msg.base_t_origin:
+      base_origin = core.Pose.from_list(msg.base_t_origin)
+      pose_origin = core.Pose.from_list(
+          transform_util.multiply_pose(
+              np.array(msg.base_t_origin, dtype=np.float64),
+              np.array(pose, dtype=np.float64)).tolist())
+      if msg.tip_adjust_t_base:
+        adjust_pose_origin = core.Pose.from_list(
+            transform_util.multiply_pose(
+                np.array(msg.base_t_origin, dtype=np.float64),
+                np.array(msg.tip_adjust_t_base, dtype=np.float64)).tolist())
     pose_t = core.Pose.from_list(pose)
     return arm.ArmState(
         utils.time_at_timestamp(msg.ts), msg.seq,
@@ -1616,7 +1585,8 @@ class ArmDevice(requester.Requester[arm.ArmState]):
         tuple(force), msg.is_protective_stopped, msg.is_emergency_stopped,
         msg.is_safeguard_stopped, msg.is_reduced_mode, msg.safety_message,
         msg.is_program_running, msg.is_robot_power_on, robot_mode,
-        tip_adjust_transform, adjust_pose)
+        tip_adjust_transform, adjust_pose, base_origin, pose_origin,
+        adjust_pose_origin)
 
   @property
   def arm_type(self) -> arm.ArmType:
@@ -1926,6 +1896,7 @@ class ArmImpl(arm.Arm):
               servo_gain: float = 0.0,
               preemptive: bool = False,
               controller_name: str = "",
+              pose_in_world_coordinates: bool = False,
               timeout: Optional[float] = None) -> core.PyReachStatus:
     """Set the pose synchronously.
 
@@ -1948,6 +1919,8 @@ class ArmImpl(arm.Arm):
          only).
        preemptive: True to preempt existing scripts.
        controller_name: The name of the controller to send the command to.
+       pose_in_world_coordinates: If true, pose is in world coordinates,
+         otherwise if false, pose is in arm base coordinates.
        timeout: The amount of time to wait until giving up.
 
     Returns:
@@ -1968,7 +1941,8 @@ class ArmImpl(arm.Arm):
                 apply_tip_adjust_transform=apply_tip_adjust_transform,
                 servo_time_seconds=servo_time_seconds,
                 servo_lookahead_time_seconds=servo_lookahead_time_seconds,
-                servo_gain=servo_gain)
+                servo_gain=servo_gain,
+                pose_in_world_coordinates=pose_in_world_coordinates)
         ]),
         intent=intent,
         pick_id=pick_id,
@@ -1994,6 +1968,7 @@ class ArmImpl(arm.Arm):
       servo_gain: float = 0.0,
       preemptive: bool = False,
       controller_name: str = "",
+      pose_in_world_coordinates: bool = False,
       timeout: Optional[float] = None,
       callback: Optional[Callable[[core.PyReachStatus], None]] = None,
       finished_callback: Optional[Callable[[], None]] = None) -> None:
@@ -2018,6 +1993,8 @@ class ArmImpl(arm.Arm):
         only).
       preemptive: True to preempt existing scripts.
       controller_name: The name of the controller to send the command to.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
       timeout: The amount of time to wait until giving up.
       callback: Optional function to call when done (None for fail.)
       finished_callback: Optional finish function to call when done.
@@ -2039,7 +2016,8 @@ class ArmImpl(arm.Arm):
                 apply_tip_adjust_transform=apply_tip_adjust_transform,
                 servo_time_seconds=servo_time_seconds,
                 servo_lookahead_time_seconds=servo_lookahead_time_seconds,
-                servo_gain=servo_gain)
+                servo_gain=servo_gain,
+                pose_in_world_coordinates=pose_in_world_coordinates)
         ]),
         intent=intent,
         pick_id=pick_id,
@@ -2122,19 +2100,6 @@ class ArmImpl(arm.Arm):
     steps = action.get_steps().copy()
     if action.get_cyclic() and steps:
       steps.append(steps[0])
-
-    calib = self._device.calibration().get()
-    if calib is None:
-      raise core.PyReachError("Calibration has not loaded yet.")
-    arm_calibration_dev = calib.get_device("robot", self.device_name)
-    if arm_calibration_dev is None:
-      arm_calibration_dev = calib.get_device("ur", self.device_name)
-    if arm_calibration_dev is None:
-      raise core.PyReachError("Arm calibration was missing.")
-    if not isinstance(arm_calibration_dev, calibration.CalibrationRobot):
-      raise core.PyReachError("Arm calibration data was not Robot.")
-    arm_calibration = cast(calibration.CalibrationRobot, arm_calibration_dev)
-    arm_transform = np.array(arm_calibration.extrinsics, dtype=np.float64)
 
     step_pose: Dict[int, Tuple[types_gen.Vec3d, types_gen.Quaternion3d]] = {}
     commands: List[_Command] = []
@@ -2295,27 +2260,24 @@ class ArmImpl(arm.Arm):
           step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
           continue
 
-        arm_origin_transform = transform_util.inverse_pose(arm_transform)
-        arm_tool_transform = transform_util.multiply_pose(
-            arm_origin_transform, target_tip_transform)
-
         use_linear = False
         if step.get_use_process_mode():
           use_linear = True
         commands.append(
             _MovePose(
                 controller_name="",
-                translation=types_gen.Vec3d(arm_tool_transform[0],
-                                            arm_tool_transform[1],
-                                            arm_tool_transform[2]),
-                rotation=types_gen.Vec3d(arm_tool_transform[3],
-                                         arm_tool_transform[4],
-                                         arm_tool_transform[5]),
+                translation=types_gen.Vec3d(target_tip_transform[0],
+                                            target_tip_transform[1],
+                                            target_tip_transform[2]),
+                rotation=types_gen.Vec3d(target_tip_transform[3],
+                                         target_tip_transform[4],
+                                         target_tip_transform[5]),
                 velocity=velocity,
                 acceleration=accel,
                 use_linear=use_linear,
                 use_unity_ik=use_unity_ik,
-                apply_tip_adjust_transform=apply_tip_adjust_transform))
+                apply_tip_adjust_transform=apply_tip_adjust_transform,
+                pose_in_world_coordinates=True))
 
       if len(step_pose) == start_len:
         raise core.PyReachError("Action invalid: contains infinite loop")
@@ -2554,7 +2516,8 @@ class ArmImpl(arm.Arm):
 
   def fk(self,
          joints: Union[Tuple[float, ...], List[float], np.ndarray],
-         apply_tip_adjust_transform: bool = False) -> Optional[core.Pose]:
+         apply_tip_adjust_transform: bool = False,
+         pose_in_world_coordinates: bool = False) -> Optional[core.Pose]:
     """Uses forward kinematics to get the pose from the joint angles.
 
     Args:
@@ -2562,6 +2525,8 @@ class ArmImpl(arm.Arm):
       apply_tip_adjust_transform: If True, will use the data in the calibration
         file for the robot to change the returned pose from the end of the arm
         to the tip of the end-effector.
+      pose_in_world_coordinates: If true, pose is in world coordinates,
+        otherwise if false, pose is in arm base coordinates.
 
     Returns:
       The pose for the end of the arm, or if apply_tip_adjust_transform was
@@ -2569,7 +2534,8 @@ class ArmImpl(arm.Arm):
       was not yet initialized, this will return None.
     """
 
-    return self._device.fk(joints, apply_tip_adjust_transform)
+    return self._device.fk(joints, apply_tip_adjust_transform,
+                           pose_in_world_coordinates)
 
   def wait_constraints(self, timeout: Optional[float] = None) -> bool:
     """Wait for the arm constraints to load.

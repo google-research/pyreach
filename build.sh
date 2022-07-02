@@ -28,6 +28,8 @@ ensure_installed wget
 ensure_installed python3-pip
 ensure_installed python3-opencv
 ensure_installed python3-scipy
+ensure_installed python3-absl
+ensure_installed python3-shapely
 
 pip3 install --upgrade pip
 

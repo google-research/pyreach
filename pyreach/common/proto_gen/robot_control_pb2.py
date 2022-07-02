@@ -37,7 +37,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x13robot_control.proto\x12\x19robotics.logging.messages\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10robot_info.proto\x1a\x0cstatus.proto\"/\n\x1aRegisterRobotClientRequest\x12\x11\n\tclient_id\x18\x01 \x01(\t\"q\n\x1bRegisterRobotClientResponse\x12!\n\x06status\x18\x01 \x01(\x0b\x32\x11.util.StatusProto\x12/\n\nrobot_info\x18\x02 \x01(\x0b\x32\x1b.robotics.logging.RobotInfo\"N\n\rControlEntity\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0f\n\x07part_id\x18\x02 \x01(\t\x12\x19\n\x11\x63ontrol_module_id\x18\x03 \x01(\t\"\x9c\x02\n\rStateMetadata\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.StateMetadata.Type\x12\x11\n\tsignal_id\x18\x04 \x01(\t\x12\x38\n\x06source\x18\x02 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12@\n\x0emerged_sources\x18\x03 \x03(\x0b\x32(.robotics.logging.messages.ControlEntity\"?\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07REGULAR\x10\x01\x12\n\n\x06MERGED\x10\x02\x12\r\n\tIRREGULAR\x10\x03\"\xae\x04\n\x0f\x43ommandMetadata\x12\x10\n\x08\x62locking\x18\x02 \x01(\x08\x12*\n\x07timeout\x18\x03 \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x0f\n\x07updated\x18\x04 \x01(\x08\x12+\n\x08min_time\x18\x06 \x01(\x0b\x32\x19.google.protobuf.Duration\x12=\n\x04type\x18\x07 \x01(\x0e\x32/.robotics.logging.messages.CommandMetadata.Type\x12\x38\n\x06source\x18\x08 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12\x38\n\x06target\x18\t \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12[\n\x11processing_result\x18\n \x01(\x0e\x32@.robotics.logging.messages.ControlModuleCommandProcessing.Result\x12\x31\n\roriginal_time\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"B\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x43LIENT\x10\x01\x12\x0b\n\x07VIRTUAL\x10\x02\x12\x10\n\x0c\x45\x43HOED_INPUT\x10\x03J\x04\x08\x05\x10\x06J\x04\x08\x01\x10\x02R\x08internalR\x02id\"\xef\x01\n\rSystemCommand\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.SystemCommand.Type\"\xa0\x01\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x11\n\rENABLE_MOTION\x10\x01\x12\x12\n\x0e\x44ISABLE_MOTION\x10\x02\x12\x0f\n\x0b\x43LEAR_FAULT\x10\x03\x12\x0f\n\x0bSTOP_MOTION\x10\x04\x12\x10\n\x0cMOVE_TO_HOME\x10\x05\x12\r\n\tFAIL_SAFE\x10\x06\x12\x1d\n\x19RELEASE_CONTROL_AUTHORITY\x10\x07\"W\n\x0eRobotCommandId\x12\x0b\n\x03seq\x18\x01 \x01(\x04\x12\x38\n\x06source\x18\x02 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\"\x8f\x01\n\x12RobotCommandResult\x12=\n\ncommand_id\x18\x04 \x01(\x0b\x32).robotics.logging.messages.RobotCommandId\x12!\n\x06status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x11\n\tpreempted\x18\x03 \x01(\x08J\x04\x08\x01\x10\x02\"a\n\x1e\x43ontrolModuleCommandProcessing\"?\n\x06Result\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x42YPASS\x10\x01\x12\x0b\n\x07SUCCESS\x10\x02\x12\x0b\n\x07\x46\x41ILURE\x10\x03\"\xfa\x03\n\x0bSystemState\x12\x46\n\x0f\x63ommand_results\x18\x01 \x03(\x0b\x32-.robotics.logging.messages.RobotCommandResult\x12(\n\rdevice_status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x16\n\x0emotion_enabled\x18\x03 \x01(\x08\x12\x18\n\x10\x64\x65vice_fail_safe\x18\x04 \x01(\x08\x12\x44\n\x11\x61\x63tive_command_id\x18\x06 \x01(\x0b\x32).robotics.logging.messages.RobotCommandId\x12\x1d\n\x15\x63ontrol_step_time_sec\x18\n \x01(\x02\x12\"\n\x1a\x63ontrol_step_time_exceeded\x18\x0e \x01(\x08\x12<\n\x18\x63ommand_sent_from_client\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12:\n\x16\x63ommand_sent_to_device\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12>\n\x1astate_received_from_device\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.TimestampJ\x04\x08\x05\x10\x06'
+  serialized_pb=b'\n\x13robot_control.proto\x12\x19robotics.logging.messages\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10robot_info.proto\x1a\x0cstatus.proto\"/\n\x1aRegisterRobotClientRequest\x12\x11\n\tclient_id\x18\x01 \x01(\t\"q\n\x1bRegisterRobotClientResponse\x12!\n\x06status\x18\x01 \x01(\x0b\x32\x11.util.StatusProto\x12/\n\nrobot_info\x18\x02 \x01(\x0b\x32\x1b.robotics.logging.RobotInfo\"N\n\rControlEntity\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0f\n\x07part_id\x18\x02 \x01(\t\x12\x19\n\x11\x63ontrol_module_id\x18\x03 \x01(\t\"\x9c\x02\n\rStateMetadata\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.StateMetadata.Type\x12\x11\n\tsignal_id\x18\x04 \x01(\t\x12\x38\n\x06source\x18\x02 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12@\n\x0emerged_sources\x18\x03 \x03(\x0b\x32(.robotics.logging.messages.ControlEntity\"?\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x0b\n\x07REGULAR\x10\x01\x12\n\n\x06MERGED\x10\x02\x12\r\n\tIRREGULAR\x10\x03\"\xd5\x04\n\x0f\x43ommandMetadata\x12\x10\n\x08\x62locking\x18\x02 \x01(\x08\x12*\n\x07timeout\x18\x03 \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x0f\n\x07updated\x18\x04 \x01(\x08\x12+\n\x08min_time\x18\x06 \x01(\x0b\x32\x19.google.protobuf.Duration\x12=\n\x04type\x18\x07 \x01(\x0e\x32/.robotics.logging.messages.CommandMetadata.Type\x12\x38\n\x06source\x18\x08 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12\x38\n\x06target\x18\t \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\x12[\n\x11processing_result\x18\n \x01(\x0e\x32@.robotics.logging.messages.ControlModuleCommandProcessing.Result\x12\x31\n\roriginal_time\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"i\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x43LIENT\x10\x01\x12\x10\n\x0c\x45\x43HOED_INPUT\x10\x03\x12\x11\n\rECHOED_OUTPUT\x10\x04\x12\x10\n\x0cSPLIT_OUTPUT\x10\x05\"\x04\x08\x02\x10\x02*\x07VIRTUALJ\x04\x08\x05\x10\x06J\x04\x08\x01\x10\x02R\x08internalR\x02id\"\xef\x01\n\rSystemCommand\x12;\n\x04type\x18\x01 \x01(\x0e\x32-.robotics.logging.messages.SystemCommand.Type\"\xa0\x01\n\x04Type\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\x11\n\rENABLE_MOTION\x10\x01\x12\x12\n\x0e\x44ISABLE_MOTION\x10\x02\x12\x0f\n\x0b\x43LEAR_FAULT\x10\x03\x12\x0f\n\x0bSTOP_MOTION\x10\x04\x12\x10\n\x0cMOVE_TO_HOME\x10\x05\x12\r\n\tFAIL_SAFE\x10\x06\x12\x1d\n\x19RELEASE_CONTROL_AUTHORITY\x10\x07\"W\n\x0eRobotCommandId\x12\x0b\n\x03seq\x18\x01 \x01(\x04\x12\x38\n\x06source\x18\x02 \x01(\x0b\x32(.robotics.logging.messages.ControlEntity\"\x8f\x01\n\x12RobotCommandResult\x12=\n\ncommand_id\x18\x04 \x01(\x0b\x32).robotics.logging.messages.RobotCommandId\x12!\n\x06status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x11\n\tpreempted\x18\x03 \x01(\x08J\x04\x08\x01\x10\x02\"a\n\x1e\x43ontrolModuleCommandProcessing\"?\n\x06Result\x12\x0f\n\x0bUNSPECIFIED\x10\x00\x12\n\n\x06\x42YPASS\x10\x01\x12\x0b\n\x07SUCCESS\x10\x02\x12\x0b\n\x07\x46\x41ILURE\x10\x03\"\xfa\x03\n\x0bSystemState\x12\x46\n\x0f\x63ommand_results\x18\x01 \x03(\x0b\x32-.robotics.logging.messages.RobotCommandResult\x12(\n\rdevice_status\x18\x02 \x01(\x0b\x32\x11.util.StatusProto\x12\x16\n\x0emotion_enabled\x18\x03 \x01(\x08\x12\x18\n\x10\x64\x65vice_fail_safe\x18\x04 \x01(\x08\x12\x44\n\x11\x61\x63tive_command_id\x18\x06 \x01(\x0b\x32).robotics.logging.messages.RobotCommandId\x12\x1d\n\x15\x63ontrol_step_time_sec\x18\n \x01(\x02\x12\"\n\x1a\x63ontrol_step_time_exceeded\x18\x0e \x01(\x08\x12<\n\x18\x63ommand_sent_from_client\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12:\n\x16\x63ommand_sent_to_device\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12>\n\x1astate_received_from_device\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.TimestampJ\x04\x08\x05\x10\x06'
   ,
   dependencies=[google_dot_protobuf_dot_duration__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,robot__info__pb2.DESCRIPTOR,status__pb2.DESCRIPTOR,])
 
@@ -96,12 +96,17 @@ _COMMANDMETADATA_TYPE = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='VIRTUAL', index=2, number=2,
+      name='ECHOED_INPUT', index=2, number=3,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='ECHOED_INPUT', index=3, number=3,
+      name='ECHOED_OUTPUT', index=3, number=4,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SPLIT_OUTPUT', index=4, number=5,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
@@ -109,7 +114,7 @@ _COMMANDMETADATA_TYPE = _descriptor.EnumDescriptor(
   containing_type=None,
   serialized_options=None,
   serialized_start=1145,
-  serialized_end=1211,
+  serialized_end=1250,
 )
 _sym_db.RegisterEnumDescriptor(_COMMANDMETADATA_TYPE)
 
@@ -163,8 +168,8 @@ _SYSTEMCOMMAND_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1319,
-  serialized_end=1479,
+  serialized_start=1358,
+  serialized_end=1518,
 )
 _sym_db.RegisterEnumDescriptor(_SYSTEMCOMMAND_TYPE)
 
@@ -198,8 +203,8 @@ _CONTROLMODULECOMMANDPROCESSING_RESULT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1750,
-  serialized_end=1813,
+  serialized_start=1789,
+  serialized_end=1852,
 )
 _sym_db.RegisterEnumDescriptor(_CONTROLMODULECOMMANDPROCESSING_RESULT)
 
@@ -460,7 +465,7 @@ _COMMANDMETADATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=679,
-  serialized_end=1237,
+  serialized_end=1276,
 )
 
 
@@ -492,8 +497,8 @@ _SYSTEMCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1240,
-  serialized_end=1479,
+  serialized_start=1279,
+  serialized_end=1518,
 )
 
 
@@ -531,8 +536,8 @@ _ROBOTCOMMANDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1481,
-  serialized_end=1568,
+  serialized_start=1520,
+  serialized_end=1607,
 )
 
 
@@ -577,8 +582,8 @@ _ROBOTCOMMANDRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1571,
-  serialized_end=1714,
+  serialized_start=1610,
+  serialized_end=1753,
 )
 
 
@@ -603,8 +608,8 @@ _CONTROLMODULECOMMANDPROCESSING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1716,
-  serialized_end=1813,
+  serialized_start=1755,
+  serialized_end=1852,
 )
 
 
@@ -698,8 +703,8 @@ _SYSTEMSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1816,
-  serialized_end=2322,
+  serialized_start=1855,
+  serialized_end=2361,
 )
 
 _REGISTERROBOTCLIENTRESPONSE.fields_by_name['status'].message_type = status__pb2._STATUSPROTO

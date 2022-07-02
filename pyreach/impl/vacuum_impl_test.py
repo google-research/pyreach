@@ -318,8 +318,8 @@ class TestPyreachVacuum(unittest.TestCase):
     ## Setup, ensure no cached image, and that tagged requests will be used.
     calibration_device = calibration_impl.CalDevice()
     armdev, extra_devs, arm_wrapper = arm_impl.ArmDevice(
-        arm_impl.ArmTypeImpl.from_urdf_file("ur5e.urdf"), calibration_device,
-        None, None, "test-name").get_wrapper()
+        arm_impl.ArmTypeImpl.from_urdf_file("ur5e.urdf"), None, None,
+        "test-name").get_wrapper()
     interfaces = machine_interfaces.MachineInterfaces(
         0.0, (machine_interfaces.MachineInterface(
             interface_type=machine_interfaces.InterfaceType.PUBLISH,

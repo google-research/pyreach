@@ -55,7 +55,7 @@ class IntegrationTestXarmEnv(reach_env.ReachEnv):
                 ik_lib=arm.IKLibType.IKPYBULLET,
                 exception_if_error=True),
         "camera":
-            reach_env.ReachColorCamera("realsense", (360, 640)),
+            reach_env.ReachColorCamera("realsense0", (360, 640)),
         "depth_camera":
             reach_env.ReachDepthCamera("", (720, 1280), color_enabled=True),
         "server":
