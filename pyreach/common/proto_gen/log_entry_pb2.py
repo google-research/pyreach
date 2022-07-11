@@ -27,6 +27,7 @@ _sym_db = _symbol_database.Default()
 
 from google.protobuf import any_pb2 as google_dot_protobuf_dot_any__pb2
 import pyreach.common.proto_gen.log_entry_id_pb2 as log__entry__id__pb2
+import pyreach.common.proto_gen.calibration_config_pb2 as calibration__config__pb2
 import pyreach.common.proto_gen.general_io_pb2 as general__io__pb2
 import pyreach.common.proto_gen.image_pb2 as image__pb2
 import pyreach.common.proto_gen.joints_pb2 as joints__pb2
@@ -43,9 +44,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto2',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0flog_entry.proto\x12\x10robotics.logging\x1a\x19google/protobuf/any.proto\x1a\x12log_entry_id.proto\x1a\x10general_io.proto\x1a\x0bimage.proto\x1a\x0cjoints.proto\x1a\x0breach.proto\x1a\x13robot_control.proto\x1a\x10simulation.proto\x1a\x0ftransform.proto\x1a\x11\x63\x61libration.proto\"\xfc\x01\n\x10LogEntryMetadata\x12>\n\tkey_value\x18\x01 \x03(\x0b\x32+.robotics.logging.LogEntryMetadata.KeyValue\x12=\n\x07\x63ommand\x18\x06 \x01(\x0b\x32*.robotics.logging.messages.CommandMetadataH\x00\x12\x39\n\x05state\x18\x10 \x01(\x0b\x32(.robotics.logging.messages.StateMetadataH\x00\x1a&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\tB\x06\n\x04\x64\x61ta\"\xa6\x05\n\x08LogEntry\x12(\n\x02id\x18\x01 \x01(\x0b\x32\x1c.robotics.logging.LogEntryId\x12\x30\n\x04meta\x18\x0f \x01(\x0b\x32\".robotics.logging.LogEntryMetadata\x12:\n\ngeneral_io\x18\x0b \x01(\x0b\x32$.robotics.logging.messages.GeneralIoH\x00\x12\x33\n\x06joints\x18\x0c \x01(\x0b\x32!.robotics.logging.messages.JointsH\x00\x12\x39\n\ttransform\x18\r \x01(\x0b\x32$.robotics.logging.messages.TransformH\x00\x12\x38\n\rencoded_image\x18\x0e \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12J\n\x12simulation_command\x18\x1a \x01(\x0b\x32,.robotics.logging.messages.SimulationCommandH\x00\x12\x42\n\x12\x63\x61mera_calibration\x18\x1b \x01(\x0b\x32$.robotics.messages.CameraCalibrationH\x00\x12\x42\n\x0esystem_command\x18\x13 \x01(\x0b\x32(.robotics.logging.messages.SystemCommandH\x00\x12>\n\x0csystem_state\x18\x16 \x01(\x0b\x32&.robotics.logging.messages.SystemStateH\x00\x12\x39\n\x05reach\x18\xe8\x07 \x01(\x0b\x32\'.robotics.logging.messages.ReachPayloadH\x00\x42\t\n\x07payload'
+  serialized_pb=b'\n\x0flog_entry.proto\x12\x10robotics.logging\x1a\x19google/protobuf/any.proto\x1a\x12log_entry_id.proto\x1a\x18\x63\x61libration_config.proto\x1a\x10general_io.proto\x1a\x0bimage.proto\x1a\x0cjoints.proto\x1a\x0breach.proto\x1a\x13robot_control.proto\x1a\x10simulation.proto\x1a\x0ftransform.proto\x1a\x11\x63\x61libration.proto\"\xfc\x01\n\x10LogEntryMetadata\x12>\n\tkey_value\x18\x01 \x03(\x0b\x32+.robotics.logging.LogEntryMetadata.KeyValue\x12=\n\x07\x63ommand\x18\x06 \x01(\x0b\x32*.robotics.logging.messages.CommandMetadataH\x00\x12\x39\n\x05state\x18\x10 \x01(\x0b\x32(.robotics.logging.messages.StateMetadataH\x00\x1a&\n\x08KeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\tB\x06\n\x04\x64\x61ta\"\xf9\x05\n\x08LogEntry\x12(\n\x02id\x18\x01 \x01(\x0b\x32\x1c.robotics.logging.LogEntryId\x12\x30\n\x04meta\x18\x0f \x01(\x0b\x32\".robotics.logging.LogEntryMetadata\x12:\n\ngeneral_io\x18\x0b \x01(\x0b\x32$.robotics.logging.messages.GeneralIoH\x00\x12\x33\n\x06joints\x18\x0c \x01(\x0b\x32!.robotics.logging.messages.JointsH\x00\x12\x39\n\ttransform\x18\r \x01(\x0b\x32$.robotics.logging.messages.TransformH\x00\x12\x38\n\rencoded_image\x18\x0e \x01(\x0b\x32\x1f.robotics.messages.EncodedImageH\x00\x12J\n\x12simulation_command\x18\x1a \x01(\x0b\x32,.robotics.logging.messages.SimulationCommandH\x00\x12\x42\n\x12\x63\x61mera_calibration\x18\x1b \x01(\x0b\x32$.robotics.messages.CameraCalibrationH\x00\x12Q\n\x19\x63\x61mera_calibration_config\x18\x1c \x01(\x0b\x32,.robotics.logging.messages.CalibrationConfigH\x00\x12\x42\n\x0esystem_command\x18\x13 \x01(\x0b\x32(.robotics.logging.messages.SystemCommandH\x00\x12>\n\x0csystem_state\x18\x16 \x01(\x0b\x32&.robotics.logging.messages.SystemStateH\x00\x12\x39\n\x05reach\x18\xe8\x07 \x01(\x0b\x32\'.robotics.logging.messages.ReachPayloadH\x00\x42\t\n\x07payload'
   ,
-  dependencies=[google_dot_protobuf_dot_any__pb2.DESCRIPTOR,log__entry__id__pb2.DESCRIPTOR,general__io__pb2.DESCRIPTOR,image__pb2.DESCRIPTOR,joints__pb2.DESCRIPTOR,reach__pb2.DESCRIPTOR,robot__control__pb2.DESCRIPTOR,simulation__pb2.DESCRIPTOR,transform__pb2.DESCRIPTOR,calibration__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_any__pb2.DESCRIPTOR,log__entry__id__pb2.DESCRIPTOR,calibration__config__pb2.DESCRIPTOR,general__io__pb2.DESCRIPTOR,image__pb2.DESCRIPTOR,joints__pb2.DESCRIPTOR,reach__pb2.DESCRIPTOR,robot__control__pb2.DESCRIPTOR,simulation__pb2.DESCRIPTOR,transform__pb2.DESCRIPTOR,calibration__pb2.DESCRIPTOR,])
 
 
 
@@ -84,8 +85,8 @@ _LOGENTRYMETADATA_KEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=424,
-  serialized_end=462,
+  serialized_start=450,
+  serialized_end=488,
 )
 
 _LOGENTRYMETADATA = _descriptor.Descriptor(
@@ -134,8 +135,8 @@ _LOGENTRYMETADATA = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=218,
-  serialized_end=470,
+  serialized_start=244,
+  serialized_end=496,
 )
 
 
@@ -204,21 +205,28 @@ _LOGENTRY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='system_command', full_name='robotics.logging.LogEntry.system_command', index=8,
+      name='camera_calibration_config', full_name='robotics.logging.LogEntry.camera_calibration_config', index=8,
+      number=28, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='system_command', full_name='robotics.logging.LogEntry.system_command', index=9,
       number=19, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='system_state', full_name='robotics.logging.LogEntry.system_state', index=9,
+      name='system_state', full_name='robotics.logging.LogEntry.system_state', index=10,
       number=22, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='reach', full_name='robotics.logging.LogEntry.reach', index=10,
+      name='reach', full_name='robotics.logging.LogEntry.reach', index=11,
       number=1000, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -241,8 +249,8 @@ _LOGENTRY = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=473,
-  serialized_end=1151,
+  serialized_start=499,
+  serialized_end=1260,
 )
 
 _LOGENTRYMETADATA_KEYVALUE.containing_type = _LOGENTRYMETADATA
@@ -263,6 +271,7 @@ _LOGENTRY.fields_by_name['transform'].message_type = transform__pb2._TRANSFORM
 _LOGENTRY.fields_by_name['encoded_image'].message_type = image__pb2._ENCODEDIMAGE
 _LOGENTRY.fields_by_name['simulation_command'].message_type = simulation__pb2._SIMULATIONCOMMAND
 _LOGENTRY.fields_by_name['camera_calibration'].message_type = calibration__pb2._CAMERACALIBRATION
+_LOGENTRY.fields_by_name['camera_calibration_config'].message_type = calibration__config__pb2._CALIBRATIONCONFIG
 _LOGENTRY.fields_by_name['system_command'].message_type = robot__control__pb2._SYSTEMCOMMAND
 _LOGENTRY.fields_by_name['system_state'].message_type = robot__control__pb2._SYSTEMSTATE
 _LOGENTRY.fields_by_name['reach'].message_type = reach__pb2._REACHPAYLOAD
@@ -284,6 +293,9 @@ _LOGENTRY.fields_by_name['simulation_command'].containing_oneof = _LOGENTRY.oneo
 _LOGENTRY.oneofs_by_name['payload'].fields.append(
   _LOGENTRY.fields_by_name['camera_calibration'])
 _LOGENTRY.fields_by_name['camera_calibration'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']
+_LOGENTRY.oneofs_by_name['payload'].fields.append(
+  _LOGENTRY.fields_by_name['camera_calibration_config'])
+_LOGENTRY.fields_by_name['camera_calibration_config'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']
 _LOGENTRY.oneofs_by_name['payload'].fields.append(
   _LOGENTRY.fields_by_name['system_command'])
 _LOGENTRY.fields_by_name['system_command'].containing_oneof = _LOGENTRY.oneofs_by_name['payload']

@@ -791,9 +791,6 @@ class Action:
         "_preconditions": list,
         "_tipInputs": list,
         "_name": str,
-        "_softstart": bool,
-        "_softstartAccel": float,
-        "_softstartVelocity": float,
         "_maxAccel": float,
         "_maxVelocity": float,
         "_cyclic": bool,
@@ -805,6 +802,9 @@ class Action:
     }
     optional: Dict[str, Union[Type[Any], Tuple[Type[Any], ...]]] = {
         "_useStepsAsIKHints": bool,
+        "_softstart": bool,
+        "_softstartAccel": float,
+        "_softstartVelocity": float,
     }
     for name, t in expect.items():
       if not isinstance(json_data.get(name, None), t):
@@ -836,9 +836,10 @@ class Action:
         return None
       tips.append(tip_object)
     return Action(steps, preconditions, tips, json_data["_name"],
-                  json_data["_softstart"], float(json_data["_softstartAccel"]),
-                  float(json_data["_softstartVelocity"]),
-                  float(json_data["_maxAccel"]),
+                  json_data.get("_softstart", False),
+                  float(json_data.get("_softstartAccel", 0.0)),
+                  float(json_data.get("_softstartVelocity",
+                                      0.0)), float(json_data["_maxAccel"]),
                   float(json_data["_maxVelocity"]), json_data["_cyclic"],
                   json_data.get("_taskIntent", ""), json_data["_intent"],
                   json_data["_successType"],

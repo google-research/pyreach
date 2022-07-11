@@ -12,77 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Implementation for the PyReach DepthCamera interface."""
+
+import dataclasses
 import logging  # type: ignore
 from typing import Callable, Optional, Tuple
 
 import numpy as np
 
-from pyreach import calibration as cal
 from pyreach import core
 from pyreach import depth_camera
+from pyreach.calibration import CalibrationCamera
 from pyreach.common.base import transform_util
 from pyreach.common.python import types_gen
-from pyreach.impl import calibration_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
 
 
+@dataclasses.dataclass(frozen=True)
 class DepthFrameImpl(depth_camera.DepthFrame):
   """Implementation of a DepthFrame."""
-
-  def __init__(self, time: float, sequence: int, device_type: str,
-               device_name: str, color_data: np.ndarray, depth_data: np.ndarray,
-               calibration: Optional[cal.Calibration],
-               pose: Optional[core.Pose]) -> None:
-    """Construct a DepthFrameImpl."""
-    self._time: float = time
-    self._sequence: int = sequence
-    self._device_type: str = device_type
-    self._device_name: str = device_name
-    self._color_data: np.ndarray = color_data
-    self._depth_data: np.ndarray = depth_data
-    self._calibration: Optional[cal.Calibration] = calibration
-    self._pose: Optional[core.Pose] = pose
-
-  @property
-  def time(self) -> float:
-    """Return timestamp of the ColorFrame."""
-    return self._time
-
-  @property
-  def sequence(self) -> int:
-    """Sequence number of the ColorFrame."""
-    return self._sequence
-
-  @property
-  def device_type(self) -> str:
-    """Return the reach device type."""
-    return self._device_type
-
-  @property
-  def device_name(self) -> str:
-    """Return the Reach device name."""
-    return self._device_name
-
-  @property
-  def color_data(self) -> np.ndarray:
-    """Return the color image as a (DX,DY,3)."""
-    return self._color_data
-
-  @property
-  def depth_data(self) -> np.ndarray:
-    """Return the color image as a (DX,DY)."""
-    return self._depth_data
-
-  @property
-  def calibration(self) -> Optional[cal.Calibration]:
-    """Return the Calibration for for the ColorFrame."""
-    return self._calibration
-
-  def pose(self) -> Optional[core.Pose]:
-    """Return the pose of the camera when the image is taken."""
-    return self._pose
 
   def get_point_normal(
       self, x: int,
@@ -105,18 +54,10 @@ class DepthFrameImpl(depth_camera.DepthFrame):
     if self.calibration is None:
       return None
 
-    c = self.calibration
-    camera_device = c.get_device(self.device_type, self.device_name)
-
-    if camera_device is None:
-      return None
-    if not isinstance(camera_device, cal.CalibrationCamera):
-      return None
-
     intrinsics = transform_util.intrinsics_to_matrix(
-        list(camera_device.intrinsics))
-    distortion = np.array(camera_device.distortion, np.float64)
-    distortion_depth = np.array(camera_device.distortion_depth, np.float64)
+        list(self.calibration.intrinsics))
+    distortion = np.array(self.calibration.distortion, np.float64)
+    distortion_depth = np.array(self.calibration.distortion_depth, np.float64)
     camera_transform = self.pose()
     if not camera_transform:
       return None
@@ -166,24 +107,17 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
 
   _device_type: str
   _device_name: str
-  _calibration: Optional[calibration_impl.CalDevice]
 
-  def __init__(
-      self,
-      device_type: str,
-      device_name: str = "",
-      calibration: Optional[calibration_impl.CalDevice] = None) -> None:
+  def __init__(self, device_type: str, device_name: str = "") -> None:
     """Initialize a depth camera.
 
     Args:
       device_type: The JSON device type for the camera.
       device_name: The JSON device name for the camera.
-      calibration: Calibration of the camera.
     """
     super().__init__()
     self._device_type = device_type
     self._device_name = device_name
-    self._calibration = calibration
 
   def get_message_supplement(
       self, msg: types_gen.DeviceData) -> Optional[depth_camera.DepthFrame]:
@@ -192,7 +126,7 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
         msg.device_type == self._device_type and
         msg.device_name == self._device_name):
 
-      return self._depth_frame_from_message(msg, self.get_calibration())
+      return self._depth_frame_from_message(msg)
     return None
 
   def get_wrapper(
@@ -200,16 +134,9 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
     """Get the wrapper for the device that should be shown to the user."""
     return self, DepthCameraImpl(self)
 
-  def get_calibration(self) -> Optional[cal.Calibration]:
-    """Get the Calibration if it is available."""
-    if self._calibration is None:
-      return None
-    return self._calibration.get()
-
   @classmethod
   def _depth_frame_from_message(
-      cls, msg: types_gen.DeviceData, calibration: Optional[cal.Calibration]
-  ) -> "Optional[depth_camera.DepthFrame]":
+      cls, msg: types_gen.DeviceData) -> "Optional[depth_camera.DepthFrame]":
     """Convert a JSON message into a camera frame."""
     try:
       color: np.ndarray = utils.load_color_image_from_data(msg)
@@ -229,11 +156,34 @@ class DepthCameraDevice(requester.Requester[depth_camera.DepthFrame]):
                       delta, msg.depth)
       return None
     pose: Optional[core.Pose] = None
-    if msg.camera_calibration and msg.camera_calibration.camera_t_origin:
-      pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
-    return DepthFrameImpl(
-        utils.time_at_timestamp(msg.ts), msg.seq, msg.device_type,
-        msg.device_name, color, depth, calibration, pose)
+    calibration: Optional[CalibrationCamera] = None
+    if msg.camera_calibration:
+      calibration = CalibrationCamera(
+          device_type=msg.device_type,
+          device_name=msg.device_name,
+          tool_mount=None,
+          sub_type=None,
+          distortion=tuple(msg.camera_calibration.distortion),
+          distortion_depth=tuple(msg.camera_calibration.distortion_depth),
+          extrinsics=tuple(msg.camera_calibration.extrinsics),
+          intrinsics=tuple(msg.camera_calibration.intrinsics),
+          height=msg.camera_calibration.calibrated_height,
+          width=msg.camera_calibration.calibrated_width,
+          extrinsics_residual=msg.camera_calibration.extrinsics_residual,
+          intrinsics_residual=msg.camera_calibration.intrinsics_residual,
+          lens_model=msg.camera_calibration.lens_model,
+          link_name=None)
+      if msg.camera_calibration.camera_t_origin:
+        pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
+    return DepthFrameImpl(  # pylint: disable=unexpected-keyword-arg
+        time=utils.time_at_timestamp(msg.ts),
+        sequence=msg.seq,
+        device_type=msg.device_type,
+        device_name=msg.device_name,
+        color_data=color,
+        depth_data=depth,
+        calibration=calibration,
+        camera_t_origin=pose)
 
   def device_type(self) -> str:
     """Return the type of device."""

@@ -14,6 +14,7 @@
 """Testing utilities for PyReach."""
 
 import dataclasses
+import difflib
 import hashlib
 import json
 import os
@@ -1823,8 +1824,16 @@ class TestDevice:
         del expect_cmd_json["ts"]
       cmd_str = json.dumps(cmd_json)
       expect_cmd_str = json.dumps(expect_cmd_json)
+      expect_cmd_pretty = json.dumps(expect_cmd_json, indent=4, sort_keys=True)
+      cmd_pretty = json.dumps(cmd_json, indent=4, sort_keys=True)
+      diff = ""
+      if cmd_str != expect_cmd_str:
+        diff = "\n".join(
+            difflib.unified_diff(
+                expect_cmd_pretty.split("\n"), cmd_pretty.split("\n")))
       assert cmd_str == expect_cmd_str, (
-          f"Invalid command, expected {expect_cmd_str} got {cmd_str}")
+          f"Invalid command, expected:\n{expect_cmd_pretty}\ngot:\n{cmd_pretty},\ndiff:{diff}"
+      )
 
   def close(self) -> None:
     """Close the device."""

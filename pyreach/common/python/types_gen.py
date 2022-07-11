@@ -876,6 +876,57 @@ class AudioRequest:
     return obj
 
 
+class AuthenticationRequest:
+  """Representation of proto message AuthenticationRequest.
+
+   AuthenticationRequest is the authentication message for starting
+   authenticated client streams with reach serve.
+
+  """
+  user_uid: str
+
+  def __init__(self, user_uid: str = '') -> None:
+    self.user_uid = user_uid
+
+  def to_json(self) -> Dict[str, Any]:
+    """Convert type object to JSON."""
+    json_data: Dict[str, Any] = dict()
+
+    if self.user_uid:
+      assert isinstance(self.user_uid, str), 'Wrong type for attribute: user_uid. Expected: str. Got: ' + str(type(self.user_uid)) + '.'
+      json_data['userUID'] = self.user_uid
+
+    return json_data
+
+  def to_proto(self) -> 'logs_pb2.AuthenticationRequest':
+    """Convert AuthenticationRequest to proto."""
+    proto = logs_pb2.AuthenticationRequest()
+    if self.user_uid:
+      proto.user_uid = self.user_uid
+    return proto
+
+  @staticmethod
+  def from_json(json_data: Dict[str, Any]) -> 'AuthenticationRequest':
+    """Convert JSON to type object."""
+    obj = AuthenticationRequest()
+
+    if 'userUID' in json_data:
+      assert isinstance(json_data['userUID'], str), 'Wrong type for attribute: userUID. Expected: str. Got: ' + str(type(json_data['userUID'])) + '.'
+      obj.user_uid = json_data['userUID']
+
+    return obj
+
+  @staticmethod
+  def from_proto(proto: logs_pb2.AuthenticationRequest) -> Optional['AuthenticationRequest']:
+    """Convert AuthenticationRequest proto to type object."""
+    if not proto:
+      return None
+    obj = AuthenticationRequest()
+    if proto.HasField('user_uid'):
+      obj.user_uid = proto.user_uid
+    return obj
+
+
 class CameraCalibration:
   """Representation of proto message CameraCalibration.
 
@@ -1712,6 +1763,11 @@ class CommandData:
   # (no fields)
   # ==============================
 
+  # === Fields for dataType authentication-request:
+
+  authentication_request: Optional['AuthenticationRequest']
+  # ==============================
+
   # The text of the script to run, if the command is run-script.
   script: str
 
@@ -1803,11 +1859,12 @@ class CommandData:
   # (also field success_type)
   # ==============================
 
-  def __init__(self, args: Optional[List[str]] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_flags: Optional['Flags'] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, stream_request: Optional['StreamRequest'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
+  def __init__(self, args: Optional[List[str]] = None, authentication_request: Optional['AuthenticationRequest'] = None, client_annotation: Optional['ClientAnnotation'] = None, client_session_start: Optional['ClientSessionStart'] = None, cmd: str = '', data_type: str = '', detailed_error: str = '', device_name: str = '', device_type: str = '', error: str = '', event_duration: float = 0.0, event_labels: Optional[List[str]] = None, event_name: str = '', event_params: Optional[List['KeyValue']] = None, exp: Optional['ExperimentalCommandData'] = None, exp_array: Optional[List['ExperimentalCommandData']] = None, experiment_flags: Optional['Flags'] = None, experiment_token: str = '', float_value: float = 0.0, history: Optional['History'] = None, int_value: int = 0, intent: str = '', key: str = '', label: str = '', message: str = '', metadata: Optional['Metadata'] = None, origin: str = '', origin_client: str = '', origin_control: str = '', origin_transport_type: str = '', origin_type: str = '', pick_id: str = '', prediction_type: str = '', progress: float = 0.0, reach_script: Optional['ReachScript'] = None, request_type: str = '', robot_id: str = '', script: str = '', seq: int = 0, session_info: Optional['SessionInfo'] = None, sim_action: Optional['SimAction'] = None, snapshot: Optional['Snapshot'] = None, stream_request: Optional['StreamRequest'] = None, success_type: str = '', tag: str = '', task_code: str = '', text_cue: str = '', ts: int = 0, value: str = '', webrtc_audio_request: Optional['WebrtcAudioRequest'] = None, x: float = 0.0, y: float = 0.0) -> None:
     if args is None:
       self.args = []
     else:
       self.args = args
+    self.authentication_request = authentication_request
     self.client_annotation = client_annotation
     self.client_session_start = client_session_start
     self.cmd = cmd
@@ -1876,6 +1933,10 @@ class CommandData:
     if self.args:
       assert isinstance(self.args, list), 'Wrong type for attribute: args. Expected: list. Got: ' + str(type(self.args)) + '.'
       json_data['args'] = self.args
+
+    if self.authentication_request:
+      assert self.authentication_request.__class__.__name__ == 'AuthenticationRequest', 'Wrong type for attribute: authentication_request. Expected: AuthenticationRequest. Got: ' + str(type(self.authentication_request)) + '.'
+      json_data['authenticationRequest'] = self.authentication_request.to_json()
 
     if self.client_annotation:
       assert self.client_annotation.__class__.__name__ == 'ClientAnnotation', 'Wrong type for attribute: client_annotation. Expected: ClientAnnotation. Got: ' + str(type(self.client_annotation)) + '.'
@@ -2201,6 +2262,9 @@ class CommandData:
     if self.data_type == 'delegated-clients-request':
       proto_delegated_clients_request = logs_pb2.EmptyMessage()
       proto.delegated_clients_request.CopyFrom(proto_delegated_clients_request)
+    if self.data_type == 'authentication-request':
+      if self.authentication_request:
+        proto.authentication_request.CopyFrom(self.authentication_request.to_proto())
     if self.script:
       proto.script = self.script
     if self.data_type == 'reach-script' or self.data_type == 'run-script' or self.data_type == 'ur-command':
@@ -2282,6 +2346,10 @@ class CommandData:
       for j in json_data['args']:
         json_list.append(j)
       obj.args = json_list
+
+    if 'authenticationRequest' in json_data:
+      assert isinstance(json_data['authenticationRequest'], dict), 'Wrong type for attribute: authenticationRequest. Expected: dict. Got: ' + str(type(json_data['authenticationRequest'])) + '.'
+      obj.authentication_request = AuthenticationRequest.from_json(json_data['authenticationRequest'])
 
     if 'clientAnnotation' in json_data:
       assert isinstance(json_data['clientAnnotation'], dict), 'Wrong type for attribute: clientAnnotation. Expected: dict. Got: ' + str(type(json_data['clientAnnotation'])) + '.'
@@ -2586,6 +2654,8 @@ class CommandData:
       obj.experiment_flags = Flags.from_proto(proto.experiment_flags)
     if proto.HasField('delegated_clients_request'):
       pass  # skip empty message
+    if proto.HasField('authentication_request'):
+      obj.authentication_request = AuthenticationRequest.from_proto(proto.authentication_request)
     if proto.HasField('script'):
       obj.script = proto.script
     if proto.HasField('reach_script'):

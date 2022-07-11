@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of PyReach Gym Color Camera Device."""
 
 import sys
@@ -54,7 +53,6 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     is_synchronous: bool = color_camera_config.is_synchronous
     calibration_enable: bool = color_camera_config.calibration_enable
     lens_model: Optional[str] = color_camera_config.lens_model
-    link_name: Optional[str] = color_camera_config.link_name
     pose_enable: bool = color_camera_config.pose_enable
     if frame_rate <= 0.0:
       frame_rate = 10.0
@@ -100,7 +98,6 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     self._shape: Tuple[int, int, int] = color_shape
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
-    self._link_name: str = link_name if link_name else ""
     self._pose_enable: bool = pose_enable
 
   def __str__(self) -> str:
@@ -182,29 +179,16 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               f"'{self.config_name}' is {image.shape}, "
               f"not desired {self._shape}")
 
-      calibration_camera: calibration.CalibrationCamera
+      calibration_camera: Optional[calibration.CalibrationCamera]
       if self._calibration_enable:
         if not color_frame:
           raise pyreach.PyReachError(
               "Internal Error: Missing image needed for calibration.")
-        camera_calibration: Optional[calibration.Calibration] = (
-            color_frame.calibration)
-        if not camera_calibration:
-          raise pyreach.PyReachError(
-              "Internal Error: Image does not have camera calibration.")
-
-        # Some mypy dancing here:
-        calibration_device: Any = camera_calibration.get_device(
-            color_frame.device_type, color_frame.device_name)
-        assert isinstance(calibration_device, calibration.CalibrationCamera)
-        calibration_camera = calibration_device
+        calibration_camera = color_frame.calibration
 
         if not calibration_camera:
           raise pyreach.PyReachError(
               "Internal Error: Image does not have a calibration device.")
-        if not isinstance(calibration_camera, calibration.CalibrationCamera):
-          raise pyreach.PyReachError(
-              "Internal Error: Image does not have a calibration camera")
         if calibration_camera.width != self._shape[1]:
           raise pyreach.PyReachError(
               f"Internal Error: Width {calibration_camera.width} "
@@ -217,10 +201,9 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
           raise pyreach.PyReachError(
               f"Internal Error: Width ''{calibration_camera.lens_model}' "
               f"!= '{self._lens_model}'")
-        if calibration_camera.link_name != self._link_name:
-          raise pyreach.PyReachError(
-              f"Internal Error: Width '{calibration_camera.link_name}' "
-              f"!= '{self._link_name}'")
+        if calibration_camera.link_name is not None:
+          raise pyreach.PyReachError(f"Internal Error: Link name is not none: "
+                                     f"'{calibration_camera.link_name}'")
 
       # mypy treats observation as immutable, disallowing incremental changes.
       observation: gyms_core.Observation

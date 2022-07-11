@@ -494,10 +494,18 @@ class ControlModuleCommandProcessing(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
         UNSPECIFIED: ControlModuleCommandProcessing.Result.ValueType = ...  # 0
         BYPASS: ControlModuleCommandProcessing.Result.ValueType = ...  # 1
-        """Command bypassed this control module (ie, ProcessCommand returned false)."""
+        """For ECHOED_INPUTs, indicates the command bypassed this control module
+        (ie, ProcessCommand returned false). For ECHOED_OUTPUTs, indicates the
+        command was not output to subordinate parts, either because it wasn't
+        updated this cycle or control authority is released/empty (ie, nothing
+        has sent the virtual part a command to process).
+        """
 
         SUCCESS: ControlModuleCommandProcessing.Result.ValueType = ...  # 2
-        """Command was processed successfully (ie, ProcessCommand returned true)."""
+        """For ECHOED_INPUTs, indicates the command was successfully processed (ie,
+        ProcessCommand returned true). For ECHOED_OUTPUTs, indicates the command
+        was successfully split and output to subordinate parts.
+        """
 
         FAILURE: ControlModuleCommandProcessing.Result.ValueType = ...  # 3
         """Command failed (ie, ControlModule::HandleCommandProcessingFailure was
@@ -511,10 +519,18 @@ class ControlModuleCommandProcessing(google.protobuf.message.Message):
 
     UNSPECIFIED: ControlModuleCommandProcessing.Result.ValueType = ...  # 0
     BYPASS: ControlModuleCommandProcessing.Result.ValueType = ...  # 1
-    """Command bypassed this control module (ie, ProcessCommand returned false)."""
+    """For ECHOED_INPUTs, indicates the command bypassed this control module
+    (ie, ProcessCommand returned false). For ECHOED_OUTPUTs, indicates the
+    command was not output to subordinate parts, either because it wasn't
+    updated this cycle or control authority is released/empty (ie, nothing
+    has sent the virtual part a command to process).
+    """
 
     SUCCESS: ControlModuleCommandProcessing.Result.ValueType = ...  # 2
-    """Command was processed successfully (ie, ProcessCommand returned true)."""
+    """For ECHOED_INPUTs, indicates the command was successfully processed (ie,
+    ProcessCommand returned true). For ECHOED_OUTPUTs, indicates the command
+    was successfully split and output to subordinate parts.
+    """
 
     FAILURE: ControlModuleCommandProcessing.Result.ValueType = ...  # 3
     """Command failed (ie, ControlModule::HandleCommandProcessingFailure was

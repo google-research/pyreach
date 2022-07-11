@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
+import math
 from typing import Dict, List, Optional, Tuple, Union
 import unittest
+
 import numpy as np
+
 from pyreach import arm
 from pyreach import core
+from pyreach.common.base import transform_util
 from pyreach.common.python import types_gen
 from pyreach.impl import actions_impl
 from pyreach.impl import arm_impl
@@ -30,12 +35,16 @@ from pyreach.impl import workcell_io_impl
 class TestPyreachArmImpl(unittest.TestCase):
 
   def _init_arm(
-      self, urdf_file: str, expect_ik_search: List[np.ndarray]
+      self,
+      urdf_file: str,
+      expect_ik_search: List[np.ndarray],
+      actionsets: Optional[str] = None
   ) -> Tuple[device_base.DeviceBase, arm_impl.ArmImpl]:
     actionsets_device = actions_impl.ActionDevice()
     key = device_base.KeyValueKey(
         device_type="settings-engine", device_name="", key="actionsets.json")
-    actionsets_device.on_set_key_value(key, test_data.get_actionsets_json())
+    actionsets_device.on_set_key_value(
+        key, actionsets if actionsets else test_data.get_actionsets_json())
     actionsets_device.close()
     workcell_io_device = workcell_io_impl.WorkcellIoDevice()
     key = device_base.KeyValueKey(
@@ -1126,13 +1135,115 @@ class TestPyreachArmImpl(unittest.TestCase):
         (0.28556403170793965, -0.7691736787189849, 0.0015124760385194225,
          0.11865414779070127, -3.0757396059788134, -0.01666054968029826))
 
+  def test_actions(self) -> None:
+    # Temporarily disable the singulation actions
+    for test_case in test_data.get_test_actions()[1:]:
+      calibration, actionsets, action, inputs, output_json = test_case
+      output_json = json.loads(json.dumps(output_json))
+      output = types_gen.ReachScript.from_json(output_json)
+      output_loop = types_gen.ReachScript.from_proto(output.to_proto())
+      assert output_loop is not None
+      output = output_loop
+      action_inputs = [
+          arm.ActionInput(None, core.Translation(**x["position3D"]),
+                          core.Quaternion(**x["quaternion3D"])) for x in inputs
+      ]
+      joints = []
+      for command in output.commands:
+        if command.move_j_path and command.move_j_path.waypoints:
+          for j_waypoint in command.move_j_path.waypoints:
+            joints.append(np.array(j_waypoint.rotation))
+        if command.move_l_path and command.move_l_path.waypoints:
+          for l_waypoint in command.move_l_path.waypoints:
+            joints.append(np.array(l_waypoint.rotation))
+      rdev, dev = self._init_arm("ur5e.urdf", joints, json.dumps(actionsets))
+      dev._acquire_tag = 0
+      with test_utils.TestDevice(rdev) as test_device:
+        tip_adjust_tf: Optional[List[float]] = None
+        tip_tf: Optional[List[float]] = None
+        calibration_devices = calibration.get("devices")
+        assert isinstance(calibration_devices, list)
+        for calibration_device in calibration_devices:
+          assert isinstance(calibration_device, dict)
+          if calibration_device.get(
+              "deviceName") == "tip0.robot.adjust" or calibration_device.get(
+                  "deviceName") == "tip0.robot":
+            params = calibration_device.get("parameters")
+            assert isinstance(params, dict)
+            extrinsics = params.get("extrinsics")
+            assert isinstance(extrinsics, list)
+            assert len(extrinsics) == 6
+            extrinsics_f = [float(v) for v in extrinsics]
+            if calibration_device.get("deviceName") == "tip0.robot":
+              tip_tf = extrinsics_f
+            else:
+              tip_adjust_tf = extrinsics_f
+        adjusted = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        if tip_adjust_tf and tip_tf:
+          adjusted = transform_util.multiply_pose(
+              np.array(tip_tf, dtype=np.float64),
+              np.array(tip_adjust_tf, dtype=np.float64)).tolist()
+        elif tip_tf:
+          adjusted = tip_tf
+        elif tip_adjust_tf:
+          adjusted = tip_adjust_tf
+        test_device.set_responder(
+            TestArm("", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], adjusted))
+        self.assertIsNotNone(dev.fetch_state())
+        test_device.expect_command_data([
+            types_gen.CommandData(
+                device_type="robot", data_type="frame-request")
+        ])
+        status = dev.execute_action(action, action_inputs, use_unity_ik=True)
+        self.assertTrue(status.is_last_status())
+        self.assertFalse(status.is_error())
+        test_device.expect_command_data([
+            types_gen.CommandData(
+                device_type="robot",
+                data_type="reach-script",
+                tag="tag-1",
+                reach_script=output)
+        ])
+
 
 class TestArm(test_utils.TestResponder):
   _device_name: str
+  _base_t_origin: List[float]
+  _pose: List[float]
+  _tip_adjust_t_base: List[float]
 
-  def __init__(self, device_name: str = "") -> None:
+  def __init__(self,
+               device_name: str = "",
+               base_t_origin: Optional[List[float]] = None,
+               pose: Optional[List[float]] = None,
+               tip_adjust_t_base: Optional[List[float]] = None) -> None:
     super().__init__()
     self._device_name = device_name
+    if base_t_origin is not None:
+      base_t_origin = base_t_origin.copy()
+    else:
+      base_t_origin = [0.1, 0.0, 0.0, 0.0, 0.0, 0.0]
+    assert len(base_t_origin) == 6
+    self._base_t_origin = base_t_origin
+    if pose is not None:
+      pose = pose.copy()
+    else:
+      pose = [
+          0.1961122234076476, -0.7146550885497088, 0.1642837633972083,
+          0.1186541477907012, -3.075739605978813, -0.01666054968029903
+      ]
+    assert len(pose) == 6
+    self._pose = pose
+    if tip_adjust_t_base is not None:
+      tip_adjust_t_base = tip_adjust_t_base.copy()
+    else:
+      tip_adjust_t_base = [
+          0.18556403170793967, -0.7691736787189849, 0.0015124760385194225,
+          0.11865414779070117, -3.075739605978814, -0.0166605496802987
+      ]
+    assert len(tip_adjust_t_base) == 6
+    self._tip_adjust_t_base = tip_adjust_t_base
 
   def start(self) -> List[types_gen.DeviceData]:
     return [
@@ -1177,16 +1288,9 @@ class TestArm(test_utils.TestResponder):
               device_name=self._device_name,
               tag=cmd.tag,
               ts=cmd.ts,
-              pose=[
-                  0.1961122234076476, -0.7146550885497088, 0.1642837633972083,
-                  0.1186541477907012, -3.075739605978813, -0.01666054968029903
-              ],
-              tip_adjust_t_base=[
-                  0.18556403170793967, -0.7691736787189849,
-                  0.0015124760385194225, 0.11865414779070117,
-                  -3.075739605978814, -0.0166605496802987
-              ],
-              base_t_origin=[0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
+              pose=self._pose,
+              tip_adjust_t_base=self._tip_adjust_t_base,
+              base_t_origin=self._base_t_origin,
               joints=[
                   1.665570735931396, -0.7995384496501465, 1.341465298329489,
                   -2.12082638363027, 4.660228729248047, 0.01271963119506836
@@ -1318,12 +1422,26 @@ class TestIKFast(arm_impl.IKLibIKFast):
                                ik_hints, use_unity_ik)
     assert self._ik_search_count < len(self._expect_ik_search)
     assert joints is not None
+
+    def clamp(x: float) -> float:
+      assert x < 10.0 * math.pi
+      assert x > -10.0 * math.pi
+      while x > math.pi:
+        x -= 2 * math.pi
+      while x <= -math.pi:
+        x += 2 * math.pi
+      return x
+
+    joints = [clamp(x) for x in joints]
     assert np.allclose(
         np.array(joints, dtype=np.float64),
-        self._expect_ik_search[self._ik_search_count]), (
-            "Got %s, expected %s for step %d" %
-            (joints, self._expect_ik_search[self._ik_search_count].tolist(),
-             self._ik_search_count))
+        [clamp(x) for x in self._expect_ik_search[self._ik_search_count]],
+        0.0001
+    ), ("IK failed,\nGot      %s,\nExpected %s for step %d\nGoal pose: %s\nFK "
+        "pose:   %s" %
+        (joints, self._expect_ik_search[self._ik_search_count].tolist(),
+         self._ik_search_count, [float(v) for v in pose], super().fk(
+             self._expect_ik_search[self._ik_search_count].tolist())))
     override_joints = self._expect_ik_search[self._ik_search_count]
     self._ik_search_count += 1
     return override_joints.tolist()

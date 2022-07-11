@@ -14,14 +14,16 @@
 
 """Interface for interacting with a color camera device."""
 
-from typing import Optional, Callable
+import dataclasses
+from typing import Callable, Optional
 
 import numpy as np
 
-from pyreach import calibration
 from pyreach import core
+from pyreach.calibration import CalibrationCamera
 
 
+@dataclasses.dataclass(frozen=True)
 class ColorFrame:
   """A single color camera frame taken at a specific time.
 
@@ -32,42 +34,20 @@ class ColorFrame:
     device_name: The JSON device name string.
     color_image: A color image as a (DX,DY,3) array of uint8's.
     calibration: The calibration when the image is captured.
-
+    camera_t_origin: The camera pose with respect to the origin.
   """
 
-  @property
-  def time(self) -> float:
-    """Return timestamp of the ColorFrame."""
-    raise NotImplementedError
-
-  @property
-  def sequence(self) -> int:
-    """Sequence number of the ColorFrame."""
-    raise NotImplementedError
-
-  @property
-  def device_type(self) -> str:
-    """Return the Reach device type."""
-    raise NotImplementedError
-
-  @property
-  def device_name(self) -> str:
-    """Return the Reach device name."""
-    raise NotImplementedError
-
-  @property
-  def color_image(self) -> np.ndarray:
-    """Return the color image as a (DX,DY,3)."""
-    raise NotImplementedError
-
-  @property
-  def calibration(self) -> Optional[calibration.Calibration]:
-    """Return the Calibration for the ColorFrame."""
-    raise NotImplementedError
+  time: float
+  sequence: int
+  device_type: str
+  device_name: str
+  color_image: np.ndarray
+  calibration: Optional[CalibrationCamera]
+  camera_t_origin: Optional[core.Pose]
 
   def pose(self) -> Optional[core.Pose]:
     """Return the pose of the camera when the image is taken."""
-    raise NotImplementedError
+    return self.camera_t_origin
 
 
 class ColorCamera(object):

@@ -32,6 +32,9 @@ readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd 
 readonly MYPY_CONFIG="${SCRIPT_DIR}/mypy.ini"
 cd "$SCRIPT_DIR"
 
+# Generate the python protos.
+./generate_python_protos.sh
+
 # Code to scan for all Python files and lint most (but not all) of them.
 declare -a SKIP_FILES
 SKIP_FILES=()

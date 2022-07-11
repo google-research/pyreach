@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Pipeline Descriptions."""
 
 import dataclasses
@@ -27,6 +26,7 @@ class InterfaceType(enum.Enum):
   CLIENT_ANNOTATION = "client-annotation"
   CONNECTED_CLIENTS_REQUEST = "connected-clients-request"
   CONTROLLER_DESCRIPTIONS_REQUEST = "controller-descriptions-request"
+  DELEGATED_CLIENTS_REQUEST = "delegated-clients-request"
   DISABLE_EXPERIMENTS = "disable-experiments"
   ENABLE_EXPERIMENTS = "enable-experiments"
   EVENT = "event"

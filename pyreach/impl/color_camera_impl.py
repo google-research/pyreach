@@ -17,65 +17,14 @@ from typing import Callable, Optional, Tuple
 
 import numpy as np
 
-from pyreach import calibration as cal
 from pyreach import color_camera
 from pyreach import core
+from pyreach.calibration import CalibrationCamera
 from pyreach.common.python import types_gen
 from pyreach.impl import calibration_impl
 from pyreach.impl import requester
 from pyreach.impl import thread_util
 from pyreach.impl import utils
-
-
-class ColorFrameImpl(color_camera.ColorFrame):
-  """Implementation of a ColorFrame."""
-
-  def __init__(self, time: float, sequence: int, device_type: str,
-               device_name: str, color_image: np.ndarray,
-               calibration: Optional[cal.Calibration],
-               pose: Optional[core.Pose]) -> None:
-    """Init a ColorFrameImpl."""
-    self._time: float = time
-    self._sequence: int = sequence
-    self._device_type: str = device_type
-    self._device_name: str = device_name
-    self._color_image: np.ndarray = color_image
-    self._calibration: Optional[cal.Calibration] = calibration
-    self._pose: Optional[core.Pose] = pose
-
-  @property
-  def time(self) -> float:
-    """Return timestamp of the ColorFrame."""
-    return self._time
-
-  @property
-  def sequence(self) -> int:
-    """The sequence number of the ColorFrame."""
-    return self._sequence
-
-  @property
-  def device_type(self) -> str:
-    """Return the reach device type."""
-    return self._device_type
-
-  @property
-  def device_name(self) -> str:
-    """Return the Reach device name."""
-    return self._device_name
-
-  @property
-  def color_image(self) -> np.ndarray:
-    """Return the color image as a (DX,DY,3)."""
-    return self._color_image
-
-  @property
-  def calibration(self) -> Optional[cal.Calibration]:
-    """Return the Calibration for for the ColorFrame."""
-    return self._calibration
-
-  def pose(self) -> Optional[core.Pose]:
-    """Return the pose of the camera when the image is taken."""
-    return self._pose
 
 
 class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
@@ -90,7 +39,6 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
   def __init__(self,
                device_type: str,
                device_name: str = "",
-               calibration: Optional[calibration_impl.CalDevice] = None,
                display_device_type: Optional[str] = None,
                display_device_name: Optional[str] = None) -> None:
     """Initialize a Camera.
@@ -98,14 +46,12 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
     Args:
       device_type: The JSON device type to use.
       device_name: The JSON device name to use.
-      calibration: Calibration of the camera.
       display_device_type: Override the device type to display to the user.
       display_device_name: Override the device name to display to the user.
     """
     super().__init__()
     self._device_type = device_type
     self._device_name = device_name
-    self._calibration = calibration
     self._display_device_type = device_type
     if display_device_type is not None:
       self._display_device_type = display_device_type
@@ -125,19 +71,13 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
     """
     if (self._device_type == msg.device_type and
         self._device_name == msg.device_name and msg.data_type == "color"):
-      return self._color_frame_from_message(msg, self.get_calibration())
+      return self._color_frame_from_message(msg)
     return None
 
   def get_wrapper(
       self) -> Tuple["ColorCameraDevice", "color_camera.ColorCamera"]:
     """Get the wrapper for the device that should be shown to the user."""
     return self, ColorCameraImpl(self)
-
-  def get_calibration(self) -> Optional[cal.Calibration]:
-    """Get the camera calibration (if available)."""
-    if self._calibration is None:
-      return None
-    return self._calibration.get()
 
   @property
   def device_name(self) -> str:
@@ -150,15 +90,31 @@ class ColorCameraDevice(requester.Requester[color_camera.ColorFrame]):
     return self._device_type
 
   def _color_frame_from_message(
-      self, msg: types_gen.DeviceData, calibration: Optional[cal.Calibration]
-  ) -> Optional[color_camera.ColorFrame]:
+      self, msg: types_gen.DeviceData) -> Optional[color_camera.ColorFrame]:
     """Convert JSON message into a ColorFrame."""
     pose: Optional[core.Pose] = None
-    if msg.camera_calibration and msg.camera_calibration.camera_t_origin:
-      pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
+    calibration: Optional[CalibrationCamera] = None
+    if msg.camera_calibration:
+      calibration = CalibrationCamera(
+          device_type=msg.device_type,
+          device_name=msg.device_name,
+          tool_mount=None,
+          sub_type=None,
+          distortion=tuple(msg.camera_calibration.distortion),
+          distortion_depth=None,
+          extrinsics=tuple(msg.camera_calibration.extrinsics),
+          intrinsics=tuple(msg.camera_calibration.intrinsics),
+          height=msg.camera_calibration.calibrated_height,
+          width=msg.camera_calibration.calibrated_width,
+          extrinsics_residual=msg.camera_calibration.extrinsics_residual,
+          intrinsics_residual=msg.camera_calibration.intrinsics_residual,
+          lens_model=msg.camera_calibration.lens_model,
+          link_name=None)
+      if msg.camera_calibration.camera_t_origin:
+        pose = core.Pose.from_list(msg.camera_calibration.camera_t_origin)
     try:
       color_image: np.ndarray = utils.load_color_image_from_data(msg)
-      return ColorFrameImpl(
+      return color_camera.ColorFrame(
           utils.time_at_timestamp(msg.ts), msg.seq, self._display_device_type,
           self._display_device_name, color_image, calibration, pose)
     except FileNotFoundError:

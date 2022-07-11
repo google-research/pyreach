@@ -17,6 +17,7 @@
 isort:skip_file
 """
 import builtins
+import calibration_config_pb2
 import calibration_pb2
 import general_io_pb2
 import google.protobuf.descriptor
@@ -96,6 +97,7 @@ class LogEntry(google.protobuf.message.Message):
     ENCODED_IMAGE_FIELD_NUMBER: builtins.int
     SIMULATION_COMMAND_FIELD_NUMBER: builtins.int
     CAMERA_CALIBRATION_FIELD_NUMBER: builtins.int
+    CAMERA_CALIBRATION_CONFIG_FIELD_NUMBER: builtins.int
     SYSTEM_COMMAND_FIELD_NUMBER: builtins.int
     SYSTEM_STATE_FIELD_NUMBER: builtins.int
     REACH_FIELD_NUMBER: builtins.int
@@ -118,7 +120,13 @@ class LogEntry(google.protobuf.message.Message):
     @property
     def simulation_command(self) -> simulation_pb2.SimulationCommand: ...
     @property
-    def camera_calibration(self) -> calibration_pb2.CameraCalibration: ...
+    def camera_calibration(self) -> calibration_pb2.CameraCalibration:
+        """Results of camera calibration."""
+        pass
+    @property
+    def camera_calibration_config(self) -> calibration_config_pb2.CalibrationConfig:
+        """Configuration for camera calibration."""
+        pass
     @property
     def system_command(self) -> robot_control_pb2.SystemCommand: ...
     @property
@@ -135,11 +143,12 @@ class LogEntry(google.protobuf.message.Message):
         encoded_image : typing.Optional[image_pb2.EncodedImage] = ...,
         simulation_command : typing.Optional[simulation_pb2.SimulationCommand] = ...,
         camera_calibration : typing.Optional[calibration_pb2.CameraCalibration] = ...,
+        camera_calibration_config : typing.Optional[calibration_config_pb2.CalibrationConfig] = ...,
         system_command : typing.Optional[robot_control_pb2.SystemCommand] = ...,
         system_state : typing.Optional[robot_control_pb2.SystemState] = ...,
         reach : typing.Optional[reach_pb2.ReachPayload] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","simulation_command","camera_calibration","system_command","system_state","reach"]]: ...
+    def HasField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","camera_calibration_config",b"camera_calibration_config","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["camera_calibration",b"camera_calibration","camera_calibration_config",b"camera_calibration_config","encoded_image",b"encoded_image","general_io",b"general_io","id",b"id","joints",b"joints","meta",b"meta","payload",b"payload","reach",b"reach","simulation_command",b"simulation_command","system_command",b"system_command","system_state",b"system_state","transform",b"transform"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing_extensions.Literal["payload",b"payload"]) -> typing.Optional[typing_extensions.Literal["general_io","joints","transform","encoded_image","simulation_command","camera_calibration","camera_calibration_config","system_command","system_state","reach"]]: ...
 global___LogEntry = LogEntry

@@ -15,6 +15,7 @@
 
 import enum
 import logging  # type: ignore
+import math
 import threading
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
@@ -284,7 +285,8 @@ class _MoveJoints(_Command):
                servo: bool = False,
                servo_time_seconds: float = 0.0,
                servo_lookahead_time_seconds: float = 0.0,
-               servo_gain: float = 0.0) -> None:
+               servo_gain: float = 0.0,
+               blend_radius: float = 0.0) -> None:
     """Construct a move joints command.
 
     Args:
@@ -298,6 +300,7 @@ class _MoveJoints(_Command):
         (servo + UR only).
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
+      blend_radius: The blend radius.
     """
     super().__init__(controller_name)
     self._joints = joints
@@ -307,6 +310,7 @@ class _MoveJoints(_Command):
     self._servo_time_seconds = servo_time_seconds
     self._servo_lookahead_time_seconds = servo_lookahead_time_seconds
     self._servo_gain = servo_gain
+    self._blend_radius = blend_radius
 
   def to_reach_script(
       self,
@@ -348,7 +352,8 @@ class _MoveJoints(_Command):
                     servo_t_secs=self._servo_time_seconds,
                     servo_lookahead_time_secs=self
                     ._servo_lookahead_time_seconds,
-                    servo_gain=self._servo_gain)
+                    servo_gain=self._servo_gain,
+                    blend_radius=self._blend_radius)
             ]))
     ]
 
@@ -360,13 +365,15 @@ class _MoveLinear(_Command):
   _velocity: float
   _acceleration: float
   _servo: bool
+  _blend_radius: float
 
   def __init__(self,
                controller_name: str,
                joints: List[float],
                velocity: float = 0.0,
                acceleration: float = 0.0,
-               servo: bool = False) -> None:
+               servo: bool = False,
+               blend_radius: float = 0.0) -> None:
     """Construct the Arm Move Linear command with its desired joints.
 
     Args:
@@ -375,12 +382,14 @@ class _MoveLinear(_Command):
       velocity: Max velocity.
       acceleration: Max acceleration.
       servo: Use servo mode.
+      blend_radius: The blend radius.
     """
     super().__init__(controller_name)
     self._joints = joints
     self._velocity = velocity
     self._acceleration = acceleration
     self._servo = servo
+    self._blend_radius = blend_radius
 
   def to_reach_script(
       self,
@@ -418,7 +427,8 @@ class _MoveLinear(_Command):
                     rotation=self._joints,
                     velocity=self._velocity,
                     acceleration=self._acceleration,
-                    servo=self._servo)
+                    servo=self._servo,
+                    blend_radius=self._blend_radius)
             ]))
     ]
 
@@ -437,6 +447,7 @@ class _MovePose(_Command):
   _servo_time_seconds: float
   _servo_lookahead_time_seconds: float
   _servo_gain: float
+  _blend_radius: float
   _pose_in_world_coordinates: bool
 
   def __init__(self,
@@ -452,6 +463,7 @@ class _MovePose(_Command):
                servo_time_seconds: float = 0.0,
                servo_lookahead_time_seconds: float = 0.0,
                servo_gain: float = 0.0,
+               blend_radius: float = 0.0,
                pose_in_world_coordinates: bool = False) -> None:
     """Construct the MovePose object.
 
@@ -472,6 +484,7 @@ class _MovePose(_Command):
         (servo + UR only).
       servo_gain: Gain for the servoing - if zero, defaults to 300 (servo + UR
         only).
+      blend_radius: The blend radius.
       pose_in_world_coordinates: If true, pose is in world coordinates,
         otherwise if false, pose is in arm base coordinates.
     """
@@ -487,6 +500,7 @@ class _MovePose(_Command):
     self._servo_time_seconds = servo_time_seconds
     self._servo_lookahead_time_seconds = servo_lookahead_time_seconds
     self._servo_gain = servo_gain
+    self._blend_radius = blend_radius
     self._pose_in_world_coordinates = pose_in_world_coordinates
 
   def to_reach_script(
@@ -526,7 +540,7 @@ class _MovePose(_Command):
           # Inverse of  Euler 90, -180, 0 in YXZ:
           # rotation to fix tip adjust in the case of Unity.
           quaternion_const = transform_util.inverse_quat(
-              np.array([0.0000, 0.7071, -0.7071, 0.0000]))
+              np.array([0.0, math.sqrt(2) / 2.0, -math.sqrt(2) / 2.0, 0.0]))
 
           # Convert tip adjust transform in Unity space.
           tip_adjust_unity = transform_util.unity_pos_quaternion_to_pose(
@@ -575,7 +589,8 @@ class _MovePose(_Command):
         raise core.PyReachError("IK failed to find solution")
       if self._use_linear:
         return _MoveLinear(self.controller_name, joints, self._velocity,
-                           self._acceleration, self._servo).to_reach_script(
+                           self._acceleration, self._servo,
+                           self._blend_radius).to_reach_script(
                                arm_type, support_vacuum, support_blowoff,
                                ik_lib, ik_hints, state, arm_origin,
                                tip_adjust_transform)
@@ -588,7 +603,8 @@ class _MovePose(_Command):
             self._servo,
             servo_time_seconds=self._servo_time_seconds,
             servo_lookahead_time_seconds=self._servo_lookahead_time_seconds,
-            servo_gain=self._servo_gain).to_reach_script(
+            servo_gain=self._servo_gain,
+            blend_radius=self._blend_radius).to_reach_script(
                 arm_type, support_vacuum, support_blowoff, ik_lib, ik_hints,
                 state, arm_origin, tip_adjust_transform)
     else:
@@ -1122,6 +1138,21 @@ class _Commands:
       cmds.extend(
           x.to_reach_script(arm_type, support_vacuum, support_blowoff, ik_lib,
                             ik_hints, state, arm_origin, tip_adjust_transform))
+    if len(cmds) > 1:
+      optimized_cmds = [cmds[0]]
+      for cmd in cmds[1:]:
+        prev_cname = optimized_cmds[len(optimized_cmds) - 1].controller_name
+        prev_move_j = optimized_cmds[len(optimized_cmds) - 1].move_j_path
+        prev_move_l = optimized_cmds[len(optimized_cmds) - 1].move_l_path
+        if (prev_move_j and cmd.move_j_path and
+            prev_cname == cmd.controller_name):
+          prev_move_j.waypoints.extend(cmd.move_j_path.waypoints)
+        elif (prev_move_l and cmd.move_l_path and
+              prev_cname == cmd.controller_name):
+          prev_move_l.waypoints.extend(cmd.move_l_path.waypoints)
+        else:
+          optimized_cmds.append(cmd)
+      cmds = optimized_cmds
     return types_gen.CommandData(
         ts=utils.timestamp_now(),
         device_type="robot",
@@ -1599,11 +1630,13 @@ class ArmImpl(arm.Arm):
 
   _device: ArmDevice
   _enable_randomization: bool
+  _acquire_tag: Optional[int]
 
   def __init__(self, device: ArmDevice) -> None:
     """Init the Arm."""
     self._device = device
     self._enable_randomization = True
+    self._acquire_tag = None
 
   @property
   def arm_type(self) -> arm.ArmType:
@@ -2093,10 +2126,8 @@ class ArmImpl(arm.Arm):
   def _action_to_commands(self, action: actions_impl.Action,
                           inputs: List[arm.ActionInput],
                           use_unity_ik: bool) -> _Commands:
-    global_acceleration = action.get_softstart_accel() if action.get_softstart(
-    ) else action.get_max_accel()
-    global_velocity = action.get_softstart_velocity() if action.get_softstart(
-    ) else action.get_max_velocity()
+    global_acceleration = action.get_max_accel()
+    global_velocity = action.get_max_velocity()
     steps = action.get_steps().copy()
     if action.get_cyclic() and steps:
       steps.append(steps[0])
@@ -2118,11 +2149,16 @@ class ArmImpl(arm.Arm):
             step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
           continue
         elif step.get_acquire_image_tag():
+          acquire_tag: str
+          if self._acquire_tag is not None:
+            self._acquire_tag += 1
+            acquire_tag = "tag-a-" + str(self._acquire_tag)
+          else:
+            acquire_tag = utils.generate_tag()
           commands.append(
               _AcquireImage("", step.get_set_capability_type(),
                             step.get_set_capability_name(),
-                            step.get_acquire_image_mode(),
-                            utils.generate_tag()))
+                            step.get_acquire_image_mode(), acquire_tag))
           if step.get_parent_step_idx() in step_pose:
             step_pose[idx] = step_pose[step.get_parent_step_idx()]
           else:
@@ -2134,23 +2170,26 @@ class ArmImpl(arm.Arm):
           ) == "place-point":
             commands.append(
                 _SetOutput("", step.get_set_capability_type(),
-                           step.get_set_capability_name(), [], []))
+                           step.get_set_capability_name(), [("", 0)], []))
           elif step.get_set_capability_io_type() == "DigitalOutput":
-            if step.get_set_capability_type(
-            ) == "vacuum" or step.get_set_capability_type() == "blowoff":
-              commands.append(
-                  _SetVacuumState(
-                      "", ActionVacuumState(step.get_set_capability_value())))
+            commands.append(
+                _SetOutput("", step.get_set_capability_type(),
+                           step.get_set_capability_name(),
+                           [("", int(step.get_set_capability_value()))], []))
+          else:
+            raise core.PyReachError("unsupported action statement: " +
+                                    str(idx) + ": " + str(step.__dict__))
           if step.get_parent_step_idx() in step_pose:
             step_pose[idx] = step_pose[step.get_parent_step_idx()]
           else:
             step_pose[idx] = (types_gen.Vec3d(), types_gen.Quaternion3d())
           continue
 
-        velocity = global_velocity if step.get_velocity(
-        ) == 0 else step.get_velocity()
-        accel = global_acceleration if step.get_acceleration(
-        ) == 0 else step.get_acceleration()
+        velocity = global_velocity
+        accel = global_acceleration
+        if step.get_individual_velocity_acceleration():
+          velocity = step.get_velocity()
+          accel = step.get_acceleration()
         offset = np.zeros(6)
 
         # Calculate randomized offset as done by the ReachUI
@@ -2200,7 +2239,7 @@ class ArmImpl(arm.Arm):
 
             if np.dot(normal, input_pose_normal[2]) > 0:
               flipz_trans = np.array([0.0, 0.0, 0.0])
-              flipz_rot = np.array([-3.14159, 0.0, 0.0])
+              flipz_rot = np.array([-np.pi, 0.0, 0.0])
               flipz_t = transform_util.matrix_to_pose(
                   transform_util.convert_to_matrix(flipz_trans, flipz_rot))
               target_tip_transform = transform_util.multiply_pose(
@@ -2230,7 +2269,8 @@ class ArmImpl(arm.Arm):
             # Apply rotation fix Euler 90, 180, 0 in YXZ on inputs as
             # per Unity implementation.
             quaternion_const = transform_util.inverse_quat(
-                np.array([0.0000, -0.7071, 0.7071, 0.0000]))
+                np.array(
+                    [0.0, -1.0 / math.sqrt(2.0), 1.0 / math.sqrt(2.0), 0.0]))
             input_matrix_unity_translation = input_transform[:3]
             input_matrix_unity_rotation = input_transform[3:]
             input_matrix_unity_rotation_quat = transform_util.axis_angle_to_quaternion(
@@ -2274,6 +2314,7 @@ class ArmImpl(arm.Arm):
                                          target_tip_transform[5]),
                 velocity=velocity,
                 acceleration=accel,
+                blend_radius=step.get_radius(),
                 use_linear=use_linear,
                 use_unity_ik=use_unity_ik,
                 apply_tip_adjust_transform=apply_tip_adjust_transform,

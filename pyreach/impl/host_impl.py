@@ -374,14 +374,12 @@ class HostImpl(pyreach.Host):
           continue
         color_cameras[color_interface.device_name] = add_device(
             color_camera_impl.ColorCameraDevice(
-                color_interface.device_type, color_interface.device_name,
-                self._config._calibration).get_wrapper())
+                color_interface.device_type,
+                color_interface.device_name).get_wrapper())
       tilestream_strategy = interfaces.get_request_strategy("uvc", "", "color")
       if tilestream_strategy is not None and "tilestream" not in color_cameras:
         color_cameras["tilestream"] = add_device(
-            color_camera_impl.ColorCameraDevice("uvc", "",
-                                                self._config._calibration,
-                                                "color-camera",
+            color_camera_impl.ColorCameraDevice("uvc", "", "color-camera",
                                                 "tilestream").get_wrapper())
     self._color_camera = color_cameras.get("")
     self._color_cameras = core.ImmutableDictionary(color_cameras)
@@ -401,8 +399,7 @@ class HostImpl(pyreach.Host):
         depth_cameras[depth_camera_interface.device_name] = add_device(
             depth_camera_impl.DepthCameraDevice(
                 depth_camera_interface.device_type,
-                depth_camera_interface.device_name,
-                self._config._calibration).get_wrapper())
+                depth_camera_interface.device_name).get_wrapper())
     self._depth_camera = depth_cameras.get("")
     self._depth_cameras = core.ImmutableDictionary(depth_cameras)
     # Load VNC cameras

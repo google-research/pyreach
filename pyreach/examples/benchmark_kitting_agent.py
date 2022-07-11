@@ -25,7 +25,7 @@ from pyreach.gyms import core
 from pyreach.gyms.envs.benchmark_kitting import BenchmarkKittingWrapper
 
 # TODO: Change from max attempts to timer.
-MAX_ATTEMPTS_KITTING = 10
+MAX_ATTEMPTS_KITTING = 14
 MAX_ATTEMPTS_DEKITTING = 10
 
 

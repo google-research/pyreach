@@ -11,18 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Interface for interacting with a depth camera device."""
 
-from typing import Optional, Callable, Tuple
+import dataclasses
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 
-from pyreach.calibration import Calibration
+from pyreach.calibration import CalibrationCamera
 from pyreach.core import Pose
 from pyreach.core import PyReachStatus
 
 
+@dataclasses.dataclass(frozen=True)
 class DepthFrame:
   """A single depth camera frame taken at a specific time.
 
@@ -34,47 +35,21 @@ class DepthFrame:
     color_data: A (DX,DY,3) array of uint8's containing the color image.
     depth_data: A (DX,DY) array of uint8's containing the depth data.
     calibration: The calibration when the image is captured.
-
+    camera_t_origin: The pose of the camera with respect to the world.
   """
 
-  @property
-  def time(self) -> float:
-    """Return timestamp of the DepthFrame."""
-    raise NotImplementedError
-
-  @property
-  def sequence(self) -> int:
-    """Return sequence number of the DepthFrame."""
-    raise NotImplementedError
-
-  @property
-  def device_type(self) -> str:
-    """Return the reach device type."""
-    raise NotImplementedError
-
-  @property
-  def device_name(self) -> str:
-    """Return the Reach device name."""
-    raise NotImplementedError
-
-  @property
-  def color_data(self) -> np.ndarray:
-    """Return the color image as a (DX,DY,3)."""
-    raise NotImplementedError
-
-  @property
-  def depth_data(self) -> np.ndarray:
-    """Return the color image as a (DX,DY)."""
-    raise NotImplementedError
-
-  @property
-  def calibration(self) -> Optional[Calibration]:
-    """Return the Calibration for the ColorFrame."""
-    raise NotImplementedError
+  time: float
+  sequence: int
+  device_type: str
+  device_name: str
+  color_data: np.ndarray
+  depth_data: np.ndarray
+  calibration: Optional[CalibrationCamera]
+  camera_t_origin: Optional[Pose]
 
   def pose(self) -> Optional[Pose]:
     """Return the pose of the camera when the image is taken."""
-    raise NotImplementedError
+    return self.camera_t_origin
 
   def get_point_normal(
       self, x: int,

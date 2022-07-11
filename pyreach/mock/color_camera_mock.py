@@ -11,79 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Mock PyReach Color Camera."""
 
 from typing import Callable, Optional
 
 import numpy as np
 
-from pyreach import calibration as cal
 from pyreach import color_camera
 from pyreach import core
-from pyreach.mock import calibration_mock as cal_mock
-
-
-class ColorFrameMock(color_camera.ColorFrame):
-  """A single color camera frame taken at a specific time.
-
-  Attributes:
-    time: The time in seconds of the frame since 1970.
-    sequence: The sequence number of the color frame.
-    device_type: The JSON device type string.
-    device_name: The JSON device name string.
-    color_image: A color image as a (DX,DY,3) array of uint8's.
-    calibration: The calibration when the image is captured.
-  """
-
-  def __init__(self, time: float, sequence: int,
-               device_type: str, device_name: str,
-               color_image: np.ndarray,
-               calibration: Optional[cal.Calibration]) -> None:
-    """Initialize a MockColorFrame."""
-    self._time: float = time
-    self._sequence = sequence
-    self._device_type: str = device_type
-    self._device_name: str = device_name
-    self._color_image: np.ndarray = color_image
-    self._calibration: Optional[cal.Calibration] = calibration
-
-  @property
-  def time(self) -> float:
-    """Return timestamp of the ColorFrame."""
-    return self._time
-
-  @property
-  def sequence(self) -> int:
-    """Sequence number of the ColorFrame."""
-    return self._sequence
-
-  @property
-  def device_type(self) -> str:
-    """Return the Reach device type."""
-    return self._device_type
-
-  @property
-  def device_name(self) -> str:
-    """Return the Reach device name."""
-    return self._device_name
-
-  @property
-  def color_image(self) -> np.ndarray:
-    """Return the color image as a (DX,DY,3)."""
-    return self._color_image
-
-  @property
-  def calibration(self) -> Optional[cal.Calibration]:
-    """Return the Calibration for for the ColorFrame."""
-    return self._calibration
-
-  def pose(self) -> Optional[core.Pose]:
-    """Return the pose of the camera when the image is taken."""
-    translation: core.Translation = core.Translation(1.0, 2.0, 3.0)
-    orientation: core.Rotation = core.Rotation(core.AxisAngle())
-    mock_pose: core.Pose = core.Pose(translation, orientation)
-    return mock_pose
+from pyreach.calibration import CalibrationCamera
 
 
 class ColorCameraMock(color_camera.ColorCamera):
@@ -140,11 +76,27 @@ class ColorCameraMock(color_camera.ColorCamera):
 
   def image(self) -> Optional[color_camera.ColorFrame]:
     """Return the latest image if it exists."""
-    color_frame_mock: ColorFrameMock = ColorFrameMock(
+    translation: core.Translation = core.Translation(1.0, 2.0, 3.0)
+    orientation: core.Rotation = core.Rotation(core.AxisAngle())
+    mock_pose: core.Pose = core.Pose(translation, orientation)
+    color_frame_mock: color_camera.ColorFrame = color_camera.ColorFrame(
         1.0, 0, "device_type", "device_name", np.zeros((3, 5, 3),
                                                        dtype=np.uint8),
-        cal_mock.CalibrationMock("device_type", "device_name",
-                                 "color_camera_link_name"))
+        CalibrationCamera(
+            device_type="device_type",
+            device_name="device_name",
+            tool_mount=None,
+            sub_type=None,
+            distortion=(1.0, 2.0, 3.0, 4.0, 5.0),
+            distortion_depth=(11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0),
+            extrinsics=(21.0, 22.0, 23.0, 24.0, 25.0, 26.0),
+            intrinsics=(31.0, 32.0, 33.0, 34.0),
+            height=3,
+            width=5,
+            extrinsics_residual=None,
+            intrinsics_residual=None,
+            lens_model="fisheye",
+            link_name=None), mock_pose)
     color_frame: color_camera.ColorFrame = color_frame_mock
     return color_frame
 

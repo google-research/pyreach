@@ -179,7 +179,7 @@ class Translation(object):
 
 @dataclasses.dataclass(frozen=True)
 class AxisAngle(object):
-  """Rodriguez axis-angle representation of an orientation.
+  """Rodrigues axis-angle representation of an orientation.
 
   The axis is the direction of the vector. The angle is the norm of the vector
   in radians. Rotation uses the right-hand rule. The angle can be any value,
@@ -309,6 +309,31 @@ class Quaternion(object):
                           float] = cast(Tuple[float, float, float, float],
                                         tuple(rotation))
     return cls.from_tuple(rotation_tuple)
+
+  def __mul__(self, b: "Quaternion") -> "Quaternion":
+    """Return product of two quaternions."""
+    # Code copied from:
+    # [Rotation with quaternions in Python]
+    # (https://www.meccanismocomplesso.org/en/
+    # hamiltons-quaternions-and-3d-rotation-with-python/)
+    w1: float = self.w
+    x1: float = self.x
+    y1: float = self.y
+    z1: float = self.z
+    w2: float = b.w
+    x2: float = b.x
+    y2: float = b.y
+    z2: float = b.z
+    w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+    x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+    y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
+    z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
+    return Quaternion(x, y, z, w)
+
+  def inverse(self) -> "Quaternion":
+    """Return the inverse of a Quaternion."""
+    # By the way, for quaternions, the inverse is the same as conjugate.
+    return Quaternion(-self.x, -self.y, -self.z, self.w)
 
 
 @dataclasses.dataclass(frozen=True)

@@ -15,13 +15,12 @@
 """Implementation of PyReach Gym Depth Camera Device."""
 
 import sys
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import gym  # type: ignore
 import numpy as np
 
 import pyreach
-from pyreach import calibration
 from pyreach import core
 from pyreach import depth_camera
 from pyreach import snapshot as lib_snapshot
@@ -57,7 +56,6 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     is_synchronous: bool = depth_camera_config.is_synchronous
     calibration_enable: bool = depth_camera_config.calibration_enable
     lens_model: Optional[str] = depth_camera_config.lens_model
-    link_name: Optional[str] = depth_camera_config.link_name
     pose_enable: bool = depth_camera_config.pose_enable
     if depth_frame_rate <= 0.0:
       depth_frame_rate = 1.0
@@ -120,7 +118,6 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     self._color_enabled: bool = color_enabled
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
-    self._link_name: str = link_name if link_name else ""
     self._color_frame_rate = color_frame_rate
     self._depth_frame_rate = depth_frame_rate
     self._frame_rate: float = frame_rate
@@ -255,22 +252,10 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
         if not depth_frame:
           raise pyreach.PyReachError(
               "Internal Error: Missing image needed for calibration.")
-        camera_calibration: Optional[calibration.Calibration] = (
-            depth_frame.calibration)
-        if not camera_calibration:
-          raise pyreach.PyReachError(
-              "Internal Error: Image does not have camera calibration.")
-        calibration_camera: Union[None, calibration.CalibrationDevice,
-                                  calibration.CalibrationCamera]
-        calibration_camera = camera_calibration.get_device(
-            depth_frame.device_type, depth_frame.device_name)
-
+        calibration_camera = depth_frame.calibration
         if not calibration_camera:
           raise pyreach.PyReachError(
               "Internal Error: Image does not have a calibration device.")
-        if not isinstance(calibration_camera, calibration.CalibrationCamera):
-          raise pyreach.PyReachError(
-              "Internal Error: Image does not have a calibration camera")
         if calibration_camera.width != depth_shape[1]:
           raise pyreach.PyReachError(
               f"Internal Error: Width {calibration_camera.width} "
@@ -283,10 +268,10 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
           raise pyreach.PyReachError(
               f"Internal Error: Width ''{calibration_camera.lens_model}' "
               f"!= '{self._lens_model}'")
-        if calibration_camera.link_name != self._link_name:
+        if calibration_camera.link_name is not None:
           raise pyreach.PyReachError(
-              f"Internal Error: Width '{calibration_camera.link_name}' "
-              f"!= '{self._link_name}'")
+              f"Internal Error: Expected no link_name not "
+              f"'{calibration_camera.link_name}'")
 
         observation["calibration"] = {
             "distortion": np.array(calibration_camera.distortion),
