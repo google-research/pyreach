@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of Open AI Gym interface for PyReach."""
 
 import collections
@@ -94,6 +93,16 @@ class ReachDevice(object):
   def get_apply_tip_adjust_transform(self) -> bool:
     """Return the apply tip adjust transform for an arm."""
     raise pyreach.PyReachError(f"Device {self._config_name} is not an arm")
+
+  def get_image_info(self) -> Optional[Tuple[float, float]]:
+    """Return whether an image has expired or not.
+
+    Returns:
+      None if the stale image detection is not enabled; otherwise,
+      a tuple of (image_timestamp, stale limit) is returned.
+    """
+    # This method is only sub-classed by image devices.
+    return None
 
   def _timers_select(self, timer_names: Set[str]) -> internal.TimersSet:
     """Select timers to enable/disable for a block of code.

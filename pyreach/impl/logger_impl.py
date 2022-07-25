@@ -319,7 +319,7 @@ class LoggerImpl(logger.Logger):
       True if the goal task state has been entered, false otherwise.
     """
     q: "queue.Queue[None]" = queue.Queue()
-    found = False
+    found = (self.task_state == state)
 
     def state_update(state_update: logger.TaskState) -> bool:
       nonlocal found
@@ -330,10 +330,11 @@ class LoggerImpl(logger.Logger):
       q.put(None)
 
     stop = self.add_task_state_update_callback(state_update, finished)
-    try:
-      q.get(block=True, timeout=timeout)
-    except queue.Empty:
-      pass
+    if not found:
+      try:
+        q.get(block=True, timeout=timeout)
+      except queue.Empty:
+        pass
     stop()
     return found
 

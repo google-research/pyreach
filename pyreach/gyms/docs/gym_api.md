@@ -1,6 +1,7 @@
 # PyReach Gym
 
 
+
 ## Introduction
 
 The [OpenAI Gym](https://gym.openai.com/) API provides a standard way to
@@ -515,9 +516,9 @@ The force torque sensor observation has the following observation entries:
 *   `"ts"`: The timestamp is returned as a scalar `numpy.ndarray` of type
     `float` and a shape of `()` (i.e. a tuple of length 0.)
 
-Currently, there is no status information from the device being captured.
-Thus, the sensor could be disabled, broken, inactive, with no visible
-information in the returned observation.
+Currently, there is no status information from the device being captured. Thus,
+the sensor could be disabled, broken, inactive, with no visible information in
+the returned observation.
 
 ### I/O Device
 
@@ -1207,6 +1208,10 @@ following arguments:
     relative to the workcell origin is returned in the observation under the
     `pose` key.
 
+*   `stale_image_dectect`: (Optional, default = None) When a set to a float, a
+    image timeout is specified that causes a PyReachError execption to be raised
+    whenever the a image is older than the specified timeout.
+
 #### Depth Camera Configuration
 
 The [`Reach Depth Camera Device`](#depth-camera-device) is initialized with the
@@ -1262,6 +1267,10 @@ following arguments:
 *   `pose_enable`: (Optional, default = `False`). When True, the camera pose
     relative to the workcell origin is returned in the observation under the
     `pose` key.
+
+*   `stale_image_dectect`: (Optional, default = None) When a set to a float, a
+    image timeout is specified that causes a PyReachError execption to be raised
+    whenever the a image is older than the specified timeout.
 
 #### Force Torque Sensor Configuration
 

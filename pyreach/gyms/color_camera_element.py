@@ -48,6 +48,10 @@ class ReachColorCamera(reach_element.ReachElement):
       This was never actually implemented.  Use frame_rate instead.
     pose_enable: When True, the camera pose is returned for each image
       observation under the `pose` key; otherwise, no camera pose is returned.
+    stale_image_dectect: When a set to a float, an image timeout is specified
+      that causes a PyReachError execption to be raised whenever the a image is
+      older than the specified timeout.
+
   """
   shape: Tuple[int, int]
   force_fit: bool = False
@@ -58,3 +62,5 @@ class ReachColorCamera(reach_element.ReachElement):
   initial_stream_request_period: float = 1.0  # Deprecated, use frame_rate!
   frame_rate: float = -1.0
   pose_enable: bool = False
+  stale_image_dectect: Optional[float] = None
+

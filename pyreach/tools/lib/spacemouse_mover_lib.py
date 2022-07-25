@@ -4,7 +4,6 @@ import copy
 import multiprocessing as mp
 from multiprocessing import connection as mpc
 import os
-import select
 import sys
 import time
 from typing import cast, Optional
@@ -112,6 +111,9 @@ class SpacemouseMover:
       new_commanded_pose[3] += cmd.delta_roll  # rx
       new_commanded_pose[4] += cmd.delta_pitch  # ry
       new_commanded_pose[5] += cmd.delta_yaw  # rz
+    else:
+      new_commanded_pose[2] = PUSHY_HEIGHT_METERS
+      new_commanded_pose[3:] = TOOL_ORIENTATION_RADS
     logging.info("Desired pose: %s", str(new_commanded_pose))
 
     self.previous_commanded_pose = Pose.from_list(new_commanded_pose)
@@ -122,31 +124,37 @@ class SpacemouseMover:
     done: bool = False
     start_time: float = time.time()
 
-    # Wait for either keyboard key or spacemouse command
-    # On spacemouse command, issue servoj
-    spacemouse_fileno = self._spacemouse_pipe.fileno()
-    keyboard_fileno = self._keyboard_pipe.fileno()
-    select_rlist = [spacemouse_fileno, keyboard_fileno]
-    select.select(select_rlist, [], [], ACTION_TIME_INCREMENT_SECONDS)
+    found = True
+    send_cmd = False
+    while found:
+      found = False
+      if self._keyboard_pipe.poll():
+        cmd = self._keyboard_pipe.recv()
+        cmd = cast(str, cmd).strip()
+        logging.info("Received keyboard command: %s", cmd)
+        if cmd == "x":
+          self.reset(final_reset=True)
+          return True
+        else:
+          done = done or self.handle_keyboard_command(cmd)
+        found = True
 
-    if self._keyboard_pipe.poll():
-      cmd = self._keyboard_pipe.recv()
-      cmd = cast(str, cmd).strip()
-      logging.info("Received keyboard command: %s", cmd)
-      if cmd == "x":
-        self.reset(final_reset=True)
-        return True
-      else:
-        done = self.handle_keyboard_command(cmd)
+      if self._spacemouse_pipe.poll():
+        logging.info("Got into spacemouse readable.")
+        arm = self.host.arm
+        assert arm is not None
+        current_state = arm.state()
+        assert current_state is not None
+        new_pose = self._get_spacemouse_command(current_state.pose)
+        arm.async_to_pose(new_pose, servo=True, preemptive=False)
+        found = True
+        send_cmd = True
 
-    elif self._spacemouse_pipe.poll():
-      logging.info("Got into spacemouse readable.")
+    if not send_cmd and self.previous_commanded_pose:
       arm = self.host.arm
       assert arm is not None
-      current_state = arm.state()
-      assert current_state is not None
-      new_pose = self._get_spacemouse_command(current_state.pose)
-      arm.async_to_pose(new_pose, servo=True, preemptive=True)
+      arm.async_to_pose(
+          self.previous_commanded_pose, servo=True, preemptive=False)
 
     if done:
       logging.info("Done set, exiting loop.")
@@ -173,6 +181,7 @@ class SpacemouseMover:
     # synchronously move.
     arm = self.host.arm
     assert arm is not None
+    arm.start_streaming()
     current_state = arm.state()
     assert current_state is not None
     current_pose = current_state.pose.as_list()
@@ -194,6 +203,8 @@ class SpacemouseMover:
     # Move the arm to one corner.
     current_pose[0] = CORNER_X_METERS
     current_pose[1] = CORNER_Y_METERS
+    current_pose[2] = SAFE_Z_METERS
+    current_pose[3:] = TOOL_ORIENTATION_RADS
     logging.info("Move arm to %s", str(current_pose))
     status = arm.to_pose(
         Pose.from_list(current_pose),
@@ -208,7 +219,10 @@ class SpacemouseMover:
     if not final_reset:
       logging.info("Arm now at %s", str(current_state.pose.as_list()))
 
+      current_pose[0] = CORNER_X_METERS
+      current_pose[1] = CORNER_Y_METERS
       current_pose[2] = PUSHY_HEIGHT_METERS
+      current_pose[3:] = TOOL_ORIENTATION_RADS
       logging.info("Move arm to %s", str(current_pose))
       status = arm.to_pose(
           Pose.from_list(current_pose),
@@ -240,9 +254,9 @@ class SpacemouseMover:
 
   def run(self) -> None:
     """Runs the loop and exits gracefully."""
-    self._clear_spacemouse_queue()
 
     self.reset()
+    self._clear_spacemouse_queue()
 
     done: bool = False
     while not done:
@@ -274,7 +288,7 @@ class SpacemouseMover:
 
   def _start_spacemouse_driver(self, conn: mpc.Connection) -> None:
     driver = spacemouse_2d_driver.SpacemouseDriver(
-        pipe=conn, spacemouse_id=0, two_dof_mode=ONLY_2D, dt=0.01)
+        pipe=conn, spacemouse_id=None, two_dof_mode=ONLY_2D, dt=0.01)
     logging.info("Started spacemouse driver")
     driver.run()
 

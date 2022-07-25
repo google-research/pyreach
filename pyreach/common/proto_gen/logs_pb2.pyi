@@ -2580,6 +2580,8 @@ class CameraCalibration(google.protobuf.message.Message):
     DISTORTION_FIELD_NUMBER: builtins.int
     DISTORTION_DEPTH_FIELD_NUMBER: builtins.int
     CAMERA_T_ORIGIN_FIELD_NUMBER: builtins.int
+    TOOL_MOUNT_FIELD_NUMBER: builtins.int
+    LINK_NAME_FIELD_NUMBER: builtins.int
     @property
     def intrinsics(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Camera intrinsics values."""
@@ -2617,6 +2619,12 @@ class CameraCalibration(google.protobuf.message.Message):
     def camera_t_origin(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """Camera pose in the origin frame, x, y, z, rx, ry, rz."""
         pass
+    tool_mount: typing.Text = ...
+    """ToolMount is the name of the device to which the camera is mounted."""
+
+    link_name: typing.Text = ...
+    """LinkName is the name of the link to which the camera is attached."""
+
     def __init__(self,
         *,
         intrinsics : typing.Optional[typing.Iterable[builtins.float]] = ...,
@@ -2629,9 +2637,11 @@ class CameraCalibration(google.protobuf.message.Message):
         distortion : typing.Optional[typing.Iterable[builtins.float]] = ...,
         distortion_depth : typing.Optional[typing.Iterable[builtins.float]] = ...,
         camera_t_origin : typing.Optional[typing.Iterable[builtins.float]] = ...,
+        tool_mount : typing.Optional[typing.Text] = ...,
+        link_name : typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","extrinsics_residual",b"extrinsics_residual","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","camera_t_origin",b"camera_t_origin","distortion",b"distortion","distortion_depth",b"distortion_depth","extrinsics",b"extrinsics","extrinsics_residual",b"extrinsics_residual","intrinsics",b"intrinsics","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","extrinsics_residual",b"extrinsics_residual","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model","link_name",b"link_name","tool_mount",b"tool_mount"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["calibrated_height",b"calibrated_height","calibrated_width",b"calibrated_width","camera_t_origin",b"camera_t_origin","distortion",b"distortion","distortion_depth",b"distortion_depth","extrinsics",b"extrinsics","extrinsics_residual",b"extrinsics_residual","intrinsics",b"intrinsics","intrinsics_residual",b"intrinsics_residual","lens_model",b"lens_model","link_name",b"link_name","tool_mount",b"tool_mount"]) -> None: ...
 global___CameraCalibration = CameraCalibration
 
 class Color(google.protobuf.message.Message):

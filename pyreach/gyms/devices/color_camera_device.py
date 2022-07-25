@@ -54,6 +54,8 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     calibration_enable: bool = color_camera_config.calibration_enable
     lens_model: Optional[str] = color_camera_config.lens_model
     pose_enable: bool = color_camera_config.pose_enable
+    stale_image_detect: Optional[
+        float] = color_camera_config.stale_image_dectect
     if frame_rate <= 0.0:
       frame_rate = 10.0
 
@@ -99,6 +101,8 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     self._calibration_enable: bool = calibration_enable
     self._lens_model: str = lens_model if lens_model else ""
     self._pose_enable: bool = pose_enable
+    self._stale_image_detect: Optional[float] = stale_image_detect
+    self._image_info: Optional[Tuple[float, float]] = None
 
   def __str__(self) -> str:
     """Return string representation of a Reach Color Camera."""
@@ -140,6 +144,15 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
     except pyreach.PyReachError as pyreach_error:
       return str(pyreach_error)
     return ""
+
+  def get_image_info(self) -> Optional[Tuple[float, float]]:
+    """Return whether an image has expired or not.
+
+    Returns:
+      None if the stale image detection is not enabled; otherwise,
+      a tuple of (image_timestamp, stale limit) is returned.
+    """
+    return self._image_info
 
   def get_observation(self,
                       host: pyreach.Host) -> reach_device.ObservationSnapshot:
@@ -241,6 +254,11 @@ class ReachDeviceColorCamera(reach_device.ReachDevice):
               f"ColorCamera {self.config_name} does not have an image"
               "to extract a pose from")
         observation["pose"] = observation_pose
+
+      self._image_info = None
+      stale_image_detect: Optional[float] = self._stale_image_detect
+      if stale_image_detect is not None:
+        self._image_info = (ts, stale_image_detect)
 
       snapshot_reference: Tuple[lib_snapshot.SnapshotReference, ...] = ()
       if color_frame:

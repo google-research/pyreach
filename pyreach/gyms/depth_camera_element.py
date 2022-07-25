@@ -55,6 +55,9 @@ class ReachDepthCamera(reach_element.ReachElement):
       Use color_frame_rate and depth_frame_rate instead.
     pose_enable: When True, the camera pose is returned for each image
       observation under the `pose` key; otherwise, no camera pose is returned.
+    stale_image_dectect: When a set to a float, an image timeout is specified
+      that causes a PyReachError execption to be raised whenever the a image is
+      older than the specified timeout.
   """
   shape: Tuple[int, int]
   color_enabled: bool
@@ -68,3 +71,4 @@ class ReachDepthCamera(reach_element.ReachElement):
   # initial_stream_request_period is deprecated. Use: color/depth_frame instead.
   initial_stream_request_period: float = 1.0
   pose_enable: bool = False
+  stale_image_detect: Optional[float] = None

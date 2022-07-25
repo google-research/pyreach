@@ -122,6 +122,7 @@ class RobotPartInfo(google.protobuf.message.Message):
     JOINT_METADATA_FIELD_NUMBER: builtins.int
     CONTROL_MODULES_FIELD_NUMBER: builtins.int
     SUBORDINATE_PART_IDS_FIELD_NUMBER: builtins.int
+    SUBORDINATE_STATE_SIGNAL_IDS_FIELD_NUMBER: builtins.int
     id: typing.Text = ...
     """Identifier for this part; must be unique within a given robot."""
 
@@ -161,6 +162,14 @@ class RobotPartInfo(google.protobuf.message.Message):
         from. Ie, when not empty, this part is a virtual part.
         """
         pass
+    @property
+    def subordinate_state_signal_ids(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
+        """State signal ids which should be collected from subordinate parts and
+        output from a virtual part even if no control modules use them. States do
+        *not* need to be listed here to be available to control modules in the
+        virtual part. This has no effect if subordinate_part_ids is empty.
+        """
+        pass
     def __init__(self,
         *,
         id : typing.Text = ...,
@@ -170,9 +179,10 @@ class RobotPartInfo(google.protobuf.message.Message):
         joint_metadata : typing.Optional[joints_pb2.JointsMetadata] = ...,
         control_modules : typing.Optional[typing.Iterable[global___ControlModuleInfo]] = ...,
         subordinate_part_ids : typing.Optional[typing.Iterable[typing.Text]] = ...,
+        subordinate_state_signal_ids : typing.Optional[typing.Iterable[typing.Text]] = ...,
         ) -> None: ...
     def HasField(self, field_name: typing_extensions.Literal["joint_metadata",b"joint_metadata"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["control_duty_cycle",b"control_duty_cycle","control_frequency",b"control_frequency","control_modules",b"control_modules","id",b"id","joint_metadata",b"joint_metadata","subordinate_part_ids",b"subordinate_part_ids","thread_id",b"thread_id"]) -> None: ...
+    def ClearField(self, field_name: typing_extensions.Literal["control_duty_cycle",b"control_duty_cycle","control_frequency",b"control_frequency","control_modules",b"control_modules","id",b"id","joint_metadata",b"joint_metadata","subordinate_part_ids",b"subordinate_part_ids","subordinate_state_signal_ids",b"subordinate_state_signal_ids","thread_id",b"thread_id"]) -> None: ...
 global___RobotPartInfo = RobotPartInfo
 
 class ControlModuleInfo(google.protobuf.message.Message):
@@ -274,9 +284,11 @@ class ControllerExecutionParams(google.protobuf.message.Message):
         output state immediately. This mode is primarily used for simulation.
         """
 
-        TESTING: ControllerExecutionParams.Mode.ValueType = ...  # 2
-        """Same as MANUAL, except that the default initial STOP_MOTION command is
-        not sent, so that test commands do not queue up behind it.
+        UNIT_TEST: ControllerExecutionParams.Mode.ValueType = ...  # 2
+        """Mode for running unit tests on control modules, parts, etc. Same as
+        MANUAL, except that the default initial STOP_MOTION command is not sent,
+        so that test commands do not queue behind it, and output command types
+        aren't validated, since unit tests do not use a complete control stack.
         """
 
     class Mode(_Mode, metaclass=_ModeEnumTypeWrapper):
@@ -299,9 +311,11 @@ class ControllerExecutionParams(google.protobuf.message.Message):
     output state immediately. This mode is primarily used for simulation.
     """
 
-    TESTING: ControllerExecutionParams.Mode.ValueType = ...  # 2
-    """Same as MANUAL, except that the default initial STOP_MOTION command is
-    not sent, so that test commands do not queue up behind it.
+    UNIT_TEST: ControllerExecutionParams.Mode.ValueType = ...  # 2
+    """Mode for running unit tests on control modules, parts, etc. Same as
+    MANUAL, except that the default initial STOP_MOTION command is not sent,
+    so that test commands do not queue behind it, and output command types
+    aren't validated, since unit tests do not use a complete control stack.
     """
 
 

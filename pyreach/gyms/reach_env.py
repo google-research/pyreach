@@ -90,11 +90,11 @@ ObservationSnapshot = Tuple[gyms_core.Observation,
 class _NumpyArrayEncoder(json.JSONEncoder):
   """A helper class to encode NumPy ndarrays into JSON."""
 
-  def default(self, obj: Any) -> Any:
+  def default(self, o: Any) -> Any:
     """Magic method to do encoding."""
-    if isinstance(obj, np.ndarray):
-      return obj.tolist()
-    return json.JSONEncoder.default(self, obj)
+    if isinstance(o, np.ndarray):
+      return o.tolist()
+    return json.JSONEncoder.default(self, o)
 
 
 # ReachEnv:
@@ -144,6 +144,7 @@ class ReachEnv(gym.Env):  # type: ignore
                gym_env_id: Optional[str] = None,
                connection_string: Optional[str] = None,
                robot_types: Optional[Dict[str, str]] = None,
+               user_uid: Optional[str] = None,
                **kwargs: Any) -> None:
     """Initialize a Reach Gym Environment.
 
@@ -155,6 +156,7 @@ class ReachEnv(gym.Env):  # type: ignore
       gym_env_id: ID used to create this gym. Must be specified.
       connection_string: the connection string (see connection_string.md).
       robot_types: Overrides for robot types.
+      user_uid: Attempt to authenticate with this user UID.
       **kwargs: Additional keyword arguments.
 
     Raises:
@@ -243,6 +245,7 @@ class ReachEnv(gym.Env):  # type: ignore
       host_kwargs: Dict[str, Any] = {
           "enable_streaming": False,
           "arm_default_ik_types": arm_default_ik_types,
+          "user_uid": user_uid,
       }
       if robot_types is not None:
         host_kwargs["robot_types"] = robot_types.copy()
@@ -650,6 +653,20 @@ class ReachEnv(gym.Env):  # type: ignore
           if "server_ts" in server_observation:
             server_observation["server_ts"] = gyms_core.Timestamp.new(
                 server_time)
+
+      stale_images: List[str] = []
+      for name, element in elements.items():
+        image_info: Optional[Tuple[float, float]] = element.get_image_info()
+        if image_info is not None:
+          image_ts: float = image_info[0]
+          stale_limit: float = image_info[1]
+          image_age: float = latest_ts - image_ts
+          if image_age > stale_limit:
+            stale_images.append(
+                f"Camera {name}: Age ({image_age}) > Limit ({stale_limit})")
+      if stale_images:
+        raise pyreach.PyReachError(
+            f"Stale camera image(s) found: {stale_images}")
 
       element_names = set(elements.keys())
       observation_names = set(observations.keys())

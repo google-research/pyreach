@@ -7,6 +7,7 @@ from absl import flags  # type: ignore
 from absl import logging  # type: ignore
 
 from pyreach.common.proto_gen import logs_pb2
+from pyreach.arm import IKLibType
 from pyreach.factory import LocalTCPHostFactory
 from pyreach.tools.lib.spacemouse_mover_lib import SpacemouseMover
 
@@ -53,7 +54,10 @@ def main(argv: Sequence[str]) -> None:
   if len(argv) > 1:
     raise app.UsageError("Too many command-line arguments.")
   logging.info("Connecting to local reach....")
-  with LocalTCPHostFactory().connect() as host:
+  with LocalTCPHostFactory(
+      enable_streaming=False, arm_default_ik_types={
+          "": IKLibType.IKPYBULLET
+      }).connect() as host:
     logging.info("Connected")
     mover = App(host, flags.FLAGS.task_code)
     mover.run()

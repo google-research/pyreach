@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Provide a local TCP client."""
 
 import json
@@ -20,6 +19,7 @@ import multiprocessing
 import queue  # pylint: disable=unused-import
 import socket
 import threading
+import time
 from typing import Any, Dict, Optional  # pylint: disable=unused-import
 
 from pyreach import host
@@ -29,37 +29,78 @@ from pyreach.impl import client as cli
 from pyreach.impl import host_impl
 
 
+class _PingManager:
+  """Manage reading from a ping queue.."""
+  _ping_queue: "queue.Queue[None]"
+  _time_time: float
+
+  def __init__(self, ping_queue: "queue.Queue[None]") -> None:
+    """Send thread sends data to a socket until it is closed.
+
+    Args:
+      ping_queue: ping queue stores pings from the main process.
+    """
+    self._ping_queue = ping_queue
+    self._ping_time = time.time()
+
+  def update(self) -> bool:
+    """Flush ping queue, return true if should continue."""
+    while True:
+      try:
+        self._ping_queue.get(block=False)
+        self._ping_time = time.time()
+      except queue.Empty:
+        break
+    if time.time() - self._ping_time > 1.0:
+      return False
+    return True
+
+
 def _send_thread(sock: socket.socket,
-                 input_queue: "queue.Queue[Optional[bytes]]") -> None:
+                 input_queue: "queue.Queue[Optional[bytes]]",
+                 ping_queue: "queue.Queue[None]") -> None:
   """Send thread sends data to a socket until it is closed.
 
   Args:
     sock: the socket to send to.
     input_queue: the input data queue of bytes. Exits if None.
+    ping_queue: ping queue stores pings from the main process.
   """
-  while True:
-    data = input_queue.get(block=True)
-    if data is None:
-      break
+  ping_manager = _PingManager(ping_queue)
+  try:
+    while True:
+      if not ping_manager.update():
+        logging.warning(
+            "sending thread and socket process are due to lack of ping from "
+            "the main process")
+        break
+      data: Optional[bytes] = None
+      try:
+        data = input_queue.get(block=True, timeout=0.5)
+      except queue.Empty:
+        continue
+      if data is None:
+        break
+      try:
+        sock.send(data)
+      except OSError:
+        break
+  finally:
     try:
-      sock.send(data)
+      sock.shutdown(socket.SHUT_RD)
     except OSError:
-      break
-  try:
-    sock.shutdown(socket.SHUT_RD)
-  except OSError:
-    pass
-  try:
-    sock.close()
-  except OSError:
-    pass
+      pass
+    try:
+      sock.close()
+    except OSError:
+      pass
 
 
 def _read_process(hostname: str, port: int,
                   q: "queue.Queue[Optional[types_gen.DeviceData]]",
                   input_queue: "queue.Queue[Optional[bytes]]",
-                  close: "queue.Queue[None]",
-                  started: "queue.Queue[bool]") -> None:
+                  started: "queue.Queue[bool]",
+                  ping_queue: "queue.Queue[None]") -> None:
   """Process for reading from a socket and writing to the socket.
 
   Args:
@@ -67,12 +108,12 @@ def _read_process(hostname: str, port: int,
     port: the TCP port number.
     q: stream of DeviceData from the socket. None is sent on close.
     input_queue: the input data queue. Sending None closes the thread.
-    close: Queue is sent when the socket closes.
     started: Queue is sent at startup, True if socket is started successfully,
-             False otherwise. If false, no data will be sent to other queues.
+      False otherwise. If false, no data will be sent to other queues.
+    ping_queue: ping queue stores pings from the main process.
   """
   sender: Optional[threading.Thread] = None
-  started_value = False
+  sock: Optional[socket.socket] = None
   try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # See end of: https://docs.python.org/3/library/socket.html
@@ -84,11 +125,9 @@ def _read_process(hostname: str, port: int,
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     sock.settimeout(60.0)  # Seconds
     sock.connect((hostname, port))
-    started_value = True
-  finally:
-    started.put(started_value)
-  try:
-    sender = threading.Thread(target=_send_thread, args=(sock, input_queue))
+    started.put(True)
+    sender = threading.Thread(
+        target=_send_thread, args=(sock, input_queue, ping_queue))
     sender.start()
     pb = ""
     while True:
@@ -119,30 +158,43 @@ def _read_process(hostname: str, port: int,
       sock.shutdown(socket.SHUT_RD)
     except OSError:
       pass
-    sock.close()
   finally:
-    close.put(None)
-    if sender:
-      sender.join()
-    q.put(None)
+    try:
+      if sock:
+        try:
+          sock.close()
+        except OSError:
+          pass
+    finally:
+      if sender:
+        sender.join()
 
 
 def _serialize_process(
     input_queue: "queue.Queue[Optional[types_gen.CommandData]]",
-    output_queue: "queue.Queue[Optional[bytes]]") -> None:
+    output_queue: "queue.Queue[Optional[bytes]]",
+    ping_queue: "queue.Queue[None]") -> None:
   """Serializes a stream of command data into a packet stream.
 
   Args:
     input_queue: input stream of command data, ends with None.
     output_queue: output stream of bytes, ends with None.
+      ping_queue: ping queue stores pings from the main process.
   """
+  ping_manager = _PingManager(ping_queue)
   while True:
+    if not ping_manager.update():
+      logging.warning(
+          "serialization process closing due to lack of ping from the "
+          "main process")
+      break
     try:
-      cmd = input_queue.get(block=True)
+      cmd = input_queue.get(block=True, timeout=0.5)
       if cmd is None:
-        output_queue.put(None)
         break
       output_queue.put((json.dumps(cmd.to_json()) + "\n").encode("utf-8"))
+    except queue.Empty:
+      pass
     except KeyboardInterrupt:
       pass
 
@@ -150,14 +202,19 @@ def _serialize_process(
 class LocalTCPClient(cli.Client):
   """Class to implement a local TCP client."""
 
-  _stop: bool
+  _stop: threading.Event
   _lock: threading.Lock
   _queue: "queue.Queue[Optional[types_gen.DeviceData]]"
   _input_queue: "queue.Queue[Optional[types_gen.CommandData]]"
-  _close_queue: "queue.Queue[None]"
-  _process: multiprocessing.Process
-  _serialize: multiprocessing.Process
-  _close_thread: threading.Thread
+  _ping_reader_queue: "queue.Queue[None]"
+  _ping_serialize_queue: "queue.Queue[None]"
+  _cmd_data_queue: "queue.Queue[Optional[bytes]]"
+  _started_queue: "queue.Queue[bool]"
+  _ping_thread: Optional[threading.Thread]
+  _process: Optional[multiprocessing.Process]
+  _serialize: Optional[multiprocessing.Process]
+  _close_reader_thread: Optional[threading.Thread]
+  _close_serialize_thread: Optional[threading.Thread]
 
   def __init__(self, hostname: str = "localhost", port: int = 50008):
     """Init a LocalTCPClient.
@@ -172,31 +229,66 @@ class LocalTCPClient(cli.Client):
        PyReachError: if connection fails.
     """
     super().__init__()
-    self._stop = False
+    self._stop = threading.Event()
     self._lock = threading.Lock()
     self._queue = multiprocessing.Queue()
     self._input_queue = multiprocessing.Queue()
-    self._close_queue = multiprocessing.Queue()
-    cmd_data_queue: "queue.Queue[Optional[bytes]]" = multiprocessing.Queue()
-    started: "queue.Queue[bool]" = multiprocessing.Queue()
-    self._process = multiprocessing.Process(
-        target=_read_process,
-        args=(hostname, port, self._queue, cmd_data_queue, self._close_queue,
-              started))
-    self._process.start()
-    self._serialize = multiprocessing.Process(
-        target=_serialize_process,
-        args=(self._input_queue, cmd_data_queue))
-    self._serialize.start()
-    if not started.get(block=True):
-      self._input_queue.put(None)
-      raise PyReachError("Failed to connect")
-    self._close_thread = threading.Thread(target=self._wait_for_close)
-    self._close_thread.start()
+    self._ping_reader_queue = multiprocessing.Queue()
+    self._ping_serialize_queue = multiprocessing.Queue()
+    self._cmd_data_queue = multiprocessing.Queue()
+    self._started_queue = multiprocessing.Queue()
+    self._ping_thread = None
+    self._process = None
+    self._serialize = None
+    self._close_reader_thread = None
+    self._close_serialize_thread = None
+    success = False
+    try:
+      self._ping_thread = threading.Thread(target=self._send_pings, args=())
+      self._ping_thread.start()
+      self._process = multiprocessing.Process(
+          target=_read_process,
+          args=(hostname, port, self._queue, self._cmd_data_queue,
+                self._started_queue, self._ping_reader_queue))
+      self._process.start()
+      self._serialize = multiprocessing.Process(
+          target=_serialize_process,
+          args=(self._input_queue, self._cmd_data_queue,
+                self._ping_serialize_queue))
+      self._serialize.start()
+      self._close_reader_thread = threading.Thread(
+          target=self._wait_for_close_reader)
+      self._close_reader_thread.start()
+      self._close_serialize_thread = threading.Thread(
+          target=self._wait_for_close_serialize)
+      self._close_serialize_thread.start()
+      if not self._started_queue.get(block=True):
+        self.close()
+        raise PyReachError("Failed to connect")
+      success = True
+    finally:
+      if not success:
+        self.close()
 
-  def _wait_for_close(self) -> None:
-    """Wait for the process to close."""
-    self._close_queue.get(block=True)
+  def _send_pings(self) -> None:
+    """Ping the processes."""
+    while not self._stop.wait(timeout=0.1):
+      self._ping_reader_queue.put(None)
+      self._ping_serialize_queue.put(None)
+
+  def _wait_for_close_reader(self) -> None:
+    """Wait for the reader process to close."""
+    if self._process:
+      self._process.join()
+    self._queue.put(None)
+    self._started_queue.put(False)
+    self._close()
+
+  def _wait_for_close_serialize(self) -> None:
+    """Wait for the serialize process to close."""
+    if self._serialize:
+      self._serialize.join()
+    self._cmd_data_queue.put(None)
     self._close()
 
   def get_queue(self) -> "queue.Queue[Optional[types_gen.DeviceData]]":
@@ -213,17 +305,20 @@ class LocalTCPClient(cli.Client):
 
   def _close(self) -> None:
     with self._lock:
-      if self._stop:
+      if self._stop.is_set():
         return
-      self._stop = True
+      self._stop.set()
     self._input_queue.put(None)
 
   def close(self) -> None:
     """Close the connection to the local client."""
     self._close()
-    self._process.join()
-    self._serialize.join()
-    self._close_thread.join()
+    for p in [
+        self._ping_thread, self._process, self._serialize,
+        self._close_reader_thread, self._close_serialize_thread
+    ]:
+      if p:
+        p.join()
 
 
 def connect_local_tcp(hostname: str, port: int, kwargs: Dict[str,

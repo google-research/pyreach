@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Implementation of PyReach Gym Depth Camera Device."""
 
 import sys
@@ -62,6 +61,7 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     if color_frame_rate <= 0.0:
       color_frame_rate = 10.0
     frame_rate: float = max(depth_frame_rate, color_frame_rate)
+    stale_image_detect: Optional[float] = depth_camera_config.stale_image_detect
 
     if len(shape) != 2:
       raise pyreach.PyReachError(f"Depth camera has shape {shape}, not (DX,DY)")
@@ -122,6 +122,8 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
     self._depth_frame_rate = depth_frame_rate
     self._frame_rate: float = frame_rate
     self._pose_enable: bool = pose_enable
+    self._stale_image_detect: Optional[float] = stale_image_detect
+    self._image_info: Optional[Tuple[float, float]] = None
 
   def __str__(self) -> str:
     """Return a string representation of ReachDeviceDepthCamera."""
@@ -176,6 +178,15 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
         The list of gym action snapshots.
     """
     return ()
+
+  def get_image_info(self) -> Optional[Tuple[float, float]]:
+    """Return whether an image information for stale image detection.
+
+    Returns:
+      None if the image stale image detection is not enabled; otherwise,
+      a tuple of (image_timestamp, stale_limit) is returned.
+    """
+    return self._image_info
 
   def get_observation(self,
                       host: pyreach.Host) -> reach_device.ObservationSnapshot:
@@ -293,6 +304,11 @@ class ReachDeviceDepthCamera(reach_device.ReachDevice):
               f"DepthCamera {self.config_name} does not have an image"
               "to extract a pose from")
         observation["pose"] = observation_pose
+
+        self._image_info = None
+        stale_image_dectect: Optional[float] = self._stale_image_detect
+        if stale_image_dectect is not None:
+          self._image_info = (ts, stale_image_dectect)
 
     return observation, snapshot_reference, ()
 

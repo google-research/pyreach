@@ -963,7 +963,13 @@ class CameraCalibration:
   # Camera pose in the origin frame, x, y, z, rx, ry, rz.
   camera_t_origin: List[float]
 
-  def __init__(self, calibrated_height: int = 0, calibrated_width: int = 0, camera_t_origin: Optional[List[float]] = None, distortion: Optional[List[float]] = None, distortion_depth: Optional[List[float]] = None, extrinsics: Optional[List[float]] = None, extrinsics_residual: float = 0.0, intrinsics: Optional[List[float]] = None, intrinsics_residual: float = 0.0, lens_model: str = '') -> None:
+  # ToolMount is the name of the device to which the camera is mounted.
+  tool_mount: str
+
+  # LinkName is the name of the link to which the camera is attached.
+  link_name: str
+
+  def __init__(self, calibrated_height: int = 0, calibrated_width: int = 0, camera_t_origin: Optional[List[float]] = None, distortion: Optional[List[float]] = None, distortion_depth: Optional[List[float]] = None, extrinsics: Optional[List[float]] = None, extrinsics_residual: float = 0.0, intrinsics: Optional[List[float]] = None, intrinsics_residual: float = 0.0, lens_model: str = '', link_name: str = '', tool_mount: str = '') -> None:
     self.calibrated_height = calibrated_height
     self.calibrated_width = calibrated_width
     if camera_t_origin is None:
@@ -989,6 +995,8 @@ class CameraCalibration:
       self.intrinsics = intrinsics
     self.intrinsics_residual = intrinsics_residual
     self.lens_model = lens_model
+    self.link_name = link_name
+    self.tool_mount = tool_mount
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -1034,6 +1042,14 @@ class CameraCalibration:
       assert isinstance(self.lens_model, str), 'Wrong type for attribute: lens_model. Expected: str. Got: ' + str(type(self.lens_model)) + '.'
       json_data['lensModel'] = self.lens_model
 
+    if self.link_name:
+      assert isinstance(self.link_name, str), 'Wrong type for attribute: link_name. Expected: str. Got: ' + str(type(self.link_name)) + '.'
+      json_data['linkName'] = self.link_name
+
+    if self.tool_mount:
+      assert isinstance(self.tool_mount, str), 'Wrong type for attribute: tool_mount. Expected: str. Got: ' + str(type(self.tool_mount)) + '.'
+      json_data['toolMount'] = self.tool_mount
+
     return json_data
 
   def to_proto(self) -> 'logs_pb2.CameraCalibration':
@@ -1054,6 +1070,10 @@ class CameraCalibration:
     proto.distortion.extend(self.distortion)
     proto.distortion_depth.extend(self.distortion_depth)
     proto.camera_t_origin.extend(self.camera_t_origin)
+    if self.tool_mount:
+      proto.tool_mount = self.tool_mount
+    if self.link_name:
+      proto.link_name = self.link_name
     return proto
 
   @staticmethod
@@ -1117,6 +1137,14 @@ class CameraCalibration:
       assert isinstance(json_data['lensModel'], str), 'Wrong type for attribute: lensModel. Expected: str. Got: ' + str(type(json_data['lensModel'])) + '.'
       obj.lens_model = json_data['lensModel']
 
+    if 'linkName' in json_data:
+      assert isinstance(json_data['linkName'], str), 'Wrong type for attribute: linkName. Expected: str. Got: ' + str(type(json_data['linkName'])) + '.'
+      obj.link_name = json_data['linkName']
+
+    if 'toolMount' in json_data:
+      assert isinstance(json_data['toolMount'], str), 'Wrong type for attribute: toolMount. Expected: str. Got: ' + str(type(json_data['toolMount'])) + '.'
+      obj.tool_mount = json_data['toolMount']
+
     return obj
 
   @staticmethod
@@ -1145,6 +1173,10 @@ class CameraCalibration:
       obj.distortion_depth.append(obj_distortion_depth)
     for obj_camera_t_origin in proto.camera_t_origin:
       obj.camera_t_origin.append(obj_camera_t_origin)
+    if proto.HasField('tool_mount'):
+      obj.tool_mount = proto.tool_mount
+    if proto.HasField('link_name'):
+      obj.link_name = proto.link_name
     return obj
 
 

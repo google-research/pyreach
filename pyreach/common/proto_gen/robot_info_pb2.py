@@ -35,7 +35,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x10robot_info.proto\x12\x10robotics.logging\x1a\x1bgoogle/protobuf/empty.proto\x1a\x0cjoints.proto\"\x97\x03\n\tRobotInfo\x12\x10\n\x08robot_id\x18\x01 \x01(\t\x12\x12\n\nproject_id\x18\x07 \x01(\t\x12\x1d\n\x15robot_repository_type\x18\x08 \x01(\t\x12\x18\n\x10log_topic_prefix\x18\x0b \x01(\t\x12\x0c\n\x04task\x18\x02 \x01(\t\x12\x15\n\rrobot_version\x18\x03 \x01(\t\x12.\n\x05parts\x18\x06 \x03(\x0b\x32\x1f.robotics.logging.RobotPartInfo\x12:\n\x0eshared_objects\x18\t \x03(\x0b\x32\".robotics.logging.SharedObjectInfo\x12I\n\x14\x63ontroller_execution\x18\n \x01(\x0b\x32+.robotics.logging.ControllerExecutionParams\x12!\n\x18toaster_command_handling\x18\x9a\x05 \x01(\x08J\x04\x08\x04\x10\x05J\x04\x08\x05\x10\x06R\x10\x63ommand_log_typeR\x0estate_log_type\"\xab\x02\n\rRobotPartInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tthread_id\x18\x07 \x01(\t\x12\x19\n\x11\x63ontrol_frequency\x18\x05 \x01(\x01\x12\x1a\n\x12\x63ontrol_duty_cycle\x18\x08 \x01(\r\x12\x41\n\x0ejoint_metadata\x18\x02 \x01(\x0b\x32).robotics.logging.messages.JointsMetadata\x12<\n\x0f\x63ontrol_modules\x18\x03 \x03(\x0b\x32#.robotics.logging.ControlModuleInfo\x12\x1c\n\x14subordinate_part_ids\x18\t \x03(\tJ\x04\x08\x04\x10\x05J\x04\x08\x06\x10\x07R\x07num_dofR\x10gripper_metadata\"\xa8\x02\n\x11\x43ontrolModuleInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x32\n\x10loopback_adapter\x18\n \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x12\x32\n\x10\x66\x61ke_imu_adapter\x18\x0e \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x12G\n\x14xarm_gripper_adapter\x18\x1c \x01(\x0b\x32\'.robotics.logging.SharedObjectReferenceH\x00\x12&\n\x04mock\x18\x0c \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x42\x06\n\x04typeJ\x04\x08\x0b\x10\x0cJ\x04\x08\x14\x10\x15R\x0csafety_layerR\x0cxarm_adapter\"N\n\x10SharedObjectInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12&\n\x04mock\x18\n \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x42\x06\n\x04type\"1\n\x15SharedObjectReference\x12\x18\n\x10shared_object_id\x18\x01 \x01(\t\"\x8b\x01\n\x19\x43ontrollerExecutionParams\x12>\n\x04mode\x18\x01 \x01(\x0e\x32\x30.robotics.logging.ControllerExecutionParams.Mode\".\n\x04Mode\x12\r\n\tAUTOMATIC\x10\x00\x12\n\n\x06MANUAL\x10\x01\x12\x0b\n\x07TESTING\x10\x02\x62\x06proto3'
+  serialized_pb=b'\n\x10robot_info.proto\x12\x10robotics.logging\x1a\x1bgoogle/protobuf/empty.proto\x1a\x0cjoints.proto\"\x97\x03\n\tRobotInfo\x12\x10\n\x08robot_id\x18\x01 \x01(\t\x12\x12\n\nproject_id\x18\x07 \x01(\t\x12\x1d\n\x15robot_repository_type\x18\x08 \x01(\t\x12\x18\n\x10log_topic_prefix\x18\x0b \x01(\t\x12\x0c\n\x04task\x18\x02 \x01(\t\x12\x15\n\rrobot_version\x18\x03 \x01(\t\x12.\n\x05parts\x18\x06 \x03(\x0b\x32\x1f.robotics.logging.RobotPartInfo\x12:\n\x0eshared_objects\x18\t \x03(\x0b\x32\".robotics.logging.SharedObjectInfo\x12I\n\x14\x63ontroller_execution\x18\n \x01(\x0b\x32+.robotics.logging.ControllerExecutionParams\x12!\n\x18toaster_command_handling\x18\x9a\x05 \x01(\x08J\x04\x08\x04\x10\x05J\x04\x08\x05\x10\x06R\x10\x63ommand_log_typeR\x0estate_log_type\"\xd1\x02\n\rRobotPartInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x11\n\tthread_id\x18\x07 \x01(\t\x12\x19\n\x11\x63ontrol_frequency\x18\x05 \x01(\x01\x12\x1a\n\x12\x63ontrol_duty_cycle\x18\x08 \x01(\r\x12\x41\n\x0ejoint_metadata\x18\x02 \x01(\x0b\x32).robotics.logging.messages.JointsMetadata\x12<\n\x0f\x63ontrol_modules\x18\x03 \x03(\x0b\x32#.robotics.logging.ControlModuleInfo\x12\x1c\n\x14subordinate_part_ids\x18\t \x03(\t\x12$\n\x1csubordinate_state_signal_ids\x18\n \x03(\tJ\x04\x08\x04\x10\x05J\x04\x08\x06\x10\x07R\x07num_dofR\x10gripper_metadata\"\xa8\x02\n\x11\x43ontrolModuleInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12\x32\n\x10loopback_adapter\x18\n \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x12\x32\n\x10\x66\x61ke_imu_adapter\x18\x0e \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x12G\n\x14xarm_gripper_adapter\x18\x1c \x01(\x0b\x32\'.robotics.logging.SharedObjectReferenceH\x00\x12&\n\x04mock\x18\x0c \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x42\x06\n\x04typeJ\x04\x08\x0b\x10\x0cJ\x04\x08\x14\x10\x15R\x0csafety_layerR\x0cxarm_adapter\"N\n\x10SharedObjectInfo\x12\n\n\x02id\x18\x01 \x01(\t\x12&\n\x04mock\x18\n \x01(\x0b\x32\x16.google.protobuf.EmptyH\x00\x42\x06\n\x04type\"1\n\x15SharedObjectReference\x12\x18\n\x10shared_object_id\x18\x01 \x01(\t\"\x8d\x01\n\x19\x43ontrollerExecutionParams\x12>\n\x04mode\x18\x01 \x01(\x0e\x32\x30.robotics.logging.ControllerExecutionParams.Mode\"0\n\x04Mode\x12\r\n\tAUTOMATIC\x10\x00\x12\n\n\x06MANUAL\x10\x01\x12\r\n\tUNIT_TEST\x10\x02\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,joints__pb2.DESCRIPTOR,])
 
@@ -59,15 +59,15 @@ _CONTROLLEREXECUTIONPARAMS_MODE = _descriptor.EnumDescriptor(
       type=None,
       create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='TESTING', index=2, number=2,
+      name='UNIT_TEST', index=2, number=2,
       serialized_options=None,
       type=None,
       create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1317,
-  serialized_end=1363,
+  serialized_start=1355,
+  serialized_end=1403,
 )
 _sym_db.RegisterEnumDescriptor(_CONTROLLEREXECUTIONPARAMS_MODE)
 
@@ -224,6 +224,13 @@ _ROBOTPARTINFO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='subordinate_state_signal_ids', full_name='robotics.logging.RobotPartInfo.subordinate_state_signal_ids', index=7,
+      number=10, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -237,7 +244,7 @@ _ROBOTPARTINFO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=492,
-  serialized_end=791,
+  serialized_end=829,
 )
 
 
@@ -301,8 +308,8 @@ _CONTROLMODULEINFO = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=794,
-  serialized_end=1090,
+  serialized_start=832,
+  serialized_end=1128,
 )
 
 
@@ -345,8 +352,8 @@ _SHAREDOBJECTINFO = _descriptor.Descriptor(
       create_key=_descriptor._internal_create_key,
     fields=[]),
   ],
-  serialized_start=1092,
-  serialized_end=1170,
+  serialized_start=1130,
+  serialized_end=1208,
 )
 
 
@@ -377,8 +384,8 @@ _SHAREDOBJECTREFERENCE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1172,
-  serialized_end=1221,
+  serialized_start=1210,
+  serialized_end=1259,
 )
 
 
@@ -410,8 +417,8 @@ _CONTROLLEREXECUTIONPARAMS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1224,
-  serialized_end=1363,
+  serialized_start=1262,
+  serialized_end=1403,
 )
 
 _ROBOTINFO.fields_by_name['parts'].message_type = _ROBOTPARTINFO

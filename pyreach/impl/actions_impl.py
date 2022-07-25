@@ -668,31 +668,30 @@ class Action:
   _capture_depth_behavior: str
   _loop: bool
 
-  def __init__(self, _steps: List[ActionStep],
-               _preconditions: List[Precondition],
-               _tip_inputs: List[ToolInteractionPoint], _name: str,
-               _softstart: bool, _softstart_accel: float,
-               _softstart_velocity: float, _max_accel: float,
-               _max_velocity: float, _cyclic: bool, _task_intent: str,
-               _intent: str, _success_type: str, _capture_depth_behavior: str,
-               _loop: bool, _use_steps_as_ikhints: bool) -> None:
+  def __init__(self, steps: List[ActionStep], preconditions: List[Precondition],
+               tip_inputs: List[ToolInteractionPoint], name: str,
+               softstart: bool, softstart_accel: float,
+               softstart_velocity: float, max_accel: float, max_velocity: float,
+               cyclic: bool, task_intent: str, intent: str, success_type: str,
+               capture_depth_behavior: str, loop: bool,
+               use_steps_as_ikhints: bool) -> None:
     """Construct a Action template."""
-    self._steps = _steps
-    self._preconditions = _preconditions
-    self._tip_inputs = _tip_inputs
-    self._name = _name
-    self._softstart = _softstart
-    self._softstart_accel = _softstart_accel
-    self._softstart_velocity = _softstart_velocity
-    self._max_accel = _max_accel
-    self._max_velocity = _max_velocity
-    self._cyclic = _cyclic
-    self._task_intent = _task_intent
-    self._intent = _intent
-    self._success_type = _success_type
-    self._capture_depth_behavior = _capture_depth_behavior
-    self._loop = _loop
-    self._use_steps_as_ikhints = _use_steps_as_ikhints
+    self._steps = steps
+    self._preconditions = preconditions
+    self._tip_inputs = tip_inputs
+    self._name = name
+    self._softstart = softstart
+    self._softstart_accel = softstart_accel
+    self._softstart_velocity = softstart_velocity
+    self._max_accel = max_accel
+    self._max_velocity = max_velocity
+    self._cyclic = cyclic
+    self._task_intent = task_intent
+    self._intent = intent
+    self._success_type = success_type
+    self._capture_depth_behavior = capture_depth_behavior
+    self._loop = loop
+    self._use_steps_as_ikhints = use_steps_as_ikhints
 
   def get_steps(self) -> List[ActionStep]:
     """Return the list of steps for an action template."""

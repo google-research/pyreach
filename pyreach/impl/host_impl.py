@@ -195,6 +195,7 @@ class HostImpl(pyreach.Host):
       take_control_at_start: bool = True,
       arm_default_ik_types: Optional[Dict[str, arm.IKLibType]] = None,
       robot_types: Optional[Dict[str, str]] = None,
+      user_uid: Optional[str] = None,
   ) -> None:
     """Initialize the Host.
 
@@ -206,6 +207,7 @@ class HostImpl(pyreach.Host):
       take_control_at_start: If True, immediately take control.
       arm_default_ik_types: Default ik type for arms.
       robot_types: Overrides for robot types, deviceName to URDF file mapping.
+      user_uid: Attempt to authenticate with this user UID.
 
     Raises:
       Exception: when failed to load config.
@@ -217,8 +219,46 @@ class HostImpl(pyreach.Host):
     self._config = ConfigImpl()
     self._arm_devices = []
 
-    # Read the initial key-value requests:
     msgs: List[Optional[types_gen.DeviceData]] = []
+    msg: Optional[types_gen.DeviceData] = None
+
+    # Authenticate, if specified
+    if user_uid is not None and not is_playback:
+      send_auth_time: Optional[float] = None
+      auth_tags: Set[str] = set()
+      while True:
+        if send_auth_time is None or time.time() - 15 > send_auth_time:
+          tag = utils.generate_tag()
+          auth_tags.add(tag)
+          send_auth_time = time.time()
+          client.send_cmd(
+              types_gen.CommandData(
+                  ts=utils.timestamp_now(),
+                  tag=tag,
+                  device_type="server",
+                  data_type="authentication-request",
+                  authentication_request=types_gen.AuthenticationRequest(
+                      user_uid=user_uid)))
+        try:
+          msg = client.get_queue().get(block=True, timeout=0.1)
+          msgs.append(msg)
+          if msg is None:
+            break
+          if msg.device_type == "server" and msg.data_type == "cmd-status" and not msg.device_name and msg.tag in auth_tags:
+            status = utils.pyreach_status_from_message(msg)
+            if status.is_last_status() and not status.is_error():
+              break
+            elif status.is_last_status(
+            ) and status.error == "already-executing":
+              break
+            elif status.is_last_status() and status.error == "denied":
+              raise core.PyReachError("invalid UID for authentication")
+            elif status.is_error():
+              logging.warning("Authentication error: %s", str(status))
+        except queue.Empty:
+          pass
+
+    # Read the initial key-value requests:
     request_kv: Dict[device_base.KeyValueKey, Optional[float]] = {
         device_base.KeyValueKey(
             device_type="settings-engine",
@@ -260,7 +300,6 @@ class HostImpl(pyreach.Host):
                     device_name=kv.device_name,
                     data_type="key-value-request",
                     key=kv.key))
-      msg: Optional[types_gen.DeviceData] = None
       if is_playback and block:
         assert isinstance(client, cli.PlaybackClient)
         playback_client: cli.PlaybackClient = client
@@ -271,6 +310,10 @@ class HostImpl(pyreach.Host):
         msgs.append(msg)
         if msg is None:
           break
+        if msg.data_type == "cmd-status":
+          status = utils.pyreach_status_from_message(msg)
+          if status.is_last_status() and status.error == "denied":
+            raise core.PyReachError("invalid UID for authentication")
       except queue.Empty:
         block = True
       if msg is not None and msg.data_type == "key-value":
