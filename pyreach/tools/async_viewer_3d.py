@@ -27,9 +27,13 @@ issues with Google's GLIBC. Either run within project-reach, or export using
 local copybara:
 
 ```
-/google/data/ro/teams/copybara/copybara robotics/learning/reach/third_party/copy.bara.sky local_debug .. --folder-dir=/tmp/project-reach --ignore-noop && \
-  cp -r ~/project-reach/pyreach/common/proto_gen /tmp/project-reach/pyreach/common && \
-  PYTHONPATH=/tmp/project-reach python /tmp/project-reach/pyreach/tools/async_viewer_3d.py \
+/google/data/ro/teams/copybara/copybara
+robotics/learning/reach/third_party/copy.bara.sky local_debug ..
+--folder-dir=/tmp/project-reach --ignore-noop && \
+  cp -r ~/project-reach/pyreach/common/proto_gen
+  /tmp/project-reach/pyreach/common && \
+  PYTHONPATH=/tmp/project-reach python
+  /tmp/project-reach/pyreach/tools/async_viewer_3d.py \
     --connection_string="connection-type=webrtc,robot-id=9932CC"
 ```
 
@@ -51,18 +55,20 @@ from absl import flags
 
 from pyreach.tools.lib import async_viewer_3d_controller
 
-_REQFPS = flags.DEFINE_float(
-    'reqfps', 10, 'Fps at which frame requests are sent.')
-_USE_TAGS = flags.DEFINE_bool(
-    'use_tags', False, 'Use tagged requests where possible.')
+_REQFPS = flags.DEFINE_float('reqfps', 10,
+                             'Fps at which frame requests are sent.')
+_USE_TAGS = flags.DEFINE_bool('use_tags', False,
+                              'Use tagged requests where possible.')
 _CONNECTION_STRING = flags.DEFINE_string(
     'connection_string', '',
     'Connect using a PyReach connection string (see connection_string.md '
     'for examples and documentation).')
-_WINDOW_HEIGHT = flags.DEFINE_integer(
-    'window_height', 960, 'Height of OpenGL window (in pixels).')
-_WINDOW_WIDTH = flags.DEFINE_integer(
-    'window_width', 1280, 'Width of OpenGL window (in pixels).')
+_WINDOW_HEIGHT = flags.DEFINE_integer('window_height', 960,
+                                      'Height of OpenGL window (in pixels).')
+_WINDOW_WIDTH = flags.DEFINE_integer('window_width', 1280,
+                                     'Width of OpenGL window (in pixels).')
+_USER_UID = flags.DEFINE_string('user_uid', None,
+                                'Set user UID to connect with.')
 
 
 def main(_) -> None:
@@ -71,7 +77,8 @@ def main(_) -> None:
       _WINDOW_HEIGHT.value,
       reqfps=_REQFPS.value,
       use_tags=_USE_TAGS.value,
-      connection_string=_CONNECTION_STRING.value)
+      connection_string=_CONNECTION_STRING.value,
+      user_uid=_USER_UID.value)
   control.run_until_closed()
 
 

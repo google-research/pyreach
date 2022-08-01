@@ -85,7 +85,8 @@ class Controller:
                quiet: bool,
                show_crosshair: bool = True,
                request_oracles: bool = False,
-               connection_string: str = "") -> None:
+               connection_string: str = "",
+               user_uid: Optional[str] = None) -> None:
     """Instantiate a controller for multiple cameras.
 
     Args:
@@ -101,6 +102,7 @@ class Controller:
         be displayed.
       request_oracles: If true, will send requests to the oracles.
       connection_string: The PyReach connection string.
+      user_uid: The user UID for the connection.
     """
     # If true, will render the undistortion field as red / green arrows.
     self._show_undistortion = show_undistortion
@@ -112,7 +114,8 @@ class Controller:
     self._host = ConnectionFactory(
         connection_string=connection_string,
         take_control_at_start=False,
-        enable_streaming=False).connect()
+        enable_streaming=False,
+        user_uid=user_uid).connect()
 
     is_playback = self._host.playback is not None
 

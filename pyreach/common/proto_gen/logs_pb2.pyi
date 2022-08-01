@@ -92,6 +92,7 @@ class CommandData(google.protobuf.message.Message):
     EXP_ARRAY_FIELD_NUMBER: builtins.int
     EVENT_DURATION_FIELD_NUMBER: builtins.int
     EVENT_NAME_FIELD_NUMBER: builtins.int
+    TASK_CODE_FIELD_NUMBER: builtins.int
     EVENT_LABELS_FIELD_NUMBER: builtins.int
     EVENT_PARAMS_FIELD_NUMBER: builtins.int
     PICK_ID_FIELD_NUMBER: builtins.int
@@ -282,6 +283,9 @@ class CommandData(google.protobuf.message.Message):
     event_name: typing.Text = ...
     """The name of the event."""
 
+    task_code: typing.Text = ...
+    """TaskCode is the task-code event parameter."""
+
     @property
     def event_labels(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[typing.Text]:
         """Labels associated with the event."""
@@ -381,6 +385,7 @@ class CommandData(google.protobuf.message.Message):
         exp_array : typing.Optional[typing.Iterable[global___ExperimentalCommandData]] = ...,
         event_duration : typing.Optional[google.protobuf.duration_pb2.Duration] = ...,
         event_name : typing.Optional[typing.Text] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
         event_labels : typing.Optional[typing.Iterable[typing.Text]] = ...,
         event_params : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
         pick_id : typing.Optional[typing.Text] = ...,
@@ -391,8 +396,8 @@ class CommandData(google.protobuf.message.Message):
         sim_action : typing.Optional[global___SimAction] = ...,
         inference_request : typing.Optional[global___InferenceRequest] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["authentication_request",b"authentication_request","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_name",b"event_name","exp",b"exp","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["args",b"args","authentication_request",b"authentication_request","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_labels",b"event_labels","event_name",b"event_name","event_params",b"event_params","exp",b"exp","exp_array",b"exp_array","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["authentication_request",b"authentication_request","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_name",b"event_name","exp",b"exp","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","task_code",b"task_code","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["args",b"args","authentication_request",b"authentication_request","client_annotation",b"client_annotation","client_os",b"client_os","client_session_end",b"client_session_end","client_session_start",b"client_session_start","cmd",b"cmd","connected_clients_request",b"connected_clients_request","controller_descriptions_request",b"controller_descriptions_request","data_type",b"data_type","data_type_oneof",b"data_type_oneof","delegated_clients_request",b"delegated_clients_request","detailed_error",b"detailed_error","device_name",b"device_name","device_type",b"device_type","disable_experiments",b"disable_experiments","enable_experiments",b"enable_experiments","error",b"error","event_duration",b"event_duration","event_labels",b"event_labels","event_name",b"event_name","event_params",b"event_params","exp",b"exp","exp_array",b"exp_array","experiment_flags",b"experiment_flags","experiment_token",b"experiment_token","finish_shutdown",b"finish_shutdown","hangup",b"hangup","history",b"history","i_see_data",b"i_see_data","inference_request",b"inference_request","intent",b"intent","key_value",b"key_value","key_value_request",b"key_value_request","machine_interfaces_request",b"machine_interfaces_request","message",b"message","metadata",b"metadata","operator_uid",b"operator_uid","origin",b"origin","origin_client",b"origin_client","origin_control",b"origin_control","origin_transport_type",b"origin_transport_type","origin_type",b"origin_type","pick_id",b"pick_id","ping",b"ping","pipeline_description_request",b"pipeline_description_request","progress",b"progress","reach_script",b"reach_script","robot_name",b"robot_name","script",b"script","seq",b"seq","session_id",b"session_id","session_info",b"session_info","sim_action",b"sim_action","snapshot",b"snapshot","start_shutdown",b"start_shutdown","stream_request",b"stream_request","success_type",b"success_type","tag",b"tag","task_code",b"task_code","text_cue",b"text_cue","text_instruction_request",b"text_instruction_request","trigger",b"trigger","ts",b"ts","ui_version",b"ui_version","user_label",b"user_label","webrtc_audio_request",b"webrtc_audio_request","x",b"x","y",b"y"]) -> None: ...
     def WhichOneof(self, oneof_group: typing_extensions.Literal["data_type_oneof",b"data_type_oneof"]) -> typing.Optional[typing_extensions.Literal["metadata","key_value","key_value_request","session_info","trigger","i_see_data","ping","client_session_end","connected_clients_request","start_shutdown","finish_shutdown","hangup","client_session_start","client_annotation","pipeline_description_request","machine_interfaces_request","text_instruction_request","stream_request","controller_descriptions_request","user_label","enable_experiments","disable_experiments","experiment_flags","delegated_clients_request","authentication_request"]]: ...
 global___CommandData = CommandData
 
@@ -4098,17 +4103,22 @@ class Metric(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     VALUE_FIELD_NUMBER: builtins.int
     LABELS_FIELD_NUMBER: builtins.int
+    TASK_CODE_FIELD_NUMBER: builtins.int
     @property
     def value(self) -> global___KeyValue: ...
     @property
     def labels(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___KeyValue]: ...
+    task_code: typing.Text = ...
+    """TaskCode is the task-code event parameter."""
+
     def __init__(self,
         *,
         value : typing.Optional[global___KeyValue] = ...,
         labels : typing.Optional[typing.Iterable[global___KeyValue]] = ...,
+        task_code : typing.Optional[typing.Text] = ...,
         ) -> None: ...
-    def HasField(self, field_name: typing_extensions.Literal["value",b"value"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing_extensions.Literal["labels",b"labels","value",b"value"]) -> None: ...
+    def HasField(self, field_name: typing_extensions.Literal["task_code",b"task_code","value",b"value"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing_extensions.Literal["labels",b"labels","task_code",b"task_code","value",b"value"]) -> None: ...
 global___Metric = Metric
 
 class EmptyMessage(google.protobuf.message.Message):

@@ -17,7 +17,7 @@ import dataclasses
 import math
 import threading
 import time
-from typing import Any, List, Tuple
+from typing import Any, List, Optional, Tuple
 
 from absl import logging
 import glfw
@@ -294,7 +294,8 @@ class Controller:
                window_height: int,
                reqfps: float,
                use_tags: bool,
-               connection_string: str = "") -> None:
+               connection_string: str = "",
+               user_uid: Optional[str] = None) -> None:
     """Instantiate a controller for multiple cameras.
 
     Args:
@@ -303,6 +304,7 @@ class Controller:
       reqfps: the request rate for cameras.
       use_tags: if true, will use tagged requests.
       connection_string: The PyReach connection string.
+      user_uid: The user UID for the connection.
 
     Raises:
       RuntimeError: if GLFW can't create a window.
@@ -319,7 +321,7 @@ class Controller:
     self._mouse_down = set()
 
     (self._host, self._depth_name, self._depth_width,
-     self._depth_height) = self._connect_to_host(connection_string)
+     self._depth_height) = self._connect_to_host(connection_string, user_uid)
     # Now that depth camera size is known, we can initialize OpenGL.
     (self._window, self._gl_data, self._pick_geom, self._place_geom,
      self._point_cloud_geom) = self._init_gl(
@@ -329,14 +331,15 @@ class Controller:
     self._register_host_callbacks(use_tags, reqfps)
 
   @classmethod
-  def _connect_to_host(cls, connection_string: str
+  def _connect_to_host(cls, connection_string: str, user_uid: str
                        ) -> Tuple[pyreach.Host, str, int, int]:
     """Connect to the pyreach host and get depth camera size."""
 
     host = ConnectionFactory(
         connection_string=connection_string,
         take_control_at_start=False,
-        enable_streaming=False).connect()
+        enable_streaming=False,
+        user_uid=user_uid).connect()
 
     # Choose a depth camera to render.
     # TODO: Support rendering from all cameras.

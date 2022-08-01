@@ -1557,7 +1557,7 @@ class ArmDevice(requester.Requester[arm.ArmState]):
     joints = list(msg.joints)
     joints = joints[0:arm_type.joint_count]
     if len(joints) < arm_type.joint_count:
-      logging.warning("joints too short: %s", msg)
+      logging.warning("joints too short: %s", msg.to_json())
       while len(joints) < arm_type.joint_count:
         joints.append(0.0)
     pose = list(msg.pose)

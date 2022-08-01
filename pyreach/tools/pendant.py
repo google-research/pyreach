@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Pendant displays a control pendant for a Reach workcell.
 
 Sample blaze command:
@@ -27,6 +26,10 @@ from absl import flags  # type: ignore
 from pyreach.tools.lib import pendant_lib
 
 flags.DEFINE_multi_string("robot_id", None, "The robot id to connect to.")
+flags.DEFINE_string(
+    "connection_string", "", "Connect using a PyReach connection string (see "
+    "connection_string.md for examples and documentation).")
+flags.DEFINE_string("user_uid", None, "Set user UID to connect with.")
 
 
 def _main(argv: List[str]) -> None:
@@ -35,7 +38,8 @@ def _main(argv: List[str]) -> None:
     raise app.UsageError("Too many command-line arguments.")
 
   pendant_lib.run_pendants(
-      flags.FLAGS.robot_id if flags.FLAGS.robot_id else [""], None)
+      flags.FLAGS.robot_id if flags.FLAGS.robot_id else [""], None,
+      flags.FLAGS.connection_string, flags.FLAGS.user_uid)
 
 
 if __name__ == "__main__":

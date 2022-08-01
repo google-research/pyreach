@@ -1836,6 +1836,9 @@ class CommandData:
   # The name of the event.
   event_name: str
 
+  # TaskCode is the task-code event parameter.
+  task_code: str
+
   # Labels associated with the event.
   event_labels: List[str]
   event_params: List['KeyValue']
@@ -1878,9 +1881,7 @@ class CommandData:
   # inference results continuously following the initial request, until "stop"
   # is sent. Oneof ["sparse"], future support: ["continuous", “stop”].
   request_type: str
-
-  # task_code: e.g. TC-101.
-  task_code: str
+  # (also field task_code)
   # (also field intent)
 
   # label: e.g. SingulateRightBin.
@@ -2330,6 +2331,9 @@ class CommandData:
     if self.data_type == 'event' or self.data_type == 'event-start' or self.data_type == 'pointer-event':
       if self.event_name:
         proto.event_name = self.event_name
+    if self.data_type == 'event' or self.data_type == 'event-start':
+      if self.task_code:
+        proto.task_code = self.task_code
     proto.event_labels.extend(self.event_labels)
     proto.event_params.extend([v.to_proto() for v in self.event_params])
     if self.pick_id:
@@ -2720,6 +2724,8 @@ class CommandData:
       obj.event_duration = float(proto.event_duration.seconds) + float(proto.event_duration.nanos) / 1000000000.0
     if proto.HasField('event_name'):
       obj.event_name = proto.event_name
+    if proto.HasField('task_code'):
+      obj.task_code = proto.task_code
     for obj_event_labels in proto.event_labels:
       obj.event_labels.append(obj_event_labels)
     for obj_event_params in proto.event_params:
@@ -4276,6 +4282,7 @@ class DeviceData:
   # === Fields for dataType metric:
   metric_value: Optional['KeyValue']
   labels: List['KeyValue']
+  # (also field task_code)
   # ==============================
 
   # === Fields for dataType reach-script-status:
@@ -5656,6 +5663,8 @@ class DeviceData:
       if self.metric_value:
         proto_metric.value.CopyFrom(self.metric_value.to_proto())
       proto_metric.labels.extend([v.to_proto() for v in self.labels])
+      if self.task_code:
+        proto_metric.task_code = self.task_code
       proto.metric.CopyFrom(proto_metric)
     if self.data_type == 'reach-script-status':
       proto_reach_script_status = logs_pb2.Status()
@@ -6892,6 +6901,8 @@ class DeviceData:
         obj.metric_value = KeyValue.from_proto(proto.metric.value)
       for obj_labels in proto.metric.labels:
         obj.labels.append(KeyValue.from_proto(obj_labels))
+      if proto.metric.HasField('task_code'):
+        obj.task_code = proto.metric.task_code
     if proto.HasField('reach_script_status'):
       if proto.reach_script_status.HasField('status'):
         obj.status = proto.reach_script_status.status
@@ -9352,12 +9363,16 @@ class Metric:
   metric_value: Optional['KeyValue']
   labels: List['KeyValue']
 
-  def __init__(self, labels: Optional[List['KeyValue']] = None, metric_value: Optional['KeyValue'] = None) -> None:
+  # TaskCode is the task-code event parameter.
+  task_code: str
+
+  def __init__(self, labels: Optional[List['KeyValue']] = None, metric_value: Optional['KeyValue'] = None, task_code: str = '') -> None:
     if labels is None:
       self.labels = []
     else:
       self.labels = labels
     self.metric_value = metric_value
+    self.task_code = task_code
 
   def to_json(self) -> Dict[str, Any]:
     """Convert type object to JSON."""
@@ -9375,6 +9390,10 @@ class Metric:
       assert self.metric_value.__class__.__name__ == 'KeyValue', 'Wrong type for attribute: metric_value. Expected: KeyValue. Got: ' + str(type(self.metric_value)) + '.'
       json_data['metricValue'] = self.metric_value.to_json()
 
+    if self.task_code:
+      assert isinstance(self.task_code, str), 'Wrong type for attribute: task_code. Expected: str. Got: ' + str(type(self.task_code)) + '.'
+      json_data['taskCode'] = self.task_code
+
     return json_data
 
   def to_proto(self) -> 'logs_pb2.Metric':
@@ -9383,6 +9402,8 @@ class Metric:
     if self.metric_value:
       proto.value.CopyFrom(self.metric_value.to_proto())
     proto.labels.extend([v.to_proto() for v in self.labels])
+    if self.task_code:
+      proto.task_code = self.task_code
     return proto
 
   @staticmethod
@@ -9402,6 +9423,10 @@ class Metric:
       assert isinstance(json_data['metricValue'], dict), 'Wrong type for attribute: metricValue. Expected: dict. Got: ' + str(type(json_data['metricValue'])) + '.'
       obj.metric_value = KeyValue.from_json(json_data['metricValue'])
 
+    if 'taskCode' in json_data:
+      assert isinstance(json_data['taskCode'], str), 'Wrong type for attribute: taskCode. Expected: str. Got: ' + str(type(json_data['taskCode'])) + '.'
+      obj.task_code = json_data['taskCode']
+
     return obj
 
   @staticmethod
@@ -9414,6 +9439,8 @@ class Metric:
       obj.metric_value = KeyValue.from_proto(proto.value)
     for obj_labels in proto.labels:
       obj.labels.append(KeyValue.from_proto(obj_labels))
+    if proto.HasField('task_code'):
+      obj.task_code = proto.task_code
     return obj
 
 

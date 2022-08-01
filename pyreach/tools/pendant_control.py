@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Pendant displays a control pendant for a Reach workcell.
 
 Run with:
@@ -28,6 +27,10 @@ from pyreach.tools.lib import pendant_lib
 
 flags.DEFINE_multi_string("robot_id", None, "The robot id to connect to.")
 flags.DEFINE_boolean("spacecat", False, "enable Space Cat user-space driver")
+flags.DEFINE_string(
+    "connection_string", "", "Connect using a PyReach connection string (see "
+    "connection_string.md for examples and documentation).")
+flags.DEFINE_string("user_uid", None, "Set user UID to connect with.")
 
 _spacemouse_position_sensitivity = 0.00002
 _spacemouse_rotation_sensitivity = 0.0001
@@ -70,10 +73,8 @@ def _spacecat_thread(pendants: List[pendant_lib.Pendant],
         if i < 0 or i >= len(device_names):
           continue
         print()
-        print(
-            f"Assign '{device_names[i]}'. "
-            f"Press any button on the mouse you want"
-        )
+        print(f"Assign '{device_names[i]}'. "
+              f"Press any button on the mouse you want")
         print("to use to control it, or don't do anything for five seconds to")
         print("delete assignment.")
         spacemouse_lib.rspnav_remove_events(spacemouse_lib.RSPNAV_EVENT_MOTION)
@@ -164,7 +165,7 @@ def _main(argv: List[str]) -> None:
 
     pendant_lib.run_pendants(
         flags.FLAGS.robot_id if flags.FLAGS.robot_id else [""],
-        continuous_control)
+        continuous_control, flags.FLAGS.connection_string, flags.FLAGS.user_uid)
 
   finally:
     spacemouse_lib.rspnav_kill()

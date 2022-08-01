@@ -93,6 +93,8 @@ def main() -> None:
       default="",
       help="Connect using a PyReach connection string (see "
       "connection_string.md for examples and documentation).")
+  parser.add_argument(
+      "--user_uid", default=None, help="Set user UID to connect with.")
   args = parser.parse_args()
 
   uwidth: int = args.uwidth
@@ -115,7 +117,8 @@ def main() -> None:
       quiet=False,
       show_crosshair=not args.disable_crosshair,
       request_oracles=args.request_oracles,
-      connection_string=args.connection_string)
+      connection_string=args.connection_string,
+      user_uid=args.user_uid)
   control.run()
 
 

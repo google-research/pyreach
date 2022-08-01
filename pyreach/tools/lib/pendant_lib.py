@@ -28,7 +28,7 @@ from pyreach.core import Pose
 from pyreach.core import PyReachError
 from pyreach.core import PyReachStatus
 from pyreach.core import Translation
-from pyreach.factory import LocalTCPHostFactory
+from pyreach.factory import ConnectionFactory
 from pyreach.host import Host
 from pyreach.host import SessionState
 from pyreach.vacuum import Vacuum
@@ -1006,14 +1006,17 @@ def _clean_device_name(device_name: str) -> str:
   return device_name[pos + 1:]
 
 
-def run_pendants(
-    device_names: List[str],
-    continuous_control: Optional[ContinuousControlThread] = None) -> None:
+def run_pendants(device_names: List[str],
+                 continuous_control: Optional[ContinuousControlThread] = None,
+                 connection_string: str = "",
+                 user_uid: Optional[str] = None) -> None:
   """Run a set of pendants.
 
   Args:
     device_names: The device_names for the robots.
     continuous_control: Function for the continuous control thread.
+    connection_string: The PyReach connection string.
+    user_uid: The user UID for the connection.
   """
   device_names = [
       _clean_device_name(device_name) for device_name in device_names
@@ -1033,7 +1036,10 @@ def run_pendants(
       should_exit = True
       should_exit_condition.notify_all()
 
-  with LocalTCPHostFactory(enable_streaming=False).connect() as host:
+  with ConnectionFactory(
+      enable_streaming=False,
+      connection_string=connection_string,
+      user_uid=user_uid).connect() as host:
     pendant_img_filename = os.path.join(_DIR_PATH, "pendant.jpg")
     bg_img = cv2.imread(pendant_img_filename)
     pendants = [
